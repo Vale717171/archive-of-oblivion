@@ -4,6 +4,31 @@
 
 ---
 
+### 2026-04-02 — GitHub Copilot (Documentation & Handoff)
+**Role:** Sincronizzazione documentazione per handoff a Claude Code
+**Done:**
+- Ripristinato `claude.md` con il GDD completo (788 righe, §1–§23) — la branch aveva solo 15 righe (§23 isolato)
+- Aggiornato §16 (Architettura Tecnica): flusso interazione con nomi classi reali + mappa struttura file annotata con autori
+- Riscritto §22 (NOTE APERTE): segnati come ✅ i componenti implementati, priorità aggiornate
+- Aggiunta sezione GitHub Copilot a `docs/prompts/role_cards.md` — codebase awareness, bug noto simulacra, regole
+
+**Key decisions:**
+- Bug simulacra (weightDelta=0 → non aggiunti all'inventario) documentato in role card + §22 come pending fix
+- `claude.md` fonte di verità: mai sovrascrivere, solo appendere in fondo
+- `docs/prompts/role_cards.md` ora include tutti i collaboratori: Claude, Gemini, o3, Mistral, SuperGrok, DeepSeek, Copilot
+
+**Files created/modified:**
+- `claude.md` (ripristinato GDD completo + §16/§22 aggiornati + §23)
+- `docs/prompts/role_cards.md` (aggiunta sezione GitHub Copilot)
+- `docs/work_log.md` (questa voce)
+
+**Next suggested step:**
+Fase 0-omega — validazione LLM su device fisico Android (GDD sezione 17).
+I modelli `.gguf` vanno in `assets/llm/` nel progetto di test (non nel repo principale, già esclusi da `.gitignore`).
+Dopo validazione: fix bug simulacra in `game_engine_provider.dart` (soluzione in role card Copilot).
+
+---
+
 ### 2026-04-02 — GitHub Copilot (Parser & UI Specialist)
 **Role:** Parser state machine + base UI + game engine stub
 **Done:**
