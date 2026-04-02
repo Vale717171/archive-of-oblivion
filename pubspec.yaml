@@ -1,0 +1,33 @@
+name: archive_of_oblivion
+description: L'Archivio dell'Oblio — psycho-philosophical text adventure for Android.
+publish_to: 'none'
+
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  just_audio: ^0.9.36
+  audio_session: ^0.1.18
+  sqflite: ^2.3.0
+  path: ^1.9.0
+  path_provider: ^2.1.2
+  # LLM package: da definire dopo Fase 0-omega (flutter_llama / mediapipe / ffi)
+  # ffi: ^2.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/audio/
+    - assets/texts/
+    - assets/config/
+    # assets/llm/ escluso — modelli .gguf troppo grandi per git
