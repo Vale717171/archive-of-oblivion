@@ -4,6 +4,50 @@
 
 ---
 
+### 2026-04-02 — GitHub Copilot (Fase 0-omega Scaffold)
+**Role:** LLM Validation Suite — app Flutter di test per validazione on-device
+**Done:**
+- Creato `tools/fase_0_omega/README.md` — guida master: download modelli, adb push, decision tree completo
+- Creato `tools/fase_0_omega/llm_test_1/` — app di test per `flutter_llama` (Tentativo 1):
+    - `pubspec.yaml` — dipendenze: `flutter_llama ^1.0.0` + `path_provider ^2.1.2`
+    - `lib/main.dart` — app completa: rilevamento modello (path configurabile), caricamento con timer, 5 test prompts da GDD §20 (formato Qwen), metriche (load time, tokens/s, durata), verdetto PASS/FAIL
+    - `android_patches.md` — patch per `build.gradle` (minSdk 26, largeHeap) e `AndroidManifest.xml`
+- Creato `tools/fase_0_omega/llm_test_2/` — app di test per `mediapipe_genai` (Tentativo 2):
+    - `pubspec.yaml` — dipendenze: `mediapipe_genai ^0.0.1`
+    - `lib/main.dart` — stessa struttura di test 1, ma con prompt in formato Gemma (`<start_of_turn>user`), GPU/CPU auto-fallback, soglie più strette (< 15s)
+    - `android_patches.md` — patch + nota su adattamento template se Gemma vince
+- Creato `tools/fase_0_omega/results_template.md` — form da compilare dopo i test (metriche, campione output, verdict, decisione finale)
+
+**Key decisions:**
+- Modelli caricati da storage esterno (`/sdcard/Download/`) via `adb push` — non bundlati in assets (350MB–1.3GB rendono l'APK ingestibile in CI, e la produzione gestirà la distribuzione separatamente)
+- Il path del modello è modificabile nell'app via campo di testo — flessibile per device con percorsi diversi
+- Test 1 usa `nGpuLayers: 0` (CPU-only) come default; commento nel codice per testare Vulkan GPU (`-1`)
+- Test 2 prova GPU prima, poi CPU come fallback automatico — registra quale modalità ha usato
+- 5 prompt prompts allineati con i template reali di GDD §20 — il test misura le stesse condizioni del gioco, non solo "hello world"
+- Nessuna dipendenza aggiunta al progetto principale — i test app sono standalone in `tools/`
+
+**Files created:**
+- `tools/fase_0_omega/README.md`
+- `tools/fase_0_omega/llm_test_1/pubspec.yaml`
+- `tools/fase_0_omega/llm_test_1/lib/main.dart`
+- `tools/fase_0_omega/llm_test_1/android_patches.md`
+- `tools/fase_0_omega/llm_test_2/pubspec.yaml`
+- `tools/fase_0_omega/llm_test_2/lib/main.dart`
+- `tools/fase_0_omega/llm_test_2/android_patches.md`
+- `tools/fase_0_omega/results_template.md`
+
+**Next suggested step:**
+1. Scarica `qwen2.5-0.5b-instruct-q4_k_m.gguf` da HuggingFace (~350 MB)
+2. `flutter create llm_test_1 --org com.archivio.test` nella cartella `tools/fase_0_omega/`
+3. Copia `pubspec.yaml` e `lib/main.dart` dal repo
+4. Applica `android_patches.md`
+5. `adb push model.gguf /sdcard/Download/`
+6. `flutter run --release` su device fisico
+7. Compila `results_template.md` e committi nel repo
+8. Se Test 1 passa: aggiungere `flutter_llama ^1.0.0` a `pubspec.yaml` principale e sostituire `_llmStub()` in `game_engine_provider.dart`
+
+---
+
 ### 2026-04-02 — GitHub Copilot (Documentation & Handoff)
 **Role:** Sincronizzazione documentazione per handoff a Claude Code
 **Done:**
