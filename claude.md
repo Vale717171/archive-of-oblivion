@@ -412,17 +412,39 @@ TOTALE:                     ~543 MB
 ```
 Input giocatore
       ↓
-Parser Flutter (intenzione + verifica stato)
+ParserService.parse()  [lib/features/parser/parser_service.dart]
       ↓
-Controllo peso + inventario + flag
+GameEngineNotifier._evaluate()  [lib/features/game/game_engine_provider.dart]
       ↓
-Motore procedurale (ingredienti da SQLite)
+_llmStub() → [POST Fase 0-omega: LLM on-device via flutter_llama/MediaPipe/FFI]
       ↓
-Costruttore prompt (contesto + peso + citazione)
-      ↓
-LLM 0.5B on-device
-      ↓
-Display testo + trigger evento audio
+GameScreen (typewriter + palette PsychoProfile)  [lib/features/ui/game_screen.dart]
+```
+
+### Struttura file implementata
+
+```
+lib/
+├── main.dart                              ← entry point, AudioService init
+├── core/
+│   └── storage/
+│       ├── database_service.dart          ← SQLite singleton (Gemini)
+│       └── dialogue_history_service.dart  ← persistenza dialoghi (Copilot)
+└── features/
+    ├── audio/
+    │   └── audio_service.dart             ← crossfade reattivo a PsychoProfile (Grok)
+    ├── game/
+    │   └── game_engine_provider.dart      ← Riverpod engine + nodi narrativi (Copilot)
+    ├── llm/
+    │   └── llm_context_service.dart       ← System Prompt dinamico (Gemini)
+    ├── parser/
+    │   ├── parser_service.dart            ← parser puro stateless (Copilot)
+    │   └── parser_state.dart              ← modelli dati (Copilot)
+    ├── state/
+    │   ├── game_state_provider.dart       ← nodo corrente + SQLite (Gemini/Grok)
+    │   └── psycho_provider.dart           ← PsychoProfile + SQLite (Gemini)
+    └── ui/
+        └── game_screen.dart               ← UI testuale + typewriter (Copilot)
 ```
 
 ---
@@ -695,15 +717,28 @@ Memories: {memories}. Inventory: {inventory}.
 - Tutti gli effetti audio speciali
 
 ---
-
 ## 22. NOTE APERTE / DA DECIDERE
 
-- **PRIORITA':** Validazione LLM (Fase 0-omega) prima di iniziare sviluppo
-- Modello specifico dipende dall'esito della validazione
-- Verso esatto di Arseny Tarkovsky per la Stele
-- Traduzione inglese dei testi narrativi (cura per preservare tono etereo)
+**Completato:**
+- ~~GDD Tecnico — state machine del parser~~ ✅ (docs/parser_state_machine.md + lib/features/parser/)
+- ~~UI testuale base reattiva a PsychoProfile~~ ✅ (lib/features/ui/game_screen.dart)
+- ~~Game engine con nodi narrativi stub~~ ✅ (lib/features/game/game_engine_provider.dart)
+- ~~Database SQLite: schema + providers Riverpod~~ ✅ (Gemini)
+- ~~AudioService reattivo a PsychoProfile~~ ✅ (Grok)
+
+**Ancora aperto / priorità:**
+- **PRIORITÀ 1:** Fase 0-omega — validazione LLM su device fisico (GDD sezione 17)
+  - Dopo la validazione: sostituire `_llmStub()` in `game_engine_provider.dart`
+- **PRIORITÀ 2:** Bundle testi JSON (`assets/texts/epicuro_bundle.json`, etc.) — GDD sezione 18
+  - I nodi del Giardino sono già nel codice; migrare in asset quando il formato è stabile
+- Fase 0-omega: modello specifico dipende dall'esito (flutter_llama vs MediaPipe vs FFI)
+- Verso esatto di Arseny Tarkovsky per la Stele (Settore Giardino, garden_stelae)
+- Traduzione inglese definitiva dei testi narrativi (i nodi del Giardino sono già in inglese)
 - Test crossfade audio su device reali (rischio click nel workaround player swap)
-- GDD Tecnico — state machine del parser (passo successivo dopo validazione LLM)
+- Implementazione Settori Est (Osservatorio), Sud (Galleria), Ovest (Laboratorio) — stub presenti
+- La Zona procedurale (GDD sezione 10) — richiede LLM validato
+- Boss finale / Il Nucleo (GDD sezione 12) — richiede LLM validato
+- Il Quinto Settore (GDD sezione 11) — richiede trigger proustiani collezionati
 
 ---
 
@@ -715,13 +750,39 @@ Memories: {memories}. Inventory: {inventory}.
 
 ## 23. CONTRIBUTI LLM
 
-### 2026-04-02 — GitHub Copilot (Sonnet 4.6)
-- Proposto diagramma di state machine per il parser (micro-loop di interazione)
-- Suggerita checklist operativa per i primi passi post-validazione LLM:
-    - Implementazione parser minimale e UI testuale reattiva a Peso Psicologico
-    - Collegamento database SQLite e provider audio
-    - Stub per trigger "Zona" e Boss finale
-    - Testing completo del Settore Giardino come MVP
-- Ribadito: tutti i contributi vanno tracciati sia nel GDD che in docs/work_log.md
+### 2026-04-02 — GitHub Copilot (Parser & UI Specialist)
+**Sessione:** Implementazione parser state machine + UI testuale + game engine stub
+**Fatto:**
+- `docs/parser_state_machine.md` — specifica completa del micro-loop a 6 fasi
+- `lib/features/parser/parser_state.dart` — modelli: `ParserPhase`, `CommandVerb`, `ParsedCommand`, `EngineResponse`, `GameMessage`
+- `lib/features/parser/parser_service.dart` — parser puro e stateless
+- `lib/core/storage/dialogue_history_service.dart` — persistenza dialoghi SQLite
+- `lib/features/game/game_engine_provider.dart` — engine Riverpod con 12 nodi (intro_void, la_soglia, Giardino completo, 3 stub)
+- `lib/features/ui/game_screen.dart` — UI testuale, typewriter, palette reattiva a PsychoProfile
+- `lib/main.dart` — aggiornato a GameScreen
 
-**Prossimo passo:** state machine del parser in Dart dopo Fase 0-omega.
+**Architettura risultante:**
+```
+Input giocatore
+      ↓
+ParserService.parse() [puro, sincrono]
+      ↓
+GameEngineNotifier._evaluate() [Riverpod AsyncNotifier]
+      ↓
+_llmStub() → [POST Fase 0-omega: LLM on-device]
+      ↓
+GameScreen [typewriter + palette PsychoProfile]
+```
+
+**Prossimo passo suggerito:**
+Fase 0-omega (validazione LLM). Poi sostituire `_llmStub()` in `game_engine_provider.dart`.
+Vedi dettagli in `docs/work_log.md`.
+
+---
+
+### 2026-04-02 — Copilot (prima sessione — Design)
+- Proposto diagramma di state machine per il parser (poi implementato nella sessione successiva).
+- Suggerita checklist operativa per i primi passi post-validazione LLM.
+- Ribadito: tutti i contributi vanno tracciati sia nel GDD che in docs/work_log.md.
+
+---

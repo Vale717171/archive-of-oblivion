@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/audio/audio_service.dart';
+import 'features/ui/game_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,19 +29,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "L'Archivio dell'Oblio",
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
         useMaterial3: true,
       ),
-      home: const Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(
-          child: Text(
-            'L\'Archivio dell\'Oblio',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
+      home: const GameScreen(),
     );
   }
 }
