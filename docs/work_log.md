@@ -4,6 +4,30 @@
 
 ---
 
+### 2026-04-02 — ChatGPT o3 (Design & Narrative Analyst)
+**Role:** Analisi critica GDD + direzione narrativa
+**Done:**
+- Analisi completa del GDD — confermata coerenza tematica e direzione artistica
+- Identificato il rischio principale: "estetica senza sistema" (bello da vedere, vuoto da usare)
+- Sollevato gap critico: manca un **loop di interazione concreto** (cosa fa l'utente per 10 minuti?)
+- Proposto 3 archetipi di loop: Archivista (preservare), Investigatore (ricostruire), Entità (manipolare)
+- 4 idee concrete per il design del "decadimento": Corruption Signature, False Memory Injection, Stabilità Apparente, Utente come fonte di errore
+
+**Key decisions / Valutazione contro GDD esistente:**
+- Loop Archivista/Investigatore/Entità → GDD già risponde: il giocatore è sempre "il protagonista senza nome" in modalità investigativa. Non serve scegliere — è già definito. Punto chiuso.
+- "Loop concreto mancante" → valido. Il GDD descrive settori e enigmi ma non il ritmo micro (cosa succede turno per turno). Da affrontare nello state machine del parser (GDD sez. 22, prossimo task di o3/Claude).
+- Corruption Signature → **interessante, compatibile** con il Peso Psicologico esistente. Da valutare come variante stilistica dell'LLM per settore (ogni settore = firma narrativa diversa).
+- False Memory Injection → **già presente** nel GDD come meccanica della Zona e dell'Antagonista (sezioni 10, 12). ChatGPT l'ha reinventata indipendentemente — segnale che la direzione è giusta.
+- Stabilità Apparente → già implicita nel game design (oggetti che sembrano utili ma aumentano il peso psicologico).
+- "Memoria diegetica" del work log → idea creativa ma fuori scope. Il log rimane documentazione tecnica.
+- Tono del contributo: eccellente come brainstorming filosofico, ma contiene molte ridondanze col GDD esistente (ChatGPT non ha letto abbastanza in profondità o ha usato una versione parziale).
+
+**Files created/modified:** nessuno (contributo design puro)
+
+**Next suggested step:** state machine del parser — definire il ritmo micro turno-per-turno. Modello consigliato: **o3** (logica formale) o **Claude** (conosce già tutto il contesto).
+
+---
+
 ### 2026-04-02 — Grok (Audio & Immersion Specialist)
 **Role:** Flutter/Audio specialist + ottimizzazione bassa RAM
 **Done:**
