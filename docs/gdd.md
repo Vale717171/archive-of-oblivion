@@ -31,9 +31,9 @@ Un'avventura testuale per Android ispirata ai giochi degli anni '80, ma radicalm
 
 ## 3. PREMESSA NARRATIVA
 
-Il giocatore si sveglia in un non-luogo chiamato L'Archivio. Non ricorda chi sia né come ci sia arrivato. Scoprirà che l'Archivio è la sua stessa mente — un costrutto difensivo creato dall'Inconscio per isolarlo da un trauma indicibile.
+Il giocatore si sveglia in un non-luogo chiamato L'Archivio. Non ricorda chi sia né come ci sia arrivato. L'Archivio non è semplicemente una mente: è uno **spazio metafisico di transito** — un *Bardo* — in cui l'Anima deve distillare il senso della propria esistenza umana prima di poter procedere oltre.
 
-Il Sistema (L'Antagonista) vuole spegnere gli ultimi ricordi per raggiungere la "Pace del Vuoto". Il giocatore deve esplorare quattro settori concettuali, recuperare quattro Simulacri e compiere il rituale della memoria per risvegliarsi.
+Il Sistema (L'Antagonista) rappresenta la tentazione del **Nichilismo**: vuole convincere il giocatore che la vita biologica è stata soltanto un doloroso e casuale errore chimico, spingendolo verso la "Pace del Vuoto" (l'annullamento totale dell'anima). Il giocatore deve esplorare quattro settori concettuali, recuperare quattro Simulacri e dimostrare — a se stesso e al Sistema — che l'esperienza umana, per quanto imperfetta e dolorosa, è **sacra, eterna e profondamente significativa**.
 
 ---
 
@@ -46,6 +46,8 @@ Il narratore non giudica, non incoraggia, non deride. **Constata.** Niente escla
 Esempi di tono:
 > *"Apri la porta. Dall'altra parte non c'è buio — c'è assenza."*
 > *"Provi a prendere il frammento. Le dita lo sfiorano. Ti chiedi se sei tu a toccarlo o lui a toccare te."*
+
+Il tono è permeato da una **speranza sotterranea**. La malinconia non è mai disperazione, ma *nostalgia dell'Assoluto*: il presentimento ostinato che tutto, anche ciò che fa male, abbia un peso e un senso. C'è una sacralità nascosta nelle cose più banali — nel profumo di un libro, nella luce obliqua di un pomeriggio, nel silenzio tra due respiri — così come in Proust ogni dettaglio involontario apre un varco verso l'eterno, e in Seth ogni esperienza fisica è già, di per sé, una forma di saggezza dell'anima.
 
 Il tono varia dinamicamente in base al Peso Psicologico del giocatore.
 
@@ -313,7 +315,7 @@ Se la frase risolutiva viene digitata con peso > 0:
 
 ### I Tre Finali
 
-**FINALE 1 — Acceptance (Vittoria):** L'Aria delle Goldberg riprende dalla nota sospesa, completa la frase, fade 20s. Porte aperte, luce oltre.
+**FINALE 1 — Acceptance (Vittoria - La Rivelazione):** L'Archivio diventa traslucido, rivelando una vastità che assomiglia a un ritorno a casa. Ogni lacrima, ogni silenzio, ogni imperfezione non erano stati invano: erano le materie prime dell'anima. Il disegno, finalmente, ha senso. *"Fuori non c'è il Vuoto. Fuori c'è tutto."* L'Aria delle Goldberg riprende dalla nota sospesa, completa la frase, fade 20s.
 
 **FINALE 2 — Oblivion (Sconfitta):** Silenzio 30s → fruscio bianco → nulla. Verso di Tarkovsky: *"Lived. Died. No one will remember."*
 
@@ -338,7 +340,9 @@ Ultimo comando: `WAKE UP`
 
 ## 14. CONNESSIONI TEMATICHE TRASVERSALI
 
-| Tema | Giardino | Osservatorio | Galleria | Laboratorio | Memoria |
+I quattro settori rappresentano i **quattro tentativi dell'anima di toccare l'Assoluto durante la vita terrena**: il Giardino attraverso la Filosofia, l'Osservatorio attraverso la Scienza, la Galleria attraverso l'Arte, il Laboratorio attraverso la Spiritualità/Alchimia.
+
+| Tema | Giardino (Filosofia) | Osservatorio (Scienza) | Galleria (Arte) | Laboratorio (Spiritualità) | Memoria |
 |---|---|---|---|---|---|
 | Rilascio | Deposita tutto | Elimina osservazione | Rompi specchio | Soffia respiro | Bevi infuso |
 | Attesa | Fontana (rugiada) | Vuoto (7 turni) | Tarkovskij (mai arriva) | Bain-Marie | Stagioni |
