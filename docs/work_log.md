@@ -4,6 +4,25 @@
 
 ---
 
+### 2026-04-02 — GitHub Copilot (Sonnet 4.6)
+**Role:** Parser design + checklist operativa MVP
+**Done:**
+- Proposta state machine per il parser (micro-loop turno-per-turno)
+- Checklist post-validazione LLM: parser minimale → UI testuale → audio → Zona stub → MVP Giardino
+- Aggiunto sezione 23 "CONTRIBUTI LLM" in `claude.md`
+
+**Key decisions:**
+- Copilot ha sovrascritto accidentalmente il GDD intero (712 righe cancellate) — ripristinato da Claude via `git show cbc194c:claude.md`. La sezione 23 è stata appesa correttamente in fondo al GDD recuperato.
+- **Nota per tutti i modelli:** modificare `claude.md` richiede append o edit mirato, mai sostituzione completa del file.
+
+**Files created/modified:**
+- `claude.md` (sezione 23 aggiunta — dopo ripristino da git)
+- `docs/work_log.md` (questa voce)
+
+**Next suggested step:** state machine del parser in Dart — modello consigliato: Claude o o3
+
+---
+
 ### 2026-04-02 — ChatGPT o3 (Design & Narrative Analyst)
 **Role:** Analisi critica GDD + direzione narrativa
 **Done:**
