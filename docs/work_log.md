@@ -4,7 +4,37 @@
 
 ---
 
-### 2026-04-02 — GitHub Copilot (Fase 0-omega Scaffold)
+### 2026-04-02 — GitHub Copilot (Claude Code Integration)
+**Role:** Documentation & tooling — Claude Code session instructions
+**Done:**
+- Creato `CLAUDE.md` (root) — letto automaticamente da Claude Code all'avvio di ogni sessione:
+  contiene convenzioni codebase, struttura file, known bug simulacra, priority order, regole
+- Creato `tools/fase_0_omega/CLAUDE_CODE_PROMPT.md` — prompt completo pronto per incollare
+  nella prima sessione Claude Code: istruzioni per `flutter create` + patch Android + adb + tabella
+  chi fa cosa (Claude Code vs umano) + prompt sessione successiva (post-risultati) + link modelli
+- Aggiornato `docs/prompts/role_cards.md` — aggiunto role card "Claude Code" e istruzioni d'uso
+
+**Key decisions:**
+- `CLAUDE.md` (uppercase) è distinto da `claude.md` (GDD, lowercase) — Claude Code legge solo `CLAUDE.md`
+- I progetti Flutter reali (`llm_test_1_project/`, `llm_test_2_project/`) vengono creati da Claude Code
+  al momento dell'esecuzione; le cartelle `llm_test_1/` e `llm_test_2/` restano template nel repo
+- Il prompt per Claude Code separa esplicitamente cosa può fare il tool (build, patch, analyze)
+  da cosa deve fare l'umano (download modello, adb push, device fisico, risultati)
+
+**Files created/modified:**
+- `CLAUDE.md` (nuovo, root)
+- `tools/fase_0_omega/CLAUDE_CODE_PROMPT.md` (nuovo)
+- `docs/prompts/role_cards.md` (aggiunto role card Claude Code)
+- `docs/work_log.md` (questa voce)
+
+**Next suggested step:**
+Aprire Claude Code nella root del repo, verificare che legga `CLAUDE.md` automaticamente,
+poi incollare il prompt da `tools/fase_0_omega/CLAUDE_CODE_PROMPT.md`.
+Prerequisiti: Flutter SDK installato localmente, device Android fisico connesso via USB.
+
+---
+
+
 **Role:** LLM Validation Suite — app Flutter di test per validazione on-device
 **Done:**
 - Creato `tools/fase_0_omega/README.md` — guida master: download modelli, adb push, decision tree completo

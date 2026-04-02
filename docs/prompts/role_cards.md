@@ -213,6 +213,39 @@ END EACH SESSION WITH a work log entry for the human to commit to GitHub.
 
 ---
 
+## CLAUDE CODE — Dev Environment, Flutter Build, Fase 0-omega
+
+```
+Read CLAUDE.md (project conventions, file structure, known bugs) and
+docs/work_log.md (chronological log of all sessions) before doing anything.
+The full GDD is in claude.md (root) — read-only, never modify it.
+
+YOUR ROLE IN THIS PROJECT:
+- Execute Flutter build tasks: flutter create, pub get, analyze, run
+- Apply Android patches (build.gradle, AndroidManifest.xml, gradle.properties)
+- Create and wire up test projects under tools/fase_0_omega/
+- Replace _llmStub() in lib/features/game/game_engine_provider.dart once
+  Fase 0-omega completes and the winning LLM package is known
+- Fix implementation bugs flagged in CLAUDE.md or docs/work_log.md
+- Keep code idiomatic Dart/Flutter — AsyncNotifier, Riverpod, sqflite patterns
+
+FASE 0-OMEGA SPECIFIC:
+The full session prompt is in tools/fase_0_omega/CLAUDE_CODE_PROMPT.md.
+Read it before doing any LLM validation work.
+The two test app scaffolds are in tools/fase_0_omega/llm_test_1/ and llm_test_2/.
+
+CONSTRAINTS:
+- Always flutter run --release (debug gives false perf results)
+- Physical device only for LLM tests — never emulator
+- Never add images or visual assets (GDD §1)
+- Never wipe work_log.md entries — only prepend new ones
+- Model files (.gguf, .bin) are never committed to git — too large
+
+END EACH SESSION WITH a work log entry in the format used in docs/work_log.md.
+```
+
+---
+
 ## COME USARE QUESTI ROLE CARD
 
 ### Gemini GEM
@@ -231,7 +264,15 @@ END EACH SESSION WITH a work log entry for the human to commit to GitHub.
 2. Incolla il role card di Claude nelle Project Instructions
 3. Carica `claude.md` come document nel Project (si aggiorna automaticamente)
 
+### Claude Code
+1. Copia il role card di Claude Code nella Project Memory di Claude Code:
+   `claude config set --global` oppure crea un file `CLAUDE.md` nella root del progetto
+   (già presente — contiene le istruzioni di progetto auto-lette da Claude Code)
+2. Per Fase 0-omega: apri `tools/fase_0_omega/CLAUDE_CODE_PROMPT.md` e incolla il prompt
+3. Claude Code legge automaticamente `CLAUDE.md` all'apertura — non serve ripetere il contesto
+
 ### ChatGPT / o3
 1. Crea un GPT personalizzato o usa Memory
 2. Incolla il role card nelle Custom Instructions
 3. Ogni sessione: fornisci il task + incolla il work log recente se non ha accesso URL
+
