@@ -4,6 +4,29 @@
 
 ---
 
+### 2026-04-02 — Gemini 2.5 Pro
+**Role:** Flutter/Android specialist
+**Done:**
+- Defined SQLite schema strategy for state management and context window optimization
+- Implemented `DatabaseService` (Singleton) with tables: `game_state`, `psycho_profile`, `dialogue_history`
+- Developed Riverpod `AsyncNotifier` for `PsychoProfile` to map DB reads/writes to UI/Audio state
+- Developed Riverpod `AsyncNotifier` for `GameState` to track the player's current narrative node
+- Engineered `LlmContextService` to dynamically assemble System Prompts based on real-time psychological parameters and game location
+
+**Key decisions:**
+- Rejected larger LLM (1.5B+) due to strict 3GB RAM mid-range target — Android LMK crashes and unacceptable token/sec latency. Committing fully to 0.5B model + aggressive Dynamic System Prompting
+- Grouped state/storage commits into a single batch to streamline developer workflow
+
+**Files created/modified:**
+- `lib/core/storage/database_service.dart` (Created)
+- `lib/features/state/psycho_provider.dart` (Created)
+- `lib/features/state/game_state_provider.dart` (Created)
+- `lib/features/llm/llm_context_service.dart` (Created)
+
+**Next suggested step:** TBD — Audio Engine integration or Base UI implementation
+
+---
+
 ### 2026-04-02 — Claude Sonnet 4.5
 **Role:** Architettura generale, setup repository, coordinamento multi-LLM
 **Done:**
