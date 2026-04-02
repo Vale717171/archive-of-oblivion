@@ -7,11 +7,10 @@ class PsychoProfile {
   final int oblivionLevel;
   final int anxiety;
 
-  PsychoProfile({
-    required this.lucidity,
-    required this.oblivionLevel,
-    required this.anxiety,
-  });
+  PsychoProfile(
+      {required this.lucidity,
+      required this.oblivionLevel,
+      required this.anxiety});
 
   factory PsychoProfile.fromMap(Map<String, dynamic> map) {
     return PsychoProfile(
@@ -28,50 +27,42 @@ class PsychoProfileNotifier extends AsyncNotifier<PsychoProfile> {
 
   @override
   Future<PsychoProfile> build() async {
-    return await _loadProfile();
+    return _fetchProfile();
   }
 
-  Future<PsychoProfile> _loadProfile() async {
+  Future<PsychoProfile> _fetchProfile() async {
     final db = await _dbService.database;
-    final List<Map<String, dynamic>> rows = await db.query(
-      'psycho_profile',
-      where: 'id = 1',
-    );
-
-    if (rows.isNotEmpty) {
-      return PsychoProfile.fromMap(rows.first);
+    final List<Map<String, dynamic>> maps =
+        await db.query('psycho_profile', where: 'id = 1');
+    if (maps.isNotEmpty) {
+      return PsychoProfile.fromMap(maps.first);
     }
-
     // Fallback di sicurezza, non dovrebbe mai accadere data l'inizializzazione del DB
-    return PsychoProfile(lucidity: 100, oblivionLevel: 0, anxiety: 0);
+    return PsychoProfile(lucidity: 50, oblivionLevel: 0, anxiety: 10);
   }
 
   // Metodo per aggiornare un parametro dinamicamente (es. quando l'utente scrive frasi senza senso)
-  Future<void> updateProfile({
-    int? lucidity,
-    int? oblivionLevel,
-    int? anxiety,
-  }) async {
+  Future<void> updateParameter(
+      {int? lucidity, int? oblivionLevel, int? anxiety}) async {
     final db = await _dbService.database;
 
     // Aggiorna solo i campi passati
-    final Map<String, dynamic> values = {};
-    if (lucidity != null) values['lucidity'] = lucidity;
-    if (oblivionLevel != null) values['oblivion_level'] = oblivionLevel;
-    if (anxiety != null) values['anxiety'] = anxiety;
+    final Map<String, dynamic> updates = {};
+    if (lucidity != null) updates['lucidity'] = lucidity;
+    if (oblivionLevel != null) updates['oblivion_level'] = oblivionLevel;
+    if (anxiety != null) updates['anxiety'] = anxiety;
 
-    if (values.isEmpty) return;
-
-    await db.update('psycho_profile', values, where: 'id = 1');
-
-    // Ricarica lo stato per notificare i listener (UI, Audio, LLM System Prompt)
-    state = const AsyncValue.loading();
-    state = AsyncValue.data(await _loadProfile());
+    if (updates.isNotEmpty) {
+      await db.update('psycho_profile', updates, where: 'id = 1');
+      // Ricarica lo stato per notificare i listener (UI, Audio, LLM System Prompt)
+      state = const AsyncValue.loading();
+      state = AsyncValue.data(await _fetchProfile());
+    }
   }
 }
 
 // Il provider globale da usare nell'app
 final psychoProfileProvider =
-    AsyncNotifierProvider<PsychoProfileNotifier, PsychoProfile>(
-  () => PsychoProfileNotifier(),
-);
+    AsyncNotifierProvider<PsychoProfileNotifier, PsychoProfile>(() {
+  return PsychoProfileNotifier();
+});
