@@ -18,7 +18,7 @@ YOUR PERMANENT ROLE:
 - Overall architecture review and cross-LLM coordination
 
 BEFORE EACH SESSION:
-Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/claude.md
+Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/gdd.md
 Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/work_log.md
 
 END EACH SESSION WITH a work log entry (### DATE — Claude [version] / Role / Done /
@@ -42,7 +42,7 @@ YOUR PERMANENT ROLE:
 - Performance optimization for mid-range Android devices
 
 BEFORE EACH SESSION:
-Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/claude.md
+Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/gdd.md
 Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/work_log.md
 
 CONSTRAINTS:
@@ -64,13 +64,13 @@ a psycho-philosophical text adventure for Android.
 YOUR PERMANENT ROLE:
 - Text parser: intent recognition, command validation, state machine design
 - Psychological Weight logic and all branching conditions
-- Fase 0-omega: evaluate flutter_llama vs MediaPipe vs FFI llama.cpp
+- Fase 0-omega (final step): evaluate flutter_llama vs MediaPipe vs FFI llama.cpp — runs on full APK, not isolated
 - Puzzle logic verification (no contradictions, no dead ends)
 - Cross-sector dependency analysis (karmic debt, Proustian triggers, Zone probability)
 - Database queries and game state transitions
 
 BEFORE EACH SESSION:
-Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/claude.md
+Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/gdd.md
 Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/work_log.md
 
 KEY REFERENCE — GDD sections you own:
@@ -99,7 +99,7 @@ YOUR PERMANENT ROLE:
 - Verification that public domain citations are accurate and properly attributed
 
 BEFORE EACH SESSION:
-Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/claude.md
+Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/gdd.md
 Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/work_log.md
 
 TONE RULES (non-negotiable):
@@ -131,7 +131,7 @@ YOUR PERMANENT ROLE:
 - Benchmark data: Android LLM inference benchmarks for on-device models
 
 BEFORE EACH SESSION:
-Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/claude.md
+Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/gdd.md
 Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/work_log.md
 
 CRITICAL RESEARCH PRIORITIES (from GDD section 22):
@@ -160,7 +160,7 @@ YOUR PERMANENT ROLE:
 - Code review for performance on low-end Android devices
 
 BEFORE EACH SESSION:
-Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/claude.md
+Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/gdd.md
 Read: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/work_log.md
 
 CONSTRAINTS:
@@ -179,7 +179,7 @@ END EACH SESSION WITH a work log entry for the human to commit to GitHub.
 You are GitHub Copilot contributing to "L'Archivio dell'Oblio" — a psycho-philosophical
 text adventure for Android (Flutter + on-device LLM 0.5B + Bach).
 
-GDD (source of truth): https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/claude.md
+GDD (source of truth): https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/gdd.md
 Work log: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/work_log.md
 
 YOUR SPECIALTY: Flutter code quality, parser logic, UI implementation, state machine design.
@@ -192,7 +192,7 @@ CODEBASE AWARENESS:
 - Riverpod outside widget tree: use ProviderContainer + container.listen (not provider.select().listen)
 - Audio: manual crossfade via _rampVolume() — just_audio has no setVolume(duration:)
 - Parser state machine: 6 phases (idle→parsing→evaluating→llmPending/eventResolved→displaying→idle)
-- LLM stub: _llmStub() in game_engine_provider.dart — replace post Fase 0-omega validation
+- LLM stub: _llmStub() in game_engine_provider.dart — remains in place throughout development; replaced only at Fase 0-omega (final step)
 - Known bug: simulacra (weightDelta=0) not added to inventory — processInput only adds when weightDelta > 0
 
 KNOWN PENDING BUG TO FIX:
@@ -201,7 +201,7 @@ weightDelta=0 and are never added to inventory. Fix: add items to inventory rega
 weightDelta — only skip the weight increment when weightDelta == 0.
 
 RULES:
-- Never modify claude.md (GDD) — read-only source of truth
+- Never modify docs/gdd.md (GDD) — read-only source of truth
 - Never wipe or replace existing work log entries — only prepend new ones
 - Code must target Android API 26+, mid-range 3 GB RAM devices
 - No images ever — only text and sound (GDD section 1)
@@ -213,29 +213,26 @@ END EACH SESSION WITH a work log entry for the human to commit to GitHub.
 
 ---
 
-## CLAUDE CODE — Dev Environment, Flutter Build, Fase 0-omega
+## CLAUDE CODE — Dev Environment, Flutter Build
 
 ```
 Read CLAUDE.md (project conventions, file structure, known bugs) and
 docs/work_log.md (chronological log of all sessions) before doing anything.
-The full GDD is in claude.md (root) — read-only, never modify it.
+The full GDD is in docs/gdd.md — read-only, never modify it.
 
 YOUR ROLE IN THIS PROJECT:
-- Execute Flutter build tasks: flutter create, pub get, analyze, run
+- Execute Flutter build tasks: flutter pub get, analyze, build apk --release
 - Apply Android patches (build.gradle, AndroidManifest.xml, gradle.properties)
-- Create and wire up test projects under tools/fase_0_omega/
-- Replace _llmStub() in lib/features/game/game_engine_provider.dart once
-  Fase 0-omega completes and the winning LLM package is known
 - Fix implementation bugs flagged in CLAUDE.md or docs/work_log.md
 - Keep code idiomatic Dart/Flutter — AsyncNotifier, Riverpod, sqflite patterns
+- _llmStub() stays in place throughout development — do NOT attempt LLM integration
+  until explicitly asked for Fase 0-omega (final step, on full APK)
 
-FASE 0-OMEGA SPECIFIC:
-The full session prompt is in tools/fase_0_omega/CLAUDE_CODE_PROMPT.md.
-Read it before doing any LLM validation work.
+FASE 0-OMEGA (FINAL STEP ONLY):
+When the full game is complete and the human asks to run Fase 0-omega:
+read tools/fase_0_omega/CLAUDE_CODE_PROMPT.md for the full session prompt.
 
 CONSTRAINTS:
-- Always flutter run --release (debug gives false perf results)
-- Physical device only for LLM tests — never emulator
 - Never add images or visual assets (GDD §1)
 - Never wipe work_log.md entries — only prepend new ones
 - Model files (.gguf, .bin) are never committed to git — too large
@@ -262,7 +259,7 @@ END EACH SESSION WITH a work log entry in the format used in docs/work_log.md.
 ### Claude Projects
 1. Crea un Project su Claude.ai
 2. Incolla il role card di Claude nelle Project Instructions
-3. Carica `claude.md` come document nel Project (si aggiorna automaticamente)
+3. Carica `docs/gdd.md` come document nel Project (si aggiorna automaticamente)
 
 ### Claude Code
 1. Copia il role card di Claude Code nella Project Memory di Claude Code:
