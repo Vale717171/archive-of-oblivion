@@ -4,6 +4,31 @@
 
 ---
 
+### 2026-04-02 — Grok (Audio & Immersion Specialist)
+**Role:** Flutter/Audio specialist + ottimizzazione bassa RAM
+**Done:**
+- Corretto bug `GameStateNotifier.updateNode()`: infinite row growth → single-row con `ConflictAlgorithm.replace` + `'id': 1`
+- Implementato `AudioService` reattivo a `psychoProfileProvider` (crossfade automatico calm/anxious/oblivion)
+- Gestione SFX separata con `AudioPlayer` usa-e-getta + auto-dispose
+- Fallback silenzioso per asset mancanti (no crash su 3 GB RAM)
+- Creato `main.dart` con `ProviderContainer` pre-`runApp` + `UncontrolledProviderScope`
+
+**Key decisions:**
+- Audio è priorità #1: zero immagini = sound design come protagonista
+- Singolo `AudioPlayer` in background (leggerissimo su RAM)
+- `ConflictAlgorithm.replace` richiede `'id': 1` esplicito per funzionare con AUTOINCREMENT (fix applicato da Claude al momento del commit)
+- `ProviderContainer` passato ad `AudioService.initialize()` — i provider Riverpod non sono Stream, non si può usare `.listen()` direttamente (fix applicato da Claude: `container.listen` invece di `provider.select().listen()`)
+- Crossfade manuale via `_rampVolume()` — `just_audio.setVolume()` non accetta `duration` (fix applicato da Claude)
+
+**Files created/modified:**
+- `lib/features/state/game_state_provider.dart` (bug fix: single-row + ConflictAlgorithm)
+- `lib/features/audio/audio_service.dart` (new)
+- `lib/main.dart` (new)
+
+**Next suggested step:** UI testuale base — schermata parser + display testo narrativo reattivo al `psychoProfileProvider`
+
+---
+
 ### 2026-04-02 — Gemini 2.5 Pro
 **Role:** Flutter/Android specialist
 **Done:**
