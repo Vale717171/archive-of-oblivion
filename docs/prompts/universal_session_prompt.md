@@ -19,7 +19,7 @@ No images — only text and sound.
 These two documents are your source of truth. Read them fully now.
 
 1. GDD (Game Design Document — the full game bible):
-   https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/claude.md
+   https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/gdd.md
 
 2. Work Log (what has been done so far, most recent session first):
    https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/work_log.md
@@ -72,7 +72,7 @@ feat: Flutter audio manager + crossfade logic — Gemini 2.5 Pro
 You are contributing to "Archive of Oblivion" — a Flutter Android text adventure
 with on-device LLM + Bach. No images.
 
-Read the GDD: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/claude.md
+Read the GDD: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/gdd.md
 Read the log: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/work_log.md
 
 Your role: [ROLE]

@@ -1,7 +1,7 @@
 # L'Archivio dell'Oblio — Claude Code Project Instructions
 
 > This file is read automatically by Claude Code at session start.
-> Do NOT modify the GDD (`claude.md`) — it is the read-only source of truth.
+> Do NOT modify the GDD (`docs/gdd.md`) — it is the read-only source of truth.
 
 ---
 
@@ -11,7 +11,7 @@ A psycho-philosophical text adventure for Android.
 Stack: **Flutter + Riverpod + sqflite + just_audio + on-device LLM 0.5B (offline)**.
 No images — only text and Bach's music.
 
-The full Game Design Document is in `claude.md` (root).
+The full Game Design Document is in `docs/gdd.md`.
 The development log is in `docs/work_log.md`.
 
 ---
@@ -24,7 +24,7 @@ The development log is in `docs/work_log.md`.
 | SQLite | Single-row pattern: always `'id': 1` + `ConflictAlgorithm.replace` |
 | Riverpod outside widget tree | `ProviderContainer` + `container.listen` (not `.select().listen`) |
 | Audio crossfade | Manual `_rampVolume()` — `just_audio` has no `setVolume(duration:)` |
-| LLM integration | `_llmStub()` in `game_engine_provider.dart` — placeholder until Fase 0-omega passes |
+| LLM integration | `_llmStub()` in `game_engine_provider.dart` — permanent placeholder; replaced only when game is complete on physical device |
 | Target Android | API 26+, mid-range 3 GB RAM |
 | Game text language | English only |
 | LLM prompt format | Qwen `<\|system\|>/<\|user\|>/<\|assistant\|>` — unless Tentativo 2 (Gemma) wins |
@@ -49,7 +49,7 @@ lib/
     ├── state/psycho_provider.dart
     └── ui/game_screen.dart
 
-tools/fase_0_omega/                         ← LLM validation suite (run FIRST)
+tools/fase_0_omega/                         ← LLM validation suite (run LAST — after game is complete)
 ├── README.md                               ← start here
 ├── llm_test_1/                             ← flutter_llama test app
 ├── llm_test_2/                             ← mediapipe_genai test app
@@ -58,20 +58,12 @@ tools/fase_0_omega/                         ← LLM validation suite (run FIRST)
 
 ---
 
-## Known bug (unfixed)
-
-In `game_engine_provider.dart`: simulacra (`weightDelta=0`) are never added to inventory
-because `processInput` only adds items when `weightDelta > 0`. Fix: add items regardless
-of `weightDelta`; only skip the weight increment when `weightDelta == 0`.
-
----
-
 ## Priority order
 
-1. **Fase 0-omega** — validate LLM on physical device (`tools/fase_0_omega/`)
-2. Replace `_llmStub()` with real LLM integration (package decided by step 1)
-3. JSON text bundles (`assets/texts/*.json`)
-4. Remaining sectors (East, South, West)
+1. JSON text bundles (`assets/texts/*.json`)
+2. Remaining sectors (East, South, West)
+3. Full game playable end-to-end → APK installable on physical device
+4. **Fase 0-omega** — replace `_llmStub()` with real LLM integration (validated on device)
 
 ---
 

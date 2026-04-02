@@ -5,8 +5,9 @@
 // Delegates navigation + weight to existing providers (gameStateProvider,
 // psychoProfileProvider). Persists every exchange via DialogueHistoryService.
 //
-// LLM integration: stub only — replace _llmStub() with the real on-device call
-// after Fase 0-omega validation (GDD section 17).
+// LLM integration: _llmStub() is a permanent placeholder throughout development.
+// Replace with the real on-device call only when the full game is complete
+// and the APK is installable on a physical device (Fase 0-omega is the final step).
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -363,7 +364,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     int newWeight = withPlayer.psychoWeight + response.weightDelta;
     List<String> newInventory = List.from(withPlayer.inventory);
 
-    if (response.weightDelta > 0 && cmd.verb == CommandVerb.take && cmd.args.isNotEmpty) {
+    if (cmd.verb == CommandVerb.take && cmd.args.isNotEmpty && response.weightDelta >= 0) {
       final item = cmd.args.join(' ');
       if (!newInventory.contains(item)) newInventory.add(item);
     }

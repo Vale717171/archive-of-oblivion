@@ -1,6 +1,44 @@
 # Work Log — L'Archivio dell'Oblio
 *Registro cronologico delle sessioni di sviluppo. Non modificare le voci esistenti.*
-*GDD completo: [`claude.md`](../claude.md)*
+*GDD completo: [`docs/gdd.md`](gdd.md)*
+
+---
+
+### 2026-04-02 — GitHub Copilot (Claude Code) — Strategic reorg + simulacra fix
+**Role:** Architecture & bug fix
+**Done:**
+- Fixed simulacra bug in `game_engine_provider.dart`: items with `weightDelta=0` (Ataraxia,
+  Constant, Proportion, Catalyst) are now correctly added to inventory; weight increment
+  is still skipped when `weightDelta == 0`
+- Created `docs/gdd.md` — GDD moved here from root `claude.md` to resolve macOS case-insensitive
+  filesystem collision between `CLAUDE.md` and `claude.md`
+- Updated `CLAUDE.md`: GDD path → `docs/gdd.md`, LLM stub note → permanent placeholder,
+  priority order updated (Fase 0-omega is now last), known bug section removed (fixed)
+- Updated `docs/prompts/role_cards.md`: all `claude.md` URLs → `docs/gdd.md`; removed
+  simulacra bug description (fixed); updated Claude Code card (LLM stub + Fase 0-omega notes)
+- Updated `docs/prompts/universal_session_prompt.md`: GDD URL → `docs/gdd.md`
+- Updated `docs/work_log.md`: GDD link → `docs/gdd.md`
+- Updated `game_engine_provider.dart` header comment: LLM stub is now permanent placeholder
+
+**Key decisions:**
+- `_llmStub()` remains in place for the entire development lifecycle; replaced only when
+  game is complete and APK runs on physical device
+- `docs/gdd.md` is the canonical GDD path; root `claude.md` is kept for backwards compatibility
+  with any existing bookmarks but is no longer the authoritative source
+- Fase 0-omega moved to last in priority order: validate LLM in the real context
+  (audio + SQLite + parser all active) rather than in isolation
+
+**Files created/modified:**
+- `lib/features/game/game_engine_provider.dart` (simulacra bug fix + header comment)
+- `docs/gdd.md` (new — copy of GDD)
+- `CLAUDE.md` (GDD path, LLM note, priority order, removed known bug section)
+- `docs/prompts/role_cards.md` (URLs, bug section, Claude Code card)
+- `docs/prompts/universal_session_prompt.md` (GDD URL)
+- `docs/work_log.md` (this entry + GDD link)
+
+**Next suggested step:**
+JSON text bundles (`assets/texts/*.json`) — Mistral Large for text content,
+DeepSeek for bundle structure and validation.
 
 ---
 
