@@ -1,5 +1,9 @@
 # L'Archivio dell'Oblio — Game Design Document
-*Ultimo aggiornamento: marzo 2026*
+*Ultimo aggiornamento: aprile 2026*
+
+> **Collaborazione multi-LLM attiva.**
+> Ogni sessione di lavoro viene registrata in [`docs/work_log.md`](docs/work_log.md).
+> Prima di lavorare: leggi questo documento + il work log. Alla fine: aggiungi la tua voce al log.
 
 ---
 
