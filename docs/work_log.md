@@ -4,6 +4,105 @@
 
 ---
 
+### 2026-04-02 — GitHub Copilot (Claude Code Integration)
+**Role:** Documentation & tooling — Claude Code session instructions
+**Done:**
+- Creato `CLAUDE.md` (root) — letto automaticamente da Claude Code all'avvio di ogni sessione:
+  contiene convenzioni codebase, struttura file, known bug simulacra, priority order, regole
+- Creato `tools/fase_0_omega/CLAUDE_CODE_PROMPT.md` — prompt completo pronto per incollare
+  nella prima sessione Claude Code: istruzioni per `flutter create` + patch Android + adb + tabella
+  chi fa cosa (Claude Code vs umano) + prompt sessione successiva (post-risultati) + link modelli
+- Aggiornato `docs/prompts/role_cards.md` — aggiunto role card "Claude Code" e istruzioni d'uso
+
+**Key decisions:**
+- `CLAUDE.md` (uppercase) è distinto da `claude.md` (GDD, lowercase) — Claude Code legge solo `CLAUDE.md`
+- I progetti Flutter reali (`llm_test_1_project/`, `llm_test_2_project/`) vengono creati da Claude Code
+  al momento dell'esecuzione; le cartelle `llm_test_1/` e `llm_test_2/` restano template nel repo
+- Il prompt per Claude Code separa esplicitamente cosa può fare il tool (build, patch, analyze)
+  da cosa deve fare l'umano (download modello, adb push, device fisico, risultati)
+
+**Files created/modified:**
+- `CLAUDE.md` (nuovo, root)
+- `tools/fase_0_omega/CLAUDE_CODE_PROMPT.md` (nuovo)
+- `docs/prompts/role_cards.md` (aggiunto role card Claude Code)
+- `docs/work_log.md` (questa voce)
+
+**Next suggested step:**
+Aprire Claude Code nella root del repo, verificare che legga `CLAUDE.md` automaticamente,
+poi incollare il prompt da `tools/fase_0_omega/CLAUDE_CODE_PROMPT.md`.
+Prerequisiti: Flutter SDK installato localmente, device Android fisico connesso via USB.
+
+---
+
+
+**Role:** LLM Validation Suite — app Flutter di test per validazione on-device
+**Done:**
+- Creato `tools/fase_0_omega/README.md` — guida master: download modelli, adb push, decision tree completo
+- Creato `tools/fase_0_omega/llm_test_1/` — app di test per `flutter_llama` (Tentativo 1):
+    - `pubspec.yaml` — dipendenze: `flutter_llama ^1.0.0` + `path_provider ^2.1.2`
+    - `lib/main.dart` — app completa: rilevamento modello (path configurabile), caricamento con timer, 5 test prompts da GDD §20 (formato Qwen), metriche (load time, tokens/s, durata), verdetto PASS/FAIL
+    - `android_patches.md` — patch per `build.gradle` (minSdk 26, largeHeap) e `AndroidManifest.xml`
+- Creato `tools/fase_0_omega/llm_test_2/` — app di test per `mediapipe_genai` (Tentativo 2):
+    - `pubspec.yaml` — dipendenze: `mediapipe_genai ^0.0.1`
+    - `lib/main.dart` — stessa struttura di test 1, ma con prompt in formato Gemma (`<start_of_turn>user`), GPU/CPU auto-fallback, soglie più strette (< 15s)
+    - `android_patches.md` — patch + nota su adattamento template se Gemma vince
+- Creato `tools/fase_0_omega/results_template.md` — form da compilare dopo i test (metriche, campione output, verdict, decisione finale)
+
+**Key decisions:**
+- Modelli caricati da storage esterno (`/sdcard/Download/`) via `adb push` — non bundlati in assets (350MB–1.3GB rendono l'APK ingestibile in CI, e la produzione gestirà la distribuzione separatamente)
+- Il path del modello è modificabile nell'app via campo di testo — flessibile per device con percorsi diversi
+- Test 1 usa `nGpuLayers: 0` (CPU-only) come default; commento nel codice per testare Vulkan GPU (`-1`)
+- Test 2 prova GPU prima, poi CPU come fallback automatico — registra quale modalità ha usato
+- 5 prompt prompts allineati con i template reali di GDD §20 — il test misura le stesse condizioni del gioco, non solo "hello world"
+- Nessuna dipendenza aggiunta al progetto principale — i test app sono standalone in `tools/`
+
+**Files created:**
+- `tools/fase_0_omega/README.md`
+- `tools/fase_0_omega/llm_test_1/pubspec.yaml`
+- `tools/fase_0_omega/llm_test_1/lib/main.dart`
+- `tools/fase_0_omega/llm_test_1/android_patches.md`
+- `tools/fase_0_omega/llm_test_2/pubspec.yaml`
+- `tools/fase_0_omega/llm_test_2/lib/main.dart`
+- `tools/fase_0_omega/llm_test_2/android_patches.md`
+- `tools/fase_0_omega/results_template.md`
+
+**Next suggested step:**
+1. Scarica `qwen2.5-0.5b-instruct-q4_k_m.gguf` da HuggingFace (~350 MB)
+2. `flutter create llm_test_1 --org com.archivio.test` nella cartella `tools/fase_0_omega/`
+3. Copia `pubspec.yaml` e `lib/main.dart` dal repo
+4. Applica `android_patches.md`
+5. `adb push model.gguf /sdcard/Download/`
+6. `flutter run --release` su device fisico
+7. Compila `results_template.md` e committi nel repo
+8. Se Test 1 passa: aggiungere `flutter_llama ^1.0.0` a `pubspec.yaml` principale e sostituire `_llmStub()` in `game_engine_provider.dart`
+
+---
+
+### 2026-04-02 — GitHub Copilot (Documentation & Handoff)
+**Role:** Sincronizzazione documentazione per handoff a Claude Code
+**Done:**
+- Ripristinato `claude.md` con il GDD completo (788 righe, §1–§23) — la branch aveva solo 15 righe (§23 isolato)
+- Aggiornato §16 (Architettura Tecnica): flusso interazione con nomi classi reali + mappa struttura file annotata con autori
+- Riscritto §22 (NOTE APERTE): segnati come ✅ i componenti implementati, priorità aggiornate
+- Aggiunta sezione GitHub Copilot a `docs/prompts/role_cards.md` — codebase awareness, bug noto simulacra, regole
+
+**Key decisions:**
+- Bug simulacra (weightDelta=0 → non aggiunti all'inventario) documentato in role card + §22 come pending fix
+- `claude.md` fonte di verità: mai sovrascrivere, solo appendere in fondo
+- `docs/prompts/role_cards.md` ora include tutti i collaboratori: Claude, Gemini, o3, Mistral, SuperGrok, DeepSeek, Copilot
+
+**Files created/modified:**
+- `claude.md` (ripristinato GDD completo + §16/§22 aggiornati + §23)
+- `docs/prompts/role_cards.md` (aggiunta sezione GitHub Copilot)
+- `docs/work_log.md` (questa voce)
+
+**Next suggested step:**
+Fase 0-omega — validazione LLM su device fisico Android (GDD sezione 17).
+I modelli `.gguf` vanno in `assets/llm/` nel progetto di test (non nel repo principale, già esclusi da `.gitignore`).
+Dopo validazione: fix bug simulacra in `game_engine_provider.dart` (soluzione in role card Copilot).
+
+---
+
 ### 2026-04-02 — GitHub Copilot (Parser & UI Specialist)
 **Role:** Parser state machine + base UI + game engine stub
 **Done:**
