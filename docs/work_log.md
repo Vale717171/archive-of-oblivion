@@ -4,6 +4,50 @@
 
 ---
 
+### 2026-04-02 — GitHub Copilot (Parser & UI Specialist)
+**Role:** Parser state machine + base UI + game engine stub
+**Done:**
+- Creato `docs/parser_state_machine.md` — specifica completa della state machine a 6 fasi (idle → parsing → evaluating → llmPending/eventResolved → displaying → idle)
+- Implementato `lib/features/parser/parser_state.dart` — modelli dati: `ParserPhase`, `CommandVerb` (17 verbi), `ParsedCommand`, `EngineResponse`, `GameMessage`, `MessageRole`
+- Implementato `lib/features/parser/parser_service.dart` — parser puro e stateless (funzione statica, zero side effects); riconosce abbreviazioni (n/s/e/w, i, z, l, ?), stop words filtering
+- Creato `lib/core/storage/dialogue_history_service.dart` — servizio singleton per persistenza dialoghi su SQLite (save / recent / contextWindow / clear)
+- Creato `lib/features/game/game_engine_provider.dart` — Riverpod `AsyncNotifier` con:
+    - 12 nodi narrativi completi in inglese: intro_void, la_soglia, garden_portico, garden_cypress, garden_fountain, garden_stelae, garden_grove, garden_alcove_pleasures, garden_alcove_pains + 3 stub (observatory, gallery, lab)
+    - Gestione peso psicologico, inventario, navigazione
+    - Trigger proustiani (smell linden → risposta Proust, lucidityDelta)
+    - Finale del Giardino (`deposit everything` → Ataraxia, lucidityDelta +10, anxietyDelta -20)
+    - LLM stub (`_llmStub`) — ready per sostituzione post Fase 0-omega
+- Creato `lib/features/ui/game_screen.dart` — UI testuale completa:
+    - Effetto typewriter con velocità variabile (lettere vs spazi)
+    - Palette colori reattiva a `PsychoProfile` (bianco/rossastro/grigio/azzurro-grigio)
+    - Background che vira al blu profondo con oblivionLevel
+    - Status bar inventario (visibile solo quando non vuoto)
+    - Tap su testo → skip typewriter
+    - Input field disabilitato durante elaborazione
+- Aggiornato `lib/main.dart` — punta a `GameScreen` (rimossa la schermata stub)
+
+**Key decisions:**
+- `ref.read` (non `ref.watch`) in `build()` del GameEngineNotifier — evita il reset della lista messaggi ad ogni navigazione
+- Nodi come `const Map` statica nel file — contenuto già in inglese, pronto per migrazione a `assets/texts/*.json` (GDD sezione 18) senza modifiche all'engine
+- LLM stub esplicito (`_llmStub`) con TODO — la firma è già quella corretta per la sostituzione post-validazione
+- Peso psicologico NON mostrato numericamente al giocatore (GDD sezione 6) — solo nella status bar dell'inventario come debug
+- Stop words filtering nel parser (`the`, `a`, `an`, `at`, `to`, `into`, `up`, `on`) — migliora il natural language feel
+- Typewriter con velocità variabile: 22ms/lettera, 10ms/spazio — equilibrio tra atmosfera e leggibilità
+
+**Files created/modified:**
+- `docs/parser_state_machine.md` (new)
+- `lib/features/parser/parser_state.dart` (new)
+- `lib/features/parser/parser_service.dart` (new)
+- `lib/core/storage/dialogue_history_service.dart` (new)
+- `lib/features/game/game_engine_provider.dart` (new)
+- `lib/features/ui/game_screen.dart` (new)
+- `lib/main.dart` (modified — GameScreen sostituisce stub)
+
+**Next suggested step:**
+Fase 0-omega — validazione LLM su device fisico (GDD sezione 17). Il gioco è ora giocabile come parser puro. Dopo la validazione: sostituire `_llmStub()` in `game_engine_provider.dart` con la chiamata reale al modello on-device. Modello consigliato per questo task: **Claude** (già conosce il contesto) o **o3** (ragionamento tecnico su llama.cpp/MediaPipe).
+
+---
+
 ### 2026-04-02 — ChatGPT o3 (Design & Narrative Analyst)
 **Role:** Analisi critica GDD + direzione narrativa
 **Done:**
