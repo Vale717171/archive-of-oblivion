@@ -768,6 +768,9 @@ class GameEngineState {
 class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   final _history = DialogueHistoryService.instance;
 
+  // Maximum value for psychological weight and psycho-profile sliders.
+  static const int _maxPsychoValue = 100;
+
   // Correct leaf order for the Cypress Avenue puzzle (GDD §8 — Epicurean hierarchy).
   // The column words read in reverse (phronesis→philia→aponia→ataraxia) give
   // the means: prudence→friendship→[absence of pain]→tranquillity.
@@ -779,6 +782,19 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   static const List<String> _planetOrder = [
     'saturn', 'jupiter', 'mars', 'sun', 'venus', 'mercury', 'moon',
   ];
+
+  // ── Small helpers ───────────────────────────────────────────────────────────
+
+  /// Returns true if [itemName] is one of the four weightless simulacra.
+  static bool _isSimulacrum(String itemName) => _simulacraNames.contains(itemName);
+
+  /// Strips commas, hyphens and collapses whitespace for puzzle input matching.
+  static String _normalizeInput(String input) =>
+      input.replaceAll(',', '').replaceAll('-', ' ').replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
+
+  /// Counts words in [raw] after skipping the first token (the command verb).
+  static int _wordCountExcludingVerb(String raw) =>
+      raw.trim().split(RegExp(r'\s+')).skip(1).length;
 
   @override
   Future<GameEngineState> build() async {
@@ -817,8 +833,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     state = AsyncValue.data(withPlayer.copyWith(phase: ParserPhase.eventResolved));
 
-    // ── Apply weight (never below 0) ────────────────────────────────────────
-    int newWeight = (withPlayer.psychoWeight + response.weightDelta).clamp(0, 100);
+    // ── Apply weight (never below 0 or above _maxPsychoValue) ──────────────
+    int newWeight = (withPlayer.psychoWeight + response.weightDelta).clamp(0, _maxPsychoValue);
 
     // ── Apply inventory changes ─────────────────────────────────────────────
     List<String> newInventory = List.from(withPlayer.inventory);
@@ -873,13 +889,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       final profile = await ref.read(psychoProfileProvider.future);
       await ref.read(psychoProfileProvider.notifier).updateParameter(
         lucidity: response.lucidityDelta != null
-            ? (profile.lucidity + response.lucidityDelta!).clamp(0, 100)
+            ? (profile.lucidity + response.lucidityDelta!).clamp(0, _maxPsychoValue)
             : null,
         anxiety: response.anxietyDelta != null
-            ? (profile.anxiety + response.anxietyDelta!).clamp(0, 100)
+            ? (profile.anxiety + response.anxietyDelta!).clamp(0, _maxPsychoValue)
             : null,
         oblivionLevel: response.oblivionDelta != null
-            ? (profile.oblivionLevel + response.oblivionDelta!).clamp(0, 100)
+            ? (profile.oblivionLevel + response.oblivionDelta!).clamp(0, _maxPsychoValue)
             : null,
       );
     }
@@ -1031,11 +1047,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (direction == 'up' && nodeId == 'la_soglia') {
       final hasAll = _simulacraNames.every((n) => s.inventory.contains(n));
       if (!hasAll) {
-        return const EngineResponse(
+        final missing = _simulacraNames
+            .where((n) => !s.inventory.contains(n))
+            .join(', ');
+        return EngineResponse(
           narrativeText: 'The fifth recess on the pedestal is dark.\n\n'
               'Four simulacra must be held before the staircase forms.\n\n'
-              'You are missing: '
-              '${_simulacraNames.where((n) => !s.inventory.contains(n)).join(", ")}.',
+              'You are missing: $missing.',
         );
       }
     }
@@ -1259,7 +1277,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         .firstOrNull;
     if (match == null) return const EngineResponse(narrativeText: 'You are not carrying that.');
 
-    final isSimulacrum = _simulacraNames.contains(match);
+    final isSimulacrum = _isSimulacrum(match);
 
     // Gallery dark chamber: dropping anything opens the tunnel
     if (nodeId == 'gallery_dark' && !s.completedPuzzles.contains('gallery_item_abandoned')) {
@@ -1478,14 +1496,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Hint: arrange leaves [word word word word word word word]',
       );
     }
-    // Normalise: strip commas, hyphens, extra spaces
-    final input = cmd.args
-        .join(' ')
-        .replaceAll(',', '')
-        .replaceAll('-', ' ')
-        .replaceAll(RegExp(r'\s+'), ' ')
-        .trim()
-        .toLowerCase();
+    // Normalise: strip commas, hyphens, extra spaces (shared helper)
+    final input = _normalizeInput(cmd.args.join(' '));
 
     if (input == _correctLeafOrder) {
       return const EngineResponse(
@@ -1528,7 +1540,9 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               'Read the eleven that came before. Understand what they build toward.',
         );
       }
-      if (cmd.rawInput.toLowerCase().contains('friendship')) {
+      // Use word-boundary regex so "friendship" inside e.g. "no friendship" still
+      // counts but "unfriendship" would not — consistent with the puzzle intent.
+      if (RegExp(r'\bfriendship\b').hasMatch(cmd.rawInput.toLowerCase())) {
         return const EngineResponse(
           narrativeText: 'The stylus moves. The words appear:\n\n'
               '"Of all wisdom\'s gifts to a happy life, '
@@ -1605,7 +1619,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       if (s.completedPuzzles.contains('gallery_originals_complete')) {
         return const EngineResponse(narrativeText: 'The canvas already holds your work.');
       }
-      final wordCount = cmd.rawInput.trim().split(RegExp(r'\s+')).skip(1).length;
+      // _wordCountExcludingVerb skips the first token (the command word itself).
+      final wordCount = _wordCountExcludingVerb(cmd.rawInput);
       if (wordCount < 50) {
         return EngineResponse(
           narrativeText: 'The canvas does not accept this.\n\n'
@@ -1767,8 +1782,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (s.completedPuzzles.contains('obs_calibrated')) {
       return const EngineResponse(narrativeText: 'The calibration is set. The dome is open.');
     }
-    final a = cmd.args.join(' ').replaceAll(',', ' ').trim();
-    final isZero = RegExp(r'^0\s+0\s+0$').hasMatch(a) || a == '0,0,0';
+    final a = _normalizeInput(cmd.args.join(' '));
+    final isZero = RegExp(r'^0\s+0\s+0$').hasMatch(a) || a == '0 0 0';
     if (isZero) {
       return const EngineResponse(
         narrativeText: 'You set all three dials to zero.\n\n'
@@ -2050,14 +2065,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       if (s.completedPuzzles.contains(puzzleId)) {
         return EngineResponse(narrativeText: 'You have already collected the $key.');
       }
-      // Check if this is the last substance
-      final afterMercury = s.completedPuzzles.contains('lab_mercury_collected') || key == 'mercury';
-      final afterSulphur = s.completedPuzzles.contains('lab_sulphur_collected') || key == 'sulphur';
-      final afterSalt    = s.completedPuzzles.contains('lab_salt_collected')    || key == 'salt';
-      final isLast = afterMercury && afterSulphur && afterSalt;
+      // Check whether this is the final substance using a Set so all three
+      // required IDs are expressed in one place.
+      const required = {'lab_mercury_collected', 'lab_sulphur_collected', 'lab_salt_collected'};
+      final afterThis = s.completedPuzzles.union({puzzleId});
+      final isLast = required.every(afterThis.contains);
       // Always record the individual substance ID; _handleGo checks all three.
-      // When all three are present the "branches open" text fires and the gate
-      // in _handleGo is automatically satisfied without a separate aggregate flag.
       return EngineResponse(
         narrativeText: isLast
             ? 'You collect the $key.\n\n'
