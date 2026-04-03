@@ -35,6 +35,16 @@ enum CommandVerb {
   combine, // combine X, Y — Observatory puzzle
   press, // press X — Gallery puzzle
   offer, // offer [concept] — Lab puzzle
+  write, // write / inscribe / describe / paint / draw — creative text input
+  measure, // measure X — Observatory Hall of Void
+  calibrate, // calibrate X,Y,Z — Observatory Calibration Chamber
+  invert, // invert X — Observatory mirror
+  confirm, // confirm / yes — multi-step confirmation
+  breakObj, // break / shatter — Gallery mirror
+  blow, // blow X — Lab alembic finale
+  setParam, // set X — Lab alembic temperature
+  drink, // drink / sip — Fifth Sector ritual
+  stir, // stir / mix — Fifth Sector ritual
   help, // help / ?
   unknown, // unrecognised input
 }

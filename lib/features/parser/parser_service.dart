@@ -30,6 +30,9 @@ class ParserService {
     if (input == 'help' || input == '?') {
       return ParsedCommand(verb: CommandVerb.help, args: const [], rawInput: raw);
     }
+    if (input == 'confirm' || input == 'yes') {
+      return ParsedCommand(verb: CommandVerb.confirm, args: const [], rawInput: raw);
+    }
     // Bare direction shortcut
     if (_directions.contains(input)) {
       return ParsedCommand(
@@ -115,6 +118,48 @@ class ParserService {
       case 'offer':
       case 'give':
         return ParsedCommand(verb: CommandVerb.offer, args: rest, rawInput: raw);
+
+      case 'write':
+      case 'inscribe':
+      case 'describe':
+      case 'paint':
+      case 'draw':
+      case 'construct':
+        return ParsedCommand(verb: CommandVerb.write, args: rest, rawInput: raw);
+
+      case 'measure':
+        return ParsedCommand(verb: CommandVerb.measure, args: rest, rawInput: raw);
+
+      case 'calibrate':
+        return ParsedCommand(verb: CommandVerb.calibrate, args: rest, rawInput: raw);
+
+      case 'invert':
+      case 'reverse':
+        return ParsedCommand(verb: CommandVerb.invert, args: rest, rawInput: raw);
+
+      case 'confirm':
+      case 'yes':
+        return ParsedCommand(verb: CommandVerb.confirm, args: rest, rawInput: raw);
+
+      case 'break':
+      case 'shatter':
+      case 'smash':
+        return ParsedCommand(verb: CommandVerb.breakObj, args: rest, rawInput: raw);
+
+      case 'blow':
+        return ParsedCommand(verb: CommandVerb.blow, args: rest, rawInput: raw);
+
+      case 'set':
+      case 'adjust':
+        return ParsedCommand(verb: CommandVerb.setParam, args: rest, rawInput: raw);
+
+      case 'drink':
+      case 'sip':
+        return ParsedCommand(verb: CommandVerb.drink, args: rest, rawInput: raw);
+
+      case 'stir':
+      case 'mix':
+        return ParsedCommand(verb: CommandVerb.stir, args: rest, rawInput: raw);
 
       case 'help':
         return ParsedCommand(verb: CommandVerb.help, args: const [], rawInput: raw);
