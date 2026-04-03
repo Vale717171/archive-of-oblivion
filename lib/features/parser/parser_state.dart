@@ -88,6 +88,16 @@ class EngineResponse {
   /// Audio trigger key: 'calm' | 'anxious' | 'oblivion' | 'sfx:<name>'.
   final String? audioTrigger;
 
+  /// Item to unconditionally add to inventory (used for simulacra granted by
+  /// puzzle solutions, e.g. deposit → ataraxia; break mirror → the proportion).
+  final String? grantItem;
+
+  /// Puzzle ID to mark as complete in [GameEngineState.completedPuzzles].
+  final String? completePuzzle;
+
+  /// Counter key to increment in [GameEngineState.puzzleCounters].
+  final String? incrementCounter;
+
   const EngineResponse({
     required this.narrativeText,
     this.needsLlm = false,
@@ -97,6 +107,9 @@ class EngineResponse {
     this.anxietyDelta,
     this.oblivionDelta,
     this.audioTrigger,
+    this.grantItem,
+    this.completePuzzle,
+    this.incrementCounter,
   });
 }
 
