@@ -4,6 +4,57 @@
 
 ---
 
+### 2026-04-04 — GitHub Copilot (Fase 0-omega — LLM integration, Tentativo 1)
+**Role:** LLM integration — flutter_llama + Qwen 2.5 0.5B Q4_K_M
+
+**Done:**
+
+- **`flutter_llama: ^1.1.2` aggiunto a `pubspec.yaml`** — versione più recente disponibile su pub.dev
+- **`lib/features/llm/llm_service.dart` creato** — singleton wrapper attorno a `FlutterLlama`:
+  - Lazy loading con `ensureLoaded()` — il modello si carica al primo `generate()` call
+  - Graceful fallback: se il modello non è presente o genera un errore, restituisce `fallbackText` invariato
+  - Formato prompt Qwen: `<|system|>/<|user|>/<|assistant|>` (GDD §20)
+  - Usa `LlmContextService.buildDynamicSystemPrompt()` per iniettare profilo psicologico e contesto nodo
+  - `maxTokens: 100`, CPU-only di default (`nGpuLayers: 0`); basta impostare `nGpuLayers: -1` per Vulkan
+- **`_llmStub()` → `_callLlm()` in `game_engine_provider.dart`** — sostituisce il placeholder con la chiamata reale
+- **Android directory creata con tutte le patch richieste (GDD §17):**
+  - `android/app/build.gradle` — `minSdkVersion 26`, `multiDexEnabled true`
+  - `android/app/src/main/AndroidManifest.xml` — `android:largeHeap="true"`, `READ_EXTERNAL_STORAGE`, `MANAGE_EXTERNAL_STORAGE`
+  - `android/gradle.properties` — `org.gradle.jvmargs=-Xmx4096m`
+  - `android/settings.gradle`, `android/build.gradle`, `android/gradle/wrapper/gradle-wrapper.properties`
+  - `MainActivity.kt`, `styles.xml`, `launch_background.xml`
+
+**Istruzioni per il test su device fisico:**
+
+```bash
+# 1. Scarica il modello (~350 MB) da HuggingFace:
+#    https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf
+
+# 2. Push del modello sul device:
+adb push qwen2.5-0.5b-instruct-q4_k_m.gguf /sdcard/Download/
+
+# 3. Build e install:
+flutter clean && flutter pub get
+flutter build apk --release
+adb install build/app/outputs/apk/release/app-release.apk
+
+# 4. Lancia il gioco e verifica:
+#    - Il modello si carica entro 60 secondi al primo comando
+#    - Le risposte LLM arrivano in meno di 20 secondi
+#    - Il testo generato è coerente (non gibberish)
+#    - Nessun crash su 5 interazioni consecutive
+#    - RAM totale < 1.5 GB (misura con Android Studio Profiler)
+```
+
+**Se Tentativo 1 fallisce:** comunicalo all'agente per passare a Tentativo 2 (mediapipe_genai + Gemma 2B).
+
+**Stato progetto:**
+- Fase 0-omega Tentativo 1 implementato — pronto per test su device
+- Se test passa: gioco completamente funzionale con LLM on-device
+- Prossimo step: test fisico su Android (vedi istruzioni sopra)
+
+---
+
 ### 2026-04-04 — GitHub Copilot (Project-wide bug audit & fixes)
 **Role:** Bug audit & defensive fixes
 

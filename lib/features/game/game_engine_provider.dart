@@ -1,7 +1,7 @@
 // lib/features/game/game_engine_provider.dart
 // Author: GitHub Copilot — 2026-04-02 | Extended: 2026-04-03, 2026-04-04
 // All four sectors + Fifth Sector + Final Boss + La Zona implemented.
-// LLM integration: stub — replace _llmStub() after Fase 0-omega (GDD §17).
+// LLM integration: flutter_llama (Fase 0-omega, GDD §17).
 
 import 'dart:math' show Random;
 
@@ -10,6 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/storage/database_service.dart';
 import '../../core/storage/dialogue_history_service.dart';
 import '../audio/audio_service.dart';
+import '../llm/llm_context_service.dart';
+import '../llm/llm_service.dart';
 import '../parser/parser_service.dart';
 import '../parser/parser_state.dart';
 import '../state/game_state_provider.dart';
@@ -1263,7 +1265,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     // ── Display ─────────────────────────────────────────────────────────────
     final narrativeText =
-        response.needsLlm ? await _llmStub(response.narrativeText) : response.narrativeText;
+        response.needsLlm ? await _callLlm(response.narrativeText) : response.narrativeText;
     await _history.save(role: 'llm', content: narrativeText);
 
     final finalState = withPlayer.copyWith(
@@ -3143,10 +3145,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return s.copyWith(messages: [...s.messages, msg]);
   }
 
-  /// LLM stub — returns engine text as-is until Fase 0-omega (GDD §17).
-  Future<String> _llmStub(String fallbackText) async {
-    // TODO(post-0-omega): replace with LlmContextService + on-device model call
-    return fallbackText;
+  /// Generates narrative text via the on-device LLM (Fase 0-omega, GDD §17).
+  /// Falls back to [fallbackText] when the model is unavailable or errors out.
+  Future<String> _callLlm(String fallbackText) async {
+    final context = ref.read(llmContextServiceProvider);
+    return LlmService.instance.generate(fallbackText, context: context);
   }
 }
 

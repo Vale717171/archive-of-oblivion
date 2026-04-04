@@ -16,8 +16,7 @@ dependencies:
   sqflite: ^2.3.0
   path: ^1.9.0
   path_provider: ^2.1.2
-  # LLM package: da definire dopo Fase 0-omega (flutter_llama / mediapipe / ffi)
-  # ffi: ^2.1.2
+  flutter_llama: ^1.1.2
 
 dev_dependencies:
   flutter_test:

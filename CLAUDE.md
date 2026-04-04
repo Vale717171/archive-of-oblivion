@@ -24,7 +24,7 @@ The development log is in `docs/work_log.md`.
 | SQLite | Single-row pattern: always `'id': 1` + `ConflictAlgorithm.replace` |
 | Riverpod outside widget tree | `ProviderContainer` + `container.listen` (not `.select().listen`) |
 | Audio crossfade | Manual `_rampVolume()` — `just_audio` has no `setVolume(duration:)` |
-| LLM integration | `_llmStub()` in `game_engine_provider.dart` — placeholder until full APK is ready for device testing |
+| LLM integration | `LlmService.instance.generate()` in `game_engine_provider.dart` via `_callLlm()` — `flutter_llama ^1.1.2`, Tentativo 1 |
 | Target Android | API 26+, mid-range 3 GB RAM |
 | Game text language | English only |
 | LLM prompt format | Qwen `<\|system\|>/<\|user\|>/<\|assistant\|>` — unless MediaPipe/Gemma wins at final validation |
@@ -69,7 +69,7 @@ tools/fase_0_omega/                         ← LLM validation (run LAST, on ful
 3. ~~Remaining sectors: East (Observatory), South (Gallery), West (Lab)~~ ✅ **DONE** — all 4 sectors fully implemented.
 4. ~~La Zona procedural engine (LLM-driven, uses stub until step 6)~~ ✅ **DONE** — probabilistic activation, 8 verses, 8 environments, 8 questions.
 5. ~~Fifth Sector (Memory/Proust) + Final Boss~~ ✅ **DONE** — 6 Quinto nodes + 4 Finale nodes, three endings.
-6. **LLM validation on full APK** — replace `_llmStub()` once the complete game is playable on device (`tools/fase_0_omega/CLAUDE_CODE_PROMPT.md`)
+6. ~~**LLM validation on full APK**~~ ✅ **CODE DONE** — `flutter_llama ^1.1.2` integrated; `_llmStub()` replaced with `_callLlm()`; Android patches applied. **Requires physical device test** — push Qwen 2.5 0.5B model to `/sdcard/Download/` and run `flutter build apk --release && adb install`. See `docs/work_log.md` for exact commands.
 
 ---
 
