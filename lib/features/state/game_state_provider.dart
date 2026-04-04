@@ -19,6 +19,21 @@ class GameState {
     this.inventory = const ['notebook'],
     this.psychoWeight = 0,
   });
+
+  /// Deserializza una riga del DB (`game_state`) in un [GameState].
+  factory GameState.fromRow(Map<String, Object?> row) {
+    return GameState(
+      currentNode:      row['current_node'] as String,
+      completedPuzzles: Set<String>.from(
+          jsonDecode(row['completed_puzzles'] as String? ?? '[]') as List),
+      puzzleCounters:   Map<String, int>.from(
+          (jsonDecode(row['puzzle_counters'] as String? ?? '{}') as Map)
+              .map((k, v) => MapEntry(k as String, (v as num).toInt()))),
+      inventory:        List<String>.from(
+          jsonDecode(row['inventory'] as String? ?? '["notebook"]') as List),
+      psychoWeight:     row['psycho_weight'] as int? ?? 0,
+    );
+  }
 }
 
 class GameStateNotifier extends AsyncNotifier<GameState> {
@@ -30,18 +45,7 @@ class GameStateNotifier extends AsyncNotifier<GameState> {
     final maps = await db.query('game_state', where: 'id = 1', limit: 1);
 
     if (maps.isNotEmpty) {
-      final row = maps.first;
-      return GameState(
-        currentNode:      row['current_node'] as String,
-        completedPuzzles: Set<String>.from(
-            jsonDecode(row['completed_puzzles'] as String? ?? '[]') as List),
-        puzzleCounters:   Map<String, int>.from(
-            (jsonDecode(row['puzzle_counters'] as String? ?? '{}') as Map)
-                .map((k, v) => MapEntry(k as String, (v as num).toInt()))),
-        inventory:        List<String>.from(
-            jsonDecode(row['inventory'] as String? ?? '["notebook"]') as List),
-        psychoWeight:     row['psycho_weight'] as int? ?? 0,
-      );
+      return GameState.fromRow(maps.first);
     }
     // Prima esecuzione: nodo iniziale
     return GameState(currentNode: 'intro_void');

@@ -35,6 +35,10 @@ class AudioService {
     'proustian_trigger': 'assets/audio/sfx_proustian_trigger.ogg',
   };
 
+  // Tracks that are set explicitly by the game engine and should not be
+  // overridden by the psycho-profile ambience updater.
+  static const Set<String> _specialTracks = {'siciliano', 'aria_goldberg', 'silence'};
+
   Future<void> initialize(ProviderContainer container) async {
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.music());
@@ -86,9 +90,7 @@ class AudioService {
       newKey = 'oblivion';
     }
     // Profile-driven ambience only changes if no special track is active
-    // (siciliano / aria_goldberg take priority and are set by the engine)
-    if (_currentAmbienceKey == 'siciliano' ||
-        _currentAmbienceKey == 'aria_goldberg') {
+    if (_specialTracks.contains(_currentAmbienceKey)) {
       return;
     }
     _crossfadeTo(newKey);

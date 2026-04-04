@@ -1197,8 +1197,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     // ── Navigation + bain-marie tracking + zone tracking ───────────────────
     if (response.newNode != null) {
-      // Full state persistence happens at end of processInput via saveEngineState.
-      // No separate updateNode call needed here.
+      // Node persistence is deferred to saveEngineState at the end of this method
+      // so that all state changes (puzzles, counters, inventory) are written atomically.
 
       // Mark bain-marie departure
       if (currentNodeId == 'lab_bain_marie' &&

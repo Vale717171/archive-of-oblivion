@@ -82,23 +82,26 @@ class DatabaseService {
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       // v1 → v2: espandi game_state con colonne engine + crea player_memories
-      await db.execute(
-          'ALTER TABLE game_state ADD COLUMN completed_puzzles TEXT NOT NULL DEFAULT \'[]\'');
-      await db.execute(
-          'ALTER TABLE game_state ADD COLUMN puzzle_counters TEXT NOT NULL DEFAULT \'{}\'');
-      await db.execute(
-          'ALTER TABLE game_state ADD COLUMN inventory TEXT NOT NULL DEFAULT \'["notebook"]\'');
-      await db.execute(
-          'ALTER TABLE game_state ADD COLUMN psycho_weight INTEGER NOT NULL DEFAULT 0');
+      // Eseguito in una transazione per garantire atomicità della migrazione.
+      await db.transaction((txn) async {
+        await txn.execute(
+            'ALTER TABLE game_state ADD COLUMN completed_puzzles TEXT NOT NULL DEFAULT \'[]\'');
+        await txn.execute(
+            'ALTER TABLE game_state ADD COLUMN puzzle_counters TEXT NOT NULL DEFAULT \'{}\'');
+        await txn.execute(
+            'ALTER TABLE game_state ADD COLUMN inventory TEXT NOT NULL DEFAULT \'["notebook"]\'');
+        await txn.execute(
+            'ALTER TABLE game_state ADD COLUMN psycho_weight INTEGER NOT NULL DEFAULT 0');
 
-      await db.execute('''
-        CREATE TABLE IF NOT EXISTS player_memories (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          memory_key TEXT NOT NULL UNIQUE,
-          content TEXT NOT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-      ''');
+        await txn.execute('''
+          CREATE TABLE IF NOT EXISTS player_memories (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            memory_key TEXT NOT NULL UNIQUE,
+            content TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )
+        ''');
+      });
     }
   }
 
