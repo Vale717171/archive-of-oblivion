@@ -4,6 +4,25 @@
 
 ---
 
+### 2026-04-04 — GitHub Copilot (Docs audit & CLAUDE.md update)
+**Role:** Documentation maintenance
+
+**Done:**
+
+- **Audit documentazione vs. codebase** — verificato allineamento completo tra `docs/gdd.md`,
+  `docs/work_log.md`, `docs/parser_state_machine.md` e codice effettivo: nessuna discrepanza trovata
+- **CLAUDE.md aggiornato:**
+  - Rimossa sezione "Known bug (unfixed)" — bug simulacra già fixato nel codice
+    (`game_engine_provider.dart` line 1167: aggiunta oggetti per `weightDelta >= 0`)
+  - "Priority order" aggiornata: items 1-5 marcati ✅ DONE, solo Fase 0-omega (step 6) ancora pending
+
+**Stato progetto:**
+- Engine completo: 4 settori + Quinto Settore + Boss Finale + La Zona + 3 finali
+- Tutto il codice è pronto per Fase 0-omega (test APK su device fisico)
+- Prossimo step: `tools/fase_0_omega/CLAUDE_CODE_PROMPT.md`
+
+---
+
 ### 2026-04-04 — GitHub Copilot (Audio wiring, State persistence, Player memories, LLM context wiring)
 **Role:** Post-completion infrastructure — priorità 1-4
 

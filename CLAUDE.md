@@ -62,21 +62,13 @@ tools/fase_0_omega/                         ← LLM validation (run LAST, on ful
 
 ---
 
-## Known bug (unfixed)
-
-In `game_engine_provider.dart`: simulacra (`weightDelta=0`) are never added to inventory
-because `processInput` only adds items when `weightDelta > 0`. Fix: add items regardless
-of `weightDelta`; only skip the weight increment when `weightDelta == 0`.
-
----
-
 ## Priority order
 
-1. Fix simulacra inventory bug in `game_engine_provider.dart`
-2. JSON text bundles (`assets/texts/*.json`) — populate game content
-3. Remaining sectors: East (Observatory), South (Gallery), West (Lab)
-4. La Zona procedural engine (LLM-driven, uses stub until step 6)
-5. Fifth Sector (Memory/Proust) + Final Boss
+1. ~~Fix simulacra inventory bug in `game_engine_provider.dart`~~ ✅ **FIXED** — items granted regardless of `weightDelta`; weight increment skipped only when `weightDelta == 0`.
+2. ~~JSON text bundles (`assets/texts/*.json`) — populate game content~~ ✅ **DONE** — 7 bundles in `assets/texts/`, 3 prompt templates in `assets/prompts/`.
+3. ~~Remaining sectors: East (Observatory), South (Gallery), West (Lab)~~ ✅ **DONE** — all 4 sectors fully implemented.
+4. ~~La Zona procedural engine (LLM-driven, uses stub until step 6)~~ ✅ **DONE** — probabilistic activation, 8 verses, 8 environments, 8 questions.
+5. ~~Fifth Sector (Memory/Proust) + Final Boss~~ ✅ **DONE** — 6 Quinto nodes + 4 Finale nodes, three endings.
 6. **LLM validation on full APK** — replace `_llmStub()` once the complete game is playable on device (`tools/fase_0_omega/CLAUDE_CODE_PROMPT.md`)
 
 ---
