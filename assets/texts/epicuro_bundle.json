@@ -1,0 +1,87 @@
+{
+  "source": "Epicurus — Principal Doctrines and Letter to Menoeceus (Public Domain, Gutenberg 67707)",
+  "sector": "north",
+
+  "maxims": [
+    {
+      "id": "stele_01",
+      "text": "A blessed and indestructible being has no trouble himself and brings no trouble upon any other being.",
+      "theme": "the divine"
+    },
+    {
+      "id": "stele_02",
+      "text": "Death is nothing to us, since when we exist, death is not yet present, and when death is present, then we do not exist.",
+      "theme": "death"
+    },
+    {
+      "id": "stele_03",
+      "text": "The magnitude of pleasure reaches its limit in the removal of all pain.",
+      "theme": "pleasure"
+    },
+    {
+      "id": "stele_04",
+      "text": "Pain does not last continuously in the flesh, but the acutest pain is there for a very short time.",
+      "theme": "pain"
+    },
+    {
+      "id": "stele_05",
+      "text": "It is not possible to live pleasantly without living prudently and honourably and justly.",
+      "theme": "virtue"
+    },
+    {
+      "id": "stele_06",
+      "text": "The natural wealth of a man is bounded and easily obtained; the wealth of vain fancies falls short of no bound.",
+      "theme": "simplicity"
+    },
+    {
+      "id": "stele_07",
+      "text": "Justice is a contract not to harm or be harmed, made among those who have the power to do so.",
+      "theme": "justice"
+    },
+    {
+      "id": "stele_08",
+      "text": "The soul does not permit the body to grieve when it has no share in that grief.",
+      "theme": "the soul"
+    },
+    {
+      "id": "stele_09",
+      "text": "Among the things held to be just by law, whatever is proved to be of advantage in the requirements of men's dealings with one another has the stamp of justice.",
+      "theme": "society"
+    },
+    {
+      "id": "stele_10",
+      "text": "The wise man is not more disturbed by himself than by fortune.",
+      "theme": "wisdom"
+    },
+    {
+      "id": "stele_11",
+      "text": "Among external goods the greatest is the possession of friends.",
+      "theme": "friendship"
+    },
+    {
+      "id": "stele_12",
+      "text": "Of all the means which wisdom acquires to ensure happiness throughout the whole of life, by far the most important is the possession of friendship.",
+      "theme": "friendship — the twelfth and highest"
+    }
+  ],
+
+  "leaf_words": [
+    { "word": "prudence",      "rank": 1, "note": "phronesis — the enabling virtue" },
+    { "word": "friendship",    "rank": 2, "note": "philia — the highest external good" },
+    { "word": "pleasure",      "rank": 3, "note": "hedone — the aim, not the starting point" },
+    { "word": "simplicity",    "rank": 4, "note": "aplouston — the condition of freedom" },
+    { "word": "absence",       "rank": 5, "note": "aponia — absence of bodily pain" },
+    { "word": "tranquillity",  "rank": 6, "note": "ataraxia — the final state of the mind" },
+    { "word": "memory",        "rank": 7, "note": "mneme — what survives the transient" }
+  ],
+
+  "ataraxia_description": "A glass sphere, perfectly empty. Not hollow — empty: the glass itself is the boundary of a contained absence.",
+
+  "letter_fragment": "Do not spoil what you have by desiring what you have not; remember that what you now have was once among the things you only hoped for.",
+
+  "llm_prompts": {
+    "garden_weight_0": "The garden is perfectly still. The protagonist moves through it without adding to it.",
+    "garden_weight_1_2": "The garden presses slightly. The weight of choices taken is present but not yet crushing.",
+    "garden_weight_3plus": "The garden is a burden. Every object the protagonist carries is a small argument against peace."
+  }
+}

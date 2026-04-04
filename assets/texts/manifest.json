@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "bundles": [
+    { "id": "epicuro",   "file": "epicuro_bundle.json",   "sector": "north",  "theme": "philosophy" },
+    { "id": "proust",    "file": "proust_bundle.json",    "sector": "fifth",  "theme": "memory" },
+    { "id": "tarkovsky", "file": "tarkovsky_bundle.json", "sector": "zone",   "theme": "poetry" },
+    { "id": "newton",    "file": "newton_bundle.json",    "sector": "east",   "theme": "science" },
+    { "id": "alchimia",  "file": "alchimia_bundle.json",  "sector": "west",   "theme": "alchemy" },
+    { "id": "arte",      "file": "arte_bundle.json",      "sector": "south",  "theme": "art" }
+  ]
+}

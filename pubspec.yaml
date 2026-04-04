@@ -29,5 +29,6 @@ flutter:
   assets:
     - assets/audio/
     - assets/texts/
+    - assets/prompts/
     - assets/config/
     # assets/llm/ escluso — modelli .gguf troppo grandi per git

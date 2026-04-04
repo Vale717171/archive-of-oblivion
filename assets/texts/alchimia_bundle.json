@@ -1,0 +1,60 @@
+{
+  "source": "Tabula Smaragdina (Emerald Tablet), Corpus Hermeticum, and general alchemical tradition. All texts public domain.",
+  "note_seth": "Seth Speaks (Jane Roberts) is in copyright. Use only the tone — allegorical, oracular, the idea that physical experience is the soul's chosen curriculum. No direct quotations.",
+  "sector": "west",
+
+  "tria_prima": {
+    "mercury": {
+      "name": "Mercury",
+      "latin": "Mercurius",
+      "principle": "Spirit — volatility, quicksilver, the mind that moves between states",
+      "symbol": "☿",
+      "alchemical_role": "That which dissolves, carries, and transmits"
+    },
+    "sulphur": {
+      "name": "Sulphur",
+      "latin": "Sulphur",
+      "principle": "Soul — combustion, will, the fire that transforms",
+      "symbol": "🜍",
+      "alchemical_role": "That which ignites, motivates, and burns away the inessential"
+    },
+    "salt": {
+      "name": "Salt",
+      "latin": "Sal",
+      "principle": "Body — fixity, matter, the vessel that holds",
+      "symbol": "🜔",
+      "alchemical_role": "That which persists, endures, and crystallises"
+    }
+  },
+
+  "planetary_order": {
+    "opus_magnum": ["Saturn", "Jupiter", "Mars", "Sun", "Venus", "Mercury", "Moon"],
+    "note": "The alchemical descent: from the heaviest (Saturn/lead) to the lightest (Moon/silver). The direction is inward.",
+    "emerald_tablet_fragment": "That which is above is as that which is below, and that which is below is as that which is above, to perform the miracles of the one thing."
+  },
+
+  "calcination": {
+    "definition": "The first operation of the Opus Magnum. The substance is reduced to ash — not destroyed, but stripped of everything non-essential. Only the essential remains.",
+    "five_turnings": "Patience is the reagent that cannot be purchased.",
+    "proustian_link": "The taste of the crystalline residue triggers the madeleine memory. Something burnt and sweet. A morning that was, in fact, everything."
+  },
+
+  "bain_marie": {
+    "history": "Named for Maria Prophetissa, the first alchemist. The gentlest form of heat — transformation by patience, not force.",
+    "puzzle_note": "The transformation begins only in the absence of the one who wants it. This is the lesson of the Bain-Marie.",
+    "three_roads": "Three external nodes must be visited before returning. The absence itself is the catalyst."
+  },
+
+  "catalyst_description": "A small flask of luminescent liquid that beats in time with the heart. The catalyst is not chemical. It was carried since before arrival. It is breath.",
+
+  "seth_tone_guide": {
+    "note": "Write in this register WITHOUT quoting Seth directly:",
+    "register": "The soul chose physical experience not as punishment but as curriculum. Every pain was elected, every joy was anticipated. The body is the soul's most sophisticated instrument for knowing itself.",
+    "application": "The lab vestibule statues accept concepts because the alchemical tradition recognises that transformation begins with intention, not material."
+  },
+
+  "llm_prompts": {
+    "lab_weight_0": "The laboratory is a place of patient transformation. The protagonist is the substance and the alchemist simultaneously.",
+    "lab_weight_3plus": "The furnace is too hot. Everything is burning that should not be burning yet."
+  }
+}

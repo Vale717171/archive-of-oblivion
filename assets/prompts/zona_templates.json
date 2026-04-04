@@ -1,0 +1,74 @@
+{
+  "version": "1.0.0",
+  "description": "Introspective questions for La Zona. Selected based on zone encounter index modulo 8.",
+  "note": "Questions are displayed as-is (no LLM needed for selection). LLM augments the environmental description around them.",
+
+  "questions": [
+    {
+      "id": "q_loss",
+      "index": 0,
+      "question": "What did you leave behind that still has your shape?",
+      "theme": "loss",
+      "evasive_response": "The Zone does not accept the half-answer. It waits. The geometry tightens slightly.",
+      "cryptic_response": "The Zone receives your answer without comment. Something in the architecture shifts — very slightly, but permanently. The corridor opens back toward the Archive."
+    },
+    {
+      "id": "q_irreversibility",
+      "index": 1,
+      "question": "When did you last do something that could not be undone?",
+      "theme": "irreversibility",
+      "evasive_response": "The Zone is patient. It has waited before. It will wait again.",
+      "cryptic_response": "The Zone records this. Not as judgment — as coordinate. You know where you are now. The Archive is north."
+    },
+    {
+      "id": "q_memory",
+      "index": 2,
+      "question": "Name the moment you would return to, if return were possible.",
+      "theme": "memory",
+      "evasive_response": "This answer passes through the Zone without registering. Try again — more specifically.",
+      "cryptic_response": "The Zone has added this to its geometry. The impossibility of return is what makes the moment permanent. You may leave."
+    },
+    {
+      "id": "q_burden",
+      "index": 3,
+      "question": "What are you carrying that does not belong to you?",
+      "theme": "burden",
+      "evasive_response": "The Zone knows you know. The question is still open.",
+      "cryptic_response": "The Zone agrees. The weight of borrowed things is different. Noted. The passage back is clear."
+    },
+    {
+      "id": "q_wound",
+      "index": 4,
+      "question": "Who taught you that what you feel is not enough?",
+      "theme": "wound",
+      "evasive_response": "The Zone requires a real answer, not a deflection.",
+      "cryptic_response": "The Zone holds this carefully. It will not repeat the lesson. You may return to the Archive."
+    },
+    {
+      "id": "q_time",
+      "index": 5,
+      "question": "What would you say to the version of yourself that cannot be reached?",
+      "theme": "time",
+      "evasive_response": "The Zone has all the time that exists. Your evasion changes nothing.",
+      "cryptic_response": "Noted. The unreachable version received it anyway — through the medium of your having said it. The Archive is through here."
+    },
+    {
+      "id": "q_resistance",
+      "index": 6,
+      "question": "In what form does the part of you that resists speak?",
+      "theme": "resistance",
+      "evasive_response": "The Zone is not convinced. Try again.",
+      "cryptic_response": "The Zone recognises resistance as intelligence. The question is answered. Return."
+    },
+    {
+      "id": "q_recognition",
+      "index": 7,
+      "question": "What do you know now that you already knew then?",
+      "theme": "recognition",
+      "evasive_response": "The Zone does not accept silence as an answer to this one.",
+      "cryptic_response": "The Zone folds this into itself. Recognition is the only form of time travel available. The Archive is waiting."
+    }
+  ],
+
+  "llm_system_prompt": "You are the narrator of an oneiric text adventure. Max 60 words, poetic, impossible geometries, one unexpected sensory detail. Only describe. Do not ask questions — the question is already in the template."
+}
