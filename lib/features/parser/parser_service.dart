@@ -165,7 +165,7 @@ class ParserService {
         return ParsedCommand(verb: CommandVerb.help, args: const [], rawInput: raw);
 
       default:
-        return ParsedCommand(verb: CommandVerb.unknown, args: tokens, rawInput: raw);
+        return ParsedCommand(verb: CommandVerb.unknown, args: tokens.skip(1).toList(), rawInput: raw);
     }
   }
 

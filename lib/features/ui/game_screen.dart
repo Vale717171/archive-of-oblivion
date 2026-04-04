@@ -8,6 +8,8 @@
 //   - Colour palette that shifts subtly with PsychoProfile
 //   - No images — only text and sound (GDD section 1)
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +40,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   int _typewriterIndex = 0;
   bool _typewriterRunning = false;
   String? _typewriterTarget;
+  Timer? _typewriterTimer;
 
   @override
   void initState() {
@@ -50,6 +53,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   void dispose() {
+    _typewriterTimer?.cancel();
     _controller.dispose();
     _scrollController.dispose();
     _focusNode.dispose();
@@ -95,7 +99,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final ch = _typewriterTarget![_typewriterIndex];
     final delay = (ch == ' ' || ch == '\n') ? 10 : 22;
 
-    Future.delayed(Duration(milliseconds: delay), () {
+    _typewriterTimer?.cancel();
+    _typewriterTimer = Timer(Duration(milliseconds: delay), () {
       if (!mounted || _typewriterTarget == null) return;
       setState(() {
         _typewriterBuffer += ch;
@@ -108,6 +113,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   void _skipTypewriter() {
     if (_typewriterRunning && _typewriterTarget != null) {
+      _typewriterTimer?.cancel();
       setState(() {
         _typewriterBuffer = _typewriterTarget!;
         _typewriterIndex = _typewriterTarget!.length;

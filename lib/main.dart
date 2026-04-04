@@ -12,7 +12,13 @@ void main() async {
 
   // Inizializza audio + sessione Android
   final audioService = AudioService();
-  await audioService.initialize(container);
+  try {
+    await audioService.initialize(container);
+  } catch (e) {
+    // Audio failure must not prevent the game from starting (GDD: text-only is valid)
+    // ignore: avoid_print
+    print('AudioService init failed: $e');
+  }
 
   runApp(
     UncontrolledProviderScope(

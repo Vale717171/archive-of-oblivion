@@ -4,6 +4,29 @@
 
 ---
 
+### 2026-04-04 — GitHub Copilot (Project-wide bug audit & fixes)
+**Role:** Bug audit & defensive fixes
+
+**Done:**
+
+- **Full codebase audit** — reviewed all 11 source files for bugs, race conditions, memory leaks, and code quality issues
+- **9 bugs fixed across 7 files:**
+  1. `audio_service.dart` — `_updateAmbienceFromProfile` now `async`/`await`s `_crossfadeTo` (was fire-and-forget, causing overlapping crossfades)
+  2. `audio_service.dart` — `_crossfadeTo` null-checks ambience asset key before access (was crashing on unknown keys)
+  3. `audio_service.dart` — SFX player disposal: added 30s timeout + `catchError` to prevent memory leaks when stream never completes
+  4. `parser_service.dart` — `CommandVerb.unknown` now excludes verb from args (was inconsistent with all other verbs)
+  5. `game_screen.dart` — replaced recursive `Future.delayed` typewriter with `Timer` + cancel in `dispose()` (was causing `setState` on disposed widget)
+  6. `main.dart` — wrapped AudioService initialization in try-catch (audio failure must not prevent game from starting)
+  7. `database_service.dart` — database singleton getter uses `Completer` to prevent race condition on concurrent init calls
+  8. `llm_context_service.dart` — Fifth Sector verse now uses encounter counter instead of always index 0
+  9. `game_engine_provider.dart` — inventory display: `\n` → `\n\n` between items list and weight
+
+**Stato progetto:**
+- Engine completo con 9 bugfix difensivi applicati
+- Prossimo step: Fase 0-omega (test APK su device fisico)
+
+---
+
 ### 2026-04-04 — GitHub Copilot (Docs audit & CLAUDE.md update)
 **Role:** Documentation maintenance
 

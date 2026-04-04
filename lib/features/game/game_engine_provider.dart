@@ -1332,7 +1332,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         return EngineResponse(
           narrativeText: s.inventory.isEmpty
               ? 'You carry nothing but a sense of incompleteness.'
-              : 'You carry: ${s.inventory.join(", ")}.\n'
+              : 'You carry: ${s.inventory.join(", ")}.\n\n'
                 'Psychological weight: ${s.psychoWeight}.',
         );
 

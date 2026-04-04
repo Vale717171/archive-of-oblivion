@@ -82,7 +82,7 @@ class AudioService {
     }
   }
 
-  void _updateAmbienceFromProfile(PsychoProfile profile) {
+  Future<void> _updateAmbienceFromProfile(PsychoProfile profile) async {
     String newKey = 'calm';
     if (profile.anxiety > 70) {
       newKey = 'anxious';
@@ -93,15 +93,17 @@ class AudioService {
     if (_specialTracks.contains(_currentAmbienceKey)) {
       return;
     }
-    _crossfadeTo(newKey);
+    await _crossfadeTo(newKey);
   }
 
   Future<void> _crossfadeTo(String key) async {
     if (_currentAmbienceKey == key) return;
+    final asset = _ambienceAssets[key];
+    if (asset == null) return; // unknown key — skip silently
     _currentAmbienceKey = key;
     try {
       await _rampVolume(0.0);
-      await _backgroundPlayer.setAsset(_ambienceAssets[key]!);
+      await _backgroundPlayer.setAsset(asset);
       await _backgroundPlayer.play();
       await _rampVolume(0.85);
     } catch (e) {
@@ -146,9 +148,12 @@ class AudioService {
     try {
       await sfxPlayer.setAsset(sfxAsset);
       await sfxPlayer.play();
+      // Dispose when done, with a safety timeout to avoid leaks
       sfxPlayer.processingStateStream
           .firstWhere((s) => s == ProcessingState.completed)
-          .then((_) => sfxPlayer.dispose());
+          .timeout(const Duration(seconds: 30))
+          .then((_) => sfxPlayer.dispose())
+          .catchError((_) => sfxPlayer.dispose());
     } catch (e) {
       sfxPlayer.dispose();
       // ignore: avoid_print
