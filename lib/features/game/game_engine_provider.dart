@@ -1143,12 +1143,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     final savedState    = await ref.read(gameStateProvider.future);
     final currentNodeId = savedState.currentNode;
-    final evalResponse  = _evaluate(cmd, currentNodeId, withPlayer);
+    final evaluationResponse = _evaluate(cmd, currentNodeId, withPlayer);
 
     // ── La Zona activation (GDD §10) ────────────────────────────────────────
-    final response = (evalResponse.newNode != null)
-        ? _maybeActivateZone(evalResponse, currentNodeId, withPlayer)
-        : evalResponse;
+    final response = (evaluationResponse.newNode != null)
+        ? _maybeActivateZone(evaluationResponse, currentNodeId, withPlayer)
+        : evaluationResponse;
 
     state = AsyncValue.data(withPlayer.copyWith(phase: ParserPhase.eventResolved));
 
@@ -2996,8 +2996,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     final q = _zoneQuestions[encounters % _zoneQuestions.length];
     return EngineResponse(
       narrativeText: 'The Zone receives your answer without comment.\n\n'
-          '${q.crypticResponse}\n\n'
-          'The Archive is through here.',
+          '${q.crypticResponse}',
       needsLlm:       true,
       newNode:        'la_soglia',
       completePuzzle: respondedKey,

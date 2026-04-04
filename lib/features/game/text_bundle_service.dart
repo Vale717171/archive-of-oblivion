@@ -52,12 +52,12 @@ class TextBundleService {
   }
 
   /// Returns the [n]th Zone question (0-indexed, wraps around).
-  /// Falls back to an empty map if the bundle is not yet loaded.
-  Map<String, dynamic>? zoneQuestion(int n) {
+  /// Returns an empty map if the bundle is not yet loaded.
+  Map<String, dynamic> zoneQuestion(int n) {
     final templates = _cache['prompts/zona_templates'];
-    if (templates == null) return null;
+    if (templates == null) return const {};
     final questions = templates['questions'] as List<dynamic>?;
-    if (questions == null || questions.isEmpty) return null;
+    if (questions == null || questions.isEmpty) return const {};
     return questions[n % questions.length] as Map<String, dynamic>;
   }
 
