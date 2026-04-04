@@ -4,6 +4,73 @@
 
 ---
 
+### 2026-04-04 — GitHub Copilot (Fifth Sector, Final Boss, JSON Bundles, La Zona)
+**Role:** Full game completion — Opzioni A, B, C
+
+**Done:**
+- **Opzione B — JSON text bundles** (`assets/texts/`, `assets/prompts/`):
+  - Creati 7 file bundle: `manifest.json`, `epicuro_bundle.json`, `proust_bundle.json`,
+    `tarkovsky_bundle.json`, `newton_bundle.json`, `alchimia_bundle.json`, `arte_bundle.json`
+  - Creati 3 file prompt template: `zona_templates.json`, `antagonist_templates.json`, `proust_triggers.json`
+  - Creato `lib/features/game/text_bundle_service.dart` — singleton, async loader con cache,
+    `preloadAll()`, helpers per zone questions, Tarkovsky verses, keywords
+  - Aggiornato `pubspec.yaml` — aggiunto `assets/prompts/` agli asset registrati
+
+- **Opzione A — Quinto Settore + Final Boss** (`game_engine_provider.dart`):
+  - Sostituito `quinto_stub` con `quinto_landing` — 4 stanze memoria + camera rituale
+  - Nuovi nodi: `quinto_landing`, `quinto_childhood`, `quinto_youth`, `quinto_maturity`,
+    `quinto_old_age`, `quinto_ritual_chamber`
+  - Nuovi nodi finali: `il_nucleo`, `finale_acceptance`, `finale_oblivion`, `finale_eternal_zone`
+  - Exit gates per quinto rooms (gating su 'back' con prezzo di memoria)
+  - Gate speciale `quinto_landing → down` come multi-condition check in `_handleGo`
+  - `_handleWrite` + `_handleMemoryWrite`: gestisce prezzi di memoria per le 4 stanze
+  - `_handleDrink` + `_handleStir`: puzzle rituale
+  - `_handleRitualPlacement`: `place [simulacrum] in cup` → puzzle IDs `cup_ataraxia` etc.
+  - `_handleBossInput` (Regola del Tre, catarsi, resolution, surrender, eternal zone)
+  - `_handleBossDrop` (catarsi nel boss fight — pesa i drop, segnala peso=0)
+  - `_antagonistArgue` (argomento Schopenhauer, personalizzato con inventario)
+  - `_handleFinaleInput` (comandi nei finali)
+  - Trigger Proustiano: `observe reflection` in `gallery_hall` (2° visita dopo backward walk)
+  - Comando `WAKE UP` per Finale 1 (`finale_acceptance`)
+  - Risposta al telefono: `say [words]`/`answer [words]` in `quinto_maturity`
+  - `_handleDeposit` aggiornato per boss context (preserva simulacra, rimuove solo mundane)
+  - `_helpText` aggiornato con tutti i nuovi comandi
+
+- **Opzione C — La Zona** (`game_engine_provider.dart`):
+  - Nodo `la_zona` aggiunto ai `_nodes`
+  - Costanti: `_tarkovskyVerses` (8), `_zoneEnvironments` (8), `_ZoneQuestion` classe + `_zoneQuestions` (8)
+  - `_maybeActivateZone` — intercetta navigazioni e può reindirizzare a `la_zona`
+  - `_zoneActivationProbability` — probabilities per scenari GDD §10 (base 15%, sector completion 25%,
+    third consecutive transit 40%, 3+ simulacra 50%, pre-fifth 75%)
+  - `_isSectorCompletion` — rileva completamento settori per probabilità zona
+  - Tracking in `processInput`:  `zone_encounters` e `consecutive_transits` nei puzzleCounters
+  - `_handleZoneResponse` — gestisce risposta libera (≥3 parole → risposta criptica → ritorno a la_soglia)
+  - Guard anti-loop: zona non si riattiva se risposta al turno corrente non ancora data
+
+**Key decisions:**
+- Quinto Settore skip Zone (no interruzione narrativa durante il percorso memorie → rituale)
+- Boss fight: `deposit` preserva simulacra (only mundane items cleared), weight → 0
+- Zone counter 1-based (incrementato all'entrata, non all'uscita) — guard controlla `zone_responded_$encounters`
+- Tutti e 3 i finali raggiungibili: risoluzione (keyword + peso=0), oblio (surrender), zona eterna (remain)
+- Trigger Proustiano gallery: condizionato su `hall_backward_walked` (proxy per "2a visita")
+
+**Files created:**
+- `assets/texts/manifest.json`, `epicuro_bundle.json`, `proust_bundle.json`, `tarkovsky_bundle.json`,
+  `newton_bundle.json`, `alchimia_bundle.json`, `arte_bundle.json`
+- `assets/prompts/zona_templates.json`, `antagonist_templates.json`, `proust_triggers.json`
+- `lib/features/game/text_bundle_service.dart`
+
+**Files modified:**
+- `pubspec.yaml` (aggiunto `assets/prompts/`)
+- `lib/features/game/game_engine_provider.dart` (major extension)
+
+**Next suggested step:**
+- Popolare i nodi narrativi con testo definitivo (quinto rooms già hanno buon testo)
+- Fase 0-omega — LLM validation su APK completo (GDD §17)
+- Sostituire `_llmStub()` dopo validazione
+
+---
+
 ### 2026-04-03 — GitHub Copilot (Puzzle Engine Implementation)
 **Role:** Game engine — full puzzle logic for all four sectors
 

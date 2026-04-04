@@ -1,7 +1,9 @@
 // lib/features/game/game_engine_provider.dart
-// Author: GitHub Copilot — 2026-04-02 | Extended: 2026-04-03
-// All four sectors fully implemented with puzzle gating.
+// Author: GitHub Copilot — 2026-04-02 | Extended: 2026-04-03, 2026-04-04
+// All four sectors + Fifth Sector + Final Boss + La Zona implemented.
 // LLM integration: stub — replace _llmStub() after Fase 0-omega (GDD §17).
+
+import 'dart:math' show Random;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -37,6 +39,114 @@ const Set<String> _simulacraNames = {
   'ataraxia', 'the constant', 'the proportion', 'the catalyst',
 };
 
+// ── Boss fight — resolution and surrender keywords (GDD §12) ─────────────────
+
+const Set<String> _resolutionKeywords = {
+  'human warmth', 'imperfection', 'observer', 'acceptance',
+  'i want to remember', 'i exist', 'irrepeatable', 'breath',
+};
+
+const Set<String> _surrenderKeywords = {
+  'i accept the void', 'nothing matters', 'surrender', 'i give up',
+  'the void is peace', 'i want to forget', 'i accept oblivion', 'oblivion',
+};
+
+// ── La Zona — Arseny Tarkovsky verse variants (GDD §10) ──────────────────────
+
+const List<String> _tarkovskyVerses = [
+  '"I was ill, or perhaps merely alive,\nand you came from a time that did not yet exist."',
+  '"What has been will be again.\nI shall arrange it differently next time."',
+  '"Life is not so short,\nand not so long — it is exactly as long as it needs to be."',
+  '"The soul has no shoulders\nand cannot carry what the body carried."',
+  '"From beyond the mirror, a world\nthat has always been waiting."',
+  '"All that glitters is not gold,\nbut all that disappears was real."',
+  '"I dreamed the world was a staircase\nand I was neither ascending nor descending."',
+  '"Nothing can be taken away\nthat was not, once, truly given."',
+];
+
+const List<String> _zoneEnvironments = [
+  'A corridor that is also a room. The walls meet at angles that should not exist.',
+  'The floor continues past where the floor should end. Below: the same floor, continuing.',
+  'Three shadows — yours, and two others whose sources cannot be located.',
+  'A staircase descending to the level you are standing on.',
+  'The ceiling is very close. Then it is very far. The distance does not change.',
+  'A window onto a room exactly like this one, except in that room there is no window.',
+  'Sound arrives before the movement that caused it.',
+  'The walls are made of the same light as what falls through windows you cannot find.',
+];
+
+// ── La Zona — introspective questions (from zona_templates.json) ──────────────
+
+class _ZoneQuestion {
+  final String question;
+  final String theme;
+  final String crypticResponse;
+  const _ZoneQuestion({
+    required this.question,
+    required this.theme,
+    required this.crypticResponse,
+  });
+}
+
+const List<_ZoneQuestion> _zoneQuestions = [
+  _ZoneQuestion(
+    question: 'What did you leave behind that still has your shape?',
+    theme: 'loss',
+    crypticResponse:
+        'Something in the architecture shifts — very slightly, but permanently.\n\n'
+        'The corridor opens back toward the Archive.',
+  ),
+  _ZoneQuestion(
+    question: 'When did you last do something that could not be undone?',
+    theme: 'irreversibility',
+    crypticResponse:
+        'The Zone records this. Not as judgement — as coordinate.\n\n'
+        'You know where you are now. The Archive is north.',
+  ),
+  _ZoneQuestion(
+    question: 'Name the moment you would return to, if return were possible.',
+    theme: 'memory',
+    crypticResponse:
+        'The impossibility of return is what makes the moment permanent.\n\n'
+        'You may leave.',
+  ),
+  _ZoneQuestion(
+    question: 'What are you carrying that does not belong to you?',
+    theme: 'burden',
+    crypticResponse:
+        'The weight of borrowed things is different. Noted.\n\n'
+        'The passage back is clear.',
+  ),
+  _ZoneQuestion(
+    question: 'Who taught you that what you feel is not enough?',
+    theme: 'wound',
+    crypticResponse:
+        'The Zone holds this carefully. It will not repeat the lesson.\n\n'
+        'You may return to the Archive.',
+  ),
+  _ZoneQuestion(
+    question: 'What would you say to the version of yourself that cannot be reached?',
+    theme: 'time',
+    crypticResponse:
+        'The unreachable version received it anyway — through the medium of your having said it.\n\n'
+        'The Archive is through here.',
+  ),
+  _ZoneQuestion(
+    question: 'In what form does the part of you that resists speak?',
+    theme: 'resistance',
+    crypticResponse:
+        'The Zone recognises resistance as intelligence.\n\n'
+        'The question is answered. Return.',
+  ),
+  _ZoneQuestion(
+    question: 'What do you know now that you already knew then?',
+    theme: 'recognition',
+    crypticResponse:
+        'Recognition is the only form of time travel available.\n\n'
+        'The Archive is waiting.',
+  ),
+];
+
 // ── Exit gates: nodeId → {direction → requiredPuzzleId} ──────────────────────
 
 const Map<String, Map<String, String>> _exitGates = {
@@ -60,6 +170,13 @@ const Map<String, Map<String, String>> _exitGates = {
   'lab_furnace':   {'south': 'furnace_calcinated'},
   'lab_alembic':   {'south': 'alembic_temperature_set'},
   'lab_bain_marie':{'south': 'bain_marie_complete'},
+  // Fifth Sector — memory price to leave each room (GDD §11)
+  'quinto_childhood': {'back': 'memory_childhood'},
+  'quinto_youth':     {'back': 'memory_youth'},
+  'quinto_maturity':  {'back': 'memory_maturity'},
+  'quinto_old_age':   {'back': 'memory_old_age'},
+  // Ritual chamber → il_nucleo (drink auto-navigates; go down also gated)
+  'quinto_ritual_chamber': {'down': 'ritual_complete'},
 };
 
 const Map<String, String> _gateHints = {
@@ -111,6 +228,22 @@ const Map<String, String> _gateHints = {
   'bain_marie_complete':
       'The bath path is sealed. The transformation has not begun.\n\n'
       'Hint: leave this room — return after you have walked three other roads.',
+  // Fifth Sector
+  'memory_childhood':
+      'The door will not release you. The price of this room is still owed.\n\n'
+      'Hint: write [the first word you truly learned].',
+  'memory_youth':
+      'The promise holds you here. Name it to be freed.\n\n'
+      'Hint: write [a promise you did not keep].',
+  'memory_maturity':
+      'The telephone waits. You cannot leave until you have spoken.\n\n'
+      'Hint: say [what you never said] — or write it.',
+  'memory_old_age':
+      'One last truth before you leave. The room asks this of you.\n\n'
+      'Hint: write [what you wish to be remembered as].',
+  'ritual_complete':
+      'The passage down is sealed. The cup is not ready.\n\n'
+      'Hint: place each simulacrum in the cup — then stir — then drink.',
 };
 
 // ── Node definitions ──────────────────────────────────────────────────────────
@@ -152,7 +285,7 @@ const Map<String, _NodeDef> _nodes = {
       'east':  'obs_antechamber',
       'south': 'gallery_hall',
       'west':  'lab_vestibule',
-      'up':    'quinto_stub',
+      'up':    'quinto_landing',
     },
     examines: {
       'pedestal':   'Five recesses. Inscribed: Ataraxia. The Constant. '
@@ -704,18 +837,199 @@ const Map<String, _NodeDef> _nodes = {
   ),
 
   // ── Fifth Sector stub — accessible once all four simulacra are in inventory ──
-  'quinto_stub': _NodeDef(
+  'quinto_landing': _NodeDef(
     title: 'The Fifth Sector — Memory',
-    description: 'A spiral staircase descends by candlelight.\n\n'
-        'The smell: Earl Grey, dust, old books. '
-        'Siciliano in B minor, distant.\n\n'
+    description: 'A spiral staircase brought you here.\n\n'
+        'Each candle on the descent was a different age.\n\n'
+        'The smell: Earl Grey, dust, and paper that has held ideas for a long time.\n\n'
+        'Distant: the Siciliano in B minor.\n\n'
         '"The real life, the life finally discovered and illuminated, '
         'the only life therefore really lived, is literature."\n\n'
-        '[The Memory Sector is not yet fully implemented.]',
-    exits: {'up': 'la_soglia', 'back': 'la_soglia'},
+        'Four doors stand at the compass points. Each opens onto a different age.\n\n'
+        'Below: a sealed chamber that will open when all four prices have been paid.',
+    exits: {
+      'east':  'quinto_childhood',
+      'west':  'quinto_youth',
+      'north': 'quinto_maturity',
+      'south': 'quinto_old_age',
+      'down':  'quinto_ritual_chamber',
+      'up':    'la_soglia',
+      'back':  'la_soglia',
+    },
     examines: {
-      'staircase': 'Spiral, descending. Each candle is a different age.',
-      'smell':     'Earl Grey. Dust. Something written a long time ago.',
+      'doors':     'Four doors. East: CHILDHOOD. West: YOUTH. North: MATURITY. South: OLD AGE.',
+      'staircase': 'The spiral you descended. Each candle burns at its own age.',
+      'smell':     'Earl Grey. Dust. Something written by someone who is no longer here.',
+      'candles':   'They burn without depleting. Each is a different temperature of light.',
+    },
+  ),
+
+  'quinto_childhood': _NodeDef(
+    title: 'Childhood',
+    description: 'A small room. The light is the exact quality of a morning you almost remember.\n\n'
+        'On the table: a madeleine of carved wood. '
+        'It does not smell of anything, which is somehow its point.\n\n'
+        'A card on the wall:\n\n'
+        '"Write the first word you truly learned — '
+        'not the first word you were taught, but the first one you understood."\n\n'
+        'The price of this room is a word.',
+    exits: {'back': 'quinto_landing'},
+    examines: {
+      'madeleine': 'Carved from pale wood. You know what it refers to.',
+      'card':      '"Write the first word you truly learned.\n'
+          'Not the one you were taught. The one you understood."',
+      'light':     'The quality of Saturday morning, before obligation.',
+      'table':     'Simple. The madeleine rests at its centre.',
+    },
+    takeable: {'madeleine'},
+  ),
+
+  'quinto_youth': _NodeDef(
+    title: 'Youth',
+    description: 'A room with the feeling of being in transit.\n\n'
+        'Luggage partially packed. A train schedule half-read and set down.\n\n'
+        'On the table: a train ticket to Balbec, never used.\n\n'
+        'A card:\n\n'
+        '"Write a promise you did not keep — not in accusation, but in acknowledgement."\n\n'
+        'The price of this room is an admission.',
+    exits: {'back': 'quinto_landing'},
+    examines: {
+      'ticket':   'Balbec. The date is illegible. It has always been slightly too late.',
+      'card':     '"Write a promise you did not keep.\nNot in accusation.\nIn acknowledgement."',
+      'luggage':  'Half-packed. As if someone was interrupted before completing the idea.',
+      'schedule': 'Times and stations. The departures are all behind you.',
+    },
+    takeable: {'ticket'},
+  ),
+
+  'quinto_maturity': _NodeDef(
+    title: 'Maturity',
+    description: 'A study. Books on every surface.\n\n'
+        'A telephone on the desk, receiver off the hook.\n\n'
+        'On the desk: a pair of glasses, fogged from breath.\n\n'
+        'A card:\n\n'
+        '"Answer the telephone. Say what you have never said to the person on the other end."\n\n'
+        'The price of this room is speech.',
+    exits: {'back': 'quinto_landing'},
+    examines: {
+      'telephone': 'Off the hook. The line is open. Someone is waiting.',
+      'glasses':   'Fogged. You cannot see through them.\n'
+          'That is the point — seeing through your own condensation.',
+      'card':      '"Answer the telephone.\nSay what you have never said."',
+      'books':     'Every subject. Evidence of a life that tried to understand.',
+    },
+    takeable: {'glasses'},
+  ),
+
+  'quinto_old_age': _NodeDef(
+    title: 'Old Age',
+    description: 'A room that has settled into itself completely.\n\n'
+        'Everything is in its place. Everything has a history visible in its surface.\n\n'
+        'On the mantelpiece: a clock. The hands are stopped at 17:00. '
+        'The light through the window matches.\n\n'
+        'A card:\n\n'
+        '"Write what you wish to be remembered as. Not an achievement. A quality."\n\n'
+        'The price of this room is a truth.',
+    exits: {'back': 'quinto_landing'},
+    examines: {
+      'clock':       'Stopped at 17:00. The afternoon light through the window is exact.',
+      'card':        '"Write what you wish to be remembered as.\nNot an achievement.\nA quality."',
+      'mantelpiece': 'The clock. A photograph facing away. A small plant, dried.',
+      'light':       'Afternoon, late. The hour just before evening becomes certain.',
+    },
+    takeable: {'clock'},
+  ),
+
+  'quinto_ritual_chamber': _NodeDef(
+    title: 'The Ritual Chamber',
+    description: 'A circular room, low-ceilinged.\n\n'
+        'At the centre: a cup of extraordinary simplicity. '
+        'Five-sided, made of no material you can name. '
+        'It holds a liquid that is neither clear nor coloured.\n\n'
+        'This is what the four simulacra were for. '
+        'This is what the four sectors have been building toward.\n\n'
+        'Place each simulacrum in the cup. Then stir. Then drink.',
+    exits: {'up': 'quinto_landing', 'back': 'quinto_landing', 'down': 'il_nucleo'},
+    examines: {
+      'cup':     'Five-sided. No joins. The liquid inside anticipates your decision.',
+      'liquid':  'Neither clear nor coloured. It is waiting for what you have found.',
+      'room':    'Circular. Five-sided symmetry. The geometry is familiar — you have seen it before.',
+    },
+  ),
+
+  // ── Il Nucleo — The Final Confrontation (GDD §12) ─────────────────────────
+  'il_nucleo': _NodeDef(
+    title: 'The Nucleus — The Final Confrontation',
+    description: 'A space with no walls.\n\n'
+        'Before you: a figure without a face. '
+        'Its features shift — not as if changing, '
+        'but as if the concept of features does not apply here.\n\n'
+        'When it speaks, the voice is very calm. Very reasonable.\n\n'
+        '"You have come a long way. You have carried a great deal. '
+        'You have distilled something, I think, that you believe has value.\n\n'
+        'I would like to offer you a different reading of what you\'ve found."\n\n'
+        'It waits for you to respond.',
+    exits: {},
+    examines: {
+      'figure': 'It has no fixed form. This is not a threat — it is a property.',
+      'voice':  'Calm. Reasonable. This is the most unsettling thing about it.',
+      'space':  'No walls. No floor in the usual sense. '
+          'Yet you are standing on something that holds.',
+    },
+  ),
+
+  // ── I Tre Finali ──────────────────────────────────────────────────────────
+  'finale_acceptance': _NodeDef(
+    title: 'Acceptance — La Rivelazione',
+    description: 'The Archive grows transparent.\n\n'
+        'Through the walls — walls that were always walls — '
+        'a vastness opens that resembles coming home.\n\n'
+        'Every tear. Every silence. Every imperfection. '
+        'They were not failures: they were the raw materials of a soul.\n\n'
+        '"Fuori non c\'è il Vuoto. Fuori c\'è tutto."\n\n'
+        'The Aria delle Goldberg resumes from its suspended note.\n\n'
+        'Type WAKE UP when you are ready.',
+    exits: {},
+    examines: {
+      'light': 'It is not dramatic. It is simply present.',
+      'walls': 'They are still here. They are also something else now.',
+    },
+  ),
+
+  'finale_oblivion': _NodeDef(
+    title: 'Oblivion',
+    description: '...\n\n'
+        '...\n\n'
+        '...\n\n'
+        '"Lived. Died. No one will remember."\n\n'
+        '— Arseny Tarkovsky',
+    exits: {},
+    examines: {},
+  ),
+
+  'finale_eternal_zone': _NodeDef(
+    title: 'The Eternal Zone',
+    description: 'You remain.\n\n'
+        'The variations begin.\n\n'
+        'They do not end.',
+    exits: {'back': 'la_zona'},
+    examines: {
+      'variations': 'Infinite. Procedural. Each one specifically yours.',
+    },
+  ),
+
+  // ── La Zona (GDD §10) ─────────────────────────────────────────────────────
+  'la_zona': _NodeDef(
+    title: 'The Zone',
+    description: 'Impossible geometry.\n\n'
+        'A corridor that is also a room. '
+        'The walls meet at an angle that should not exist.\n\n'
+        'Something is asking you something.',
+    exits: {'back': 'la_soglia'},
+    examines: {
+      'geometry': 'The walls agree only in the angle they refuse to make.',
+      'walls':    'Present — but defined by their own impossibility.',
+      'space':    'It is inside something. It is also outside it.',
     },
   ),
 
@@ -829,7 +1143,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     final savedState    = await ref.read(gameStateProvider.future);
     final currentNodeId = savedState.currentNode;
-    final response      = _evaluate(cmd, currentNodeId, withPlayer);
+    final evalResponse  = _evaluate(cmd, currentNodeId, withPlayer);
+
+    // ── La Zona activation (GDD §10) ────────────────────────────────────────
+    final response = (evalResponse.newNode != null)
+        ? _maybeActivateZone(evalResponse, currentNodeId, withPlayer)
+        : evalResponse;
 
     state = AsyncValue.data(withPlayer.copyWith(phase: ParserPhase.eventResolved));
 
@@ -841,14 +1160,20 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (response.grantItem != null && !newInventory.contains(response.grantItem!)) {
       newInventory.add(response.grantItem!);
     }
-    // drop removes from inventory (except Great Work placement — handled in handler)
+    // drop removes from inventory (except Great Work and Ritual Chamber placements)
     if (cmd.verb == CommandVerb.drop && cmd.args.isNotEmpty &&
-        currentNodeId != 'lab_great_work') {
+        currentNodeId != 'lab_great_work' &&
+        currentNodeId != 'quinto_ritual_chamber') {
       newInventory.remove(cmd.args.join(' '));
     }
-    // deposit clears all mundane items, then re-adds the granted simulacrum
+    // deposit clears mundane items, re-adds granted simulacrum.
+    // In boss context (il_nucleo): preserve simulacra — only remove mundane items.
     if (cmd.verb == CommandVerb.deposit) {
-      newInventory.clear();
+      if (currentNodeId == 'il_nucleo') {
+        newInventory = newInventory.where(_isSimulacrum).toList();
+      } else {
+        newInventory.clear();
+      }
       newWeight = 0;
       if (response.grantItem != null) newInventory.add(response.grantItem!);
     }
@@ -863,7 +1188,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           (newCounters[response.incrementCounter!] ?? 0) + 1;
     }
 
-    // ── Navigation + bain-marie tracking ───────────────────────────────────
+    // ── Navigation + bain-marie tracking + zone tracking ───────────────────
     if (response.newNode != null) {
       await ref.read(gameStateProvider.notifier).updateNode(response.newNode!);
 
@@ -879,6 +1204,20 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         final visits = (newCounters['bain_marie_external'] ?? 0) + 1;
         newCounters['bain_marie_external'] = visits;
         if (visits >= 3) newPuzzles.add('bain_marie_complete');
+      }
+
+      // Zone encounter tracking
+      if (response.newNode == 'la_zona') {
+        newCounters['zone_encounters'] = (newCounters['zone_encounters'] ?? 0) + 1;
+      }
+
+      // Consecutive transit tracking (la_soglia ↔ sectors)
+      final isTransit = currentNodeId == 'la_soglia' || response.newNode == 'la_soglia';
+      if (isTransit && response.newNode != 'la_zona') {
+        newCounters['consecutive_transits'] =
+            (newCounters['consecutive_transits'] ?? 0) + 1;
+      } else if (!isTransit && response.newNode != 'la_zona') {
+        newCounters['consecutive_transits'] = 0;
       }
     }
 
@@ -930,6 +1269,25 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     final node = _nodes[nodeId];
     if (node == null) {
       return const EngineResponse(narrativeText: 'The Archive does not recognise this place.');
+    }
+
+    // ── Il Nucleo: route most commands through boss handler (GDD §12) ────────
+    if (nodeId == 'il_nucleo' &&
+        cmd.verb != CommandVerb.inventory &&
+        cmd.verb != CommandVerb.examine &&
+        cmd.verb != CommandVerb.help) {
+      return _handleBossInput(cmd, s);
+    }
+
+    // ── Finale nodes: minimal interactions ───────────────────────────────────
+    if (nodeId == 'finale_acceptance' || nodeId == 'finale_oblivion' ||
+        nodeId == 'finale_eternal_zone') {
+      if (cmd.verb == CommandVerb.inventory || cmd.verb == CommandVerb.examine ||
+          cmd.verb == CommandVerb.help) {
+        // Fall through to normal handling
+      } else {
+        return _handleFinaleInput(cmd, nodeId, s);
+      }
     }
 
     switch (cmd.verb) {
@@ -1007,6 +1365,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       case CommandVerb.setParam:
         return _handleSetParam(cmd, nodeId, s);
 
+      case CommandVerb.drink:
+        return _handleDrink(nodeId, s);
+
+      case CommandVerb.stir:
+        return _handleStir(nodeId, s);
+
       case CommandVerb.unknown:
         return _handleUnknown(cmd, nodeId, s);
 
@@ -1069,6 +1433,24 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           narrativeText: 'The sealed chamber will not open.\n\n'
               'Three channels must converge and the Great Work be complete '
               'before the door yields.',
+        );
+      }
+    }
+
+    // Special: quinto_landing → quinto_ritual_chamber requires all 4 memory prices
+    if (nodeId == 'quinto_landing' && direction == 'down') {
+      const memories = {
+        'memory_childhood', 'memory_youth', 'memory_maturity', 'memory_old_age',
+      };
+      if (!memories.every(s.completedPuzzles.contains)) {
+        final missing = memories
+            .where((m) => !s.completedPuzzles.contains(m))
+            .map((m) => m.replaceFirst('memory_', '').replaceAll('_', ' '))
+            .join(', ');
+        return EngineResponse(
+          narrativeText: 'The lower chamber is sealed.\n\n'
+              'Four prices remain unpaid: $missing.\n\n'
+              'Return through each room and pay the price.',
         );
       }
     }
@@ -1271,6 +1653,9 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     // Lab Great Work: placement puzzle
     if (nodeId == 'lab_great_work') return _handleGreatWorkPlacement(cmd, s);
+
+    // Ritual Chamber: place simulacra in cup
+    if (nodeId == 'quinto_ritual_chamber') return _handleRitualPlacement(cmd, s);
 
     final match = s.inventory
         .where((i) => i.contains(target) || target.contains(i))
@@ -1641,8 +2026,58 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
+    // Fifth Sector — memory price for each room (GDD §11)
+    if (nodeId == 'quinto_childhood') {
+      return _handleMemoryWrite(cmd, s, 'memory_childhood',
+          gate: 'The first word you truly learned — not taught, but understood.');
+    }
+    if (nodeId == 'quinto_youth') {
+      return _handleMemoryWrite(cmd, s, 'memory_youth',
+          gate: 'A promise you did not keep — not in accusation, but in acknowledgement.');
+    }
+    if (nodeId == 'quinto_old_age') {
+      return _handleMemoryWrite(cmd, s, 'memory_old_age',
+          gate: 'What you wish to be remembered as — not an achievement, a quality.');
+    }
+    // Maturity room also accepts 'write' (in addition to 'say'/'answer' in _handleUnknown)
+    if (nodeId == 'quinto_maturity') {
+      return _handleMemoryWrite(cmd, s, 'memory_maturity',
+          gate: 'What you have never said — the telephone is waiting.');
+    }
+
     return const EngineResponse(
       narrativeText: 'Nothing happens. The Archive observes your writing.',
+    );
+  }
+
+  /// Shared helper for the four memory room writing puzzles.
+  EngineResponse _handleMemoryWrite(
+    ParsedCommand cmd,
+    GameEngineState s,
+    String puzzleId, {
+    required String gate,
+  }) {
+    if (s.completedPuzzles.contains(puzzleId)) {
+      return const EngineResponse(
+        narrativeText: 'The price has been paid. You may leave.',
+      );
+    }
+    if (cmd.args.isEmpty) {
+      return EngineResponse(
+        narrativeText: 'Write what?\n\n$gate',
+      );
+    }
+    final words = cmd.args.join(' ');
+    return EngineResponse(
+      narrativeText: 'You write.\n\n'
+          '"$words"\n\n'
+          'The word settles into the room. '
+          'Something in the architecture acknowledges it without comment.\n\n'
+          'You may now leave.',
+      needsLlm:       true,
+      lucidityDelta:  6,
+      completePuzzle: puzzleId,
+      audioTrigger:   'calm',
     );
   }
 
@@ -2099,7 +2534,561 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
+    // Gallery hall: observe reflection (2nd Proustian trigger, GDD §9)
+    if ((raw == 'observe reflection' || raw.startsWith('observe reflection') ||
+            raw == 'observe' || raw.startsWith('observe ')) &&
+        nodeId == 'gallery_hall') {
+      if (s.completedPuzzles.contains('hall_backward_walked') &&
+          !s.completedPuzzles.contains('gallery_reflection_triggered')) {
+        return const EngineResponse(
+          narrativeText: 'You look into the mirrors a second time.\n\n'
+              'Your reflection looks back — and it is not quite the one you left.\n\n'
+              '"Plus fragiles mais plus vivaces, plus immatérielles, '
+              'plus persistantes, plus fidèles."\n\n'
+              'The images hold something you had forgotten was yours.',
+          needsLlm:       true,
+          lucidityDelta:  -5,
+          anxietyDelta:   5,
+          audioTrigger:   'sfx:proustian_trigger',
+          completePuzzle: 'gallery_reflection_triggered',
+        );
+      }
+      return const EngineResponse(
+        narrativeText: 'The mirrors reflect you from every angle. '
+            'None of them shows you looking at them.',
+      );
+    }
+
+    // Quinto maturity: answer telephone (say/answer/tell)
+    if (nodeId == 'quinto_maturity' &&
+        (raw.startsWith('say ') || raw.startsWith('answer ') || raw.startsWith('tell '))) {
+      final content = raw.replaceFirst(RegExp(r'^(say|answer|tell)\s+'), '');
+      if (s.completedPuzzles.contains('memory_maturity')) {
+        return const EngineResponse(narrativeText: 'The price has been paid. You may leave.');
+      }
+      if (content.trim().isEmpty) {
+        return const EngineResponse(
+          narrativeText: 'Say what? The line is open. Someone is waiting.',
+        );
+      }
+      return EngineResponse(
+        narrativeText: 'You speak into the telephone.\n\n'
+            '"$content"\n\n'
+            'There is a silence on the line — not empty, but full.\n\n'
+            'Then a soft sound that might be acknowledgement.\n\n'
+            'The glasses on the desk clear. You may leave.',
+        needsLlm:       true,
+        lucidityDelta:  8,
+        completePuzzle: 'memory_maturity',
+        audioTrigger:   'calm',
+      );
+    }
+
+    // La Zona: free-text response to the introspective question (GDD §10)
+    if (nodeId == 'la_zona') {
+      return _handleZoneResponse(raw, s);
+    }
+
+    // Finale 1: WAKE UP epilogue (GDD §12)
+    if ((raw == 'wake up' || raw == 'wakeup') && nodeId == 'finale_acceptance') {
+      return const EngineResponse(
+        narrativeText: '"The Archive is empty.\n\n'
+            'Time has started flowing again.\n\n'
+            'Outside it is cold, but you are no longer alone."\n\n'
+            '— FINE —',
+        audioTrigger: 'calm',
+        lucidityDelta: 20,
+      );
+    }
+
     return const EngineResponse(narrativeText: 'The Archive does not understand.');
+  }
+
+  // ── New handlers ─────────────────────────────────────────────────────────────
+
+  EngineResponse _handleDrink(String nodeId, GameEngineState s) {
+    if (nodeId != 'quinto_ritual_chamber') {
+      return const EngineResponse(narrativeText: 'There is nothing to drink here.');
+    }
+    const cup = {
+      'cup_ataraxia', 'cup_the_constant', 'cup_the_proportion', 'cup_the_catalyst',
+    };
+    if (!cup.every(s.completedPuzzles.contains)) {
+      final missing = <String>[];
+      if (!s.completedPuzzles.contains('cup_ataraxia'))       missing.add('Ataraxia');
+      if (!s.completedPuzzles.contains('cup_the_constant'))   missing.add('The Constant');
+      if (!s.completedPuzzles.contains('cup_the_proportion')) missing.add('The Proportion');
+      if (!s.completedPuzzles.contains('cup_the_catalyst'))   missing.add('The Catalyst');
+      return EngineResponse(
+        narrativeText: 'The cup is not complete.\n\n'
+            'Still to be placed: ${missing.join(", ")}.',
+      );
+    }
+    if (!s.completedPuzzles.contains('ritual_stirred')) {
+      return const EngineResponse(
+        narrativeText: 'Stir the infusion before drinking.',
+      );
+    }
+    if (s.completedPuzzles.contains('ritual_complete')) {
+      return const EngineResponse(
+        narrativeText: 'You have already drunk the infusion. The passage below is open.',
+      );
+    }
+    return const EngineResponse(
+      narrativeText: 'You drink.\n\n'
+          'The taste is impossible — all four at once and separately: '
+          'emptiness, light, proportion, and the warm quickening of breath.\n\n'
+          'For a moment the cup is the Archive and the Archive is the cup '
+          'and you are neither the one who holds it nor the one held.\n\n'
+          'Then: the silence before a question that has waited a very long time.\n\n'
+          'The passage below opens.',
+      needsLlm:       true,
+      lucidityDelta:  15,
+      anxietyDelta:   -20,
+      audioTrigger:   'calm',
+      completePuzzle: 'ritual_complete',
+      newNode:        'il_nucleo',
+    );
+  }
+
+  EngineResponse _handleStir(String nodeId, GameEngineState s) {
+    if (nodeId != 'quinto_ritual_chamber') {
+      return const EngineResponse(narrativeText: 'Nothing here to stir.');
+    }
+    const cup = {
+      'cup_ataraxia', 'cup_the_constant', 'cup_the_proportion', 'cup_the_catalyst',
+    };
+    if (!cup.every(s.completedPuzzles.contains)) {
+      final missing = <String>[];
+      if (!s.completedPuzzles.contains('cup_ataraxia'))       missing.add('ataraxia');
+      if (!s.completedPuzzles.contains('cup_the_constant'))   missing.add('the constant');
+      if (!s.completedPuzzles.contains('cup_the_proportion')) missing.add('the proportion');
+      if (!s.completedPuzzles.contains('cup_the_catalyst'))   missing.add('the catalyst');
+      return EngineResponse(
+        narrativeText: 'The cup is not ready.\n\n'
+            'Still to be placed: ${missing.join(", ")}.',
+      );
+    }
+    if (s.completedPuzzles.contains('ritual_stirred')) {
+      return const EngineResponse(
+        narrativeText: 'The infusion has been stirred. Now drink.',
+      );
+    }
+    return const EngineResponse(
+      narrativeText: 'You stir the infusion.\n\n'
+          'The four elements spiral together — each distinct, all one. '
+          'A scent rises: specific, personal, the sum of everything encountered.\n\n'
+          'The infusion is ready. Drink.',
+      needsLlm:       true,
+      lucidityDelta:  8,
+      completePuzzle: 'ritual_stirred',
+      audioTrigger:   'calm',
+    );
+  }
+
+  EngineResponse _handleRitualPlacement(ParsedCommand cmd, GameEngineState s) {
+    final raw = cmd.rawInput.toLowerCase();
+
+    // Must reference the cup to be a ritual placement (vs a normal drop)
+    if (!raw.contains('cup')) {
+      // Normal drop behaviour in ritual chamber
+      final target = cmd.args.join(' ');
+      final match = s.inventory
+          .where((i) => i.contains(target) || target.contains(i))
+          .firstOrNull;
+      if (match == null) {
+        return const EngineResponse(narrativeText: 'You are not carrying that.');
+      }
+      return EngineResponse(
+        narrativeText: 'You set down the $match.',
+        weightDelta: _isSimulacrum(match) ? 0 : -1,
+        anxietyDelta: _isSimulacrum(match) ? 0 : -1,
+      );
+    }
+
+    // Identify which simulacrum is being placed
+    String? simFound;
+    for (final sim in _simulacraNames) {
+      if (raw.contains(sim) && s.inventory.contains(sim)) {
+        simFound = sim;
+        break;
+      }
+    }
+
+    if (simFound == null) {
+      // Check if player is trying to place a mundane item
+      final mundane = s.inventory.where((i) => !_isSimulacrum(i));
+      for (final item in mundane) {
+        if (raw.contains(item)) {
+          return const EngineResponse(
+            narrativeText: 'The cup does not accept mundane things.\n\n'
+                'Only the four simulacra belong here.',
+          );
+        }
+      }
+      return const EngineResponse(
+        narrativeText: 'Place what in the cup?\n\n'
+            'The four simulacra must be placed: '
+            'ataraxia, the constant, the proportion, the catalyst.',
+      );
+    }
+
+    // Encode puzzle ID: 'cup_ataraxia', 'cup_the_constant', etc.
+    final puzzleId = 'cup_${simFound.replaceAll(' ', '_')}';
+    if (s.completedPuzzles.contains(puzzleId)) {
+      return EngineResponse(
+        narrativeText: 'You have already placed the $simFound in the cup.',
+      );
+    }
+
+    const cup = {
+      'cup_ataraxia', 'cup_the_constant', 'cup_the_proportion', 'cup_the_catalyst',
+    };
+    final afterThis = Set<String>.from(s.completedPuzzles)..add(puzzleId);
+    final isLast = cup.every(afterThis.contains);
+    final remaining = cup.where((c) => !afterThis.contains(c)).length;
+
+    return EngineResponse(
+      narrativeText: isLast
+          ? 'You place the $simFound in the cup.\n\n'
+            'All four simulacra rest together in the liquid. '
+            'It shimmers — a colour you cannot name.\n\n'
+            'Something has shifted in the architecture of the Archive.\n\n'
+            'Now: stir.'
+          : 'You place the $simFound in the cup.\n\n'
+            'The liquid brightens briefly. '
+            '$remaining more to place.',
+      needsLlm:       isLast,
+      completePuzzle: puzzleId,
+      lucidityDelta:  isLast ? 5 : null,
+    );
+  }
+
+  // ── Il Nucleo handlers ────────────────────────────────────────────────────
+
+  EngineResponse _handleBossInput(ParsedCommand cmd, GameEngineState s) {
+    final raw = cmd.rawInput.toLowerCase().trim();
+
+    // Surrender → Finale 2 (GDD §12)
+    if (_surrenderKeywords.any(raw.contains)) {
+      return const EngineResponse(
+        narrativeText: 'You speak the word.\n\n'
+            'The Antagonist does not triumph. It simply waits.\n\n'
+            '...\n\n'
+            '...\n\n'
+            '"Lived. Died. No one will remember."\n\n'
+            '— Arseny Tarkovsky',
+        needsLlm:     false,
+        newNode:      'finale_oblivion',
+        audioTrigger: 'oblivion',
+        oblivionDelta: 30,
+      );
+    }
+
+    // Remain / stay → Finale 3 (Eternal Zone)
+    if (raw == 'stay' || raw == 'remain' || raw == 'i remain' ||
+        raw.contains('eternal zone') || raw == 'i want to stay') {
+      return const EngineResponse(
+        narrativeText: 'You stay.\n\n'
+            'The Antagonist says nothing. It may not have noticed.\n\n'
+            'The Archive continues. The variations are infinite. '
+            'You will encounter them all, eventually.\n\n'
+            'The Zone does not end. Neither do you.',
+        needsLlm:     true,
+        newNode:      'finale_eternal_zone',
+        audioTrigger: 'oblivion',
+      );
+    }
+
+    // Resolution keyword check (GDD §12 — Regola del Tre)
+    final hasResolution = _resolutionKeywords.any(raw.contains);
+    if (hasResolution) {
+      if (s.psychoWeight == 0) {
+        // Weight is zero — resolution accepted → Finale 1
+        return const EngineResponse(
+          narrativeText: 'You say it.\n\n'
+              'The Antagonist is silent for a long time.\n\n'
+              'Then:\n\n'
+              '"You are correct. I have no argument against that."\n\n'
+              'The voice does not disappear — it simply stops trying.\n\n'
+              'Something in the space changes. The Archive, which had been '
+              'holding itself very carefully, relaxes.\n\n'
+              'A light — not dramatic, not final — '
+              'the light of an ordinary room at dusk.',
+          needsLlm:       true,
+          newNode:        'finale_acceptance',
+          lucidityDelta:  20,
+          audioTrigger:   'calm',
+          completePuzzle: 'boss_resolved',
+        );
+      }
+
+      // Weight > 0 — Regola del Tre
+      final attempts = (s.puzzleCounters['boss_attempts'] ?? 0) + 1;
+      final String responseText;
+      if (attempts == 1) {
+        responseText = 'The words form — and dissolve.\n\n'
+            'Something in you does not believe them yet. '
+            'They are true, but you are carrying too much for them to land.\n\n'
+            'The Antagonist says: "You almost had it."\n\n'
+            'It waits. It is patient.';
+      } else if (attempts == 2) {
+        final inv = s.inventory.where((i) => !_isSimulacrum(i)).join(', ');
+        final invText = inv.isEmpty ? 'nothing you can name' : inv;
+        responseText = 'Again the words — and again they cannot reach.\n\n'
+            'The Antagonist tilts its face:\n\n'
+            '"You carry: $invText.\n\n'
+            'Each one is a small argument against what you are trying to say. '
+            'They are yours. They are also in the way."\n\n'
+            'It waits.';
+      } else {
+        // Attempt 3+: [INVENTORY] visible
+        final inv = s.inventory.where((i) => !_isSimulacrum(i)).join(', ');
+        final invBlock = inv.isEmpty ? '' : '\n\n[INVENTORY: $inv]';
+        responseText = 'A third time.\n\n'
+            'The words will not cohere.$invBlock\n\n'
+            '"The weight is the proof," the Antagonist says. '
+            '"You know what it is asking you to put down."';
+      }
+      return EngineResponse(
+        narrativeText: responseText,
+        needsLlm:         attempts < 2,
+        incrementCounter: 'boss_attempts',
+        anxietyDelta:     attempts * 3,
+      );
+    }
+
+    // Drop in boss context — catarsis (GDD §12)
+    if (cmd.verb == CommandVerb.drop) {
+      return _handleBossDrop(cmd, s);
+    }
+
+    // Deposit in boss context — clear all mundane items (processInput handles the inventory)
+    if (cmd.verb == CommandVerb.deposit) {
+      final hasMundane = s.inventory.any((i) => !_isSimulacrum(i));
+      if (!hasMundane) {
+        return const EngineResponse(
+          narrativeText: 'You carry nothing that can be set down here.\n\n'
+              'The simulacra are yours. They are not the weight.',
+        );
+      }
+      return const EngineResponse(
+        narrativeText: 'You set everything down.\n\n'
+            'Your hands are empty. The weight is gone.\n\n'
+            'The Antagonist looks at you differently.\n\n'
+            '"That," it says, "changes the argument."',
+        lucidityDelta:  10,
+        anxietyDelta:   -15,
+        needsLlm:       true,
+        audioTrigger:   'calm',
+      );
+    }
+
+    // Generic: Antagonist continues its argument
+    return _antagonistArgue(s);
+  }
+
+  EngineResponse _handleBossDrop(ParsedCommand cmd, GameEngineState s) {
+    if (cmd.args.isEmpty) {
+      return const EngineResponse(
+        narrativeText: 'What do you wish to set down?',
+      );
+    }
+    final target = cmd.args.join(' ');
+    final match = s.inventory
+        .where((i) => !_isSimulacrum(i) && (i.contains(target) || target.contains(i)))
+        .firstOrNull;
+    if (match == null) {
+      return const EngineResponse(
+        narrativeText: 'You do not carry that — or perhaps you carry it '
+            'in a way that cannot be put down here.',
+      );
+    }
+    final remaining = s.inventory
+        .where((i) => !_isSimulacrum(i) && i != match)
+        .length;
+    if (remaining == 0) {
+      return EngineResponse(
+        narrativeText: 'You set down the $match.\n\n'
+            'Your hands are empty. The weight is zero.\n\n'
+            'The Antagonist looks at you for a long time.\n\n'
+            '"That," it says, "changes the argument."',
+        weightDelta:  -1,
+        lucidityDelta: 10,
+        anxietyDelta:  -10,
+        needsLlm:      true,
+        audioTrigger:  'calm',
+      );
+    }
+    return EngineResponse(
+      narrativeText: 'You set down the $match.\n\n'
+          'The Antagonist observes this. "There is still weight," it says.\n\n'
+          '$remaining thing${remaining == 1 ? "" : "s"} '
+          'remain${remaining == 1 ? "s" : ""}.',
+      weightDelta:  -1,
+      anxietyDelta: -2,
+      lucidityDelta: 3,
+    );
+  }
+
+  EngineResponse _antagonistArgue(GameEngineState s) {
+    final attempts = s.puzzleCounters['boss_attempts'] ?? 0;
+    if (attempts == 0) {
+      return const EngineResponse(
+        narrativeText: 'The Antagonist speaks without raising its voice.\n\n'
+            '"Consider: every thought you value was the product of electro-chemistry. '
+            'Every love: oxytocin, dopamine, the firing of neurons that did not '
+            'choose to fire. Every memory: a reconstruction, inaccurate, '
+            'serving the survival of an organism that will not survive.\n\n'
+            'I am not your enemy. I am the mercy you have been afraid to accept."',
+        needsLlm:    true,
+        anxietyDelta: 5,
+      );
+    }
+    return const EngineResponse(
+      narrativeText: 'The Antagonist listens.\n\n'
+          '"You speak as if the words could change what is true.\n\n'
+          'What do you carry that proves you wrong?"',
+      needsLlm:    true,
+      anxietyDelta: 2,
+    );
+  }
+
+  EngineResponse _handleFinaleInput(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
+    // In finales: most commands return flavour text; WAKE UP handled in _handleUnknown
+    if (nodeId == 'finale_acceptance') {
+      return const EngineResponse(
+        narrativeText: 'The Archive is still. Type WAKE UP when you are ready.',
+      );
+    }
+    if (nodeId == 'finale_oblivion') {
+      return const EngineResponse(narrativeText: '...');
+    }
+    // finale_eternal_zone: zone continues
+    return const EngineResponse(
+      narrativeText: 'The variations continue. There is no command that ends this.',
+    );
+  }
+
+  // ── La Zona handlers ──────────────────────────────────────────────────────
+
+  EngineResponse _handleZoneResponse(String raw, GameEngineState s) {
+    final encounters = s.puzzleCounters['zone_encounters'] ?? 0;
+    final respondedKey = 'zone_responded_$encounters';
+    if (s.completedPuzzles.contains(respondedKey)) {
+      return const EngineResponse(
+        narrativeText: 'The Zone has heard you. The Archive is back.',
+        newNode: 'la_soglia',
+      );
+    }
+
+    final wordCount = raw.trim().split(RegExp(r'\s+')).length;
+    if (wordCount < 3) {
+      return const EngineResponse(
+        narrativeText: 'The Zone does not accept the half-answer.\n\n'
+            'It waits. Something in the geometry tightens.\n\n'
+            'Try again — more fully.',
+        anxietyDelta: 5,
+      );
+    }
+
+    final q = _zoneQuestions[encounters % _zoneQuestions.length];
+    return EngineResponse(
+      narrativeText: 'The Zone receives your answer without comment.\n\n'
+          '${q.crypticResponse}\n\n'
+          'The Archive is through here.',
+      needsLlm:       true,
+      newNode:        'la_soglia',
+      completePuzzle: respondedKey,
+      lucidityDelta:  -3,
+      anxietyDelta:   -5,
+    );
+  }
+
+  /// Probabilistic La Zona activation on navigation (GDD §10).
+  EngineResponse _maybeActivateZone(
+    EngineResponse resp,
+    String fromNodeId,
+    GameEngineState s,
+  ) {
+    final dest = resp.newNode!;
+    // Do not activate when entering/leaving finales, nucleo, or zone itself
+    if (dest.startsWith('finale_') || dest == 'il_nucleo' || dest == 'la_zona') {
+      return resp;
+    }
+    if (fromNodeId == 'la_zona' || fromNodeId.startsWith('finale_') ||
+        fromNodeId == 'il_nucleo') {
+      return resp;
+    }
+    // Also skip Zone for quinto sector (narrative flow must not be interrupted)
+    if (dest.startsWith('quinto_') || fromNodeId.startsWith('quinto_')) {
+      return resp;
+    }
+
+    final prob = _zoneActivationProbability(fromNodeId, dest, s);
+    if (prob <= 0) return resp;
+    if (Random().nextDouble() >= prob) return resp;
+
+    // Zone activates — build entry text
+    final encounters = s.puzzleCounters['zone_encounters'] ?? 0;
+    final verse = _tarkovskyVerses[encounters % _tarkovskyVerses.length];
+    final env   = _zoneEnvironments[encounters % _zoneEnvironments.length];
+    final q     = _zoneQuestions[encounters % _zoneQuestions.length];
+
+    return EngineResponse(
+      narrativeText: '$verse\n\n$env\n\n${q.question}',
+      newNode:   'la_zona',
+      needsLlm:  true,
+      anxietyDelta: 5,
+    );
+  }
+
+  double _zoneActivationProbability(
+      String fromNode, String destNode, GameEngineState s) {
+    final encounters      = s.puzzleCounters['zone_encounters'] ?? 0;
+    final consecutive     = s.puzzleCounters['consecutive_transits'] ?? 0;
+    final simulacraCount  = _simulacraNames.where(s.inventory.contains).length;
+    final hasAllSimulacra = simulacraCount == 4;
+
+    // Avoid triggering while a zone response is still pending
+    if (encounters > 0) {
+      final pendingKey = 'zone_responded_$encounters';
+      if (!s.completedPuzzles.contains(pendingKey)) {
+        return 0; // Still in zone (haven't responded yet)
+      }
+    }
+
+    double prob;
+
+    if (hasAllSimulacra && encounters == 0) {
+      // Pre-fifth sector: no zone encounters yet — inevitable first time (GDD §10 — 75%)
+      return 0.75;
+    } else if (simulacraCount >= 3) {
+      prob = 0.50; // After third simulacrum
+    } else if (consecutive >= 2) {
+      prob = 0.40; // Third consecutive transit
+    } else if (_isSectorCompletion(fromNode, destNode, s)) {
+      prob = 0.25; // After sector completion
+    } else if (fromNode == 'la_soglia' || destNode == 'la_soglia') {
+      prob = 0.15; // Normal threshold transit
+    } else {
+      return 0;
+    }
+
+    // +5% per simulacrum
+    prob += simulacraCount * 0.05;
+    return prob.clamp(0.0, 0.9);
+  }
+
+  bool _isSectorCompletion(
+      String fromNode, String destNode, GameEngineState s) {
+    final done = s.completedPuzzles;
+    if (fromNode == 'garden_grove'    && done.contains('garden_complete'))   return true;
+    if (fromNode == 'obs_dome'        && done.contains('obs_complete'))      return true;
+    if (fromNode == 'gallery_central' && done.contains('gallery_complete'))  return true;
+    if (fromNode == 'lab_sealed'      && done.contains('lab_complete'))      return true;
+    return false;
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -2123,33 +3112,38 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 // ── Help text ─────────────────────────────────────────────────────────────────
 
 const _helpText = '''Commands:
-  go [north/south/east/west/up]   — move
-  examine [object]  /  look       — inspect
-  take [object]                   — pick up (increases psychological weight)
-  drop [object]                   — set down
-  deposit everything              — leave all at the statue (Garden finale)
-  wait  /  z                      — let time pass
-  smell [object]                  — attend to a scent
-  taste [object]                  — attend to a flavour
-  arrange leaves [order]          — Cypress Avenue puzzle
-  walk [mode]                     — e.g. "walk blindfolded", "walk backward", "walk through"
-  combine [items]                 — Observatory Antechamber puzzle
-  press [target]                  — Gallery Corridor puzzle
-  construct / describe / paint / write [content]  — writing puzzles
-  offer [concept]                 — Lab Vestibule puzzle
-  calibrate [x] [y] [z]          — Observatory Calibration puzzle
-  invert [target]                 — Observatory Dome puzzle
-  confirm  /  yes                 — multi-step confirmation
-  break [target]                  — Gallery finale
-  blow                            — Lab sealed chamber finale
-  set temperature [value]         — Lab Alembic puzzle
-  decipher symbols                — Lab Substances puzzle
-  collect [substance]             — Lab Substances puzzle
-  calcinate                       — Lab Furnace puzzle
-  enter [value]                   — Observatory Archive puzzle
-  observe                         — Observatory Dome finale
-  inventory  /  i                 — list what you carry
-  help  /  ?                      — this message''';
+  go [north/south/east/west/up/down]   — move
+  examine [object]  /  look            — inspect
+  take [object]                        — pick up (increases psychological weight)
+  drop [object]                        — set down
+  deposit everything                   — leave all at the statue (Garden finale)
+  wait  /  z                           — let time pass
+  smell [object]                       — attend to a scent
+  taste [object]                       — attend to a flavour
+  arrange leaves [order]               — Cypress Avenue puzzle
+  walk [mode]      — "walk blindfolded", "walk backward", "walk through"
+  combine [items]                      — Observatory Antechamber puzzle
+  press [target]                       — Gallery Corridor puzzle
+  construct / describe / paint / write [content]   — writing puzzles
+  offer [concept]                      — Lab Vestibule puzzle
+  calibrate [x] [y] [z]               — Observatory Calibration puzzle
+  invert [target]                      — Observatory Dome puzzle
+  confirm  /  yes                      — multi-step confirmation
+  break [target]                       — Gallery finale
+  blow                                 — Lab sealed chamber finale
+  set temperature [value]              — Lab Alembic puzzle
+  decipher symbols                     — Lab Substances puzzle
+  collect [substance]                  — Lab Substances puzzle
+  calcinate                            — Lab Furnace puzzle
+  enter [value]                        — Observatory Archive puzzle
+  observe                              — Observatory Dome finale
+  place [simulacrum] in cup            — Fifth Sector ritual
+  stir                                 — Fifth Sector ritual
+  drink                                — Fifth Sector ritual
+  say [words]                          — Maturity room (Fifth Sector)
+  inventory  /  i                      — list what you carry
+  wake up                              — Finale 1 epilogue
+  help  /  ?                           — this message''';
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
