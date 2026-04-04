@@ -48,7 +48,9 @@ class LlmContextService {
 
     // Fifth Sector: usa citazioni proustiane
     if (node.startsWith('quinto_')) {
-      final verse = bundles.tarkovskyVerse(0);
+      final encounters =
+          gameState.puzzleCounters['zone_encounters'] ?? 0;
+      final verse = bundles.tarkovskyVerse(encounters);
       if (verse != null) {
         sb.write('Tonalità proustiana: "$verse" ');
       }
