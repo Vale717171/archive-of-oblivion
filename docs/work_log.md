@@ -4,6 +4,54 @@
 
 ---
 
+### 2026-04-04 — GitHub Copilot (Audio wiring, State persistence, Player memories, LLM context wiring)
+**Role:** Post-completion infrastructure — priorità 1-4
+
+**Done:**
+
+- **Audio triggers wired (Priorità 1)**
+  - `AudioService`: aggiunto `handleTrigger(String? trigger)` — dispatcha verso
+    crossfade ambience (`siciliano`, `aria_goldberg`, nuovi), SFX one-shot (`sfx:*`)
+    o silence-ending per Finale 2 (`silence`)
+  - `_ambienceAssets` esteso con `siciliano` (Bach BWV 1017) e `aria_goldberg` (Aria Goldberg)
+  - Logica `_updateAmbienceFromProfile` non sovrascrive più i trigger speciali
+    (siciliano/aria_goldberg hanno priorità sul profilo psicologico)
+  - `_handleZoneResponse` e `_handleGo` in `game_engine_provider.dart`: aggiunto `audioTrigger`
+    per `quinto_landing` → `siciliano`, `finale_acceptance` → `aria_goldberg`,
+    `finale_oblivion` → `silence`, `il_nucleo` → `oblivion`
+  - `processInput`: `AudioService().handleTrigger(response.audioTrigger)` chiamato dopo
+    ogni risposta del motore
+
+- **Persistenza completa dello stato (Priorità 2)**
+  - `DatabaseService`: bumped a versione 2 con `onUpgrade` — aggiunge colonne
+    `completed_puzzles`, `puzzle_counters`, `inventory`, `psycho_weight` a `game_state`
+  - `GameState`: espanso con i 4 nuovi campi (deserializzati da JSON)
+  - `GameStateNotifier`: rimpiazzato `updateNode()` con `saveEngineState()` che persiste
+    tutto; `build()` ripristina lo stato completo dal DB
+  - `GameEngineNotifier.build()`: ora ripristina `completedPuzzles`, `puzzleCounters`,
+    `inventory`, `psychoWeight` da `savedState` invece di partire da zero
+  - `processInput`: rimossa la vecchia chiamata `updateNode`; la `saveEngineState`
+    al fondo del processInput salva il nodo + tutto lo stato in un'unica transazione
+
+- **Player memories → DB (Priorità 3)**
+  - `DatabaseService`: aggiunta tabella `player_memories` (key UNIQUE, content, created_at);
+    helper `saveMemory()` e `loadAllMemories()`
+  - `EngineResponse`: aggiunto campo `playerMemoryKey` (nullable)
+  - `_handleMemoryWrite`: passa `playerMemoryKey: puzzleId` per le 4 stanze proustiane
+  - `_handleZoneResponse`: passa `playerMemoryKey: 'zone_$encounters'` per ogni risposta
+  - `processInput`: se `response.playerMemoryKey != null` salva il testo del giocatore in
+    `player_memories`
+
+- **TextBundleService → LlmContextService (Priorità 4)**
+  - `LlmContextService`: importa `TextBundleService`, aggiunge `_buildBundleContext()` che
+    arricchisce il system prompt con versi Tarkovsky (quinto / zona), keywords di
+    confronto (nucleo) dalla cache precaricata — zero I/O sincrona
+
+**Not done (Priorità 5):**
+- Fase 0-omega: `_llmStub()` → modello on-device reale — richiede APK completo su device fisico
+
+---
+
 ### 2026-04-04 — GitHub Copilot (Fifth Sector, Final Boss, JSON Bundles, La Zona)
 **Role:** Full game completion — Opzioni A, B, C
 

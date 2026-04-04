@@ -7,7 +7,9 @@ import 'dart:math' show Random;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/storage/database_service.dart';
 import '../../core/storage/dialogue_history_service.dart';
+import '../audio/audio_service.dart';
 import '../parser/parser_service.dart';
 import '../parser/parser_state.dart';
 import '../state/game_state_provider.dart';
@@ -1117,9 +1119,14 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     final intro = _enterNode(node);
     await _history.save(role: 'system', content: 'Session started: ${node.title}');
     return GameEngineState(
-      messages:  [GameMessage(text: intro, role: MessageRole.narrative)],
-      phase:     ParserPhase.idle,
-      inventory: const ['notebook'], // GDD §7: starting inventory
+      messages:         [GameMessage(text: intro, role: MessageRole.narrative)],
+      phase:            ParserPhase.idle,
+      inventory:        savedState.inventory.isNotEmpty
+                            ? savedState.inventory
+                            : const ['notebook'],
+      completedPuzzles: savedState.completedPuzzles,
+      puzzleCounters:   savedState.puzzleCounters,
+      psychoWeight:     savedState.psychoWeight,
     );
   }
 
@@ -1190,7 +1197,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     // ── Navigation + bain-marie tracking + zone tracking ───────────────────
     if (response.newNode != null) {
-      await ref.read(gameStateProvider.notifier).updateNode(response.newNode!);
+      // Full state persistence happens at end of processInput via saveEngineState.
+      // No separate updateNode call needed here.
 
       // Mark bain-marie departure
       if (currentNodeId == 'lab_bain_marie' &&
@@ -1239,19 +1247,45 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
+    // ── Audio trigger ────────────────────────────────────────────────────────
+    await AudioService().handleTrigger(response.audioTrigger);
+
+    // ── Player memory (proustian responses + zone responses) ─────────────────
+    if (response.playerMemoryKey != null) {
+      final memoryContent = cmd.args.join(' ').trim();
+      if (memoryContent.isNotEmpty) {
+        await DatabaseService.instance.saveMemory(
+          key:     response.playerMemoryKey!,
+          content: memoryContent,
+        );
+      }
+    }
+
     // ── Display ─────────────────────────────────────────────────────────────
     final narrativeText =
         response.needsLlm ? await _llmStub(response.narrativeText) : response.narrativeText;
     await _history.save(role: 'llm', content: narrativeText);
 
+    final finalState = withPlayer.copyWith(
+      phase:            ParserPhase.displaying,
+      psychoWeight:     newWeight,
+      inventory:        newInventory,
+      completedPuzzles: newPuzzles,
+      puzzleCounters:   newCounters,
+    );
+
+    // ── Persist full engine state ─────────────────────────────────────────────
+    final savedNodeId = response.newNode ?? currentNodeId;
+    await ref.read(gameStateProvider.notifier).saveEngineState(
+      currentNode:      savedNodeId,
+      completedPuzzles: newPuzzles,
+      puzzleCounters:   newCounters,
+      inventory:        newInventory,
+      psychoWeight:     newWeight,
+    );
+
     final withNarrative = _appendMessage(
-      withPlayer.copyWith(
-        phase:            ParserPhase.displaying,
-        psychoWeight:     newWeight,
-        inventory:        newInventory,
-        completedPuzzles: newPuzzles,
-        puzzleCounters:   newCounters,
-      ),
+      finalState,
       GameMessage(text: narrativeText, role: MessageRole.narrative),
     );
     state = AsyncValue.data(withNarrative);
@@ -1506,6 +1540,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       narrativeText: _enterNode(destNode),
       newNode: dest,
       needsLlm: true,
+      // Siciliano BWV 1017 when entering the Fifth Sector; silence for Oblivion finale
+      audioTrigger: dest == 'quinto_landing'     ? 'siciliano'
+                  : dest == 'finale_acceptance'  ? 'aria_goldberg'
+                  : dest == 'finale_oblivion'    ? 'silence'
+                  : dest == 'il_nucleo'          ? 'oblivion'
+                  : null,
     );
   }
 
@@ -2074,10 +2114,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The word settles into the room. '
           'Something in the architecture acknowledges it without comment.\n\n'
           'You may now leave.',
-      needsLlm:       true,
-      lucidityDelta:  6,
-      completePuzzle: puzzleId,
-      audioTrigger:   'calm',
+      needsLlm:        true,
+      lucidityDelta:   6,
+      completePuzzle:  puzzleId,
+      audioTrigger:    'calm',
+      playerMemoryKey: puzzleId, // salva la risposta in player_memories
     );
   }
 
@@ -2997,11 +3038,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return EngineResponse(
       narrativeText: 'The Zone receives your answer without comment.\n\n'
           '${q.crypticResponse}',
-      needsLlm:       true,
-      newNode:        'la_soglia',
-      completePuzzle: respondedKey,
-      lucidityDelta:  -3,
-      anxietyDelta:   -5,
+      needsLlm:        true,
+      newNode:         'la_soglia',
+      completePuzzle:  respondedKey,
+      lucidityDelta:   -3,
+      anxietyDelta:    -5,
+      playerMemoryKey: 'zone_$encounters', // salva la risposta alla Zona
     );
   }
 

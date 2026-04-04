@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../game/text_bundle_service.dart';
 import '../state/psycho_provider.dart';
 import '../state/game_state_provider.dart';
 
@@ -31,7 +32,48 @@ class LlmContextService {
           "Il giocatore sta perdendo la lucidità. Le tue risposte devono essere oniriche e confondere la realtà. ";
     }
 
-    return "$basePrompt $locationContext $psychoContext";
+    // Bundle enrichment — usa la cache precaricata (TextBundleService.preloadAll()
+    // viene chiamato all'avvio dell'app prima di qualsiasi interazione).
+    final String bundleContext = _buildBundleContext();
+
+    return "$basePrompt $locationContext $psychoContext$bundleContext".trim();
+  }
+
+  /// Aggiunge citazioni tematiche al prompt in base al nodo corrente.
+  /// Usa solo dati già in cache — nessuna I/O sincrona.
+  String _buildBundleContext() {
+    final bundles = TextBundleService.instance;
+    final node = gameState.currentNode;
+    final sb = StringBuffer();
+
+    // Fifth Sector: usa citazioni proustiane
+    if (node.startsWith('quinto_')) {
+      final verse = bundles.tarkovskyVerse(0);
+      if (verse != null) {
+        sb.write('Tonalità proustiana: "$verse" ');
+      }
+    }
+
+    // La Zona: usa versi Tarkovsky dalla cache
+    if (node == 'la_zona') {
+      final encounters =
+          gameState.puzzleCounters['zone_encounters'] ?? 0;
+      final verse = bundles.tarkovskyVerse(encounters);
+      if (verse != null) {
+        sb.write('Tonalità zona: "$verse" ');
+      }
+    }
+
+    // Boss / Nucleare: usa keywords di resa/risoluzione
+    if (node == 'il_nucleo') {
+      final keywords = bundles.resolutionKeywords;
+      if (keywords.isNotEmpty) {
+        sb.write(
+            'Temi di confronto: ${keywords.take(3).join(", ")}. ');
+      }
+    }
+
+    return sb.toString();
   }
 }
 
