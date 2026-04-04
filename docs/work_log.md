@@ -4,6 +4,55 @@
 
 ---
 
+### 2026-04-03 — GitHub Copilot (Puzzle Engine Implementation)
+**Role:** Game engine — full puzzle logic for all four sectors
+
+**Done:**
+- `parser_state.dart`: aggiunto `grantItem`, `completePuzzle`, `incrementCounter` a `EngineResponse`
+- `game_engine_provider.dart` — riscrittura completa con:
+  - `GameEngineState` ora tiene `completedPuzzles` (Set) e `puzzleCounters` (Map)
+  - 22 nuovi nodi (Observatory, Gallery, Lab, stub Quinto Settore) — stubs rimossi
+  - `_exitGates` e `_gateHints`: ogni corridoio gateato dal puzzle ID richiesto
+  - `processInput`: applica nuovi campi risposta, fix bug simulacri inventario,
+    tracking visite esterne per bain-marie, peso clampato ≥ 0
+  - Tutti i puzzle handler implementati con logica corretta per GDD §8:
+    - **Giardino**: arrange leaves (ordine epicureo corretto), wait×3 fontana,
+      inscribe stele (gate peso=0, check word-boundary "friendship"),
+      walk through entrambe le alcove, deposit (prerequisito alcove)
+    - **Osservatorio**: combine lenses (Moon/Mercury/Sun invertito), walk blindfolded,
+      wait×7 + measure fluctuation, enter 1, calibrate 0,0,0,
+      invert mirror + confirm×3 + observe → The Constant
+    - **Galleria**: walk backward, press anomalous tile, construct pentagon,
+      describe copies×3, paint originals ≥50 parole, drop item in dark chamber,
+      break mirror (peso=0 → The Proportion; peso>0 → caos, nessun simulacro)
+    - **Laboratorio**: offer×3, decipher + collect Tria Prima, calcinate+wait×5,
+      set temperature gentle, leave+return bain-marie (3 nodi esterni),
+      place in planetary circles×7 (ordine Opus Magnum), blow → The Catalyst
+  - Helper: `_isSimulacrum()`, `_normalizeInput()`, `_wordCountExcludingVerb()`
+  - Costante `_maxPsychoValue = 100`; notebook inizializzato in inventario (GDD §7)
+  - `_helpText` aggiornato con tutti i comandi
+
+**Key decisions:**
+- Nodi narrativi = enigmi di progressione: ogni nodo blocca l'uscita nord/avanti
+  finché il puzzle non è risolto (gating via `_exitGates`)
+- Ordine foglie Cipresso: prudence → friendship → pleasure → simplicity →
+  absence → tranquillity → memory (progressione epicurea dal mezzo al fine)
+- Stele: accetta qualsiasi input contenente la parola "friendship" (con word-boundary)
+  solo se peso psicologico = 0 (GDD §6)
+- Specchio galleria: peso>0 → frantumazione caotica senza simulacro (GDD §8)
+- bain-marie: tracking automatico visite esterne in `processInput`
+
+**Files modified:**
+- `lib/features/parser/parser_state.dart`
+- `lib/features/game/game_engine_provider.dart`
+
+**Next suggested step:**
+- Popolare i bundle JSON (`assets/texts/*.json`) con il testo narrativo definitivo (GDD §18)
+- Implementare i settori mancanti Est, Sud, Ovest (già presenti come nodi, manca il testo finale)
+- Quinto Settore + Boss finale (GDD §11–12)
+
+---
+
 ### 2026-04-02 — GitHub Copilot (Claude Code Integration)
 **Role:** Documentation & tooling — Claude Code session instructions
 **Done:**
