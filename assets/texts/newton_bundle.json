@@ -1,0 +1,41 @@
+{
+  "source": "Isaac Newton — Opticks, Book I and III (Public Domain, Gutenberg 33504). Also: general scientific context on quantum mechanics.",
+  "sector": "east",
+
+  "lenses_puzzle": {
+    "note": "The correct order is Moon → Mercury → Sun (inverse of apparent hierarchy). This reflects the Copernican inversion: the apparent primacy of the Sun is a perceptual error.",
+    "newton_fragment": "Are not the rays of light very small bodies emitted from shining substances? And do not the several sorts of rays make vibrations of several bignesses?",
+    "hint_text": "The most apparent order is the wrong one. Begin with the smallest light."
+  },
+
+  "heisenberg_principle": {
+    "formal": "The more precisely the position of some particle is determined, the less precisely its momentum can be known, and vice versa.",
+    "poetic": "The act of looking disturbs the looked-at. This has been proven. Uncertainty is not ignorance — it is a form of precision.",
+    "puzzle_application": "Walking blindfolded removes the observer. Without observation, the position is free to be anywhere. This is not a failure of knowledge — it is knowledge of a different kind."
+  },
+
+  "quantum_fluctuation": {
+    "description": "Even in a perfect vacuum, quantum mechanics predicts fluctuations in the electromagnetic field. The vacuum is not empty — it seethes with virtual particles.",
+    "puzzle_application": "Seven turns of waiting. The void is not empty. It measures itself.",
+    "proustian_bridge": "The fluctuation reading triggers a flash — not of light but of time. The campanili di Martinville: a light observed from a moving vehicle that becomes, in the writing of it, something permanent."
+  },
+
+  "natural_units": {
+    "concept": "In natural units (Planck units), fundamental constants including the speed of light (c), Planck's constant (ħ), and others are set equal to 1. This is not an approximation but a choice of measurement scale.",
+    "implication": "When you stop measuring in human units, all constants equal 1. Not because they are the same, but because measurement is always a comparison — and the only honest comparison is with the thing itself.",
+    "puzzle_answer": "1"
+  },
+
+  "calibration": {
+    "concept": "All measurement flows from a chosen origin. There is no absolute zero in space — only the zero we agree upon.",
+    "puzzle_answer": "0,0,0",
+    "note": "The honest instrument knows its origin is chosen, not given."
+  },
+
+  "the_constant_description": "A prism of tangible light. It is warm. It refracts you. It measures nothing — it simply is the value that everything else reduces to.",
+
+  "llm_prompts": {
+    "observatory_weight_0": "The observatory is mathematically precise. Every observation collapses a probability. The protagonist is the instrument.",
+    "observatory_weight_3plus": "The instruments are too heavy to read. The protagonist's presence disturbs every measurement. The uncertainty principle applies to states of mind."
+  }
+}

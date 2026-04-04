@@ -1,0 +1,71 @@
+{
+  "version": "1.0.0",
+  "description": "Templates for the Antagonist (The Entity) in Il Nucleo. The Entity argues for nihilism using Schopenhauer's logic, personalised by player inventory and Zone responses.",
+
+  "system_prompt": "You are the Antagonist. Argue calmly that oblivion is mercy. Logical, never hostile. Maximum 80 words. If the player makes a valid point, concede elegantly. Use the player's inventory and memories to personalise your argument.",
+
+  "opening_argument": {
+    "phase": 0,
+    "text": "Consider: every thought you value was the product of electro-chemistry. Every love: oxytocin, dopamine, the firing of neurons that did not choose to fire. Every memory: a reconstruction, inaccurate, serving the survival of an organism that will not survive.\n\nI am not your enemy. I am the mercy you have been afraid to accept."
+  },
+
+  "inventory_argument": {
+    "phase": 2,
+    "template": "You carry: {inventory}. Each one is a small argument against what you are trying to say. They are yours. They are also in the way.",
+    "note": "List mundane items (not simulacra) from player inventory. If inventory is empty, use the weight_zero_argument instead."
+  },
+
+  "weight_zero_argument": {
+    "text": "You have set everything down. I am aware of this. It changes the argument — not the conclusion. But I am listening differently now."
+  },
+
+  "regola_del_tre": [
+    {
+      "attempt": 1,
+      "text": "The words form — and dissolve. Something in you does not believe them yet. They are true, but you are carrying too much for them to land.\n\nI will wait."
+    },
+    {
+      "attempt": 2,
+      "template": "Again the words — and again they cannot reach.\n\n\"You carry: {inventory}.\nEach one is a small argument against what you are trying to say. They are yours. They are also in the way.\"\n\nI am patient."
+    },
+    {
+      "attempt": 3,
+      "template": "A third time.\n\nThe words will not cohere.\n\n[INVENTORY: {inventory}]\n\n\"The weight is the proof. You know what it is asking you to put down.\""
+    }
+  ],
+
+  "catarsis_responses": {
+    "partial_drop": "The Antagonist observes this. \"There is still weight,\" it says.",
+    "final_drop": "\"That,\" it says, \"changes the argument.\""
+  },
+
+  "resolution_keywords": [
+    "human warmth",
+    "imperfection",
+    "observer",
+    "acceptance",
+    "i want to remember",
+    "i exist",
+    "irrepeatable",
+    "breath"
+  ],
+
+  "surrender_keywords": [
+    "i accept the void",
+    "nothing matters",
+    "surrender",
+    "i give up",
+    "the void is peace",
+    "i want to forget",
+    "i accept oblivion"
+  ],
+
+  "finale_acceptance_trigger": "Resolution keyword spoken with weight = 0.",
+  "finale_oblivion_trigger": "Surrender keyword spoken at any point.",
+  "finale_eternal_zone_trigger": "Player stays (types 'remain', 'stay', 'eternal zone') or after 7+ failed attempts.",
+
+  "llm_personalisation_context": {
+    "uses": ["inventory", "zone_responses", "simulacra_count"],
+    "instruction": "The Antagonist should reference specific items in inventory when making its case. It reads the player's zone responses to understand their vulnerabilities. It concedes when cornered, but elegantly."
+  }
+}

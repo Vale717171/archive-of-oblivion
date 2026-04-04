@@ -98,6 +98,10 @@ class EngineResponse {
   /// Counter key to increment in [GameEngineState.puzzleCounters].
   final String? incrementCounter;
 
+  /// When set, the player's input is saved to the `player_memories` table
+  /// under this key (e.g. 'memory_childhood', 'zone_1').
+  final String? playerMemoryKey;
+
   const EngineResponse({
     required this.narrativeText,
     this.needsLlm = false,
@@ -110,6 +114,7 @@ class EngineResponse {
     this.grantItem,
     this.completePuzzle,
     this.incrementCounter,
+    this.playerMemoryKey,
   });
 }
 

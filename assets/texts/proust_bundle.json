@@ -1,0 +1,54 @@
+{
+  "source": "Marcel Proust — Du côté de chez Swann (Public Domain, Gutenberg 7178). English translation Scott Moncrieff.",
+  "sector": "fifth",
+
+  "involuntary_memory_triggers": [
+    {
+      "id": "linden_scent",
+      "sector": "north",
+      "trigger": "smell",
+      "object": "linden flowers",
+      "citation_original": "l'odeur et la saveur restent encore longtemps, comme des âmes, à se rappeler, à attendre, à espérer, sur la ruine de tout le reste",
+      "citation_english": "the smell and taste of things remain poised a long time, like souls, ready to remind us, waiting and hoping for their moment",
+      "llm_instruction": "A scent triggers an involuntary memory. Describe the threshold between two times: the Archive's present and a specific sensory past. Precise. Brief. End with one question."
+    },
+    {
+      "id": "church_steeples",
+      "sector": "east",
+      "trigger": "automatic — after seventh silence",
+      "citation_english": "A light — brief, inexplicable — crosses the darkness from no direction. I am briefly not here. A road between two church steeples at dusk, a light that moved and became something else.",
+      "llm_instruction": "A flash of involuntary light crosses the void. The player is briefly displaced. Reference the campanili di Martinville passage: light observed from a moving vehicle, turning into something that must be written down."
+    },
+    {
+      "id": "anticipated_reflection",
+      "sector": "south",
+      "trigger": "observe reflection (second visit)",
+      "citation_original": "Plus fragiles mais plus vivaces, plus immatérielles, plus persistantes, plus fidèles",
+      "citation_english": "More fragile, but more living, more unsubstantial, more persistent, more faithful",
+      "llm_instruction": "The protagonist sees themselves in a mirror for a second time. The reflection is different — not incorrect, but more honest. Describe the gap between what was seen the first time and what is seen now."
+    },
+    {
+      "id": "crystal_taste",
+      "sector": "west",
+      "trigger": "taste crystal",
+      "citation_original": "cette petite madeleine... il m'avait semblé que la vie méritait d'être vécue",
+      "citation_english": "that little cake... at once the vicissitudes of life had become indifferent to me, its disasters innocuous, its brevity illusory",
+      "llm_instruction": "A taste of the calcinated residue triggers the madeleine memory. Do not reference Proust by name. Describe the exact sensation: something burnt and sweet, a displacement in time, a morning that was in fact everything."
+    }
+  ],
+
+  "ritual_infusion": {
+    "description": "The cup holds the essence of four sectors: philosophy, science, art, spirituality. When all four simulacra are placed and the cup is stirred, the LLM generates a personalised aroma — the sum of the four Proustian responses the player has given during the game.",
+    "llm_instruction": "Generate a synesthetic description of a unique aroma. It should combine: {linden_response}, {steeple_response}, {reflection_response}, {crystal_response}. Maximum 40 words. Entirely sensory. No abstraction.",
+    "fallback": "A taste impossible to name — all four at once and separately. The sum of what you have noticed and what you have remembered."
+  },
+
+  "proust_quote_entry": "\"The real life, the life finally discovered and illuminated, the only life therefore really lived, is literature.\"",
+
+  "memory_room_prompts": {
+    "childhood": "Write the first word you truly learned — not the first word you were taught, but the first one you understood.",
+    "youth": "Write a promise you did not keep — not in accusation, but in acknowledgement.",
+    "maturity": "Answer the telephone. Say what you have never said to the person on the other end.",
+    "old_age": "Write what you wish to be remembered as. Not an achievement. A quality."
+  }
+}

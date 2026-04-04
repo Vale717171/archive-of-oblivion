@@ -1,0 +1,42 @@
+{
+  "source": "Luca Pacioli — De Divina Proportione (Public Domain, Gutenberg 25326); Leonardo da Vinci — Notebooks (Public Domain, Gutenberg 5000); general art theory.",
+  "sector": "south",
+
+  "golden_ratio": {
+    "definition": "The golden ratio φ ≈ 1.618... Cannot be expressed as a ratio of integers. Cannot be precisely written. It can only be approached, asymptotically, through successive approximations.",
+    "pacioli_fragment": "Without mathematics there is no art. The divine proportion is the mirror in which all beauty studies itself.",
+    "puzzle_application": "The pentagon is constructed with compass and straightedge — the ancient Euclidean method. Its diagonals divide each other in the golden ratio."
+  },
+
+  "pentagon_construction": {
+    "steps": [
+      "Draw a circle",
+      "Mark any point on the circumference — this is vertex 1",
+      "Use compass to step the radius around the circle five times",
+      "Connect the five points: a regular pentagon"
+    ],
+    "note": "The construction is inevitable. Once begun with correct tools, it cannot fail."
+  },
+
+  "copy_vs_original": {
+    "problem": "A perfect reproduction is not the original. The original contains the irreproducible: the specific moment of its making, the imperfections that are signatures.",
+    "tarkovskij_note": "Andrei Tarkovsky (the director) walks ahead in the gallery — always at the same distance, always facing away. He represents the impossible original: the artistic vision that can be approached but never owned.",
+    "the_proportion_description": "A golden compass with no hinge. It can measure anything but cannot be closed. The proportion is always open."
+  },
+
+  "mirror_mechanics": {
+    "clean_break": "If psychological weight = 0: the mirror shatters into a perfect pentagon. A golden compass with no hinge emerges from the fragments.",
+    "chaotic_break": "If psychological weight > 0: each fragment reflects a different version of the protagonist carrying something they should have left behind. No simulacrum appears.",
+    "implication": "The gallery sector cannot be completed by someone who has accumulated weight. The proportion requires empty hands."
+  },
+
+  "backward_walking": {
+    "puzzle_note": "The door exists only in the reflection. To pass through a door that exists only in the mirror, one must walk backward — facing the mirror while moving away from it.",
+    "philosophical_note": "To see clearly, sometimes one must stop facing forward."
+  },
+
+  "llm_prompts": {
+    "gallery_weight_0": "The gallery is precise. Every reflection is accurate. The protagonist can see clearly.",
+    "gallery_weight_3plus": "The mirrors are distorted by weight. Every reflection adds another layer of what was taken."
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "source": "Arseny Alexandrovich Tarkovsky (1907–1989) — selected poems. Public domain status varies by jurisdiction; these are paraphrases in the spirit of the work, not direct translations.",
+  "note": "Do not reproduce verbatim copyrighted translations. Use these as thematic inspiration for the game's poetic voice.",
+
+  "zone_verses": [
+    {
+      "id": "verse_01",
+      "text": "I was ill, or perhaps merely alive,\nand you came from a time that did not yet exist.",
+      "theme": "displacement"
+    },
+    {
+      "id": "verse_02",
+      "text": "What has been will be again.\nI shall arrange it differently next time.",
+      "theme": "recurrence"
+    },
+    {
+      "id": "verse_03",
+      "text": "Life is not so short,\nand not so long — it is exactly as long as it needs to be.",
+      "theme": "duration"
+    },
+    {
+      "id": "verse_04",
+      "text": "The soul has no shoulders\nand cannot carry what the body carried.",
+      "theme": "release"
+    },
+    {
+      "id": "verse_05",
+      "text": "From beyond the mirror, a world\nthat has always been waiting.",
+      "theme": "threshold"
+    },
+    {
+      "id": "verse_06",
+      "text": "All that glitters is not gold,\nbut all that disappears was real.",
+      "theme": "loss"
+    },
+    {
+      "id": "verse_07",
+      "text": "I dreamed the world was a staircase\nand I was neither ascending nor descending.",
+      "theme": "suspension"
+    },
+    {
+      "id": "verse_08",
+      "text": "Nothing can be taken away\nthat was not, once, truly given.",
+      "theme": "permanence"
+    }
+  ],
+
+  "finale_oblivion_verse": "Lived. Died. No one will remember.",
+
+  "stele_fragment": {
+    "text": "And time flows — without hands, without a face, in both directions at once.",
+    "location": "garden_stelae — visible when player has completed the stele puzzle"
+  },
+
+  "zone_environment_fragments": [
+    "A corridor that is also a room. The walls meet at angles that should not exist.",
+    "The floor continues past where the floor should end. Below: the same floor, continuing.",
+    "Three shadows — yours, and two others whose sources cannot be located.",
+    "A staircase descending to the level you are standing on.",
+    "The ceiling is very close. Then it is very far. The distance does not change.",
+    "A window onto a room exactly like this one, except in that room there is no window.",
+    "Sound arrives before the movement that caused it.",
+    "The walls are made of the same light as what falls through windows you cannot find."
+  ]
+}
