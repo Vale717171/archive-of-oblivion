@@ -4,6 +4,23 @@
 
 ---
 
+### 2026-04-05 — GitHub Copilot (CLAUDE.md rewrite — full AI agent briefing)
+**Role:** Documentation update — CLAUDE.md made into a complete, self-contained briefing for any AI agent
+
+**Done:**
+
+- **`CLAUDE.md` fully rewritten** as single source of truth for any AI agent joining cold:
+  - Added per-file architecture section (all 13 source files documented with roles and key details)
+  - Added "The Demiurge system" section: how it works, `respond()` API, sector mapping, JSON schema with example
+  - Added "Current bundle status" table: 12 entries per sector, target 200+
+  - Added "Known bugs" section: simulacra fix documented (✅ FIXED), bundle under-population flagged (⚠️ OPEN)
+  - Updated priority order: item 8 now clearly marks "populate bundles to ≥200" as the next task
+  - Stack/conventions and Rules sections preserved and expanded
+
+**No code changes — documentation only.**
+
+---
+
 ### 2026-04-05 — GitHub Copilot (DemiurgeService integration — wiring into game engine)
 **Role:** DemiurgeService wired into `game_engine_provider.dart`, replacing `_callLlm()`
 
