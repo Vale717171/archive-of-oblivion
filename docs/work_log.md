@@ -4,6 +4,39 @@
 
 ---
 
+### 2026-04-05 — GitHub Copilot (DemiurgeService integration — wiring into game engine)
+**Role:** DemiurgeService wired into `game_engine_provider.dart`, replacing `_callLlm()`
+
+**Done:**
+
+- **`lib/features/game/game_engine_provider.dart`**:
+  - Removed `llm_context_service.dart` and `llm_service.dart` imports (legacy LLM, no longer used)
+  - Added `demiurge_service.dart` import
+  - Replaced `_callLlm(String fallbackText)` (async, required `LlmService`) with `_callDemiurge(String fallbackText, String nodeId)` (sync, uses `DemiurgeService.sectorForNode()` + `DemiurgeService.instance.respond()`)
+  - Call site at `processInput` updated: `await _callLlm(...)` → `_callDemiurge(..., currentNodeId)` (no longer async)
+  - History save label updated: `'llm'` → `'demiurge'`
+  - Header comment updated: LLM reference → Demiurge reference
+- **`lib/main.dart`**:
+  - Added `DemiurgeService.instance.loadAll()` pre-load at startup (inside try-catch; bundle failure is non-fatal)
+- **`CLAUDE.md`**: priority #7 marked as ✅ DONE
+
+**Architecture after this session:**
+```
+Input giocatore
+      ↓
+ParserService.parse()                [pure, sync]
+      ↓
+GameEngineNotifier._evaluate()       [Riverpod AsyncNotifier]
+      ↓
+_callDemiurge(fallback, nodeId)      [sync; no LLM, no network]
+  → DemiurgeService.sectorForNode()  [node → sector key]
+  → DemiurgeService.respond()        [pick from bundle, anti-repetition]
+      ↓
+GameScreen (typewriter display)
+```
+
+---
+
 ### 2026-04-05 — GitHub Copilot (Demiurge Architecture — replacing LLM)
 **Role:** Architectural change — replacing on-device LLM with deterministic DemiurgeService
 

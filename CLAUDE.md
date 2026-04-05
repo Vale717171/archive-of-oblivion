@@ -73,7 +73,7 @@ tools/
 4. ~~La Zona procedural engine (LLM-driven, uses stub until step 6)~~ ✅ **DONE** — probabilistic activation, 8 verses, 8 environments, 8 questions.
 5. ~~Fifth Sector (Memory/Proust) + Final Boss~~ ✅ **DONE** — 6 Quinto nodes + 4 Finale nodes, three endings.
 6. ~~LLM integration~~ **SUPERSEDED** — replaced by **DemiurgeService** ("All That Is"). See architectural decision in `docs/work_log.md`.
-7. **DemiurgeService integration** — wire `DemiurgeService.respond()` into `game_engine_provider.dart`, replacing `_callLlm()`. Populate `assets/texts/demiurge/` with ≥200 curated citations per sector using `tools/prepare_demiurge_bundles.py`.
+7. ~~DemiurgeService integration~~ ✅ **DONE** — `_callLlm()` replaced by `_callDemiurge()` in `game_engine_provider.dart`; `DemiurgeService.loadAll()` called at startup in `main.dart`. Bundle target: ≥200 citations per sector via `tools/prepare_demiurge_bundles.py`.
 
 ---
 
