@@ -13,7 +13,7 @@ class DialogueHistoryService {
   final _db = DatabaseService.instance;
 
   /// Save a single exchange to the history.
-  /// [role] must be one of: 'user' | 'llm' | 'system'
+  /// [role] must be one of: 'user' | 'llm' | 'demiurge' | 'system'
   Future<void> save({required String role, required String content}) async {
     final db = await _db.database;
     await db.insert('dialogue_history', {

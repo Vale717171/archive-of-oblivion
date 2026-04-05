@@ -4,6 +4,34 @@
 
 ---
 
+### 2026-04-05 — GitHub Copilot (Repository code review — logic/persistence/audio fixes)
+**Role:** Full-repository review + targeted bug fixes across Demiurge, La Zona, persistence, and finale flow
+
+**Done:**
+
+- **`lib/features/game/game_engine_provider.dart`**
+  - Fixed Demiurge sector selection to use `response.newNode ?? currentNodeId`, so narrated room-entry text now pulls citations from the destination sector instead of the source node
+  - Routed the global unknown-command fallback through the Demiurge (`needsLlm: true`) instead of returning a flat hardcoded line
+  - Blocked `go back` from `la_zona` until the current Zone prompt has actually been answered
+  - Preserved full raw text for `player_memories` saves on unknown/free-text commands, fixing truncated Zona responses
+  - Added `playerMemoryKey: 'memory_maturity'` to the telephone-answer path in the Fifth Sector
+  - Reset `consecutive_transits` when La Zona activates, preventing post-Zone probability carry-over
+  - Corrected finale audio triggers: Acceptance now requests `aria_goldberg`, Oblivion now requests `silence`
+- **`lib/core/storage/database_service.dart`**
+  - Bumped DB schema to v3 and updated `dialogue_history.role` to allow `demiurge`
+  - Added a migration that rebuilds `dialogue_history`, preserves prior rows, and rewrites legacy `llm` rows to `demiurge`
+- **`lib/core/storage/dialogue_history_service.dart`**
+  - Updated role documentation to match the live schema and engine usage
+- **`lib/features/audio/audio_service.dart`**
+  - Made ambience switching more resilient when `assets/audio/` is empty by only committing `_currentAmbienceKey` after a successful load
+  - Removed the force-unwrapped Oblivion fallback asset lookup in the silence-ending handler
+- **`lib/features/state/game_state_provider.dart`**
+  - Added a defensive fallback to `intro_void` when a malformed saved `game_state` row cannot be deserialized
+
+**Validation note:** `flutter`/`dart` are not installed in this sandbox, so `flutter analyze` and `flutter test` could not be executed here. I still ran `git diff --check` and static sanity checks over the patched code paths.
+
+---
+
 ### 2026-04-05 — Claude Code (Demiurge bundles — 200 citations per sector)
 **Role:** Content generation — populate all five Demiurge JSON bundles to ≥200 entries each
 

@@ -1218,6 +1218,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       // Zone encounter tracking
       if (response.newNode == 'la_zona') {
         newCounters['zone_encounters'] = (newCounters['zone_encounters'] ?? 0) + 1;
+        newCounters['consecutive_transits'] = 0;
       }
 
       // Consecutive transit tracking (la_soglia ↔ sectors)
@@ -1253,7 +1254,9 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     // ── Player memory (proustian responses + zone responses) ─────────────────
     if (response.playerMemoryKey != null) {
-      final memoryContent = cmd.args.join(' ').trim();
+      final memoryContent = cmd.verb == CommandVerb.unknown
+          ? trimmed
+          : cmd.args.join(' ').trim();
       if (memoryContent.isNotEmpty) {
         await DatabaseService.instance.saveMemory(
           key:     response.playerMemoryKey!,
@@ -1263,8 +1266,9 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     // ── Display ─────────────────────────────────────────────────────────────
+    final demiurgeNodeId = response.newNode ?? currentNodeId;
     final narrativeText = response.needsLlm
-        ? _callDemiurge(response.narrativeText, currentNodeId)
+        ? _callDemiurge(response.narrativeText, demiurgeNodeId)
         : response.narrativeText;
     await _history.save(role: 'demiurge', content: narrativeText);
 
@@ -1454,6 +1458,17 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           narrativeText: 'The fifth recess on the pedestal is dark.\n\n'
               'Four simulacra must be held before the staircase forms.\n\n'
               'You are missing: $missing.',
+        );
+      }
+    }
+
+    if (nodeId == 'la_zona' && direction == 'back') {
+      final encounters = s.puzzleCounters['zone_encounters'] ?? 0;
+      final respondedKey = 'zone_responded_$encounters';
+      if (!s.completedPuzzles.contains(respondedKey)) {
+        return const EngineResponse(
+          narrativeText: 'The Zone does not release you yet.\n\n'
+              'It is still waiting for your answer.',
         );
       }
     }
@@ -2624,6 +2639,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         lucidityDelta:  8,
         completePuzzle: 'memory_maturity',
         audioTrigger:   'calm',
+        playerMemoryKey: 'memory_maturity',
       );
     }
 
@@ -2644,7 +2660,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
-    return const EngineResponse(narrativeText: 'The Archive does not understand.');
+    return const EngineResponse(
+      narrativeText: 'The Archive does not understand.',
+      needsLlm: true,
+    );
   }
 
   // ── New handlers ─────────────────────────────────────────────────────────────
@@ -2823,7 +2842,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             '— Arseny Tarkovsky',
         needsLlm:     false,
         newNode:      'finale_oblivion',
-        audioTrigger: 'oblivion',
+        audioTrigger: 'silence',
         oblivionDelta: 30,
       );
     }
@@ -2861,7 +2880,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           needsLlm:       true,
           newNode:        'finale_acceptance',
           lucidityDelta:  20,
-          audioTrigger:   'calm',
+          audioTrigger:   'aria_goldberg',
           completePuzzle: 'boss_resolved',
         );
       }

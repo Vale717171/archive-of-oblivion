@@ -45,7 +45,11 @@ class GameStateNotifier extends AsyncNotifier<GameState> {
     final maps = await db.query('game_state', where: 'id = 1', limit: 1);
 
     if (maps.isNotEmpty) {
-      return GameState.fromRow(maps.first);
+      try {
+        return GameState.fromRow(maps.first);
+      } catch (_) {
+        return GameState(currentNode: 'intro_void');
+      }
     }
     // Prima esecuzione: nodo iniziale
     return GameState(currentNode: 'intro_void');
