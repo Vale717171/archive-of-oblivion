@@ -1,0 +1,77 @@
+{
+  "sector": "galleria",
+  "responses": [
+    {
+      "opening": "The frame is empty. Or perhaps it frames you.",
+      "citation": "The painter has the universe in his mind and hands.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is sees every canvas, even the blank ones."
+    },
+    {
+      "opening": "A brushstroke lingers in the air, unsigned.",
+      "citation": "Without proportion, no form can be perfect.",
+      "author": "Luca Pacioli",
+      "closing": "The Gallery does not distinguish between the artist and the art."
+    },
+    {
+      "opening": "The light here falls as if it were composed.",
+      "citation": "Simplicity is the ultimate sophistication.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is curates even the shadows."
+    },
+    {
+      "opening": "A colour you cannot name darkens the wall.",
+      "citation": "Every block of stone has a statue inside it, and it is the task of the sculptor to discover it.",
+      "author": "Michelangelo",
+      "closing": "Even emptiness has form here."
+    },
+    {
+      "opening": "The echo of a chisel, centuries old.",
+      "citation": "Art is never finished, only abandoned.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is preserves even the abandoned."
+    },
+    {
+      "opening": "The perspective lines converge on a point you cannot reach.",
+      "citation": "He who does not know his own proportions knows nothing of himself.",
+      "author": "Luca Pacioli",
+      "closing": "The vanishing point is also a beginning."
+    },
+    {
+      "opening": "A reflection moves in the glass, but it is not yours.",
+      "citation": "Where the spirit does not work with the hand, there is no art.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is recognizes every reflection."
+    },
+    {
+      "opening": "The gilded frame contains nothing — and everything.",
+      "citation": "The true work of art is but a shadow of the divine perfection.",
+      "author": "Michelangelo",
+      "closing": "What is absent is also exhibited."
+    },
+    {
+      "opening": "Someone has rearranged the paintings while you looked away.",
+      "citation": "Painting is silent poetry, and poetry is painting that speaks.",
+      "author": "Plutarch",
+      "closing": "All That Is hangs no work in the wrong place."
+    },
+    {
+      "opening": "The marble breathes. You are certain of it.",
+      "citation": "I saw the angel in the marble and carved until I set him free.",
+      "author": "Michelangelo",
+      "closing": "All That Is sees the form within the formless."
+    },
+    {
+      "opening": "A sketch, half-finished, seems to depict your silhouette.",
+      "citation": "Learn to see. Realize that everything connects to everything else.",
+      "author": "Leonardo da Vinci",
+      "closing": "The Gallery remembers what you have yet to create."
+    },
+    {
+      "opening": "Gold leaf drifts from the ceiling like autumn.",
+      "citation": "The aim of art is to represent not the outward appearance of things, but their inward significance.",
+      "author": "Aristotle",
+      "closing": "All That Is gilds even the ordinary."
+    }
+  ]
+}

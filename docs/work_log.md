@@ -4,6 +4,71 @@
 
 ---
 
+### 2026-04-05 — GitHub Copilot (Demiurge Architecture — replacing LLM)
+**Role:** Architectural change — replacing on-device LLM with deterministic DemiurgeService
+
+**Done:**
+
+- **Architectural decision: LLM → Demiurge ("All That Is")**
+  - On-device LLM (flutter_llama, Qwen 2.5 0.5B) replaced by a fully deterministic narrator
+  - "All That Is" (Tutto Ciò Che È) — name from Seth/Jane Roberts philosophy — is the voice of the Archive
+  - Player never knows if they made a mistake or discovered something; error is part of the existential journey
+- **`CLAUDE.md` updated:**
+  - Stack description: `on-device LLM 0.5B` → `DemiurgeService (deterministic, offline)`
+  - Conventions table: LLM rows → Demiurge rows
+  - File structure: added `demiurge/demiurge_service.dart`, marked `llm/` as legacy
+  - Priority order: removed LLM validation, added DemiurgeService integration as next priority
+  - Rules: updated LLM reference to Demiurge
+- **`docs/gdd.md` updated:**
+  - §1 NOTA CRITICA: rewritten for Demiurge philosophy
+  - §5: entire section replaced — "RUOLO DELL'LLM" → "IL DEMIURGO — ALL THAT IS"
+  - §16: Stack, budget, interaction flow, file structure all updated
+  - §17: "STRATEGIA VALIDAZIONE LLM" → "ARCHITETTURA DEMIURGO" with implementation details
+  - §18: assets structure updated with `demiurge/` subdirectory
+  - §20: LLM prompt templates marked as legacy
+  - §21: Roadmap updated (versions 1–3 completed, version 4 = DemiurgoService)
+  - §22: Priorities updated for Demiurge integration
+- **`lib/features/demiurge/demiurge_service.dart` created:**
+  - Singleton service with `respond(sector, fallbackText)` API
+  - Loads JSON bundles from `assets/texts/demiurge/`
+  - Anti-repetition ring buffer (last 20 per sector)
+  - `sectorForNode()` maps game node IDs to sector keys
+  - Riverpod provider (`demiurgeServiceProvider`)
+- **`assets/texts/demiurge/` created with 5 sector bundles:**
+  - `giardino.json` — 12 entries (Epicurus, Marcus Aurelius, Seneca, Plato, Aristotle, Epictetus, Socrates)
+  - `osservatorio.json` — 12 entries (Newton, Galileo, Planck, Einstein, Plato)
+  - `galleria.json` — 12 entries (Leonardo, Michelangelo, Pacioli, Plutarch, Aristotle)
+  - `laboratorio.json` — 12 entries (Hermes Trismegistus, Paracelsus, Aristotle, Basilius Valentinus, The Emerald Tablet)
+  - `universale.json` — 12 entries (Lao Tzu, Rumi, Heraclitus, Thoreau, Blake, Socrates)
+  - All citations from public domain sources
+- **`tools/prepare_demiurge_bundles.py` created:**
+  - Fetches citations from Wikiquote API and Project Gutenberg
+  - Filters by author/sector, deduplicates, pairs with opening/closing lines
+  - Exports JSON bundles with ≥200 citations per sector target
+  - CLI: `python tools/prepare_demiurge_bundles.py [--output-dir] [--target]`
+- **`pubspec.yaml` updated:** added `assets/texts/demiurge/` to asset registration
+
+**Architecture:**
+```
+Input giocatore
+      ↓
+ParserService.parse() [puro, sincrono]
+      ↓
+GameEngineNotifier._evaluate() [Riverpod AsyncNotifier]
+      ↓
+DemiurgeService.respond() [deterministico, offline]
+      ↓
+GameScreen [typewriter + palette PsychoProfile]
+```
+
+**Next steps:**
+1. Wire `DemiurgeService.respond()` into `game_engine_provider.dart` (replace `_callLlm()`)
+2. Run `tools/prepare_demiurge_bundles.py` to populate ≥200 citations per sector
+3. Remove `flutter_llama` from `pubspec.yaml`
+4. Test on physical device
+
+---
+
 ### 2026-04-04 — GitHub Copilot (Fase 0-omega — LLM integration, Tentativo 1)
 **Role:** LLM integration — flutter_llama + Qwen 2.5 0.5B Q4_K_M
 

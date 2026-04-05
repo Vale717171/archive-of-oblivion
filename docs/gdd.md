@@ -1,7 +1,7 @@
 # L'Archivio dell'Oblio — Game Design Document
 *Ultimo aggiornamento: aprile 2026*
 
-> **Collaborazione multi-LLM attiva.**
+> **Collaborazione multi-agente attiva.**
 > Ogni sessione di lavoro viene registrata in [`docs/work_log.md`](docs/work_log.md).
 > Prima di lavorare: leggi questo documento + il work log. Alla fine: aggiungi la tua voce al log.
 
@@ -12,12 +12,12 @@
 **Titolo di lavoro:** L'Archivio dell'Oblio (alt: L'Archivio dei Concetti Perduti)
 **Genere:** Avventura Testuale / Interactive Fiction Psico-Filosofica
 **Piattaforma:** Android
-**Lingua del gioco:** Inglese (tutti i testi narrativi, dialoghi, descrizioni, prompt LLM — traduzione dall'italiano richiede cura per preservare il tono etereo)
-**Motore:** Ibrido — Parser logico tradizionale + LLM 0.5B in locale
+**Lingua del gioco:** Inglese (tutti i testi narrativi, dialoghi, descrizioni — traduzione dall'italiano richiede cura per preservare il tono etereo)
+**Motore:** Ibrido — Parser logico tradizionale + DemiurgeService deterministico (offline)
 **Tematica centrale:** La lotta tra la preservazione della memoria (che porta dolore ma identità) e l'oblio totale (che porta pace ma annullamento)
 **Presentazione:** Solo testo e musica — niente immagini. Coraggioso, coerente con l'estetica anni '80, più leggero da sviluppare.
 
-**NOTA CRITICA:** L'LLM non è opzionale. Senza di esso il gioco perde la Zona procedurale, i trigger proustiani, il boss finale personalizzato, l'aroma dell'infuso. Diventa un parser anni '80 con audio. Tutta la sua essenza dipende dall'LLM.
+**NOTA CRITICA:** Il Demiurgo ("All That Is" / "Tutto Ciò Che È") è la voce dell'Archivio stesso — nome preso dalla filosofia di Seth (Jane Roberts). Non è un LLM: è un sistema deterministico che risponde ai comandi non riconosciuti con frasi enigmatiche, citazioni culturali di pubblico dominio e chiusure ambigue. Il giocatore non sa mai se ha sbagliato o scoperto qualcosa. L'errore è parte del viaggio esistenziale.
 
 ---
 
@@ -53,18 +53,57 @@ Il tono varia dinamicamente in base al Peso Psicologico del giocatore.
 
 ---
 
-## 5. RUOLO DELL'LLM
+## 5. IL DEMIURGO — "ALL THAT IS" (TUTTO CIÒ CHE È)
 
-Il modello 0.5B on-device **non gestisce la logica degli enigmi** ma agisce come **interprete emotivo e narrativo**. Tramite System Prompt nascosti, attinge ai bundle JSON per generare:
+Il narratore del gioco è **"All That Is"** — il nome dato a Dio da Seth nella filosofia di Jane Roberts. È la voce dell'Archivio stesso: non giudica, non corregge — *testimonia*.
 
-- Descrizioni ambientali dinamiche (colorate dal Peso Psicologico)
-- Monologhi interiori e risposte contestuali
-- La Zona (ambiente procedurale + domande introspettive)
-- Trigger proustiani trasversali
-- Dialogo adattivo dell'Antagonista finale
-- Aroma personalizzato dell'infuso (Quinto Settore)
+### Come funziona
 
-L'LLM riceve solo lo snapshot della scena attuale — non ricorda la storia. Ci pensa il parser.
+Quando il giocatore digita un comando non riconosciuto o commette un errore, "All That Is" risponde con:
+
+1. **Una breve frase enigmatica** (~200 variazioni, scritte a mano, in JSON)
+2. **Una citazione culturale** da un bundle JSON curato (fonti Gutenberg/Wikiquote, solo pubblico dominio)
+3. **Una chiusura ambigua** che non rivela mai se il comando era sbagliato o giusto
+
+### Filosofia di design
+
+Il giocatore non sa mai se ha sbagliato o scoperto qualcosa. L'errore è parte del viaggio esistenziale. "All That Is" non giudica, non corregge — *testimonia*. Ogni comando errato è comunque un atto di coscienza.
+
+### Implementazione tecnica
+
+- **Nessun LLM necessario** — completamente deterministico e offline
+- Risposte in `assets/texts/demiurge/` come bundle JSON per settore
+- Citazioni organizzate per settore (giardino, osservatorio, galleria, laboratorio) + pool universale
+- Sistema anti-ripetizione: non ripete mai le ultime 20 citazioni mostrate
+- `DemiurgeService` in `lib/features/demiurge/demiurge_service.dart`
+
+### Struttura JSON
+
+```json
+{
+  "sector": "giardino",
+  "responses": [
+    {
+      "opening": "Even this was necessary.",
+      "citation": "Nature does nothing in vain.",
+      "author": "Aristotle",
+      "closing": "All That Is knows this path too."
+    }
+  ]
+}
+```
+
+### Fonti citazioni (pubblico dominio)
+
+| Settore | Autori |
+|---|---|
+| Giardino | Epicuro, Marco Aurelio, Seneca, Platone, Aristotele |
+| Osservatorio | Newton, Galileo, Planck, Einstein |
+| Galleria | Pacioli, Leonardo, Vasari, Michelangelo |
+| Laboratorio | Ermete Trismegisto, Paracelso, testi alchemici |
+| Universale | Lao Tzu, Rumi, Eraclito, Thoreau, Blake |
+
+**Seth Material:** NON bundlare — in copyright. Solo il tono e il nome "All That Is".
 
 ---
 
@@ -77,7 +116,7 @@ Variabile intera nascosta (`psychological_weight = 0`). Sovverte la regola d'oro
 - Simulacri (Ataraxia, Constant, Proportion, Catalyst): +0
 
 **Soglie:**
-| Livello | Valore | Effetto LLM |
+| Livello | Valore | Effetto narrativo |
 |---|---|---|
 | Light | 0 | Prosa lucida, ariosa, minimale |
 | Burdened | 1–2 | Frasi tortuose, senso di affaticamento |
@@ -260,7 +299,7 @@ Le risposte del giocatore vengono salvate e usate per generare l'aroma personali
 | Dopo il terzo Simulacro | 50% | fisso |
 | Pre-Quinto Settore | 75% | inevitabile prima volta |
 
-**Dinamica:** L'LLM prende il controllo. Una domanda profonda basata sull'ultima azione. Risposta evasiva → loop d'angoscia. Risposta introspettiva → sentenza criptica, ritorno alla Soglia.
+**Dinamica:** Il Demiurgo prende il controllo. Una domanda profonda basata sull'ultima azione. Risposta evasiva → loop d'angoscia. Risposta introspettiva → sentenza criptica, ritorno alla Soglia.
 
 **Nota tecnica:** Set predefinito di domande in `zona_templates.json`. Le risposte vengono salvate in `zone_responses` e influenzano il boss finale.
 
@@ -289,7 +328,7 @@ place Ataraxia in cup    → acqua limpida
 place Constant in cup    → acqua si illumina
 place Proportion in cup  → spirale aurea
 place Catalyst in cup    → oro antico
-stir                     → aroma unico (LLM combina i 4 trigger sensoriali)
+stir                     → aroma unico (il gioco combina i 4 trigger sensoriali)
 drink                    → TRANSIZIONE AL NUCLEO
 ```
 
@@ -396,19 +435,19 @@ Solo testo e musica. Bach è l'architettura sonora dell'Archivio — non accompa
 
 - **Flutter** — UI, logica di gioco, SQLite, navigazione
 - **just_audio + audio_session** — crossfade, effetti dinamici
-- **LLM on-device 0.5B** — offline (soluzione da validare, vedi sezione 17)
+- **DemiurgeService** — narratore deterministico "All That Is" (offline, JSON-based)
 - **sqflite** — stato, ricordi, risposte Zona
 - **Riverpod** — state management
 
 ### Budget Dimensioni
 
 ```
-LLM (Qwen 0.5B Q4):        ~500 MB  (o ~2.5 GB se MediaPipe+Gemma)
+Demiurge JSON bundles:       ~200 KB
 Audio Bach (OGG):           ~28 MB
 Testi JSON bundle:           ~30 KB
 Codice app:                  ~15 MB
 ──────────────────────────────────
-TOTALE:                     ~543 MB
+TOTALE:                     ~43 MB
 ```
 
 ### Flusso interazione
@@ -420,7 +459,7 @@ ParserService.parse()  [lib/features/parser/parser_service.dart]
       ↓
 GameEngineNotifier._evaluate()  [lib/features/game/game_engine_provider.dart]
       ↓
-_llmStub() → [POST Fase 0-omega: LLM on-device via flutter_llama/MediaPipe/FFI]
+DemiurgeService.respond()  [lib/features/demiurge/demiurge_service.dart]
       ↓
 GameScreen (typewriter + palette PsychoProfile)  [lib/features/ui/game_screen.dart]
 ```
@@ -437,10 +476,12 @@ lib/
 └── features/
     ├── audio/
     │   └── audio_service.dart             ← crossfade reattivo a PsychoProfile (Grok)
+    ├── demiurge/
+    │   └── demiurge_service.dart          ← "All That Is" — narratore deterministico
     ├── game/
     │   └── game_engine_provider.dart      ← Riverpod engine + nodi narrativi (Copilot)
     ├── llm/
-    │   └── llm_context_service.dart       ← System Prompt dinamico (Gemini)
+    │   └── llm_context_service.dart       ← [legacy — mantenuto per riferimento]
     ├── parser/
     │   ├── parser_service.dart            ← parser puro stateless (Copilot)
     │   └── parser_state.dart              ← modelli dati (Copilot)
@@ -453,95 +494,48 @@ lib/
 
 ---
 
-## 17. STRATEGIA VALIDAZIONE LLM — FASE 0-OMEGA
+## 17. ARCHITETTURA DEMIURGO — "ALL THAT IS"
 
-**DA ESEGUIRE ALLA FINE, quando il gioco completo è installabile sull'APK.**
+**Decisione architetturale: l'LLM on-device è sostituito dal Demiurgo.**
 
-La validazione avviene direttamente sul gioco reale: si scarica l'APK completo sul device fisico, si sostituisce `_llmStub()` con l'integrazione reale, si verifica che regga. Non ha senso fare test isolati prima — il contesto di RAM, audio e SQLite concorrenti è parte del test stesso.
+Il sistema LLM (flutter_llama, MediaPipe, FFI) è stato rimosso a favore di un narratore completamente deterministico chiamato **"All That Is"** (Tutto Ciò Che È) — il nome dato a Dio da Seth nella filosofia di Jane Roberts.
 
-### Gerarchia di Fallback
+### Motivazione
 
-```
-TENTATIVO 1: flutter_llama (4 ore)
-    ↓ SUCCESSO → Usa questo
-    ↓ FALLIMENTO ↓
+- Nessuna dipendenza da modelli ML pesanti (~350 MB–2.5 GB)
+- Nessun rischio di output non sensato o incoerente
+- APK più leggero (~180 MB contro ~543 MB)
+- Funzionamento identico su ogni dispositivo Android API 26+
+- Filosoficamente coerente: l'errore del giocatore diventa parte della narrazione
 
-TENTATIVO 2: MediaPipe LLM Task (4 ore)
-    ↓ SUCCESSO → Usa questo (app ~2.5 GB, Gemma invece di Qwen)
-    ↓ FALLIMENTO ↓
+### Implementazione
 
-TENTATIVO 3: FFI Custom llama.cpp (8 ore)
-    ↓ SUCCESSO → Usa questo
-    ↓ FALLIMENTO → STOP, riprogetta
-
-TOTALE worst case: 16 ore
-TOTALE best case: 4 ore
-```
-
-### Tentativo 1: flutter_llama
-
-```bash
-flutter create llm_test_1
-cd llm_test_1
-flutter pub add flutter_llama path_provider
-mkdir -p assets/llm
-# Download Qwen 2.5 0.5B Instruct Q4_K_M (~350 MB) da HuggingFace
-flutter run --release  # DEVICE FISICO, non emulatore
+```dart
+// lib/features/demiurge/demiurge_service.dart
+DemiurgeService.instance.respond(
+  sector: DemiurgeService.sectorForNode(currentNodeId),
+  fallbackText: response.narrativeText,
+);
 ```
 
-**Criteri di successo:**
-- Load time < 60 secondi
-- Generation time < 20 secondi (100 token)
-- Output inglese/italiano sensato (non gibberish)
-- 5 generazioni consecutive senza crash
-- RAM < 1.5 GB
-
-### Tentativo 2: MediaPipe LLM Task
-
-```bash
-flutter create llm_test_2
-cd llm_test_2
-flutter pub add mediapipe_text path_provider
-# Download Gemma 2B int8 (~2.5 GB) o Gemma 2 2B compresso (~1.3 GB) da Google
-flutter run --release
-```
-
-**Nota:** Gemma usa prompt format diverso da Qwen (`<start_of_turn>user` invece di `<|user|>`). Tutti i template prompt del gioco vanno adattati.
-
-**Criteri di successo:**
-- Load time < 60 secondi
-- Generation time < 15 secondi (MediaPipe ottimizza meglio l'hardware)
-- Output sensato
-- RAM < 2 GB
-
-### Tentativo 3: FFI Custom llama.cpp
-
-Solo se Tentativo 1 e 2 falliscono. Compila llama.cpp come libreria condivisa per Android ARM64 via NDK, crea binding Dart con dart:ffi.
-
-**Costo:** 8 ore setup + complessità manutenzione elevata. Ma massimo controllo e performance.
-
-### Decision Tree
+### Bundle struttura
 
 ```
-flutter_llama OK?
-  SÌ → Usa flutter_llama, Qwen 0.5B, app ~500 MB
-  NO → MediaPipe OK?
-         SÌ → Usa MediaPipe, Gemma 2B, app ~2.5 GB
-              Adatta tutti i prompt template
-         NO → FFI Custom OK?
-                SÌ → Usa FFI, Qwen 0.5B, app ~500 MB
-                     Aggiungi 8 ore al progetto
-                NO → STOP
-                     Opzioni: desktop app / server-based / riprogetta
+assets/texts/demiurge/
+├── giardino.json       ← Epicuro, Marco Aurelio, Seneca, Platone, Aristotele
+├── osservatorio.json   ← Newton, Galileo, Planck, Einstein
+├── galleria.json       ← Pacioli, Leonardo, Vasari, Michelangelo
+├── laboratorio.json    ← Ermete Trismegisto, Paracelso, testi alchemici
+└── universale.json     ← Lao Tzu, Rumi, Eraclito, Thoreau, Blake
 ```
 
-### Tabella Comparativa
+### Popolamento citazioni
 
-| Soluzione | Setup | Complessità | Dimensione | Performance | Affidabilità |
-|---|---|---|---|---|---|
-| flutter_llama | 4h | Bassa | ~500 MB | Media | Da testare |
-| MediaPipe | 4h | Media | ~2.5 GB | Alta | Google ufficiale |
-| FFI Custom | 8h | Alta | ~500 MB | Molto alta | Massima |
+Script Python `tools/prepare_demiurge_bundles.py` — interroga Wikiquote API e Project Gutenberg, filtra per autore/tema, esporta bundle JSON con minimo 200 citazioni per settore.
+
+### Anti-ripetizione
+
+Buffer circolare delle ultime 20 citazioni mostrate per settore. Quando tutte le citazioni del settore sono esaurite, il buffer si resetta.
 
 ---
 
@@ -560,7 +554,13 @@ app/assets/
 │   ├── tarkovsky_bundle.json     # 2 KB
 │   ├── newton_bundle.json        # 2 KB
 │   ├── alchimia_bundle.json      # 3 KB
-│   └── arte_bundle.json          # 2 KB
+│   ├── arte_bundle.json          # 2 KB
+│   └── demiurge/                 # "All That Is" citation bundles
+│       ├── giardino.json
+│       ├── osservatorio.json
+│       ├── galleria.json
+│       ├── laboratorio.json
+│       └── universale.json
 ├── prompts/
 │   ├── zona_templates.json
 │   ├── antagonist_templates.json
@@ -576,10 +576,7 @@ app/assets/
 │   ├── siciliano_bwv1017.ogg
 │   ├── fuga_14_processed.ogg
 │   └── white_noise.ogg
-├── llm/
-│   └── [modello scelto nella fase 0-omega].gguf
 └── config/
-    ├── llm_config.json
     └── game_config.json
 ```
 
@@ -647,80 +644,40 @@ CREATE TABLE zone_responses (
 
 ---
 
-## 20. TEMPLATE PROMPT LLM (in inglese)
+## 20. TEMPLATE PROMPT — LEGACY (SOSTITUITO DAL DEMIURGO)
 
-```
-[ZONE - Environment]
-<|system|>
-You are the narrator of an oneiric text adventure. Max 60 words,
-poetic, impossible geometries, one unexpected sensory detail. Only describe.
-<|user|>
-Simulacra collected: {n}/4. Tarkovsky verse to vary: "{verse}". Mood: {mood}.
-<|assistant|>
+> **Nota storica:** Questa sezione documentava i prompt LLM originali. Con l'adozione del Demiurgo ("All That Is"), i prompt LLM non sono più necessari. Le risposte narrative sono ora interamente determinate dai bundle JSON in `assets/texts/demiurge/`. I template zona, antagonista e proust in `assets/prompts/` rimangono per la logica del game engine (selezione testi statici).
 
-[ZONE - Introspective Question]
-<|system|>
-Ask ONE personal question. Max 15 words. Direct, deep, non-invasive.
-<|user|>
-Previous sector: {sector}. Previous response: "{response}". Theme: {theme}.
-<|assistant|>
-
-[PROUST - Involuntary Memory]
-<|system|>
-Generate a Proustian reminiscence. Max 50 words. Triggered by {trigger}.
-Precise sensory detail, sensation preceding the memory. Then ONE question.
-<|user|>
-Proust reference: "{citation}". Sector: {sector}.
-<|assistant|>
-
-[ANTAGONIST - Argument]
-<|system|>
-You are the Antagonist. Argue calmly that oblivion is mercy. Logical, never hostile.
-Max 80 words. If player makes a valid point, concede elegantly.
-<|user|>
-Phase: {phase}. Simulacrum: {simulacrum}. Player input: "{input}".
-Memories: {memories}. Inventory: {inventory}.
-<|assistant|>
-
-[NARRATOR - Weight 0]
-<|system|> Describe with lucid, minimal, airy style. The player is at peace. <|assistant|>
-
-[NARRATOR - Weight 1-2]
-<|system|> Describe with slight fatigue. Slightly longer, tortuous sentences. <|assistant|>
-
-[NARRATOR - Weight 3+]
-<|system|> Describe as oppressive, claustrophobic, anxious. Mind clouded. <|assistant|>
-```
-
-**Nota MediaPipe/Gemma:** Se si usa MediaPipe, sostituire i tag `<|system|>` con il formato Gemma: `<start_of_turn>user` / `<end_of_turn>` / `<start_of_turn>model`.
+**Nota MediaPipe/Gemma:** Non più applicabile — LLM rimosso.
 
 ---
 
 ## 21. ROADMAP DI SVILUPPO
 
-**Versione 1 — scheletro funzionante** ✅ in corso
+**Versione 1 — scheletro funzionante** ✅ completata
 - Solo Il Giardino di Epicuro
 - Parser base + Peso Psicologico
-- `_llmStub()` in place (LLM reale si integra alla fine)
 - `epicuro_bundle.json` + `tarkovsky_bundle.json`
 - Audio: Aria Goldberg + dissolvenza su `deposit everything`
 
-**Versione 2 — atmosfera**
+**Versione 2 — atmosfera** ✅ completata
 - Salvataggio partita
-- La Zona attiva (usa stub LLM, testi statici da `zona_templates.json`)
+- La Zona attiva (testi statici da `zona_templates.json`)
 - Tutti i bundle testi
 - Crossfade audio tra settori
 
-**Versione 3 — completamento**
+**Versione 3 — completamento** ✅ completata
 - Tutti i settori
 - Trigger proustiani trasversali
 - Boss finale con Regola del Tre e tre finali
 - Quinto Settore con aroma personalizzato
 - Tutti gli effetti audio speciali
 
-**FASE 0-OMEGA (ultima cosa):** Validazione LLM sul gioco completo installato su APK
-- Sostituire `_llmStub()` con integrazione reale (flutter_llama → MediaPipe → FFI)
-- Criteri: load < 60s, generazione < 20s/100 token, 5 sessioni senza crash, RAM < 1.5 GB
+**Versione 4 — DemiurgoService** ← ATTUALE
+- Integrazione `DemiurgeService` ("All That Is") in `game_engine_provider.dart`
+- Popolamento bundle citazioni (`assets/texts/demiurge/`) con ≥200 citazioni per settore
+- Rimozione dipendenza `flutter_llama` da `pubspec.yaml`
+- Test su device reale
 
 ---
 ## 22. NOTE APERTE / DA DECIDERE
@@ -731,15 +688,16 @@ Memories: {memories}. Inventory: {inventory}.
 - ~~Game engine con nodi narrativi stub~~ ✅ (lib/features/game/game_engine_provider.dart)
 - ~~Database SQLite: schema + providers Riverpod~~ ✅ (Gemini)
 - ~~AudioService reattivo a PsychoProfile~~ ✅ (Grok)
+- ~~Fix bug inventario simulacri~~ ✅
+- ~~Bundle testi JSON~~ ✅
+- ~~Tutti i settori~~ ✅
+- ~~La Zona procedurale~~ ✅
+- ~~Boss finale + Quinto Settore~~ ✅
 
 **Ancora aperto / priorità:**
-- **PRIORITÀ 1:** Fix bug inventario simulacri in `game_engine_provider.dart` (weightDelta=0 → non entrano)
-- **PRIORITÀ 2:** Bundle testi JSON (`assets/texts/epicuro_bundle.json`, etc.) — GDD sezione 18
-  - I nodi del Giardino sono già nel codice; migrare in asset quando il formato è stabile
-- **PRIORITÀ 3:** Settori Est (Osservatorio), Sud (Galleria), Ovest (Laboratorio)
-- **PRIORITÀ 4:** La Zona procedurale (GDD sezione 10) — usa `_llmStub()` fino alla fine
-- **PRIORITÀ 5:** Boss finale / Il Nucleo (GDD sezione 12) + Quinto Settore (GDD sezione 11)
-- **PRIORITÀ FINALE:** Fase 0-omega — LLM su APK completo (GDD sezione 17)
+- **PRIORITÀ 1:** Integrare `DemiurgeService.respond()` in `game_engine_provider.dart` (sostituire `_callLlm()`)
+- **PRIORITÀ 2:** Popolare citazioni Demiurgo con ≥200 per settore via `tools/prepare_demiurge_bundles.py`
+- **PRIORITÀ 3:** Rimuovere dipendenza `flutter_llama` da `pubspec.yaml`
 - Verso esatto di Arseny Tarkovsky per la Stele (Settore Giardino, garden_stelae)
 - Test crossfade audio su device reali (rischio click nel workaround player swap)
 
@@ -749,7 +707,7 @@ Memories: {memories}. Inventory: {inventory}.
 
 ---
 
-## 23. CONTRIBUTI LLM
+## 23. CONTRIBUTI
 
 ### 2026-04-02 — GitHub Copilot (Parser & UI Specialist)
 **Sessione:** Implementazione parser state machine + UI testuale + game engine stub
@@ -770,13 +728,14 @@ ParserService.parse() [puro, sincrono]
       ↓
 GameEngineNotifier._evaluate() [Riverpod AsyncNotifier]
       ↓
-_llmStub() → [POST Fase 0-omega: LLM on-device]
+DemiurgeService.respond() [deterministico, offline]
       ↓
 GameScreen [typewriter + palette PsychoProfile]
 ```
 
 **Prossimo passo suggerito:**
-Fase 0-omega (validazione LLM). Poi sostituire `_llmStub()` in `game_engine_provider.dart`.
+Integrare `DemiurgeService.respond()` in `game_engine_provider.dart`, sostituendo `_callLlm()`.
+Popolare bundle citazioni con `tools/prepare_demiurge_bundles.py`.
 Vedi dettagli in `docs/work_log.md`.
 
 ---

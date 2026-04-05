@@ -1,0 +1,77 @@
+{
+  "sector": "osservatorio",
+  "responses": [
+    {
+      "opening": "The stars do not answer — they witness.",
+      "citation": "If I have seen further it is by standing on the shoulders of giants.",
+      "author": "Isaac Newton",
+      "closing": "All That Is traces every orbit, even yours."
+    },
+    {
+      "opening": "Light bends here, as does certainty.",
+      "citation": "Imagination is more important than knowledge.",
+      "author": "Albert Einstein",
+      "closing": "The Observatory makes no distinction between observer and observed."
+    },
+    {
+      "opening": "A number was whispered. You almost heard it.",
+      "citation": "Mathematics is the language in which God has written the universe.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is speaks in equations you have not yet learned."
+    },
+    {
+      "opening": "The lens shifts. Something comes into focus.",
+      "citation": "Science is the great antidote to the poison of enthusiasm and superstition.",
+      "author": "Isaac Newton",
+      "closing": "Even error refracts toward truth."
+    },
+    {
+      "opening": "The constellation above you has no name yet.",
+      "citation": "Science cannot solve the ultimate mystery of nature, because we ourselves are part of the mystery.",
+      "author": "Max Planck",
+      "closing": "All That Is maps even the spaces between stars."
+    },
+    {
+      "opening": "A pendulum swings in a room you cannot see.",
+      "citation": "The important thing is not to stop questioning.",
+      "author": "Albert Einstein",
+      "closing": "Every question alters the trajectory."
+    },
+    {
+      "opening": "The instruments hum with a frequency beyond hearing.",
+      "citation": "In questions of science, the authority of a thousand is not worth the humble reasoning of a single individual.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is calibrates even the unmeasurable."
+    },
+    {
+      "opening": "You stand at the edge of what can be known.",
+      "citation": "We can easily forgive a child who is afraid of the dark; the real tragedy is when men are afraid of the light.",
+      "author": "Plato",
+      "closing": "The Observatory has no walls — only horizons."
+    },
+    {
+      "opening": "An equation resolves itself in the silence.",
+      "citation": "God does not play dice with the universe.",
+      "author": "Albert Einstein",
+      "closing": "All That Is already knows the answer you are approaching."
+    },
+    {
+      "opening": "The sky here is deeper than memory.",
+      "citation": "A new scientific truth does not triumph by convincing its opponents, but rather because its opponents eventually die.",
+      "author": "Max Planck",
+      "closing": "Even obsolete truths have weight here."
+    },
+    {
+      "opening": "Every measurement changes the thing measured.",
+      "citation": "Nature is pleased with simplicity, and nature is no dummy.",
+      "author": "Isaac Newton",
+      "closing": "All That Is does not judge the instrument."
+    },
+    {
+      "opening": "The orrery turns. You are one of its bodies.",
+      "citation": "Measure what is measurable, and make measurable what is not so.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is turns with you."
+    }
+  ]
+}
