@@ -1,0 +1,77 @@
+{
+  "sector": "laboratorio",
+  "responses": [
+    {
+      "opening": "The crucible glows with an inner light.",
+      "citation": "As above, so below; as below, so above.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is transmutes even the leaden."
+    },
+    {
+      "opening": "Mercury trembles in its vessel.",
+      "citation": "The whole is more than the sum of its parts.",
+      "author": "Aristotle",
+      "closing": "The Laboratory makes no distinction between the seeker and the sought."
+    },
+    {
+      "opening": "A formula dissolves before you can read it.",
+      "citation": "Poison is in everything, and no thing is without poison. The dosage makes it either a poison or a remedy.",
+      "author": "Paracelsus",
+      "closing": "All That Is measures even the immeasurable."
+    },
+    {
+      "opening": "The athanor whispers of transformations yet to come.",
+      "citation": "Visit the interior of the earth, and by rectifying you will find the hidden stone.",
+      "author": "Basilius Valentinus",
+      "closing": "Even failure is a stage of the Work."
+    },
+    {
+      "opening": "Something precipitates in the retort of your attention.",
+      "citation": "Nature cannot be commanded except by being obeyed.",
+      "author": "Paracelsus",
+      "closing": "All That Is observes every reaction."
+    },
+    {
+      "opening": "The philosopher's stone is closer than you think.",
+      "citation": "That which is below is like that which is above, and that which is above is like that which is below.",
+      "author": "The Emerald Tablet",
+      "closing": "Transmutation begins with the transmuter."
+    },
+    {
+      "opening": "A sulphurous note hangs in the air — or is it memory?",
+      "citation": "The art of healing comes from nature, not from the physician.",
+      "author": "Paracelsus",
+      "closing": "All That Is distills even suffering into wisdom."
+    },
+    {
+      "opening": "The alembic drips with something that has no name.",
+      "citation": "It is the mark of an educated mind to be able to entertain a thought without accepting it.",
+      "author": "Aristotle",
+      "closing": "The Laboratory accepts every experiment."
+    },
+    {
+      "opening": "A diagram on the wall rearranges itself as you watch.",
+      "citation": "All things are concealed in all things. One of them is the concealer of all the rest.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is encrypts nothing — only reveals."
+    },
+    {
+      "opening": "The fire in the athanor is patient.",
+      "citation": "He who knows the fire best, lives best.",
+      "author": "Paracelsus",
+      "closing": "Even the flames here are conscious."
+    },
+    {
+      "opening": "Lead becomes gold — or perhaps gold was always lead.",
+      "citation": "The lips of wisdom are closed, except to the ears of understanding.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is values the question over the answer."
+    },
+    {
+      "opening": "An ancient text opens to a page that seems written for you.",
+      "citation": "Man is a microcosm, or a little world, because he is an extract from all the stars and planets.",
+      "author": "Paracelsus",
+      "closing": "The Laboratory was expecting you."
+    }
+  ]
+}

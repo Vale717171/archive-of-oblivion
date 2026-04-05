@@ -8,7 +8,7 @@
 ## What this project is
 
 A psycho-philosophical text adventure for Android.
-Stack: **Flutter + Riverpod + sqflite + just_audio + on-device LLM 0.5B (offline)**.
+Stack: **Flutter + Riverpod + sqflite + just_audio + DemiurgeService (deterministic, offline)**.
 No images — only text and Bach's music.
 
 The full Game Design Document is in `docs/gdd.md`.
@@ -24,10 +24,10 @@ The development log is in `docs/work_log.md`.
 | SQLite | Single-row pattern: always `'id': 1` + `ConflictAlgorithm.replace` |
 | Riverpod outside widget tree | `ProviderContainer` + `container.listen` (not `.select().listen`) |
 | Audio crossfade | Manual `_rampVolume()` — `just_audio` has no `setVolume(duration:)` |
-| LLM integration | `LlmService.instance.generate()` in `game_engine_provider.dart` via `_callLlm()` — `flutter_llama ^1.1.2`, Tentativo 1 |
+| Demiurge narrator | `DemiurgeService.instance.respond()` in `game_engine_provider.dart` — deterministic, no LLM needed |
 | Target Android | API 26+, mid-range 3 GB RAM |
 | Game text language | English only |
-| LLM prompt format | Qwen `<\|system\|>/<\|user\|>/<\|assistant\|>` — unless MediaPipe/Gemma wins at final validation |
+| Demiurge bundles | `assets/texts/demiurge/*.json` — enigmatic openings, public-domain citations, ambiguous closings |
 
 ---
 
@@ -41,8 +41,9 @@ lib/
 │   └── dialogue_history_service.dart
 └── features/
     ├── audio/audio_service.dart
-    ├── game/game_engine_provider.dart      ← _llmStub() lives here
-    ├── llm/llm_context_service.dart
+    ├── demiurge/demiurge_service.dart      ← "All That Is" deterministic narrator
+    ├── game/game_engine_provider.dart      ← DemiurgeService replaces _callLlm()
+    ├── llm/llm_context_service.dart        ← [legacy — kept for reference]
     ├── parser/parser_service.dart
     ├── parser/parser_state.dart
     ├── state/game_state_provider.dart
@@ -50,14 +51,16 @@ lib/
     └── ui/game_screen.dart
 
 docs/
-├── gdd.md                                  ← full GDD (source of truth, read-only)
+├── gdd.md                                  ← full GDD (source of truth)
 ├── work_log.md                             ← chronological dev log
 └── prompts/
-    ├── role_cards.md                       ← persistent system prompts for each LLM
+    ├── role_cards.md                       ← persistent system prompts
     └── universal_session_prompt.md
 
-tools/fase_0_omega/                         ← LLM validation (run LAST, on full APK)
-└── CLAUDE_CODE_PROMPT.md                   ← session prompt for final LLM integration
+tools/
+├── prepare_demiurge_bundles.py             ← fetch citations from Wikiquote/Gutenberg
+└── fase_0_omega/                           ← [legacy LLM validation — superseded]
+    └── CLAUDE_CODE_PROMPT.md
 ```
 
 ---
@@ -69,7 +72,8 @@ tools/fase_0_omega/                         ← LLM validation (run LAST, on ful
 3. ~~Remaining sectors: East (Observatory), South (Gallery), West (Lab)~~ ✅ **DONE** — all 4 sectors fully implemented.
 4. ~~La Zona procedural engine (LLM-driven, uses stub until step 6)~~ ✅ **DONE** — probabilistic activation, 8 verses, 8 environments, 8 questions.
 5. ~~Fifth Sector (Memory/Proust) + Final Boss~~ ✅ **DONE** — 6 Quinto nodes + 4 Finale nodes, three endings.
-6. ~~**LLM validation on full APK**~~ ✅ **CODE DONE** — `flutter_llama ^1.1.2` integrated; `_llmStub()` replaced with `_callLlm()`; Android patches applied. **Requires physical device test** — push Qwen 2.5 0.5B model to `/sdcard/Download/` and run `flutter build apk --release && adb install`. See `docs/work_log.md` for exact commands.
+6. ~~LLM integration~~ **SUPERSEDED** — replaced by **DemiurgeService** ("All That Is"). See architectural decision in `docs/work_log.md`.
+7. **DemiurgeService integration** — wire `DemiurgeService.respond()` into `game_engine_provider.dart`, replacing `_callLlm()`. Populate `assets/texts/demiurge/` with ≥200 curated citations per sector using `tools/prepare_demiurge_bundles.py`.
 
 ---
 
@@ -77,5 +81,5 @@ tools/fase_0_omega/                         ← LLM validation (run LAST, on ful
 
 - Never wipe or replace existing `docs/work_log.md` entries — only prepend new ones.
 - Never suggest adding images or visual assets.
-- The LLM is not optional (GDD §1 — NOTA CRITICA) — but `_llmStub()` is fine throughout development.
+- The Demiurge ("All That Is") is the game's narrative voice — fully deterministic, no LLM required.
 - End every session with a work log entry (see format in `docs/work_log.md`).
