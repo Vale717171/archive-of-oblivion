@@ -100,12 +100,12 @@ class AudioService {
     if (_currentAmbienceKey == key) return;
     final asset = _ambienceAssets[key];
     if (asset == null) return; // unknown key — skip silently
-    _currentAmbienceKey = key;
     try {
       await _rampVolume(0.0);
       await _backgroundPlayer.setAsset(asset);
       await _backgroundPlayer.play();
       await _rampVolume(0.85);
+      _currentAmbienceKey = key;
     } catch (e) {
       // Fallback silenzioso — non crasha mai su 3 GB RAM
       // ignore: avoid_print
@@ -122,7 +122,9 @@ class AudioService {
       _currentAmbienceKey = 'silence';
       await Future.delayed(const Duration(seconds: 30));
       // White noise / echo chamber is the closest available ambient track
-      await _backgroundPlayer.setAsset(_ambienceAssets['oblivion']!);
+      final oblivionAsset = _ambienceAssets['oblivion'];
+      if (oblivionAsset == null) return;
+      await _backgroundPlayer.setAsset(oblivionAsset);
       await _backgroundPlayer.setLoopMode(LoopMode.one);
       await _backgroundPlayer.play();
       await _rampVolume(0.3); // deliberately low — it is aftermath

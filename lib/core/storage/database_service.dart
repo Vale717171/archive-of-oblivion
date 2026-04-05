@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 
 class DatabaseService {
   static const _databaseName = "oblivion_archive.db";
-  static const _databaseVersion = 2;
+  static const _databaseVersion = 3;
 
   // Singleton pattern per evitare accessi concorrenti non sicuri
   DatabaseService._privateConstructor();
@@ -69,7 +69,7 @@ class DatabaseService {
     await db.execute('''
       CREATE TABLE dialogue_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        role TEXT NOT NULL CHECK(role IN ('user', 'llm', 'system')),
+        role TEXT NOT NULL CHECK(role IN ('user', 'llm', 'demiurge', 'system')),
         content TEXT NOT NULL,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -114,6 +114,30 @@ class DatabaseService {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           )
         ''');
+      });
+    }
+    if (oldVersion < 3) {
+      await db.transaction((txn) async {
+        await txn.execute('ALTER TABLE dialogue_history RENAME TO dialogue_history_old');
+        await txn.execute('''
+          CREATE TABLE dialogue_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            role TEXT NOT NULL CHECK(role IN ('user', 'llm', 'demiurge', 'system')),
+            content TEXT NOT NULL,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )
+        ''');
+        await txn.execute('''
+          INSERT INTO dialogue_history (id, role, content, timestamp)
+          SELECT id,
+                 CASE WHEN role = 'llm' THEN 'demiurge' ELSE role END,
+                 content,
+                 timestamp
+          FROM dialogue_history_old
+        ''');
+        await txn.execute(
+            'CREATE INDEX idx_dialogue_time ON dialogue_history(timestamp)');
+        await txn.execute('DROP TABLE dialogue_history_old');
       });
     }
   }
