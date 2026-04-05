@@ -84,8 +84,9 @@ class DemiurgeService {
           .toList(growable: false);
       _pools[sector] = responses;
       _recentIndices[sector] = [];
-    } catch (_) {
-      // Bundle missing or malformed — pool stays empty.
+    } catch (e) {
+      // Bundle missing or malformed — pool stays empty; log for debugging.
+      assert(() { print('DemiurgeService: failed to load $sector — $e'); return true; }());
       _pools[sector] = [];
       _recentIndices[sector] = [];
     }
@@ -107,8 +108,9 @@ class DemiurgeService {
     if (pool == null || pool.isEmpty) return null;
 
     final recent = _recentIndices[sector] ?? [];
+    final recentSet = recent.toSet();
     final available = List<int>.generate(pool.length, (i) => i)
-      ..removeWhere(recent.contains);
+      ..removeWhere(recentSet.contains);
 
     // If all indices were recently shown, reset the buffer.
     if (available.isEmpty) {

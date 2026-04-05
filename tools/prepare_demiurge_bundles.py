@@ -175,7 +175,9 @@ def fetch_wikiquote_quotes(author: str, max_quotes: int = 60) -> list[str]:
     url = f"{WIKIQUOTE_API}?{params}"
 
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "DemiurgeBundleBot/1.0"})
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "DemiurgeBundleBot/1.0 (https://github.com/Vale717171/archive-of-oblivion)"
+        })
         with urllib.request.urlopen(req, timeout=15) as resp:
             data = json.loads(resp.read().decode())
     except (urllib.error.URLError, json.JSONDecodeError, OSError) as exc:
@@ -245,15 +247,16 @@ def fetch_gutenberg_sentences(author: str, max_quotes: int = 40) -> list[str]:
         return []
 
     url = f"https://www.gutenberg.org/files/{gid}/{gid}-0.txt"
+    _ua = {"User-Agent": "DemiurgeBundleBot/1.0 (https://github.com/Vale717171/archive-of-oblivion)"}
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "DemiurgeBundleBot/1.0"})
+        req = urllib.request.Request(url, headers=_ua)
         with urllib.request.urlopen(req, timeout=30) as resp:
             raw = resp.read().decode("utf-8", errors="replace")
     except (urllib.error.URLError, OSError) as exc:
         # Try mirror URL format
         url_alt = f"https://www.gutenberg.org/cache/epub/{gid}/pg{gid}.txt"
         try:
-            req = urllib.request.Request(url_alt, headers={"User-Agent": "DemiurgeBundleBot/1.0"})
+            req = urllib.request.Request(url_alt, headers=_ua)
             with urllib.request.urlopen(req, timeout=30) as resp:
                 raw = resp.read().decode("utf-8", errors="replace")
         except (urllib.error.URLError, OSError) as exc2:
@@ -276,7 +279,9 @@ def fetch_gutenberg_sentences(author: str, max_quotes: int = 40) -> list[str]:
     candidates: list[str] = []
     for s in sentences:
         s = s.strip().replace("\n", " ").replace("  ", " ")
-        if 40 <= len(s) <= 200 and s[0].isupper() and s[-1] in ".!?":
+        if len(s) < 40 or len(s) > 200:
+            continue
+        if s[0].isupper() and s[-1] in ".!?":
             candidates.append(s)
     random.shuffle(candidates)
     return candidates[:max_quotes]
