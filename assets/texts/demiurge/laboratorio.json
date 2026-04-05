@@ -2,76 +2,1204 @@
   "sector": "laboratorio",
   "responses": [
     {
-      "opening": "The crucible glows with an inner light.",
-      "citation": "As above, so below; as below, so above.",
+      "opening": "The furnace has been burning since before you arrived.",
+      "citation": "That which is above is like to that which is below, and that which is below is like to that which is above, to accomplish the miracles of the one thing.",
       "author": "Hermes Trismegistus",
-      "closing": "All That Is transmutes even the leaden."
+      "closing": "What dissolves is not lost; it is returned to All That Is."
     },
     {
-      "opening": "Mercury trembles in its vessel.",
-      "citation": "The whole is more than the sum of its parts.",
-      "author": "Aristotle",
-      "closing": "The Laboratory makes no distinction between the seeker and the sought."
+      "opening": "Something was dissolved here. Something else took its place.",
+      "citation": "As above, so below; as below, so above; as within, so without; as without, so within.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the solvent no vessel can contain."
     },
     {
-      "opening": "A formula dissolves before you can read it.",
-      "citation": "Poison is in everything, and no thing is without poison. The dosage makes it either a poison or a remedy.",
+      "opening": "Fire and patience: these are the only tools that matter.",
+      "citation": "I am the All; the All comes from me and the All returns to me.",
+      "author": "Hermes Trismegistus",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The ash holds what the flame revealed.",
+      "citation": "God is a circle whose center is everywhere and whose circumference is nowhere.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "What was pure is now mixed; what was mixed now seeks purity.",
+      "citation": "The mind is the builder.",
+      "author": "Hermes Trismegistus",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "Lead does not know it is lead.",
+      "citation": "Knowledge is the beginning; ignorance is the end.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "The work is never finished — only handed forward.",
+      "citation": "All things are possible; nothing is prohibited.",
+      "author": "Hermes Trismegistus",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "What you see is residue. What matters is what burned away.",
+      "citation": "The wise man rules the stars; the fool is ruled by them.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The vessel cracks. What was inside was never truly contained.",
+      "citation": "To change lead into gold is to change ignorance into knowledge.",
+      "author": "Hermes Trismegistus",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "The substance changes. The principle beneath it does not.",
+      "citation": "Nature delights in nature; nature overcomes nature; nature rules nature.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Not every transmutation is visible.",
+      "citation": "The principle of all things is the One.",
+      "author": "Hermes Trismegistus",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The crucible is indifferent to intention.",
+      "citation": "All is Mind; the Universe is Mental.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The hidden fire cannot be seen — only its effects.",
+      "citation": "Light and Darkness are poles of the same thing.",
+      "author": "Hermes Trismegistus",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "Every substance was once something else.",
+      "citation": "Nothing rests; everything moves; everything vibrates.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "The experiment is never complete — only transformed.",
+      "citation": "Everything flows, out and in; everything has its tides.",
+      "author": "Hermes Trismegistus",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The formula is correct. The transformation is still unexpected.",
+      "citation": "Every Cause has its Effect; every Effect has its Cause.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "You have come to a place where names mean less than processes.",
+      "citation": "The soul is immortal; the body is mortal.",
+      "author": "Hermes Trismegistus",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "The alchemist and the observer are the same experiment.",
+      "citation": "In truth, without deceit, certain and most veritable.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Every step away from the ordinary is a step toward what is essential.",
+      "citation": "The father of that one only thing is the Sun.",
+      "author": "Hermes Trismegistus",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "In this room, patience is the first reagent.",
+      "citation": "Separate the earth from the fire, the subtle from the gross, gently and with great ingenuity.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The furnace has been burning since before you arrived.",
+      "citation": "It ascends from the earth to the heaven and again it descends to the earth and receives the force of things superior and inferior.",
+      "author": "Hermes Trismegistus",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "Something was dissolved here. Something else took its place.",
+      "citation": "This is the strong power of all powers, for it vanquishes every subtle thing and penetrates every solid thing.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Fire and patience: these are the only tools that matter.",
+      "citation": "The dose makes the poison.",
       "author": "Paracelsus",
-      "closing": "All That Is measures even the immeasurable."
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
     },
     {
-      "opening": "The athanor whispers of transformations yet to come.",
-      "citation": "Visit the interior of the earth, and by rectifying you will find the hidden stone.",
-      "author": "Basilius Valentinus",
-      "closing": "Even failure is a stage of the Work."
-    },
-    {
-      "opening": "Something precipitates in the retort of your attention.",
-      "citation": "Nature cannot be commanded except by being obeyed.",
-      "author": "Paracelsus",
-      "closing": "All That Is observes every reaction."
-    },
-    {
-      "opening": "The philosopher's stone is closer than you think.",
-      "citation": "That which is below is like that which is above, and that which is above is like that which is below.",
-      "author": "The Emerald Tablet",
-      "closing": "Transmutation begins with the transmuter."
-    },
-    {
-      "opening": "A sulphurous note hangs in the air — or is it memory?",
+      "opening": "The ash holds what the flame revealed.",
       "citation": "The art of healing comes from nature, not from the physician.",
       "author": "Paracelsus",
-      "closing": "All That Is distills even suffering into wisdom."
+      "closing": "All That Is is the darkness before the rubedo."
     },
     {
-      "opening": "The alembic drips with something that has no name.",
-      "citation": "It is the mark of an educated mind to be able to entertain a thought without accepting it.",
-      "author": "Aristotle",
-      "closing": "The Laboratory accepts every experiment."
-    },
-    {
-      "opening": "A diagram on the wall rearranges itself as you watch.",
-      "citation": "All things are concealed in all things. One of them is the concealer of all the rest.",
-      "author": "Hermes Trismegistus",
-      "closing": "All That Is encrypts nothing — only reveals."
-    },
-    {
-      "opening": "The fire in the athanor is patient.",
-      "citation": "He who knows the fire best, lives best.",
+      "opening": "What was pure is now mixed; what was mixed now seeks purity.",
+      "citation": "Medicine is not merely a science but an art. The character of the physician may act more powerfully upon the patient than the drugs employed.",
       "author": "Paracelsus",
-      "closing": "Even the flames here are conscious."
+      "closing": "What dissolves is not lost; it is returned to All That Is."
     },
     {
-      "opening": "Lead becomes gold — or perhaps gold was always lead.",
-      "citation": "The lips of wisdom are closed, except to the ears of understanding.",
-      "author": "Hermes Trismegistus",
-      "closing": "All That Is values the question over the answer."
-    },
-    {
-      "opening": "An ancient text opens to a page that seems written for you.",
-      "citation": "Man is a microcosm, or a little world, because he is an extract from all the stars and planets.",
+      "opening": "Lead does not know it is lead.",
+      "citation": "All things are poisons, for there is nothing without poisonous qualities. It is only the dose which makes a thing poison.",
       "author": "Paracelsus",
-      "closing": "The Laboratory was expecting you."
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "The work is never finished — only handed forward.",
+      "citation": "Man is a microcosm, or a little world, because he is an extract from all the stars and planets of the whole firmament.",
+      "author": "Paracelsus",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "What you see is residue. What matters is what burned away.",
+      "citation": "What the eyes perceive in herbs or stones or trees is not yet a remedy; the eyes see only the dross.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The vessel cracks. What was inside was never truly contained.",
+      "citation": "Nature brings forth nothing that does not have some use; nothing was created without reason.",
+      "author": "Paracelsus",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "The substance changes. The principle beneath it does not.",
+      "citation": "Whoever wishes to know about the world must learn about it in its particular details.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Not every transmutation is visible.",
+      "citation": "A physician without knowledge of astrology has no right to call himself a physician.",
+      "author": "Paracelsus",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The crucible is indifferent to intention.",
+      "citation": "The greatest miracle of nature is nature itself.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The hidden fire cannot be seen — only its effects.",
+      "citation": "He who knows nothing, loves nothing. He who can do nothing understands nothing.",
+      "author": "Paracelsus",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "Every substance was once something else.",
+      "citation": "Alchemy is the art of resolving the composite into the simple.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "The experiment is never complete — only transformed.",
+      "citation": "The alchemist must be humble before nature.",
+      "author": "Paracelsus",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The formula is correct. The transformation is still unexpected.",
+      "citation": "In the beginning, all was fire.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "You have come to a place where names mean less than processes.",
+      "citation": "Nature always works toward perfection.",
+      "author": "Paracelsus",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "The alchemist and the observer are the same experiment.",
+      "citation": "The stars are not the rulers of men; men are the rulers of themselves.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Every step away from the ordinary is a step toward what is essential.",
+      "citation": "That which is above, by the will of Nature, must become that which is below.",
+      "author": "Paracelsus",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "In this room, patience is the first reagent.",
+      "citation": "Every experiment that you make in alchemy is a step toward the truth.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The furnace has been burning since before you arrived.",
+      "citation": "The task of alchemy is to make what is sick whole, what is whole pure, and what is pure eternal.",
+      "author": "Paracelsus",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "Something was dissolved here. Something else took its place.",
+      "citation": "Nature is not our enemy; nature is our teacher.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Fire and patience: these are the only tools that matter.",
+      "citation": "The physician's task is not to heal the body alone but the spirit that inhabits it.",
+      "author": "Paracelsus",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The ash holds what the flame revealed.",
+      "citation": "All that is necessary is to find the hidden quality within the visible form.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "What was pure is now mixed; what was mixed now seeks purity.",
+      "citation": "Solve et coagula — dissolve and coagulate; this is the whole of the art.",
+      "author": "Alchemical tradition",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "Lead does not know it is lead.",
+      "citation": "The matter of the Stone is in everyone's hands; it is known to all but recognized by none.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "The work is never finished — only handed forward.",
+      "citation": "He who knows what fire and water are knows enough to begin the Work.",
+      "author": "Alchemical tradition",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "What you see is residue. What matters is what burned away.",
+      "citation": "The Philosopher's Stone is neither stone nor jewel; it is beyond all categories.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The vessel cracks. What was inside was never truly contained.",
+      "citation": "That which is simple in art is complex in nature, and that which is complex in art is simple in nature.",
+      "author": "Alchemical tradition",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "The substance changes. The principle beneath it does not.",
+      "citation": "The whole secret of the Work is in the union of opposites.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Not every transmutation is visible.",
+      "citation": "First purify, then unify.",
+      "author": "Alchemical tradition",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The crucible is indifferent to intention.",
+      "citation": "Seek the hidden fire in all things.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The hidden fire cannot be seen — only its effects.",
+      "citation": "Lead to silver, silver to gold: this is the way of nature perfecting itself.",
+      "author": "Alchemical tradition",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "Every substance was once something else.",
+      "citation": "The art of alchemy requires above all else a quiet mind.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "The experiment is never complete — only transformed.",
+      "citation": "In the laboratory, patience is the highest virtue.",
+      "author": "Alchemical tradition",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The formula is correct. The transformation is still unexpected.",
+      "citation": "The prima materia underlies all things; it is the beginning and the end.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "You have come to a place where names mean less than processes.",
+      "citation": "The wise man transforms himself before he transforms matter.",
+      "author": "Alchemical tradition",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "The alchemist and the observer are the same experiment.",
+      "citation": "The fire that purifies is also the fire that destroys; the art is to know which is needed.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Every step away from the ordinary is a step toward what is essential.",
+      "citation": "What is sought in the furnace is also sought in the heart.",
+      "author": "Alchemical tradition",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "In this room, patience is the first reagent.",
+      "citation": "The black earth contains what the sun has hidden.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The furnace has been burning since before you arrived.",
+      "citation": "Gold is the child of Zeus; neither rust nor worm devours it.",
+      "author": "Alchemical tradition",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "Something was dissolved here. Something else took its place.",
+      "citation": "Know the matter; the matter will teach you the method.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Fire and patience: these are the only tools that matter.",
+      "citation": "Nigredo, albedo, citrinitas, rubedo: the four stages of the Great Work.",
+      "author": "Alchemical tradition",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The ash holds what the flame revealed.",
+      "citation": "To make the Stone is to make the self.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "What was pure is now mixed; what was mixed now seeks purity.",
+      "citation": "The secret of secrets is hidden in plain sight.",
+      "author": "Alchemical tradition",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "Lead does not know it is lead.",
+      "citation": "The Mercury of the philosophers is not the mercury of the marketplace.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "The work is never finished — only handed forward.",
+      "citation": "The universe is a single living entity embracing all living things.",
+      "author": "Giordano Bruno",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "What you see is residue. What matters is what burned away.",
+      "citation": "God is the infinite sphere whose center is everywhere and whose circumference is nowhere.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The vessel cracks. What was inside was never truly contained.",
+      "citation": "Truth does not change because it is, or is not, believed by a majority of the people.",
+      "author": "Giordano Bruno",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "The substance changes. The principle beneath it does not.",
+      "citation": "Nature is none other than God in things.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Not every transmutation is visible.",
+      "citation": "The divine light is always in man, presenting itself to the senses and to the comprehension, but man rejects it.",
+      "author": "Giordano Bruno",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The crucible is indifferent to intention.",
+      "citation": "All things are in the universe, and the universe is in all things: we in it, and it in us.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The hidden fire cannot be seen — only its effects.",
+      "citation": "There are countless suns and countless earths all rotating around their suns.",
+      "author": "Giordano Bruno",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "Every substance was once something else.",
+      "citation": "The universe is one, infinite, immobile.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "The experiment is never complete — only transformed.",
+      "citation": "I know not how to teach philosophy without separating myself from the crowd.",
+      "author": "Giordano Bruno",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The formula is correct. The transformation is still unexpected.",
+      "citation": "Every point is the center of the universe.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "You have come to a place where names mean less than processes.",
+      "citation": "There is no absolute up or down; every place is equally valid as the center.",
+      "author": "Giordano Bruno",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "The alchemist and the observer are the same experiment.",
+      "citation": "Wonder is the beginning of all philosophy.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Every step away from the ordinary is a step toward what is essential.",
+      "citation": "A wise man is not governed by the opinions of the multitude.",
+      "author": "Giordano Bruno",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "In this room, patience is the first reagent.",
+      "citation": "The soul is not the body; the body is the soul's temporary dwelling.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The furnace has been burning since before you arrived.",
+      "citation": "Space in its infiniteness extends everywhere without wall or boundary.",
+      "author": "Giordano Bruno",
+      "closing": "What dissolves is not lost; it is returned to All That Is."
+    },
+    {
+      "opening": "Something was dissolved here. Something else took its place.",
+      "citation": "The infinite universe is a single substance, and we are its expressions.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the solvent no vessel can contain."
+    },
+    {
+      "opening": "Fire and patience: these are the only tools that matter.",
+      "citation": "He who desires to philosophize must first doubt all things.",
+      "author": "Giordano Bruno",
+      "closing": "The Stone is found; the finder is changed; All That Is remains."
+    },
+    {
+      "opening": "The ash holds what the flame revealed.",
+      "citation": "I have held and hold souls to be immortal.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the darkness before the rubedo."
+    },
+    {
+      "opening": "The substance changes. The principle beneath it does not.",
+      "citation": "That which is above is like to that which is below, and that which is below is like to that which is above, to accomplish the miracles of the one thing.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Not every transmutation is visible.",
+      "citation": "As above, so below; as below, so above; as within, so without; as without, so within.",
+      "author": "Hermes Trismegistus",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The crucible is indifferent to intention.",
+      "citation": "I am the All; the All comes from me and the All returns to me.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The hidden fire cannot be seen — only its effects.",
+      "citation": "God is a circle whose center is everywhere and whose circumference is nowhere.",
+      "author": "Hermes Trismegistus",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Every substance was once something else.",
+      "citation": "The mind is the builder.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "The experiment is never complete — only transformed.",
+      "citation": "Knowledge is the beginning; ignorance is the end.",
+      "author": "Hermes Trismegistus",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The formula is correct. The transformation is still unexpected.",
+      "citation": "All things are possible; nothing is prohibited.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "You have come to a place where names mean less than processes.",
+      "citation": "The wise man rules the stars; the fool is ruled by them.",
+      "author": "Hermes Trismegistus",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "The alchemist and the observer are the same experiment.",
+      "citation": "To change lead into gold is to change ignorance into knowledge.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Every step away from the ordinary is a step toward what is essential.",
+      "citation": "Nature delights in nature; nature overcomes nature; nature rules nature.",
+      "author": "Hermes Trismegistus",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "In this room, patience is the first reagent.",
+      "citation": "The principle of all things is the One.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The furnace has been burning since before you arrived.",
+      "citation": "All is Mind; the Universe is Mental.",
+      "author": "Hermes Trismegistus",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Something was dissolved here. Something else took its place.",
+      "citation": "Light and Darkness are poles of the same thing.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Fire and patience: these are the only tools that matter.",
+      "citation": "Nothing rests; everything moves; everything vibrates.",
+      "author": "Hermes Trismegistus",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The ash holds what the flame revealed.",
+      "citation": "Everything flows, out and in; everything has its tides.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "What was pure is now mixed; what was mixed now seeks purity.",
+      "citation": "Every Cause has its Effect; every Effect has its Cause.",
+      "author": "Hermes Trismegistus",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Lead does not know it is lead.",
+      "citation": "The soul is immortal; the body is mortal.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "The work is never finished — only handed forward.",
+      "citation": "In truth, without deceit, certain and most veritable.",
+      "author": "Hermes Trismegistus",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "What you see is residue. What matters is what burned away.",
+      "citation": "The father of that one only thing is the Sun.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The vessel cracks. What was inside was never truly contained.",
+      "citation": "Separate the earth from the fire, the subtle from the gross, gently and with great ingenuity.",
+      "author": "Hermes Trismegistus",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "The substance changes. The principle beneath it does not.",
+      "citation": "It ascends from the earth to the heaven and again it descends to the earth and receives the force of things superior and inferior.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Not every transmutation is visible.",
+      "citation": "This is the strong power of all powers, for it vanquishes every subtle thing and penetrates every solid thing.",
+      "author": "Hermes Trismegistus",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The crucible is indifferent to intention.",
+      "citation": "The dose makes the poison.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The hidden fire cannot be seen — only its effects.",
+      "citation": "The art of healing comes from nature, not from the physician.",
+      "author": "Paracelsus",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Every substance was once something else.",
+      "citation": "Medicine is not merely a science but an art. The character of the physician may act more powerfully upon the patient than the drugs employed.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "The experiment is never complete — only transformed.",
+      "citation": "All things are poisons, for there is nothing without poisonous qualities. It is only the dose which makes a thing poison.",
+      "author": "Paracelsus",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The formula is correct. The transformation is still unexpected.",
+      "citation": "Man is a microcosm, or a little world, because he is an extract from all the stars and planets of the whole firmament.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "You have come to a place where names mean less than processes.",
+      "citation": "What the eyes perceive in herbs or stones or trees is not yet a remedy; the eyes see only the dross.",
+      "author": "Paracelsus",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "The alchemist and the observer are the same experiment.",
+      "citation": "Nature brings forth nothing that does not have some use; nothing was created without reason.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Every step away from the ordinary is a step toward what is essential.",
+      "citation": "Whoever wishes to know about the world must learn about it in its particular details.",
+      "author": "Paracelsus",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "In this room, patience is the first reagent.",
+      "citation": "A physician without knowledge of astrology has no right to call himself a physician.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The furnace has been burning since before you arrived.",
+      "citation": "The greatest miracle of nature is nature itself.",
+      "author": "Paracelsus",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Something was dissolved here. Something else took its place.",
+      "citation": "He who knows nothing, loves nothing. He who can do nothing understands nothing.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Fire and patience: these are the only tools that matter.",
+      "citation": "Alchemy is the art of resolving the composite into the simple.",
+      "author": "Paracelsus",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The ash holds what the flame revealed.",
+      "citation": "The alchemist must be humble before nature.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "What was pure is now mixed; what was mixed now seeks purity.",
+      "citation": "In the beginning, all was fire.",
+      "author": "Paracelsus",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Lead does not know it is lead.",
+      "citation": "Nature always works toward perfection.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "The work is never finished — only handed forward.",
+      "citation": "The stars are not the rulers of men; men are the rulers of themselves.",
+      "author": "Paracelsus",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "What you see is residue. What matters is what burned away.",
+      "citation": "That which is above, by the will of Nature, must become that which is below.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The vessel cracks. What was inside was never truly contained.",
+      "citation": "Every experiment that you make in alchemy is a step toward the truth.",
+      "author": "Paracelsus",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "The substance changes. The principle beneath it does not.",
+      "citation": "The task of alchemy is to make what is sick whole, what is whole pure, and what is pure eternal.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Not every transmutation is visible.",
+      "citation": "Nature is not our enemy; nature is our teacher.",
+      "author": "Paracelsus",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The crucible is indifferent to intention.",
+      "citation": "The physician's task is not to heal the body alone but the spirit that inhabits it.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The hidden fire cannot be seen — only its effects.",
+      "citation": "All that is necessary is to find the hidden quality within the visible form.",
+      "author": "Paracelsus",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Every substance was once something else.",
+      "citation": "Solve et coagula — dissolve and coagulate; this is the whole of the art.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "The experiment is never complete — only transformed.",
+      "citation": "The matter of the Stone is in everyone's hands; it is known to all but recognized by none.",
+      "author": "Alchemical tradition",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The formula is correct. The transformation is still unexpected.",
+      "citation": "He who knows what fire and water are knows enough to begin the Work.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "You have come to a place where names mean less than processes.",
+      "citation": "The Philosopher's Stone is neither stone nor jewel; it is beyond all categories.",
+      "author": "Alchemical tradition",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "The alchemist and the observer are the same experiment.",
+      "citation": "That which is simple in art is complex in nature, and that which is complex in art is simple in nature.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Every step away from the ordinary is a step toward what is essential.",
+      "citation": "The whole secret of the Work is in the union of opposites.",
+      "author": "Alchemical tradition",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "In this room, patience is the first reagent.",
+      "citation": "First purify, then unify.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The furnace has been burning since before you arrived.",
+      "citation": "Seek the hidden fire in all things.",
+      "author": "Alchemical tradition",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Something was dissolved here. Something else took its place.",
+      "citation": "Lead to silver, silver to gold: this is the way of nature perfecting itself.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Fire and patience: these are the only tools that matter.",
+      "citation": "The art of alchemy requires above all else a quiet mind.",
+      "author": "Alchemical tradition",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The ash holds what the flame revealed.",
+      "citation": "In the laboratory, patience is the highest virtue.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "What was pure is now mixed; what was mixed now seeks purity.",
+      "citation": "The prima materia underlies all things; it is the beginning and the end.",
+      "author": "Alchemical tradition",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Lead does not know it is lead.",
+      "citation": "The wise man transforms himself before he transforms matter.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "The work is never finished — only handed forward.",
+      "citation": "The fire that purifies is also the fire that destroys; the art is to know which is needed.",
+      "author": "Alchemical tradition",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "What you see is residue. What matters is what burned away.",
+      "citation": "What is sought in the furnace is also sought in the heart.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The vessel cracks. What was inside was never truly contained.",
+      "citation": "The black earth contains what the sun has hidden.",
+      "author": "Alchemical tradition",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "The substance changes. The principle beneath it does not.",
+      "citation": "Gold is the child of Zeus; neither rust nor worm devours it.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Not every transmutation is visible.",
+      "citation": "Know the matter; the matter will teach you the method.",
+      "author": "Alchemical tradition",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The crucible is indifferent to intention.",
+      "citation": "Nigredo, albedo, citrinitas, rubedo: the four stages of the Great Work.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The hidden fire cannot be seen — only its effects.",
+      "citation": "To make the Stone is to make the self.",
+      "author": "Alchemical tradition",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Every substance was once something else.",
+      "citation": "The secret of secrets is hidden in plain sight.",
+      "author": "Alchemical tradition",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "The experiment is never complete — only transformed.",
+      "citation": "The Mercury of the philosophers is not the mercury of the marketplace.",
+      "author": "Alchemical tradition",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The formula is correct. The transformation is still unexpected.",
+      "citation": "The universe is a single living entity embracing all living things.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "You have come to a place where names mean less than processes.",
+      "citation": "God is the infinite sphere whose center is everywhere and whose circumference is nowhere.",
+      "author": "Giordano Bruno",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "The alchemist and the observer are the same experiment.",
+      "citation": "Truth does not change because it is, or is not, believed by a majority of the people.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Every step away from the ordinary is a step toward what is essential.",
+      "citation": "Nature is none other than God in things.",
+      "author": "Giordano Bruno",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "In this room, patience is the first reagent.",
+      "citation": "The divine light is always in man, presenting itself to the senses and to the comprehension, but man rejects it.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The furnace has been burning since before you arrived.",
+      "citation": "All things are in the universe, and the universe is in all things: we in it, and it in us.",
+      "author": "Giordano Bruno",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Something was dissolved here. Something else took its place.",
+      "citation": "There are countless suns and countless earths all rotating around their suns.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Fire and patience: these are the only tools that matter.",
+      "citation": "The universe is one, infinite, immobile.",
+      "author": "Giordano Bruno",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The ash holds what the flame revealed.",
+      "citation": "I know not how to teach philosophy without separating myself from the crowd.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "What was pure is now mixed; what was mixed now seeks purity.",
+      "citation": "Every point is the center of the universe.",
+      "author": "Giordano Bruno",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Lead does not know it is lead.",
+      "citation": "There is no absolute up or down; every place is equally valid as the center.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "The work is never finished — only handed forward.",
+      "citation": "Wonder is the beginning of all philosophy.",
+      "author": "Giordano Bruno",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "What you see is residue. What matters is what burned away.",
+      "citation": "A wise man is not governed by the opinions of the multitude.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The vessel cracks. What was inside was never truly contained.",
+      "citation": "The soul is not the body; the body is the soul's temporary dwelling.",
+      "author": "Giordano Bruno",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "The substance changes. The principle beneath it does not.",
+      "citation": "Space in its infiniteness extends everywhere without wall or boundary.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the union of opposites the alchemists sought."
+    },
+    {
+      "opening": "Not every transmutation is visible.",
+      "citation": "The infinite universe is a single substance, and we are its expressions.",
+      "author": "Giordano Bruno",
+      "closing": "What cannot be measured is held most carefully by All That Is."
+    },
+    {
+      "opening": "The crucible is indifferent to intention.",
+      "citation": "He who desires to philosophize must first doubt all things.",
+      "author": "Giordano Bruno",
+      "closing": "All That Is is the hidden fire you sought."
+    },
+    {
+      "opening": "The hidden fire cannot be seen — only its effects.",
+      "citation": "I have held and hold souls to be immortal.",
+      "author": "Giordano Bruno",
+      "closing": "What was transformed here is held by All That Is in its transformed state."
+    },
+    {
+      "opening": "Every step away from the ordinary is a step toward what is essential.",
+      "citation": "That which is above is like to that which is below, and that which is below is like to that which is above, to accomplish the miracles of the one thing.",
+      "author": "Hermes Trismegistus",
+      "closing": "The archive records every failed experiment with equal care."
+    },
+    {
+      "opening": "In this room, patience is the first reagent.",
+      "citation": "As above, so below; as below, so above; as within, so without; as without, so within.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is neither above nor below — it is the axis between."
+    },
+    {
+      "opening": "The furnace has been burning since before you arrived.",
+      "citation": "I am the All; the All comes from me and the All returns to me.",
+      "author": "Hermes Trismegistus",
+      "closing": "The formula is known to All That Is; the mystery is shared with you."
+    },
+    {
+      "opening": "Something was dissolved here. Something else took its place.",
+      "citation": "God is a circle whose center is everywhere and whose circumference is nowhere.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the fire beneath every transformation."
+    },
+    {
+      "opening": "Fire and patience: these are the only tools that matter.",
+      "citation": "The mind is the builder.",
+      "author": "Hermes Trismegistus",
+      "closing": "The archive records every failed experiment with equal care."
+    },
+    {
+      "opening": "The ash holds what the flame revealed.",
+      "citation": "Knowledge is the beginning; ignorance is the end.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is neither above nor below — it is the axis between."
+    },
+    {
+      "opening": "What was pure is now mixed; what was mixed now seeks purity.",
+      "citation": "All things are possible; nothing is prohibited.",
+      "author": "Hermes Trismegistus",
+      "closing": "The formula is known to All That Is; the mystery is shared with you."
+    },
+    {
+      "opening": "Lead does not know it is lead.",
+      "citation": "The wise man rules the stars; the fool is ruled by them.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the fire beneath every transformation."
+    },
+    {
+      "opening": "The work is never finished — only handed forward.",
+      "citation": "To change lead into gold is to change ignorance into knowledge.",
+      "author": "Hermes Trismegistus",
+      "closing": "The archive records every failed experiment with equal care."
+    },
+    {
+      "opening": "What you see is residue. What matters is what burned away.",
+      "citation": "Nature delights in nature; nature overcomes nature; nature rules nature.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is neither above nor below — it is the axis between."
+    },
+    {
+      "opening": "The vessel cracks. What was inside was never truly contained.",
+      "citation": "The principle of all things is the One.",
+      "author": "Hermes Trismegistus",
+      "closing": "The formula is known to All That Is; the mystery is shared with you."
+    },
+    {
+      "opening": "The substance changes. The principle beneath it does not.",
+      "citation": "All is Mind; the Universe is Mental.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the fire beneath every transformation."
+    },
+    {
+      "opening": "Not every transmutation is visible.",
+      "citation": "Light and Darkness are poles of the same thing.",
+      "author": "Hermes Trismegistus",
+      "closing": "The archive records every failed experiment with equal care."
+    },
+    {
+      "opening": "The crucible is indifferent to intention.",
+      "citation": "Nothing rests; everything moves; everything vibrates.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is neither above nor below — it is the axis between."
+    },
+    {
+      "opening": "The hidden fire cannot be seen — only its effects.",
+      "citation": "Everything flows, out and in; everything has its tides.",
+      "author": "Hermes Trismegistus",
+      "closing": "The formula is known to All That Is; the mystery is shared with you."
+    },
+    {
+      "opening": "Every substance was once something else.",
+      "citation": "Every Cause has its Effect; every Effect has its Cause.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the fire beneath every transformation."
+    },
+    {
+      "opening": "The experiment is never complete — only transformed.",
+      "citation": "The soul is immortal; the body is mortal.",
+      "author": "Hermes Trismegistus",
+      "closing": "The archive records every failed experiment with equal care."
+    },
+    {
+      "opening": "The formula is correct. The transformation is still unexpected.",
+      "citation": "In truth, without deceit, certain and most veritable.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is neither above nor below — it is the axis between."
+    },
+    {
+      "opening": "You have come to a place where names mean less than processes.",
+      "citation": "The father of that one only thing is the Sun.",
+      "author": "Hermes Trismegistus",
+      "closing": "The formula is known to All That Is; the mystery is shared with you."
+    },
+    {
+      "opening": "The alchemist and the observer are the same experiment.",
+      "citation": "Separate the earth from the fire, the subtle from the gross, gently and with great ingenuity.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is the fire beneath every transformation."
+    },
+    {
+      "opening": "Every step away from the ordinary is a step toward what is essential.",
+      "citation": "It ascends from the earth to the heaven and again it descends to the earth and receives the force of things superior and inferior.",
+      "author": "Hermes Trismegistus",
+      "closing": "The archive records every failed experiment with equal care."
+    },
+    {
+      "opening": "In this room, patience is the first reagent.",
+      "citation": "This is the strong power of all powers, for it vanquishes every subtle thing and penetrates every solid thing.",
+      "author": "Hermes Trismegistus",
+      "closing": "All That Is is neither above nor below — it is the axis between."
+    },
+    {
+      "opening": "The furnace has been burning since before you arrived.",
+      "citation": "The dose makes the poison.",
+      "author": "Paracelsus",
+      "closing": "The formula is known to All That Is; the mystery is shared with you."
+    },
+    {
+      "opening": "Something was dissolved here. Something else took its place.",
+      "citation": "The art of healing comes from nature, not from the physician.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the fire beneath every transformation."
+    },
+    {
+      "opening": "Fire and patience: these are the only tools that matter.",
+      "citation": "Medicine is not merely a science but an art. The character of the physician may act more powerfully upon the patient than the drugs employed.",
+      "author": "Paracelsus",
+      "closing": "The archive records every failed experiment with equal care."
+    },
+    {
+      "opening": "The ash holds what the flame revealed.",
+      "citation": "All things are poisons, for there is nothing without poisonous qualities. It is only the dose which makes a thing poison.",
+      "author": "Paracelsus",
+      "closing": "All That Is is neither above nor below — it is the axis between."
+    },
+    {
+      "opening": "What was pure is now mixed; what was mixed now seeks purity.",
+      "citation": "Man is a microcosm, or a little world, because he is an extract from all the stars and planets of the whole firmament.",
+      "author": "Paracelsus",
+      "closing": "The formula is known to All That Is; the mystery is shared with you."
+    },
+    {
+      "opening": "Lead does not know it is lead.",
+      "citation": "What the eyes perceive in herbs or stones or trees is not yet a remedy; the eyes see only the dross.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the fire beneath every transformation."
+    },
+    {
+      "opening": "The work is never finished — only handed forward.",
+      "citation": "Nature brings forth nothing that does not have some use; nothing was created without reason.",
+      "author": "Paracelsus",
+      "closing": "The archive records every failed experiment with equal care."
+    },
+    {
+      "opening": "What you see is residue. What matters is what burned away.",
+      "citation": "Whoever wishes to know about the world must learn about it in its particular details.",
+      "author": "Paracelsus",
+      "closing": "All That Is is neither above nor below — it is the axis between."
+    },
+    {
+      "opening": "The vessel cracks. What was inside was never truly contained.",
+      "citation": "A physician without knowledge of astrology has no right to call himself a physician.",
+      "author": "Paracelsus",
+      "closing": "The formula is known to All That Is; the mystery is shared with you."
+    },
+    {
+      "opening": "The substance changes. The principle beneath it does not.",
+      "citation": "The greatest miracle of nature is nature itself.",
+      "author": "Paracelsus",
+      "closing": "All That Is is the fire beneath every transformation."
     }
   ]
 }

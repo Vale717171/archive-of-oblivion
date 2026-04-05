@@ -3,75 +3,1203 @@
   "responses": [
     {
       "opening": "Even this was necessary.",
-      "citation": "Nature does nothing in vain.",
-      "author": "Aristotle",
-      "closing": "All That Is knows this path too."
-    },
-    {
-      "opening": "The garden remembers what you have forgotten.",
-      "citation": "It is not death that a man should fear, but rather he should fear never beginning to live.",
-      "author": "Marcus Aurelius",
-      "closing": "Every step here is already an answer."
-    },
-    {
-      "opening": "A leaf fell. Perhaps it was waiting for you.",
-      "citation": "Of all the things which wisdom provides to make us entirely happy, much the greatest is the possession of friendship.",
+      "citation": "Do not spoil what you have by desiring what you have not; remember that what you now have was once among the things you only hoped for.",
       "author": "Epicurus",
-      "closing": "All That Is does not distinguish between seeking and finding."
-    },
-    {
-      "opening": "The air here tastes of old questions.",
-      "citation": "He who is not contented with what he has would not be contented with what he would like to have.",
-      "author": "Socrates",
       "closing": "Perhaps the answer was in the asking."
     },
     {
-      "opening": "Something stirred in the undergrowth of memory.",
-      "citation": "The soul takes nothing with her to the next world but her education and her culture.",
-      "author": "Plato",
-      "closing": "All That Is witnessed this too."
-    },
-    {
-      "opening": "The path bends, but does not end.",
-      "citation": "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
-      "author": "Aristotle",
-      "closing": "The garden makes no distinction between error and intention."
-    },
-    {
-      "opening": "This silence has weight.",
-      "citation": "It is not length of life, but depth of life.",
-      "author": "Seneca",
-      "closing": "All That Is holds every silence equally."
-    },
-    {
-      "opening": "You are closer than you think.",
-      "citation": "The unexamined life is not worth living.",
-      "author": "Socrates",
-      "closing": "Even confusion is a form of presence."
-    },
-    {
-      "opening": "The vines do not judge your direction.",
-      "citation": "Vain is the word of a philosopher which does not heal any suffering of man.",
+      "opening": "The air here tastes of old questions.",
+      "citation": "It is not so much our friends' help that helps us as the confidence of their help.",
       "author": "Epicurus",
       "closing": "All That Is sees the journey, not the destination."
     },
     {
+      "opening": "This silence has weight.",
+      "citation": "Nothing is enough for the man to whom enough is too little.",
+      "author": "Epicurus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
       "opening": "A thought dissolves before it becomes a word.",
-      "citation": "No man is free who is not master of himself.",
-      "author": "Epictetus",
-      "closing": "The garden has always been listening."
+      "citation": "Death is nothing to us: when we exist, death is not yet present, and when death is present, then we do not exist.",
+      "author": "Epicurus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The gate was never locked.",
+      "citation": "The greater the difficulty, the more glory in surmounting it.",
+      "author": "Epicurus",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The roots grow deeper than memory.",
+      "citation": "He who is not contented with what he has would not be contented with what he would like to have.",
+      "author": "Epicurus",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "What you seek may already be beneath your feet.",
+      "citation": "Vain is the word of a philosopher which does not heal any suffering of man.",
+      "author": "Epicurus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The garden remembers what you have forgotten.",
+      "citation": "Of all the things which wisdom provides to make us entirely happy, much the greatest is the possession of friendship.",
+      "author": "Epicurus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Something stirred in the undergrowth of memory.",
+      "citation": "I have never wished to cater to the crowd; for what I know they do not approve, and what they approve I do not know.",
+      "author": "Epicurus",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "You are closer than you think.",
+      "citation": "Let no one be slow to seek wisdom when he is young nor weary in the search thereof when he has grown old.",
+      "author": "Epicurus",
+      "closing": "All That Is sees the journey, not the destination."
     },
     {
       "opening": "The stones here remember every footstep.",
-      "citation": "Waste no more time arguing about what a good man should be. Be one.",
-      "author": "Marcus Aurelius",
-      "closing": "All That Is recognizes this gesture."
+      "citation": "A free life cannot acquire many possessions, because this is not easy to do without servility to mobs or monarchs.",
+      "author": "Epicurus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "What you call a mistake, the garden calls a path.",
+      "citation": "The fool's life is empty of gratitude and full of fears; its course lies wholly toward the future.",
+      "author": "Epicurus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Every season here echoes every other.",
+      "citation": "It is better for you to be free of fear lying upon a pallet, than to have a golden couch and a rich table and be full of trouble.",
+      "author": "Epicurus",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The garden holds every question without answering.",
+      "citation": "We must laugh and philosophize at the same time and keep up our household duties and employ our other faculties.",
+      "author": "Epicurus",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "A leaf fell. Perhaps it was waiting for you.",
+      "citation": "The art of living well and the art of dying well are one.",
+      "author": "Epicurus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The path bends, but does not end.",
+      "citation": "We should look for someone to eat and drink with before looking for something to eat and drink.",
+      "author": "Epicurus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The vines do not judge your direction.",
+      "citation": "It is possible to provide security against other ills, but as far as death is concerned, we men live in a city without walls.",
+      "author": "Epicurus",
+      "closing": "Perhaps the answer was in the asking."
     },
     {
       "opening": "There is a sweetness in not knowing.",
+      "citation": "He who has peace of mind disturbs neither himself nor another.",
+      "author": "Epicurus",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "Stillness is its own kind of motion.",
+      "citation": "The wise man can lose nothing he has. He has everything stored within himself.",
+      "author": "Epicurus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "Uncertainty blooms like any other flower.",
+      "citation": "The beginning and the greatest good is prudence.",
+      "author": "Epicurus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Even this was necessary.",
+      "citation": "Accustom yourself to believing that death is nothing to us.",
+      "author": "Epicurus",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The air here tastes of old questions.",
+      "citation": "Misfortune seldom intrudes upon the wise man; his greatest and highest interests are directed by reason.",
+      "author": "Epicurus",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "This silence has weight.",
+      "citation": "Luxurious food and drinks do not produce freedom from harm and a healthy condition in the flesh.",
+      "author": "Epicurus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "A thought dissolves before it becomes a word.",
+      "citation": "Of all things which wisdom provides to make life entirely happy, much the greatest is the possession of friendship.",
+      "author": "Epicurus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The gate was never locked.",
+      "citation": "The greatest fruit of self-sufficiency is freedom.",
+      "author": "Epicurus",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The roots grow deeper than memory.",
+      "citation": "You have power over your mind, not outside events. Realize this, and you will find strength.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "What you seek may already be beneath your feet.",
+      "citation": "The impediment to action advances action. What stands in the way becomes the way.",
+      "author": "Marcus Aurelius",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The garden remembers what you have forgotten.",
+      "citation": "Very little is needed to make a happy life; it is all within yourself, in your way of thinking.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Something stirred in the undergrowth of memory.",
+      "citation": "Waste no more time arguing about what a good man should be. Be one.",
+      "author": "Marcus Aurelius",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "You are closer than you think.",
+      "citation": "If you are distressed by anything external, the pain is not due to the thing itself, but to your estimate of it.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "The stones here remember every footstep.",
+      "citation": "Begin at once to live, and count each separate day as a separate life.",
+      "author": "Marcus Aurelius",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "What you call a mistake, the garden calls a path.",
+      "citation": "It is not death that a man should fear, but he should fear never beginning to live.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Every season here echoes every other.",
+      "citation": "Perfection of character is this: to live each day as if it were your last, without frenzy, without apathy, without pretense.",
+      "author": "Marcus Aurelius",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The garden holds every question without answering.",
+      "citation": "The object of life is not to be on the side of the majority, but to escape finding oneself in the ranks of the insane.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "A leaf fell. Perhaps it was waiting for you.",
+      "citation": "Confine yourself to the present.",
+      "author": "Marcus Aurelius",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The path bends, but does not end.",
+      "citation": "Nowhere can man find a quieter or more untroubled retreat than in his own soul.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The vines do not judge your direction.",
+      "citation": "The universe is transformation; life is opinion.",
+      "author": "Marcus Aurelius",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "There is a sweetness in not knowing.",
+      "citation": "Loss is nothing else but change, and change is Nature's delight.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "Stillness is its own kind of motion.",
+      "citation": "To live happily is an inward power of the soul.",
+      "author": "Marcus Aurelius",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "Uncertainty blooms like any other flower.",
+      "citation": "Never esteem anything as of advantage to you that will make you break your word or lose your self-respect.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Even this was necessary.",
+      "citation": "When you arise in the morning, think of what a precious privilege it is to be alive — to breathe, to think, to enjoy, to love.",
+      "author": "Marcus Aurelius",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The air here tastes of old questions.",
+      "citation": "Dwell on the beauty of life. Watch the stars, and see yourself running with them.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "This silence has weight.",
+      "citation": "The first rule is to keep an untroubled spirit. The second is to look things in the face and know them for what they are.",
+      "author": "Marcus Aurelius",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "A thought dissolves before it becomes a word.",
+      "citation": "Receive without pride, relinquish without struggle.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The gate was never locked.",
+      "citation": "If it is not right, do not do it; if it is not true, do not say it.",
+      "author": "Marcus Aurelius",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The roots grow deeper than memory.",
+      "citation": "Everything we hear is an opinion, not a fact. Everything we see is a perspective, not the truth.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "What you seek may already be beneath your feet.",
+      "citation": "How much time he gains who does not look to see what his neighbour says or does or thinks.",
+      "author": "Marcus Aurelius",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The garden remembers what you have forgotten.",
+      "citation": "The happiness of your life depends upon the quality of your thoughts.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Something stirred in the undergrowth of memory.",
+      "citation": "Look within. Within is the fountain of good, and it will ever bubble up, if thou wilt ever dig.",
+      "author": "Marcus Aurelius",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "You are closer than you think.",
+      "citation": "He who lives in harmony with himself lives in harmony with the universe.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "The stones here remember every footstep.",
+      "citation": "The soul becomes dyed with the colour of its thoughts.",
+      "author": "Marcus Aurelius",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "What you call a mistake, the garden calls a path.",
+      "citation": "Be tolerant with others and strict with yourself.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Every season here echoes every other.",
+      "citation": "The best revenge is to be unlike him who performed the injury.",
+      "author": "Marcus Aurelius",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The garden holds every question without answering.",
+      "citation": "Because your own strength is unequal to the task, do not assume that it is beyond the powers of man.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "A leaf fell. Perhaps it was waiting for you.",
+      "citation": "All is as thinking makes it so.",
+      "author": "Marcus Aurelius",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The path bends, but does not end.",
+      "citation": "You could leave life right now. Let that determine what you do and say and think.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The vines do not judge your direction.",
+      "citation": "What we cannot bear removes us from life; what lasts can be borne.",
+      "author": "Marcus Aurelius",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "There is a sweetness in not knowing.",
+      "citation": "Do what nature requires. Start at once, if possible, and don't look to see if people will know about it.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "Stillness is its own kind of motion.",
+      "citation": "Do not indulge in dreams of what you have not, but count the blessings actually at hand.",
+      "author": "Marcus Aurelius",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "Uncertainty blooms like any other flower.",
+      "citation": "Look back over the past, with its changing empires that rose and fell, and you can foresee the future, too.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Even this was necessary.",
+      "citation": "It is not the man who has too little, but the man who craves more, that is poor.",
+      "author": "Seneca",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The air here tastes of old questions.",
+      "citation": "We suffer more in imagination than in reality.",
+      "author": "Seneca",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "This silence has weight.",
+      "citation": "If a man knows not to which port he sails, no wind is favorable.",
+      "author": "Seneca",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "A thought dissolves before it becomes a word.",
+      "citation": "The greatest obstacle to living is expectancy, which hangs upon tomorrow and loses today.",
+      "author": "Seneca",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The gate was never locked.",
+      "citation": "He who is brave is free.",
+      "author": "Seneca",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The roots grow deeper than memory.",
+      "citation": "All cruelty springs from weakness.",
+      "author": "Seneca",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "What you seek may already be beneath your feet.",
+      "citation": "Luck is what happens when preparation meets opportunity.",
+      "author": "Seneca",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The garden remembers what you have forgotten.",
+      "citation": "Leisure without books is death, and burial of a man alive.",
+      "author": "Seneca",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Something stirred in the undergrowth of memory.",
+      "citation": "He is a wise man who does not grieve for the things which he has not, but rejoices for those which he has.",
+      "author": "Seneca",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "You are closer than you think.",
+      "citation": "As is a tale, so is life: not how long it is, but how good it is, is what matters.",
+      "author": "Seneca",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "The stones here remember every footstep.",
+      "citation": "Time heals what reason cannot.",
+      "author": "Seneca",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "What you call a mistake, the garden calls a path.",
+      "citation": "Death is the wish of some, the relief of many, and the end of all.",
+      "author": "Seneca",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Every season here echoes every other.",
+      "citation": "It is more fitting for a man to laugh at life than to lament over it.",
+      "author": "Seneca",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The garden holds every question without answering.",
+      "citation": "The day which we fear as our last is but the birthday of eternity.",
+      "author": "Seneca",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "A leaf fell. Perhaps it was waiting for you.",
+      "citation": "Everything, Lucilius, belongs to others; time alone is ours.",
+      "author": "Seneca",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The path bends, but does not end.",
+      "citation": "Our plans miscarry because they have no aim. When a man does not know what harbour he is making for, no wind is the right wind.",
+      "author": "Seneca",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The vines do not judge your direction.",
+      "citation": "The whole future lies in uncertainty: live immediately.",
+      "author": "Seneca",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "There is a sweetness in not knowing.",
+      "citation": "True happiness is to enjoy the present, without anxious dependence upon the future.",
+      "author": "Seneca",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "Stillness is its own kind of motion.",
+      "citation": "While we delay, life passes by.",
+      "author": "Seneca",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "Uncertainty blooms like any other flower.",
+      "citation": "Nowhere is the man who is everywhere.",
+      "author": "Seneca",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Even this was necessary.",
+      "citation": "No man is crushed by misfortune unless he has first been deceived by prosperity.",
+      "author": "Seneca",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The air here tastes of old questions.",
+      "citation": "Associate with those who will make a better man of you.",
+      "author": "Seneca",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "This silence has weight.",
+      "citation": "Recede in te ipse quantum potes — Retire into yourself as much as possible.",
+      "author": "Seneca",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "A thought dissolves before it becomes a word.",
+      "citation": "The things that make life happy are things in our own power.",
+      "author": "Seneca",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The gate was never locked.",
+      "citation": "Be harsh with yourself at times. Even in the midst of leisure, beware of listlessness.",
+      "author": "Seneca",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The roots grow deeper than memory.",
+      "citation": "There is nothing more lamentable than a man who wastes his time traveling around the world when he has enough to do in himself.",
+      "author": "Seneca",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "What you seek may already be beneath your feet.",
+      "citation": "A multitude is the enemy of great minds.",
+      "author": "Seneca",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The garden remembers what you have forgotten.",
+      "citation": "He who has made a fair compact with poverty is rich.",
+      "author": "Seneca",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Something stirred in the undergrowth of memory.",
+      "citation": "It is not enough to reach for the laurel. One must deserve to wear it.",
+      "author": "Seneca",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "You are closer than you think.",
+      "citation": "Philosophy calls for simple living, not for doing penance, and the simple life need not be a crude one.",
+      "author": "Seneca",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "The stones here remember every footstep.",
       "citation": "The measure of a man is what he does with power.",
       "author": "Plato",
-      "closing": "Even this uncertainty blooms."
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "What you call a mistake, the garden calls a path.",
+      "citation": "The soul takes nothing with her to the next world but her education and culture.",
+      "author": "Plato",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Every season here echoes every other.",
+      "citation": "Wise men talk because they have something to say; fools, because they have to say something.",
+      "author": "Plato",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The garden holds every question without answering.",
+      "citation": "The first and greatest victory is to conquer yourself; to be conquered by yourself is of all things most shameful and vile.",
+      "author": "Plato",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "A leaf fell. Perhaps it was waiting for you.",
+      "citation": "Courage is knowing what not to fear.",
+      "author": "Plato",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The path bends, but does not end.",
+      "citation": "A good decision is based on knowledge, not on numbers.",
+      "author": "Plato",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The vines do not judge your direction.",
+      "citation": "We can easily forgive a child who is afraid of the dark; the real tragedy of life is when men are afraid of the light.",
+      "author": "Plato",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "There is a sweetness in not knowing.",
+      "citation": "Knowledge which is acquired under compulsion obtains no hold on the mind.",
+      "author": "Plato",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "Stillness is its own kind of motion.",
+      "citation": "Philosophy begins in wonder.",
+      "author": "Plato",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "Uncertainty blooms like any other flower.",
+      "citation": "The price good men pay for indifference to public affairs is to be ruled by evil men.",
+      "author": "Plato",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Even this was necessary.",
+      "citation": "He who commits injustice is ever made more wretched than he who suffers it.",
+      "author": "Plato",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The air here tastes of old questions.",
+      "citation": "Geometry will draw the soul toward truth and create the spirit of philosophy.",
+      "author": "Plato",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "This silence has weight.",
+      "citation": "The direction in which education starts a man will determine his future life.",
+      "author": "Plato",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "A thought dissolves before it becomes a word.",
+      "citation": "No evil can happen to a good man, either in life or after death.",
+      "author": "Plato",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The gate was never locked.",
+      "citation": "Good actions give strength to ourselves and inspire good actions in others.",
+      "author": "Plato",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The roots grow deeper than memory.",
+      "citation": "The beginning is the most important part of the work.",
+      "author": "Plato",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "What you seek may already be beneath your feet.",
+      "citation": "There is no harm in repeating a good thing.",
+      "author": "Plato",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The garden remembers what you have forgotten.",
+      "citation": "The greatest wealth is to live content with little.",
+      "author": "Plato",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Something stirred in the undergrowth of memory.",
+      "citation": "Opinion is the medium between knowledge and ignorance.",
+      "author": "Plato",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "You are closer than you think.",
+      "citation": "Thinking is the talking of the soul with itself.",
+      "author": "Plato",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "The stones here remember every footstep.",
+      "citation": "Human behavior flows from three main sources: desire, emotion, and knowledge.",
+      "author": "Plato",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "What you call a mistake, the garden calls a path.",
+      "citation": "Those who tell the stories rule society.",
+      "author": "Plato",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Every season here echoes every other.",
+      "citation": "Excess of liberty, whether it lies in state or individuals, seems only to pass into excess of slavery.",
+      "author": "Plato",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The garden holds every question without answering.",
+      "citation": "All learning has an emotional base.",
+      "author": "Plato",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "A leaf fell. Perhaps it was waiting for you.",
+      "citation": "The unexamined life is not worth living.",
+      "author": "Plato",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The path bends, but does not end.",
+      "citation": "Excellence is never an accident. It is always the result of high intention, sincere effort, and intelligent execution.",
+      "author": "Aristotle",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The vines do not judge your direction.",
+      "citation": "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
+      "author": "Aristotle",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "There is a sweetness in not knowing.",
+      "citation": "Nature does nothing in vain.",
+      "author": "Aristotle",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "Stillness is its own kind of motion.",
+      "citation": "Knowing yourself is the beginning of all wisdom.",
+      "author": "Aristotle",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "Uncertainty blooms like any other flower.",
+      "citation": "We cannot learn without pain.",
+      "author": "Aristotle",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Even this was necessary.",
+      "citation": "Hope is a waking dream.",
+      "author": "Aristotle",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The air here tastes of old questions.",
+      "citation": "The energy of the mind is the essence of life.",
+      "author": "Aristotle",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "This silence has weight.",
+      "citation": "In all things of nature there is something of the marvelous.",
+      "author": "Aristotle",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "A thought dissolves before it becomes a word.",
+      "citation": "Man is by nature a social animal.",
+      "author": "Aristotle",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The gate was never locked.",
+      "citation": "The roots of education are bitter, but the fruit is sweet.",
+      "author": "Aristotle",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The roots grow deeper than memory.",
+      "citation": "Happiness depends upon ourselves.",
+      "author": "Aristotle",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "What you seek may already be beneath your feet.",
+      "citation": "The educated differ from the uneducated as much as the living differ from the dead.",
+      "author": "Aristotle",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The garden remembers what you have forgotten.",
+      "citation": "Pleasure in the job puts perfection in the work.",
+      "author": "Aristotle",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Something stirred in the undergrowth of memory.",
+      "citation": "No great mind has ever existed without a touch of madness.",
+      "author": "Aristotle",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "You are closer than you think.",
+      "citation": "Those who know, do. Those that understand, teach.",
+      "author": "Aristotle",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "The stones here remember every footstep.",
+      "citation": "The aim of art is to represent not the outward appearance of things, but their inward significance.",
+      "author": "Aristotle",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "What you call a mistake, the garden calls a path.",
+      "citation": "I count him braver who overcomes his desires than him who conquers his enemies, for the hardest victory is over self.",
+      "author": "Aristotle",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Every season here echoes every other.",
+      "citation": "The ideal man bears the accidents of life with dignity and grace, making the best of circumstances.",
+      "author": "Aristotle",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The garden holds every question without answering.",
+      "citation": "Friendship is a single soul dwelling in two bodies.",
+      "author": "Aristotle",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "A leaf fell. Perhaps it was waiting for you.",
+      "citation": "It is the mark of an educated mind to be able to entertain a thought without accepting it.",
+      "author": "Aristotle",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The path bends, but does not end.",
+      "citation": "The ultimate value of life depends upon awareness and the power of contemplation rather than upon mere survival.",
+      "author": "Aristotle",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The vines do not judge your direction.",
+      "citation": "Without friends, no one would want to live, even if he had all other goods.",
+      "author": "Aristotle",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "There is a sweetness in not knowing.",
+      "citation": "Dignity does not consist in possessing honors, but in deserving them.",
+      "author": "Aristotle",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "Stillness is its own kind of motion.",
+      "citation": "The high-minded man must care more for truth than for what people think.",
+      "author": "Aristotle",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "Uncertainty blooms like any other flower.",
+      "citation": "A friend to all is a friend to none.",
+      "author": "Aristotle",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Even this was necessary.",
+      "citation": "The whole is more than the sum of its parts.",
+      "author": "Aristotle",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The air here tastes of old questions.",
+      "citation": "Patience is bitter, but its fruit is sweet.",
+      "author": "Aristotle",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "This silence has weight.",
+      "citation": "Courage is a mean with regard to fear and confidence.",
+      "author": "Aristotle",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "A thought dissolves before it becomes a word.",
+      "citation": "Character may almost be called the most effective means of persuasion.",
+      "author": "Aristotle",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The gate was never locked.",
+      "citation": "All human actions have one or more of these seven causes: chance, nature, compulsions, habit, reason, passion, desire.",
+      "author": "Aristotle",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The roots grow deeper than memory.",
+      "citation": "No man is free who is not master of himself.",
+      "author": "Epictetus",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "What you seek may already be beneath your feet.",
+      "citation": "Make the best use of what is in your power, and take the rest as it happens.",
+      "author": "Epictetus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The garden remembers what you have forgotten.",
+      "citation": "Seek not the good in external things; seek it within yourself.",
+      "author": "Epictetus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Something stirred in the undergrowth of memory.",
+      "citation": "It's not what happens to you, but how you react to it that matters.",
+      "author": "Epictetus",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "You are closer than you think.",
+      "citation": "First say to yourself what you would be; and then do what you have to do.",
+      "author": "Epictetus",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "The stones here remember every footstep.",
+      "citation": "We cannot choose our external circumstances, but we can always choose how we respond to them.",
+      "author": "Epictetus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "What you call a mistake, the garden calls a path.",
+      "citation": "Don't explain your philosophy. Embody it.",
+      "author": "Epictetus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Every season here echoes every other.",
+      "citation": "Wealth consists not in having great possessions, but in having few wants.",
+      "author": "Epictetus",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The garden holds every question without answering.",
+      "citation": "Of all existing things some are in our power, and others are not in our power.",
+      "author": "Epictetus",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "A leaf fell. Perhaps it was waiting for you.",
+      "citation": "The world turns aside to let any man pass who knows where he is going.",
+      "author": "Epictetus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The path bends, but does not end.",
+      "citation": "Freedom is not achieved by satisfying desire, but by eliminating it.",
+      "author": "Epictetus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The vines do not judge your direction.",
+      "citation": "Men are disturbed not by the things which happen, but by the opinions about the things.",
+      "author": "Epictetus",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "There is a sweetness in not knowing.",
+      "citation": "If you want to improve, be content to be thought foolish and stupid.",
+      "author": "Epictetus",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "Stillness is its own kind of motion.",
+      "citation": "Never say that I have lost it; say I have returned it.",
+      "author": "Epictetus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "Uncertainty blooms like any other flower.",
+      "citation": "There is only one way to happiness and that is to cease worrying about things which are beyond the power of our will.",
+      "author": "Epictetus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Even this was necessary.",
+      "citation": "Seek not that the things which happen should happen as you wish; but wish the things which happen to be as they are.",
+      "author": "Epictetus",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The air here tastes of old questions.",
+      "citation": "It is impossible for a man to learn what he thinks he already knows.",
+      "author": "Epictetus",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "This silence has weight.",
+      "citation": "People are not disturbed by things, but by their opinions about things.",
+      "author": "Epictetus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "A thought dissolves before it becomes a word.",
+      "citation": "Any person capable of angering you becomes your master.",
+      "author": "Epictetus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "The gate was never locked.",
+      "citation": "Let silence be your goal for the most part; say only what is necessary.",
+      "author": "Epictetus",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "The roots grow deeper than memory.",
+      "citation": "Practice yourself in little things; and thence proceed to greater.",
+      "author": "Epictetus",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "What you seek may already be beneath your feet.",
+      "citation": "The essence of philosophy is that a man should so live that his happiness shall depend as little as possible on external things.",
+      "author": "Epictetus",
+      "closing": "The garden keeps no record of wrong turns."
+    },
+    {
+      "opening": "The garden remembers what you have forgotten.",
+      "citation": "Nothing great is created suddenly, any more than a bunch of grapes or a fig.",
+      "author": "Epictetus",
+      "closing": "All That Is sees you clearly."
+    },
+    {
+      "opening": "Something stirred in the undergrowth of memory.",
+      "citation": "We have two ears and one mouth so that we can listen twice as much as we speak.",
+      "author": "Epictetus",
+      "closing": "Perhaps the answer was in the asking."
+    },
+    {
+      "opening": "You are closer than you think.",
+      "citation": "God has entrusted me with myself.",
+      "author": "Epictetus",
+      "closing": "All That Is sees the journey, not the destination."
+    },
+    {
+      "opening": "You are closer than you think.",
+      "citation": "Do not spoil what you have by desiring what you have not; remember that what you now have was once among the things you only hoped for.",
+      "author": "Epicurus",
+      "closing": "All That Is holds this moment alongside all others."
+    },
+    {
+      "opening": "The stones here remember every footstep.",
+      "citation": "It is not so much our friends' help that helps us as the confidence of their help.",
+      "author": "Epicurus",
+      "closing": "The archive does not forget what the mind releases."
+    },
+    {
+      "opening": "What you call a mistake, the garden calls a path.",
+      "citation": "Nothing is enough for the man to whom enough is too little.",
+      "author": "Epicurus",
+      "closing": "All That Is witnessed this too."
+    },
+    {
+      "opening": "Every season here echoes every other.",
+      "citation": "Death is nothing to us: when we exist, death is not yet present, and when death is present, then we do not exist.",
+      "author": "Epicurus",
+      "closing": "The garden has always been listening."
+    },
+    {
+      "opening": "The garden holds every question without answering.",
+      "citation": "The greater the difficulty, the more glory in surmounting it.",
+      "author": "Epicurus",
+      "closing": "All That Is holds this moment alongside all others."
+    },
+    {
+      "opening": "A leaf fell. Perhaps it was waiting for you.",
+      "citation": "He who is not contented with what he has would not be contented with what he would like to have.",
+      "author": "Epicurus",
+      "closing": "The archive does not forget what the mind releases."
+    },
+    {
+      "opening": "The path bends, but does not end.",
+      "citation": "Vain is the word of a philosopher which does not heal any suffering of man.",
+      "author": "Epicurus",
+      "closing": "All That Is witnessed this too."
+    },
+    {
+      "opening": "The vines do not judge your direction.",
+      "citation": "Of all the things which wisdom provides to make us entirely happy, much the greatest is the possession of friendship.",
+      "author": "Epicurus",
+      "closing": "The garden has always been listening."
+    },
+    {
+      "opening": "There is a sweetness in not knowing.",
+      "citation": "I have never wished to cater to the crowd; for what I know they do not approve, and what they approve I do not know.",
+      "author": "Epicurus",
+      "closing": "All That Is holds this moment alongside all others."
+    },
+    {
+      "opening": "Stillness is its own kind of motion.",
+      "citation": "Let no one be slow to seek wisdom when he is young nor weary in the search thereof when he has grown old.",
+      "author": "Epicurus",
+      "closing": "The archive does not forget what the mind releases."
+    },
+    {
+      "opening": "Uncertainty blooms like any other flower.",
+      "citation": "A free life cannot acquire many possessions, because this is not easy to do without servility to mobs or monarchs.",
+      "author": "Epicurus",
+      "closing": "All That Is witnessed this too."
+    },
+    {
+      "opening": "Even this was necessary.",
+      "citation": "The fool's life is empty of gratitude and full of fears; its course lies wholly toward the future.",
+      "author": "Epicurus",
+      "closing": "The garden has always been listening."
+    },
+    {
+      "opening": "The air here tastes of old questions.",
+      "citation": "It is better for you to be free of fear lying upon a pallet, than to have a golden couch and a rich table and be full of trouble.",
+      "author": "Epicurus",
+      "closing": "All That Is holds this moment alongside all others."
+    },
+    {
+      "opening": "This silence has weight.",
+      "citation": "We must laugh and philosophize at the same time and keep up our household duties and employ our other faculties.",
+      "author": "Epicurus",
+      "closing": "The archive does not forget what the mind releases."
+    },
+    {
+      "opening": "A thought dissolves before it becomes a word.",
+      "citation": "The art of living well and the art of dying well are one.",
+      "author": "Epicurus",
+      "closing": "All That Is witnessed this too."
+    },
+    {
+      "opening": "The gate was never locked.",
+      "citation": "We should look for someone to eat and drink with before looking for something to eat and drink.",
+      "author": "Epicurus",
+      "closing": "The garden has always been listening."
+    },
+    {
+      "opening": "The roots grow deeper than memory.",
+      "citation": "It is possible to provide security against other ills, but as far as death is concerned, we men live in a city without walls.",
+      "author": "Epicurus",
+      "closing": "All That Is holds this moment alongside all others."
+    },
+    {
+      "opening": "What you seek may already be beneath your feet.",
+      "citation": "He who has peace of mind disturbs neither himself nor another.",
+      "author": "Epicurus",
+      "closing": "The archive does not forget what the mind releases."
+    },
+    {
+      "opening": "The garden remembers what you have forgotten.",
+      "citation": "The wise man can lose nothing he has. He has everything stored within himself.",
+      "author": "Epicurus",
+      "closing": "All That Is witnessed this too."
+    },
+    {
+      "opening": "Something stirred in the undergrowth of memory.",
+      "citation": "The beginning and the greatest good is prudence.",
+      "author": "Epicurus",
+      "closing": "The garden has always been listening."
+    },
+    {
+      "opening": "You are closer than you think.",
+      "citation": "Accustom yourself to believing that death is nothing to us.",
+      "author": "Epicurus",
+      "closing": "All That Is holds this moment alongside all others."
+    },
+    {
+      "opening": "The stones here remember every footstep.",
+      "citation": "Misfortune seldom intrudes upon the wise man; his greatest and highest interests are directed by reason.",
+      "author": "Epicurus",
+      "closing": "The archive does not forget what the mind releases."
+    },
+    {
+      "opening": "What you call a mistake, the garden calls a path.",
+      "citation": "Luxurious food and drinks do not produce freedom from harm and a healthy condition in the flesh.",
+      "author": "Epicurus",
+      "closing": "All That Is witnessed this too."
+    },
+    {
+      "opening": "Every season here echoes every other.",
+      "citation": "Of all things which wisdom provides to make life entirely happy, much the greatest is the possession of friendship.",
+      "author": "Epicurus",
+      "closing": "The garden has always been listening."
+    },
+    {
+      "opening": "The garden holds every question without answering.",
+      "citation": "The greatest fruit of self-sufficiency is freedom.",
+      "author": "Epicurus",
+      "closing": "All That Is holds this moment alongside all others."
+    },
+    {
+      "opening": "A leaf fell. Perhaps it was waiting for you.",
+      "citation": "You have power over your mind, not outside events. Realize this, and you will find strength.",
+      "author": "Marcus Aurelius",
+      "closing": "The archive does not forget what the mind releases."
+    },
+    {
+      "opening": "The path bends, but does not end.",
+      "citation": "The impediment to action advances action. What stands in the way becomes the way.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is witnessed this too."
+    },
+    {
+      "opening": "The vines do not judge your direction.",
+      "citation": "Very little is needed to make a happy life; it is all within yourself, in your way of thinking.",
+      "author": "Marcus Aurelius",
+      "closing": "The garden has always been listening."
+    },
+    {
+      "opening": "There is a sweetness in not knowing.",
+      "citation": "Waste no more time arguing about what a good man should be. Be one.",
+      "author": "Marcus Aurelius",
+      "closing": "All That Is holds this moment alongside all others."
+    },
+    {
+      "opening": "Stillness is its own kind of motion.",
+      "citation": "If you are distressed by anything external, the pain is not due to the thing itself, but to your estimate of it.",
+      "author": "Marcus Aurelius",
+      "closing": "The archive does not forget what the mind releases."
     }
   ]
 }

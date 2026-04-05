@@ -3,75 +3,1203 @@
   "responses": [
     {
       "opening": "The stars do not answer — they witness.",
-      "citation": "If I have seen further it is by standing on the shoulders of giants.",
+      "citation": "If I have seen further, it is by standing on the shoulders of giants.",
       "author": "Isaac Newton",
-      "closing": "All That Is traces every orbit, even yours."
+      "closing": "The stars have noted your presence."
     },
     {
-      "opening": "Light bends here, as does certainty.",
-      "citation": "Imagination is more important than knowledge.",
-      "author": "Albert Einstein",
-      "closing": "The Observatory makes no distinction between observer and observed."
+      "opening": "There is no darkness here — only distances too great for light.",
+      "citation": "Truth is ever to be found in simplicity, and not in the multiplicity and confusion of things.",
+      "author": "Isaac Newton",
+      "closing": "All That Is does not distinguish between the observer and the observed."
     },
     {
-      "opening": "A number was whispered. You almost heard it.",
+      "opening": "The planets have been counting since before we learned to count.",
+      "citation": "What we know is a drop, what we don't know is an ocean.",
+      "author": "Isaac Newton",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Even the instrument of measurement is changed by what it measures.",
+      "citation": "Plato is my friend, Aristotle is my friend, but my greatest friend is truth.",
+      "author": "Isaac Newton",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "Every calculation carries within it the shape of the unknown.",
+      "citation": "I do not know what I may appear to the world, but to myself I seem to have been only like a boy playing on the seashore, and diverting myself in now and then finding a smoother pebble or a prettier shell than ordinary, whilst the great ocean of truth lay all undiscovered before me.",
+      "author": "Isaac Newton",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "You have arrived at the edge of the measurable.",
+      "citation": "If I have done the public any service, it is due to my patient thought.",
+      "author": "Isaac Newton",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "What the ancients called divine, we now call constant.",
+      "citation": "Gravity explains the motions of the planets, but it cannot explain who set the planets in motion.",
+      "author": "Isaac Newton",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Something vast turned overhead while you were not looking.",
+      "citation": "God created everything by number, weight and measure.",
+      "author": "Isaac Newton",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "A number was written in the sky before language existed.",
+      "citation": "To arrive at the simplest truth requires years of contemplation.",
+      "author": "Isaac Newton",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "What you call silence is the hum of forces you cannot name.",
+      "citation": "This most beautiful system of the sun, planets, and comets, could only proceed from the counsel and dominion of an intelligent Being.",
+      "author": "Isaac Newton",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "This observatory was built to look out; perhaps it is also built to look in.",
+      "citation": "We are to admit no more causes of natural things than such as are both true and sufficient to explain their appearances.",
+      "author": "Isaac Newton",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Light takes time. What you see is already the past.",
+      "citation": "The changing of bodies into light, and light into bodies, is very conformable to the course of Nature.",
+      "author": "Isaac Newton",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "An orbit does not ask permission to close.",
+      "citation": "I keep the subject constantly before me and wait till the first dawnings open slowly, by little and little, into a full and clear light.",
+      "author": "Isaac Newton",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "There is no map here — only coordinates.",
+      "citation": "Nature is pleased with simplicity and affects not the pomp of superfluous causes.",
+      "author": "Isaac Newton",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The telescope sees further than the eye; the mind, further still.",
+      "citation": "To every action there is always opposed an equal reaction.",
+      "author": "Isaac Newton",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "The lens focuses, but the mystery remains.",
+      "citation": "Tact is the knack of making a point without making an enemy.",
+      "author": "Isaac Newton",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "The universe is older than every question you carry.",
+      "citation": "My powers are ordinary. Only my application brings me success.",
+      "author": "Isaac Newton",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "The void between stars is not empty — it is full of what we have not named.",
+      "citation": "All the phenomena of nature may be reduced to general laws.",
+      "author": "Isaac Newton",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The clockwork of heaven runs without our permission.",
+      "citation": "No great discovery was ever made without a bold guess.",
+      "author": "Isaac Newton",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "The sky is a question that sharpens the longer you look at it.",
+      "citation": "The most beautiful and most profound experience is the sensation of the mystical.",
+      "author": "Isaac Newton",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "The stars do not answer — they witness.",
       "citation": "Mathematics is the language in which God has written the universe.",
       "author": "Galileo Galilei",
-      "closing": "All That Is speaks in equations you have not yet learned."
+      "closing": "The stars have noted your presence."
     },
     {
-      "opening": "The lens shifts. Something comes into focus.",
-      "citation": "Science is the great antidote to the poison of enthusiasm and superstition.",
-      "author": "Isaac Newton",
-      "closing": "Even error refracts toward truth."
+      "opening": "There is no darkness here — only distances too great for light.",
+      "citation": "All truths are easy to understand once they are discovered; the point is to discover them.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is does not distinguish between the observer and the observed."
     },
     {
-      "opening": "The constellation above you has no name yet.",
-      "citation": "Science cannot solve the ultimate mystery of nature, because we ourselves are part of the mystery.",
-      "author": "Max Planck",
-      "closing": "All That Is maps even the spaces between stars."
+      "opening": "The planets have been counting since before we learned to count.",
+      "citation": "The sun, with all those planets revolving around it and dependent on it, can still ripen a bunch of grapes as if it had nothing else in the universe to do.",
+      "author": "Galileo Galilei",
+      "closing": "What you could not name, the universe named for itself."
     },
     {
-      "opening": "A pendulum swings in a room you cannot see.",
-      "citation": "The important thing is not to stop questioning.",
-      "author": "Albert Einstein",
-      "closing": "Every question alters the trajectory."
+      "opening": "Even the instrument of measurement is changed by what it measures.",
+      "citation": "I have never met a man so ignorant that I couldn't learn something from him.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
     },
     {
-      "opening": "The instruments hum with a frequency beyond hearing.",
+      "opening": "Every calculation carries within it the shape of the unknown.",
       "citation": "In questions of science, the authority of a thousand is not worth the humble reasoning of a single individual.",
       "author": "Galileo Galilei",
-      "closing": "All That Is calibrates even the unmeasurable."
+      "closing": "The stars have noted your presence."
     },
     {
-      "opening": "You stand at the edge of what can be known.",
-      "citation": "We can easily forgive a child who is afraid of the dark; the real tragedy is when men are afraid of the light.",
-      "author": "Plato",
-      "closing": "The Observatory has no walls — only horizons."
+      "opening": "You have arrived at the edge of the measurable.",
+      "citation": "The universe cannot be read until we have learned the language and become familiar with the characters in which it is written.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is does not distinguish between the observer and the observed."
     },
     {
-      "opening": "An equation resolves itself in the silence.",
+      "opening": "What the ancients called divine, we now call constant.",
+      "citation": "You cannot teach a man anything; you can only help him find it within himself.",
+      "author": "Galileo Galilei",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Something vast turned overhead while you were not looking.",
+      "citation": "Measure what can be measured, and make measurable what cannot be measured.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "A number was written in the sky before language existed.",
+      "citation": "I do not feel obliged to believe that the same God who has endowed us with sense, reason, and intellect has intended us to forgo their use.",
+      "author": "Galileo Galilei",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "What you call silence is the hum of forces you cannot name.",
+      "citation": "The Bible shows the way to go to heaven, not the way the heavens go.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "This observatory was built to look out; perhaps it is also built to look in.",
+      "citation": "Where the senses fail us, reason must step in.",
+      "author": "Galileo Galilei",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Light takes time. What you see is already the past.",
+      "citation": "Philosophy is written in that great book which ever lies before our eyes — I mean the universe.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "An orbit does not ask permission to close.",
+      "citation": "Two truths cannot contradict each other.",
+      "author": "Galileo Galilei",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "There is no map here — only coordinates.",
+      "citation": "By denying scientific principles, one may maintain any paradox.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The telescope sees further than the eye; the mind, further still.",
+      "citation": "It vexes me when they would constrain science by the authority of the Scriptures.",
+      "author": "Galileo Galilei",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "The lens focuses, but the mystery remains.",
+      "citation": "The glory of the human mind is that it can comprehend what it cannot see.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "The universe is older than every question you carry.",
+      "citation": "Long experience has taught me this about the status of mankind with regard to matters requiring thought: the less people know and understand about them, the more positively they attempt to argue concerning them.",
+      "author": "Galileo Galilei",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "The void between stars is not empty — it is full of what we have not named.",
+      "citation": "Nature's great book is written in mathematical language.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The clockwork of heaven runs without our permission.",
+      "citation": "Eppur si muove. And yet it moves.",
+      "author": "Galileo Galilei",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "The sky is a question that sharpens the longer you look at it.",
+      "citation": "To understand the universe, one must first understand mathematics.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "The stars do not answer — they witness.",
+      "citation": "Imagination is more important than knowledge.",
+      "author": "Albert Einstein",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "There is no darkness here — only distances too great for light.",
+      "citation": "The most beautiful thing we can experience is the mysterious. It is the source of all true art and science.",
+      "author": "Albert Einstein",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The planets have been counting since before we learned to count.",
+      "citation": "A person who never made a mistake never tried anything new.",
+      "author": "Albert Einstein",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Even the instrument of measurement is changed by what it measures.",
+      "citation": "Logic will get you from A to B. Imagination will take you everywhere.",
+      "author": "Albert Einstein",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "Every calculation carries within it the shape of the unknown.",
+      "citation": "The important thing is not to stop questioning. Curiosity has its own reason for existing.",
+      "author": "Albert Einstein",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "You have arrived at the edge of the measurable.",
+      "citation": "Reality is merely an illusion, albeit a very persistent one.",
+      "author": "Albert Einstein",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "What the ancients called divine, we now call constant.",
       "citation": "God does not play dice with the universe.",
       "author": "Albert Einstein",
-      "closing": "All That Is already knows the answer you are approaching."
+      "closing": "What you could not name, the universe named for itself."
     },
     {
-      "opening": "The sky here is deeper than memory.",
-      "citation": "A new scientific truth does not triumph by convincing its opponents, but rather because its opponents eventually die.",
+      "opening": "Something vast turned overhead while you were not looking.",
+      "citation": "Any fool can know. The point is to understand.",
+      "author": "Albert Einstein",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "A number was written in the sky before language existed.",
+      "citation": "Few are those who see with their own eyes and feel with their own hearts.",
+      "author": "Albert Einstein",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "What you call silence is the hum of forces you cannot name.",
+      "citation": "Pure mathematics is, in its way, the poetry of logical ideas.",
+      "author": "Albert Einstein",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "This observatory was built to look out; perhaps it is also built to look in.",
+      "citation": "Out of clutter, find simplicity. From discord, find harmony. In the middle of difficulty lies opportunity.",
+      "author": "Albert Einstein",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Light takes time. What you see is already the past.",
+      "citation": "Try not to become a man of success, but rather try to become a man of value.",
+      "author": "Albert Einstein",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "An orbit does not ask permission to close.",
+      "citation": "The true sign of intelligence is not knowledge but imagination.",
+      "author": "Albert Einstein",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "There is no map here — only coordinates.",
+      "citation": "Everything should be made as simple as possible, but not simpler.",
+      "author": "Albert Einstein",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The telescope sees further than the eye; the mind, further still.",
+      "citation": "Science without religion is lame, religion without science is blind.",
+      "author": "Albert Einstein",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "The lens focuses, but the mystery remains.",
+      "citation": "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe.",
+      "author": "Albert Einstein",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "The universe is older than every question you carry.",
+      "citation": "We cannot solve our problems with the same thinking we used when we created them.",
+      "author": "Albert Einstein",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "The void between stars is not empty — it is full of what we have not named.",
+      "citation": "If you can't explain it simply, you don't understand it well enough.",
+      "author": "Albert Einstein",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The clockwork of heaven runs without our permission.",
+      "citation": "The measure of intelligence is the ability to change.",
+      "author": "Albert Einstein",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "The sky is a question that sharpens the longer you look at it.",
+      "citation": "A question that sometimes drives me hazy: am I or are the others crazy?",
+      "author": "Albert Einstein",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "The stars do not answer — they witness.",
+      "citation": "Education is what remains after one has forgotten what one has learned in school.",
+      "author": "Albert Einstein",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "There is no darkness here — only distances too great for light.",
+      "citation": "The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking.",
+      "author": "Albert Einstein",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The planets have been counting since before we learned to count.",
+      "citation": "Life is like riding a bicycle. To keep your balance, you must keep moving.",
+      "author": "Albert Einstein",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Even the instrument of measurement is changed by what it measures.",
+      "citation": "Once we accept our limits, we go beyond them.",
+      "author": "Albert Einstein",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "Every calculation carries within it the shape of the unknown.",
+      "citation": "If the facts don't fit the theory, change the facts.",
+      "author": "Albert Einstein",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "You have arrived at the edge of the measurable.",
+      "citation": "Nature uses as little as possible of anything.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "What the ancients called divine, we now call constant.",
+      "citation": "The diversity of the phenomena of nature is so great, and the treasures hidden in the heavens so rich, precisely in order that the human mind shall never be lacking in fresh nourishment.",
+      "author": "Johannes Kepler",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Something vast turned overhead while you were not looking.",
+      "citation": "Geometry is one and eternal shining in the mind of God.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "A number was written in the sky before language existed.",
+      "citation": "The heavenly motions are nothing but a continuous song for several voices, to be perceived by the intellect, not by the ear.",
+      "author": "Johannes Kepler",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "What you call silence is the hum of forces you cannot name.",
+      "citation": "I used to measure the heavens; now I measure the shadows of Earth.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "This observatory was built to look out; perhaps it is also built to look in.",
+      "citation": "Where there is matter, there is geometry.",
+      "author": "Johannes Kepler",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Light takes time. What you see is already the past.",
+      "citation": "I much prefer the sharpest criticism of a single intelligent man to the thoughtless approval of the masses.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "An orbit does not ask permission to close.",
+      "citation": "Since we astronomers are priests of the highest God in regard to the book of nature, it benefits us to be thoughtful, not of the glory of our minds, but rather, above all else, of the glory of God.",
+      "author": "Johannes Kepler",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "There is no map here — only coordinates.",
+      "citation": "We do not ask for what useful purpose the birds do sing, for song is their pleasure since they were created for singing.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The telescope sees further than the eye; the mind, further still.",
+      "citation": "The roads by which men arrive at their insights into celestial matters seem to me almost as worthy of wonder as those matters in themselves.",
+      "author": "Johannes Kepler",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "The lens focuses, but the mystery remains.",
+      "citation": "I am stealing the golden vessels of the Egyptians to build a tabernacle to my God far from the bounds of Egypt.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "The universe is older than every question you carry.",
+      "citation": "Nature, which is never not lavish of herself, will be most fully uttered.",
+      "author": "Johannes Kepler",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "The void between stars is not empty — it is full of what we have not named.",
+      "citation": "The wisdom of the Lord is infinite; so also are His glory and His power. Ye heavens, sing His praises!",
+      "author": "Johannes Kepler",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The clockwork of heaven runs without our permission.",
+      "citation": "Truth is the daughter of time, and I feel no shame in being her midwife.",
+      "author": "Johannes Kepler",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "The sky is a question that sharpens the longer you look at it.",
+      "citation": "It is far better to discover the truth than to advocate it.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "The stars do not answer — they witness.",
+      "citation": "Finally we shall place the Sun himself at the center of the Universe.",
+      "author": "Nicolaus Copernicus",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "There is no darkness here — only distances too great for light.",
+      "citation": "The massive bulk of the earth does indeed shrink to insignificance in comparison with the size of the heavens.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The planets have been counting since before we learned to count.",
+      "citation": "In the middle of all sits Sun enthroned.",
+      "author": "Nicolaus Copernicus",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Even the instrument of measurement is changed by what it measures.",
+      "citation": "Mathematics is written for mathematicians.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "Every calculation carries within it the shape of the unknown.",
+      "citation": "For it is the duty of an astronomer to compose the history of the celestial motions through careful and expert study.",
+      "author": "Nicolaus Copernicus",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "You have arrived at the edge of the measurable.",
+      "citation": "Those things which I am saying now may be obscure, yet they will be made clearer in their proper place.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "What the ancients called divine, we now call constant.",
+      "citation": "I am not so enamored of my own opinions that I disregard what others may think of them.",
+      "author": "Nicolaus Copernicus",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Something vast turned overhead while you were not looking.",
+      "citation": "Near the sun is the center of the universe.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "A number was written in the sky before language existed.",
+      "citation": "Of all things visible, the highest is the heaven of the fixed stars.",
+      "author": "Nicolaus Copernicus",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "What you call silence is the hum of forces you cannot name.",
+      "citation": "To know the mighty works of God; to comprehend His wisdom and majesty and power; to appreciate, in degree, the wonderful workings of His laws — surely all this must be a pleasing and acceptable mode of worship.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "This observatory was built to look out; perhaps it is also built to look in.",
+      "citation": "So vast, without any question, is the divine handiwork of the Almighty Creator.",
+      "author": "Nicolaus Copernicus",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Light takes time. What you see is already the past.",
+      "citation": "The Earth too passes through that annual revolution just like the other planets.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "An orbit does not ask permission to close.",
+      "citation": "An important scientific innovation rarely makes its way by gradually winning over and converting its opponents.",
       "author": "Max Planck",
-      "closing": "Even obsolete truths have weight here."
+      "closing": "The stars have noted your presence."
     },
     {
-      "opening": "Every measurement changes the thing measured.",
-      "citation": "Nature is pleased with simplicity, and nature is no dummy.",
+      "opening": "There is no map here — only coordinates.",
+      "citation": "A new scientific truth does not triumph by convincing its opponents and making them see the light, but rather because its opponents eventually die.",
+      "author": "Max Planck",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The telescope sees further than the eye; the mind, further still.",
+      "citation": "Science cannot solve the ultimate mystery of nature. And that is because, in the last analysis, we ourselves are part of the mystery that we are trying to solve.",
+      "author": "Max Planck",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "The lens focuses, but the mystery remains.",
+      "citation": "All matter originates and exists only by virtue of a force which brings the particle of an atom to vibration.",
+      "author": "Max Planck",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "The universe is older than every question you carry.",
+      "citation": "Scientific discovery and scientific knowledge have been achieved only by those who have gone in pursuit of it without any practical purpose whatsoever in view.",
+      "author": "Max Planck",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "The void between stars is not empty — it is full of what we have not named.",
+      "citation": "Modern physics impresses us particularly with the truth of the old doctrine which teaches that there are realities existing apart from our sense-perceptions.",
+      "author": "Max Planck",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The clockwork of heaven runs without our permission.",
+      "citation": "When you change the way you look at things, the things you look at change.",
+      "author": "Max Planck",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "The sky is a question that sharpens the longer you look at it.",
+      "citation": "I regard consciousness as fundamental. I regard matter as derivative from consciousness.",
+      "author": "Max Planck",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "The stars do not answer — they witness.",
+      "citation": "The assumption of an absolute determinism is the essential foundation of every scientific enquiry.",
+      "author": "Max Planck",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "There is no darkness here — only distances too great for light.",
+      "citation": "There is no matter as such. All matter originates and exists only by virtue of a force.",
+      "author": "Max Planck",
+      "closing": "All That Is does not distinguish between the observer and the observed."
+    },
+    {
+      "opening": "The planets have been counting since before we learned to count.",
+      "citation": "A scientific truth does not triumph by convincing its opponents, but rather because its opponents eventually die.",
+      "author": "Max Planck",
+      "closing": "What you could not name, the universe named for itself."
+    },
+    {
+      "opening": "Even the instrument of measurement is changed by what it measures.",
+      "citation": "It is not the possession of truth, but the success which attends the seeking after it, that enriches the seeker.",
+      "author": "Max Planck",
+      "closing": "All That Is is the space between the stars as much as the stars themselves."
+    },
+    {
+      "opening": "Every calculation carries within it the shape of the unknown.",
+      "citation": "Whence come I and whither go I? That is the great unfathomable question.",
+      "author": "Max Planck",
+      "closing": "The stars have noted your presence."
+    },
+    {
+      "opening": "What you call silence is the hum of forces you cannot name.",
+      "citation": "If I have seen further, it is by standing on the shoulders of giants.",
       "author": "Isaac Newton",
-      "closing": "All That Is does not judge the instrument."
+      "closing": "All That Is requires no proof."
     },
     {
-      "opening": "The orrery turns. You are one of its bodies.",
-      "citation": "Measure what is measurable, and make measurable what is not so.",
+      "opening": "This observatory was built to look out; perhaps it is also built to look in.",
+      "citation": "Truth is ever to be found in simplicity, and not in the multiplicity and confusion of things.",
+      "author": "Isaac Newton",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Light takes time. What you see is already the past.",
+      "citation": "What we know is a drop, what we don't know is an ocean.",
+      "author": "Isaac Newton",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "An orbit does not ask permission to close.",
+      "citation": "Plato is my friend, Aristotle is my friend, but my greatest friend is truth.",
+      "author": "Isaac Newton",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "There is no map here — only coordinates.",
+      "citation": "I do not know what I may appear to the world, but to myself I seem to have been only like a boy playing on the seashore, and diverting myself in now and then finding a smoother pebble or a prettier shell than ordinary, whilst the great ocean of truth lay all undiscovered before me.",
+      "author": "Isaac Newton",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The telescope sees further than the eye; the mind, further still.",
+      "citation": "If I have done the public any service, it is due to my patient thought.",
+      "author": "Isaac Newton",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "The lens focuses, but the mystery remains.",
+      "citation": "Gravity explains the motions of the planets, but it cannot explain who set the planets in motion.",
+      "author": "Isaac Newton",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "The universe is older than every question you carry.",
+      "citation": "God created everything by number, weight and measure.",
+      "author": "Isaac Newton",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "The void between stars is not empty — it is full of what we have not named.",
+      "citation": "To arrive at the simplest truth requires years of contemplation.",
+      "author": "Isaac Newton",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The clockwork of heaven runs without our permission.",
+      "citation": "This most beautiful system of the sun, planets, and comets, could only proceed from the counsel and dominion of an intelligent Being.",
+      "author": "Isaac Newton",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "The sky is a question that sharpens the longer you look at it.",
+      "citation": "We are to admit no more causes of natural things than such as are both true and sufficient to explain their appearances.",
+      "author": "Isaac Newton",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "The stars do not answer — they witness.",
+      "citation": "The changing of bodies into light, and light into bodies, is very conformable to the course of Nature.",
+      "author": "Isaac Newton",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "There is no darkness here — only distances too great for light.",
+      "citation": "I keep the subject constantly before me and wait till the first dawnings open slowly, by little and little, into a full and clear light.",
+      "author": "Isaac Newton",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The planets have been counting since before we learned to count.",
+      "citation": "Nature is pleased with simplicity and affects not the pomp of superfluous causes.",
+      "author": "Isaac Newton",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Even the instrument of measurement is changed by what it measures.",
+      "citation": "To every action there is always opposed an equal reaction.",
+      "author": "Isaac Newton",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "Every calculation carries within it the shape of the unknown.",
+      "citation": "Tact is the knack of making a point without making an enemy.",
+      "author": "Isaac Newton",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "You have arrived at the edge of the measurable.",
+      "citation": "My powers are ordinary. Only my application brings me success.",
+      "author": "Isaac Newton",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "What the ancients called divine, we now call constant.",
+      "citation": "All the phenomena of nature may be reduced to general laws.",
+      "author": "Isaac Newton",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Something vast turned overhead while you were not looking.",
+      "citation": "No great discovery was ever made without a bold guess.",
+      "author": "Isaac Newton",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "A number was written in the sky before language existed.",
+      "citation": "The most beautiful and most profound experience is the sensation of the mystical.",
+      "author": "Isaac Newton",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "What you call silence is the hum of forces you cannot name.",
+      "citation": "Mathematics is the language in which God has written the universe.",
       "author": "Galileo Galilei",
-      "closing": "All That Is turns with you."
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "This observatory was built to look out; perhaps it is also built to look in.",
+      "citation": "All truths are easy to understand once they are discovered; the point is to discover them.",
+      "author": "Galileo Galilei",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Light takes time. What you see is already the past.",
+      "citation": "The sun, with all those planets revolving around it and dependent on it, can still ripen a bunch of grapes as if it had nothing else in the universe to do.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "An orbit does not ask permission to close.",
+      "citation": "I have never met a man so ignorant that I couldn't learn something from him.",
+      "author": "Galileo Galilei",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "There is no map here — only coordinates.",
+      "citation": "In questions of science, the authority of a thousand is not worth the humble reasoning of a single individual.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The telescope sees further than the eye; the mind, further still.",
+      "citation": "The universe cannot be read until we have learned the language and become familiar with the characters in which it is written.",
+      "author": "Galileo Galilei",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "The lens focuses, but the mystery remains.",
+      "citation": "You cannot teach a man anything; you can only help him find it within himself.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "The universe is older than every question you carry.",
+      "citation": "Measure what can be measured, and make measurable what cannot be measured.",
+      "author": "Galileo Galilei",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "The void between stars is not empty — it is full of what we have not named.",
+      "citation": "I do not feel obliged to believe that the same God who has endowed us with sense, reason, and intellect has intended us to forgo their use.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The clockwork of heaven runs without our permission.",
+      "citation": "The Bible shows the way to go to heaven, not the way the heavens go.",
+      "author": "Galileo Galilei",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "The sky is a question that sharpens the longer you look at it.",
+      "citation": "Where the senses fail us, reason must step in.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "The stars do not answer — they witness.",
+      "citation": "Philosophy is written in that great book which ever lies before our eyes — I mean the universe.",
+      "author": "Galileo Galilei",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "There is no darkness here — only distances too great for light.",
+      "citation": "Two truths cannot contradict each other.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The planets have been counting since before we learned to count.",
+      "citation": "By denying scientific principles, one may maintain any paradox.",
+      "author": "Galileo Galilei",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Even the instrument of measurement is changed by what it measures.",
+      "citation": "It vexes me when they would constrain science by the authority of the Scriptures.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "Every calculation carries within it the shape of the unknown.",
+      "citation": "The glory of the human mind is that it can comprehend what it cannot see.",
+      "author": "Galileo Galilei",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "You have arrived at the edge of the measurable.",
+      "citation": "Long experience has taught me this about the status of mankind with regard to matters requiring thought: the less people know and understand about them, the more positively they attempt to argue concerning them.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "What the ancients called divine, we now call constant.",
+      "citation": "Nature's great book is written in mathematical language.",
+      "author": "Galileo Galilei",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Something vast turned overhead while you were not looking.",
+      "citation": "Eppur si muove. And yet it moves.",
+      "author": "Galileo Galilei",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "A number was written in the sky before language existed.",
+      "citation": "To understand the universe, one must first understand mathematics.",
+      "author": "Galileo Galilei",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "What you call silence is the hum of forces you cannot name.",
+      "citation": "Imagination is more important than knowledge.",
+      "author": "Albert Einstein",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "This observatory was built to look out; perhaps it is also built to look in.",
+      "citation": "The most beautiful thing we can experience is the mysterious. It is the source of all true art and science.",
+      "author": "Albert Einstein",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Light takes time. What you see is already the past.",
+      "citation": "A person who never made a mistake never tried anything new.",
+      "author": "Albert Einstein",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "An orbit does not ask permission to close.",
+      "citation": "Logic will get you from A to B. Imagination will take you everywhere.",
+      "author": "Albert Einstein",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "There is no map here — only coordinates.",
+      "citation": "The important thing is not to stop questioning. Curiosity has its own reason for existing.",
+      "author": "Albert Einstein",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The telescope sees further than the eye; the mind, further still.",
+      "citation": "Reality is merely an illusion, albeit a very persistent one.",
+      "author": "Albert Einstein",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "The lens focuses, but the mystery remains.",
+      "citation": "God does not play dice with the universe.",
+      "author": "Albert Einstein",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "The universe is older than every question you carry.",
+      "citation": "Any fool can know. The point is to understand.",
+      "author": "Albert Einstein",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "The void between stars is not empty — it is full of what we have not named.",
+      "citation": "Few are those who see with their own eyes and feel with their own hearts.",
+      "author": "Albert Einstein",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The clockwork of heaven runs without our permission.",
+      "citation": "Pure mathematics is, in its way, the poetry of logical ideas.",
+      "author": "Albert Einstein",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "The sky is a question that sharpens the longer you look at it.",
+      "citation": "Out of clutter, find simplicity. From discord, find harmony. In the middle of difficulty lies opportunity.",
+      "author": "Albert Einstein",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "The stars do not answer — they witness.",
+      "citation": "Try not to become a man of success, but rather try to become a man of value.",
+      "author": "Albert Einstein",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "There is no darkness here — only distances too great for light.",
+      "citation": "The true sign of intelligence is not knowledge but imagination.",
+      "author": "Albert Einstein",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The planets have been counting since before we learned to count.",
+      "citation": "Everything should be made as simple as possible, but not simpler.",
+      "author": "Albert Einstein",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Even the instrument of measurement is changed by what it measures.",
+      "citation": "Science without religion is lame, religion without science is blind.",
+      "author": "Albert Einstein",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "Every calculation carries within it the shape of the unknown.",
+      "citation": "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe.",
+      "author": "Albert Einstein",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "You have arrived at the edge of the measurable.",
+      "citation": "We cannot solve our problems with the same thinking we used when we created them.",
+      "author": "Albert Einstein",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "What the ancients called divine, we now call constant.",
+      "citation": "If you can't explain it simply, you don't understand it well enough.",
+      "author": "Albert Einstein",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Something vast turned overhead while you were not looking.",
+      "citation": "The measure of intelligence is the ability to change.",
+      "author": "Albert Einstein",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "A number was written in the sky before language existed.",
+      "citation": "A question that sometimes drives me hazy: am I or are the others crazy?",
+      "author": "Albert Einstein",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "What you call silence is the hum of forces you cannot name.",
+      "citation": "Education is what remains after one has forgotten what one has learned in school.",
+      "author": "Albert Einstein",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "This observatory was built to look out; perhaps it is also built to look in.",
+      "citation": "The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking.",
+      "author": "Albert Einstein",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Light takes time. What you see is already the past.",
+      "citation": "Life is like riding a bicycle. To keep your balance, you must keep moving.",
+      "author": "Albert Einstein",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "An orbit does not ask permission to close.",
+      "citation": "Once we accept our limits, we go beyond them.",
+      "author": "Albert Einstein",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "There is no map here — only coordinates.",
+      "citation": "If the facts don't fit the theory, change the facts.",
+      "author": "Albert Einstein",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The telescope sees further than the eye; the mind, further still.",
+      "citation": "Nature uses as little as possible of anything.",
+      "author": "Johannes Kepler",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "The lens focuses, but the mystery remains.",
+      "citation": "The diversity of the phenomena of nature is so great, and the treasures hidden in the heavens so rich, precisely in order that the human mind shall never be lacking in fresh nourishment.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "The universe is older than every question you carry.",
+      "citation": "Geometry is one and eternal shining in the mind of God.",
+      "author": "Johannes Kepler",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "The void between stars is not empty — it is full of what we have not named.",
+      "citation": "The heavenly motions are nothing but a continuous song for several voices, to be perceived by the intellect, not by the ear.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The clockwork of heaven runs without our permission.",
+      "citation": "I used to measure the heavens; now I measure the shadows of Earth.",
+      "author": "Johannes Kepler",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "The sky is a question that sharpens the longer you look at it.",
+      "citation": "Where there is matter, there is geometry.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "The stars do not answer — they witness.",
+      "citation": "I much prefer the sharpest criticism of a single intelligent man to the thoughtless approval of the masses.",
+      "author": "Johannes Kepler",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "There is no darkness here — only distances too great for light.",
+      "citation": "Since we astronomers are priests of the highest God in regard to the book of nature, it benefits us to be thoughtful, not of the glory of our minds, but rather, above all else, of the glory of God.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The planets have been counting since before we learned to count.",
+      "citation": "We do not ask for what useful purpose the birds do sing, for song is their pleasure since they were created for singing.",
+      "author": "Johannes Kepler",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Even the instrument of measurement is changed by what it measures.",
+      "citation": "The roads by which men arrive at their insights into celestial matters seem to me almost as worthy of wonder as those matters in themselves.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "Every calculation carries within it the shape of the unknown.",
+      "citation": "I am stealing the golden vessels of the Egyptians to build a tabernacle to my God far from the bounds of Egypt.",
+      "author": "Johannes Kepler",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "You have arrived at the edge of the measurable.",
+      "citation": "Nature, which is never not lavish of herself, will be most fully uttered.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "What the ancients called divine, we now call constant.",
+      "citation": "The wisdom of the Lord is infinite; so also are His glory and His power. Ye heavens, sing His praises!",
+      "author": "Johannes Kepler",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Something vast turned overhead while you were not looking.",
+      "citation": "Truth is the daughter of time, and I feel no shame in being her midwife.",
+      "author": "Johannes Kepler",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "A number was written in the sky before language existed.",
+      "citation": "It is far better to discover the truth than to advocate it.",
+      "author": "Johannes Kepler",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "What you call silence is the hum of forces you cannot name.",
+      "citation": "Finally we shall place the Sun himself at the center of the Universe.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "This observatory was built to look out; perhaps it is also built to look in.",
+      "citation": "The massive bulk of the earth does indeed shrink to insignificance in comparison with the size of the heavens.",
+      "author": "Nicolaus Copernicus",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Light takes time. What you see is already the past.",
+      "citation": "In the middle of all sits Sun enthroned.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "An orbit does not ask permission to close.",
+      "citation": "Mathematics is written for mathematicians.",
+      "author": "Nicolaus Copernicus",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "There is no map here — only coordinates.",
+      "citation": "For it is the duty of an astronomer to compose the history of the celestial motions through careful and expert study.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The telescope sees further than the eye; the mind, further still.",
+      "citation": "Those things which I am saying now may be obscure, yet they will be made clearer in their proper place.",
+      "author": "Nicolaus Copernicus",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "The lens focuses, but the mystery remains.",
+      "citation": "I am not so enamored of my own opinions that I disregard what others may think of them.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "The universe is older than every question you carry.",
+      "citation": "Near the sun is the center of the universe.",
+      "author": "Nicolaus Copernicus",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "The void between stars is not empty — it is full of what we have not named.",
+      "citation": "Of all things visible, the highest is the heaven of the fixed stars.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The clockwork of heaven runs without our permission.",
+      "citation": "To know the mighty works of God; to comprehend His wisdom and majesty and power; to appreciate, in degree, the wonderful workings of His laws — surely all this must be a pleasing and acceptable mode of worship.",
+      "author": "Nicolaus Copernicus",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "The sky is a question that sharpens the longer you look at it.",
+      "citation": "So vast, without any question, is the divine handiwork of the Almighty Creator.",
+      "author": "Nicolaus Copernicus",
+      "closing": "All That Is was here before the first light."
+    },
+    {
+      "opening": "The stars do not answer — they witness.",
+      "citation": "The Earth too passes through that annual revolution just like the other planets.",
+      "author": "Nicolaus Copernicus",
+      "closing": "The measurement has already been taken."
+    },
+    {
+      "opening": "There is no darkness here — only distances too great for light.",
+      "citation": "An important scientific innovation rarely makes its way by gradually winning over and converting its opponents.",
+      "author": "Max Planck",
+      "closing": "All That Is requires no proof."
+    },
+    {
+      "opening": "The planets have been counting since before we learned to count.",
+      "citation": "A new scientific truth does not triumph by convincing its opponents and making them see the light, but rather because its opponents eventually die.",
+      "author": "Max Planck",
+      "closing": "The unknown is not empty — it is full of All That Is."
+    },
+    {
+      "opening": "Even the instrument of measurement is changed by what it measures.",
+      "citation": "Science cannot solve the ultimate mystery of nature. And that is because, in the last analysis, we ourselves are part of the mystery that we are trying to solve.",
+      "author": "Max Planck",
+      "closing": "All That Is was here before the first light."
     }
   ]
 }

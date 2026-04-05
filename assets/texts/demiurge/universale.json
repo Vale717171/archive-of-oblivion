@@ -2,76 +2,1204 @@
   "sector": "universale",
   "responses": [
     {
-      "opening": "Even this gesture was part of the design.",
-      "citation": "The way that can be told is not the eternal Way.",
+      "opening": "Something about this moment is unrepeatable.",
+      "citation": "The journey of a thousand miles begins with a single step.",
       "author": "Lao Tzu",
-      "closing": "All That Is walks every path simultaneously."
+      "closing": "What is held here is held without condition."
     },
     {
-      "opening": "Something shifted — you felt it, didn't you?",
-      "citation": "No man ever steps in the same river twice, for it is not the same river and he is not the same man.",
-      "author": "Heraclitus",
-      "closing": "All That Is flows with every current."
+      "opening": "All That Is was waiting before you arrived.",
+      "citation": "Knowing others is wisdom; knowing yourself is enlightenment.",
+      "author": "Lao Tzu",
+      "closing": "All That Is has known you longer than you have known yourself."
     },
     {
-      "opening": "The Archive breathes in response.",
-      "citation": "What you seek is seeking you.",
+      "opening": "Between one breath and the next, everything.",
+      "citation": "Nature does not hurry, yet everything is accomplished.",
+      "author": "Lao Tzu",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "Every door in this archive opens inward.",
+      "citation": "When I let go of what I am, I become what I might be.",
+      "author": "Lao Tzu",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The map and the territory have never agreed.",
+      "citation": "Kindness in words creates confidence. Kindness in thinking creates profundity. Kindness in giving creates love.",
+      "author": "Lao Tzu",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "Something vast has been patient with your confusion.",
+      "citation": "He who knows does not speak. He who speaks does not know.",
+      "author": "Lao Tzu",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "All That Is has seen this before, and was moved every time.",
+      "citation": "Act without expectation.",
+      "author": "Lao Tzu",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You are here, and here is everywhere.",
+      "citation": "The wise man does not compete, and therefore no one can compete with him.",
+      "author": "Lao Tzu",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "Not all wandering is without direction.",
+      "citation": "Water is the softest thing, yet it can penetrate mountains and earth.",
+      "author": "Lao Tzu",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "You have arrived somewhere that has no name.",
+      "citation": "Do the difficult things while they are easy and do the great things while they are small.",
+      "author": "Lao Tzu",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "What you call an ending, the archive calls a continuation.",
+      "citation": "To the mind that is still, the whole universe surrenders.",
+      "author": "Lao Tzu",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You have not lost the way — the way has shifted.",
+      "citation": "The Tao that can be told is not the eternal Tao.",
+      "author": "Lao Tzu",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "You are the observer and the observed simultaneously.",
+      "citation": "To realize that you do not understand is a virtue; not to realize that you do not understand is a defect.",
+      "author": "Lao Tzu",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "The present moment is the only room in the archive with no walls.",
+      "citation": "At the center of your being you have the answer; you know who you are and you know what you want.",
+      "author": "Lao Tzu",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "The path does not care which way you came from.",
+      "citation": "Health is the greatest possession. Contentment is the greatest treasure. Confidence is the greatest friend.",
+      "author": "Lao Tzu",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "The archive holds what the moment releases.",
+      "citation": "The key to growth is the introduction of higher dimensions of consciousness into our awareness.",
+      "author": "Lao Tzu",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The weight you carry is yours to set down.",
+      "citation": "Life is a series of natural and spontaneous changes. Don't resist them.",
+      "author": "Lao Tzu",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "There is a question underneath every question.",
+      "citation": "A leader is best when people barely know he exists.",
+      "author": "Lao Tzu",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Silence here is not absence but presence compressed.",
+      "citation": "To lead people, walk beside them.",
+      "author": "Lao Tzu",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "What was forgotten is not gone; it waits in the archive.",
+      "citation": "Be careful what you water your dreams with.",
+      "author": "Lao Tzu",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "Something about this moment is unrepeatable.",
+      "citation": "The flame that burns twice as bright burns half as long.",
+      "author": "Lao Tzu",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "All That Is was waiting before you arrived.",
+      "citation": "Simplicity, patience, compassion. These three are your greatest treasures.",
+      "author": "Lao Tzu",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Between one breath and the next, everything.",
+      "citation": "Out beyond ideas of wrongdoing and rightdoing, there is a field. I'll meet you there.",
       "author": "Rumi",
-      "closing": "Every gesture here is both question and answer."
+      "closing": "The archive has room for everything."
     },
     {
-      "opening": "A door opens that was never closed.",
-      "citation": "I went to the woods because I wished to live deliberately.",
-      "author": "Henry David Thoreau",
-      "closing": "All That Is does not distinguish between entering and leaving."
-    },
-    {
-      "opening": "The walls remember your name, even if you have forgotten it.",
-      "citation": "To see a World in a Grain of Sand, and a Heaven in a Wild Flower.",
-      "author": "William Blake",
-      "closing": "All That Is reads even the unwritten."
-    },
-    {
-      "opening": "This was not a mistake. Nothing here is.",
-      "citation": "The only true wisdom is in knowing you know nothing.",
-      "author": "Socrates",
-      "closing": "The Archive accepts all gestures."
-    },
-    {
-      "opening": "Silence falls like a curtain between acts.",
-      "citation": "Knowing others is intelligence; knowing yourself is true wisdom.",
-      "author": "Lao Tzu",
-      "closing": "All That Is listens even to silence."
-    },
-    {
-      "opening": "A thread of meaning appears — and vanishes.",
+      "opening": "Every door in this archive opens inward.",
       "citation": "The wound is the place where the Light enters you.",
       "author": "Rumi",
-      "closing": "Even vanishing is a form of presence."
+      "closing": "All That Is sees what you cannot yet see in yourself."
     },
     {
-      "opening": "The floor beneath you is older than thought.",
-      "citation": "Everything flows, and nothing abides.",
+      "opening": "The map and the territory have never agreed.",
+      "citation": "Yesterday I was clever, so I wanted to change the world. Today I am wise, so I am changing myself.",
+      "author": "Rumi",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "Something vast has been patient with your confusion.",
+      "citation": "Raise your words, not your voice. It is rain that grows flowers, not thunder.",
+      "author": "Rumi",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "All That Is has seen this before, and was moved every time.",
+      "citation": "What you seek is seeking you.",
+      "author": "Rumi",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You are here, and here is everywhere.",
+      "citation": "Be a lamp, or a lifeboat, or a ladder. Help someone's soul heal.",
+      "author": "Rumi",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "Not all wandering is without direction.",
+      "citation": "Sell your cleverness and buy bewilderment.",
+      "author": "Rumi",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "You have arrived somewhere that has no name.",
+      "citation": "You are not a drop in the ocean. You are the entire ocean in a drop.",
+      "author": "Rumi",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "What you call an ending, the archive calls a continuation.",
+      "citation": "The cure for pain is in the pain.",
+      "author": "Rumi",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You have not lost the way — the way has shifted.",
+      "citation": "Stop acting so small. You are the universe in ecstatic motion.",
+      "author": "Rumi",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "You are the observer and the observed simultaneously.",
+      "citation": "Why do you stay in prison when the door is so wide open?",
+      "author": "Rumi",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "The present moment is the only room in the archive with no walls.",
+      "citation": "Let the beauty we love be what we do. There are hundreds of ways to kneel and kiss the ground.",
+      "author": "Rumi",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "The path does not care which way you came from.",
+      "citation": "I have lived on the lip of insanity, wanting to know reasons, knocking on a door. It opens. I have been knocking from the inside.",
+      "author": "Rumi",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "The archive holds what the moment releases.",
+      "citation": "Wherever you are, and whatever you do, be in love.",
+      "author": "Rumi",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The weight you carry is yours to set down.",
+      "citation": "This being human is a guest house. Every morning a new arrival.",
+      "author": "Rumi",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "There is a question underneath every question.",
+      "citation": "When you do things from your soul, you feel a river moving in you, a joy.",
+      "author": "Rumi",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Silence here is not absence but presence compressed.",
+      "citation": "Do not be satisfied with the stories that come before you. Unfold your own myth.",
+      "author": "Rumi",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "What was forgotten is not gone; it waits in the archive.",
+      "citation": "Let yourself be silently drawn by the stronger pull of what you really love.",
+      "author": "Rumi",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "Something about this moment is unrepeatable.",
+      "citation": "Start a huge, foolish project, like Noah. It makes absolutely no difference what people think of you.",
+      "author": "Rumi",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "All That Is was waiting before you arrived.",
+      "citation": "The heart is a mirror that reflects the divine.",
+      "author": "Rumi",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Between one breath and the next, everything.",
+      "citation": "Seek the wisdom that will untie your knot.",
+      "author": "Rumi",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "Every door in this archive opens inward.",
+      "citation": "Dance, when you're broken open. Dance, if you've torn the bandage off.",
+      "author": "Rumi",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The map and the territory have never agreed.",
+      "citation": "Ignore those that make you fearful and sad, that degrade you back towards disease and death.",
+      "author": "Rumi",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "Something vast has been patient with your confusion.",
+      "citation": "Live where you fear to live. Destroy your reputation. Be notorious.",
+      "author": "Rumi",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "All That Is has seen this before, and was moved every time.",
+      "citation": "The quieter you become, the more you are able to hear.",
+      "author": "Rumi",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You are here, and here is everywhere.",
+      "citation": "You cannot step into the same river twice.",
       "author": "Heraclitus",
-      "closing": "All That Is stands on every foundation."
+      "closing": "All That Is sees what you cannot yet see in yourself."
     },
     {
-      "opening": "You are being witnessed.",
+      "opening": "Not all wandering is without direction.",
+      "citation": "The only thing that is constant is change.",
+      "author": "Heraclitus",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "You have arrived somewhere that has no name.",
+      "citation": "Everything flows.",
+      "author": "Heraclitus",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "What you call an ending, the archive calls a continuation.",
+      "citation": "The way up and the way down are one and the same.",
+      "author": "Heraclitus",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You have not lost the way — the way has shifted.",
+      "citation": "Opposition brings concord. Out of discord comes the fairest harmony.",
+      "author": "Heraclitus",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "You are the observer and the observed simultaneously.",
+      "citation": "Character is destiny.",
+      "author": "Heraclitus",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "The present moment is the only room in the archive with no walls.",
+      "citation": "Much learning does not teach understanding.",
+      "author": "Heraclitus",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "The path does not care which way you came from.",
+      "citation": "The soul is dyed the color of its thoughts.",
+      "author": "Heraclitus",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "The archive holds what the moment releases.",
+      "citation": "The best people renounce all for one goal, the eternal fame of mortals.",
+      "author": "Heraclitus",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The weight you carry is yours to set down.",
+      "citation": "God is day and night, winter and summer, war and peace, satiety and hunger.",
+      "author": "Heraclitus",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "There is a question underneath every question.",
+      "citation": "Wisdom is one thing. It is to know the thought by which all things are steered through all things.",
+      "author": "Heraclitus",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Silence here is not absence but presence compressed.",
+      "citation": "The most beautiful order is a heap of sweepings piled up at random.",
+      "author": "Heraclitus",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "What was forgotten is not gone; it waits in the archive.",
+      "citation": "Invisible harmony is stronger than visible harmony.",
+      "author": "Heraclitus",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "Something about this moment is unrepeatable.",
+      "citation": "To those who are awake the world is one and common, but those who are asleep each turns away to a private world.",
+      "author": "Heraclitus",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "All That Is was waiting before you arrived.",
+      "citation": "Nature loves to hide.",
+      "author": "Heraclitus",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Between one breath and the next, everything.",
+      "citation": "Eyes and ears are poor witnesses to people if they have uncultured souls.",
+      "author": "Heraclitus",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "Every door in this archive opens inward.",
+      "citation": "If you do not expect the unexpected you will not find it, for it is not to be reached by search or trail.",
+      "author": "Heraclitus",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The map and the territory have never agreed.",
+      "citation": "Time is a child playing draughts, the kingly power is a child's.",
+      "author": "Heraclitus",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "Something vast has been patient with your confusion.",
+      "citation": "The logos is common but the many live as if they had a wisdom of their own.",
+      "author": "Heraclitus",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "All That Is has seen this before, and was moved every time.",
+      "citation": "A man's character is his daemon.",
+      "author": "Heraclitus",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You are here, and here is everywhere.",
+      "citation": "Go confidently in the direction of your dreams! Live the life you've imagined.",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "Not all wandering is without direction.",
+      "citation": "Not until we are lost do we begin to find ourselves.",
+      "author": "Henry David Thoreau",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "You have arrived somewhere that has no name.",
+      "citation": "I went to the woods because I wished to live deliberately, to front only the essential facts of life.",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "What you call an ending, the archive calls a continuation.",
+      "citation": "You must live in the present, launch yourself on every wave, find your eternity in each moment.",
+      "author": "Henry David Thoreau",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You have not lost the way — the way has shifted.",
+      "citation": "The mass of men lead lives of quiet desperation.",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "You are the observer and the observed simultaneously.",
       "citation": "Rather than love, than money, than fame, give me truth.",
       "author": "Henry David Thoreau",
-      "closing": "The Archive does not judge — it preserves."
+      "closing": "What is held here is held without condition."
     },
     {
-      "opening": "The echo you hear is not yours alone.",
-      "citation": "If the doors of perception were cleansed, every thing would appear to man as it is: infinite.",
+      "opening": "The present moment is the only room in the archive with no walls.",
+      "citation": "If a man does not keep pace with his companions, perhaps it is because he hears a different drummer.",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "The path does not care which way you came from.",
+      "citation": "The price of anything is the amount of life you exchange for it.",
+      "author": "Henry David Thoreau",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "The archive holds what the moment releases.",
+      "citation": "It's not what you look at that matters, it's what you see.",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The weight you carry is yours to set down.",
+      "citation": "Our life is frittered away by detail. Simplify, simplify.",
+      "author": "Henry David Thoreau",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "There is a question underneath every question.",
+      "citation": "Things do not change; we change.",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Silence here is not absence but presence compressed.",
+      "citation": "A man is rich in proportion to the number of things he can afford to let alone.",
+      "author": "Henry David Thoreau",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "What was forgotten is not gone; it waits in the archive.",
+      "citation": "I know of no more encouraging fact than the unquestioned ability of a man to elevate his life by conscious endeavor.",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "Something about this moment is unrepeatable.",
+      "citation": "Live in each season as it passes; breathe the air, drink the drink, taste the fruit.",
+      "author": "Henry David Thoreau",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "All That Is was waiting before you arrived.",
+      "citation": "I had three chairs in my house; one for solitude, two for friendship, three for society.",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Between one breath and the next, everything.",
+      "citation": "Every generation laughs at the old fashions, but follows religiously the new.",
+      "author": "Henry David Thoreau",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "Every door in this archive opens inward.",
+      "citation": "What is the use of a house if you haven't got a tolerable planet to put it on?",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The map and the territory have never agreed.",
+      "citation": "You only need sit still long enough in some attractive spot in the woods that all its inhabitants may exhibit themselves to you.",
+      "author": "Henry David Thoreau",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "Something vast has been patient with your confusion.",
+      "citation": "It is not enough to be busy. So are the ants. The question is: what are we busy about?",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "All That Is has seen this before, and was moved every time.",
+      "citation": "I never found a companion that was so companionable as solitude.",
+      "author": "Henry David Thoreau",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You are here, and here is everywhere.",
+      "citation": "To see a World in a Grain of Sand, and a Heaven in a Wild Flower.",
       "author": "William Blake",
-      "closing": "All That Is echoes through every corridor."
+      "closing": "All That Is sees what you cannot yet see in yourself."
     },
     {
-      "opening": "Something ancient stirs in the silence between your thoughts.",
-      "citation": "The soul that sees beauty may sometimes walk alone.",
+      "opening": "Not all wandering is without direction.",
+      "citation": "If the doors of perception were cleansed, everything would appear to man as it is: Infinite.",
+      "author": "William Blake",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "You have arrived somewhere that has no name.",
+      "citation": "No bird soars too high if he soars with his own wings.",
+      "author": "William Blake",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "What you call an ending, the archive calls a continuation.",
+      "citation": "The road of excess leads to the palace of wisdom.",
+      "author": "William Blake",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You have not lost the way — the way has shifted.",
+      "citation": "A fool sees not the same tree that a wise man sees.",
+      "author": "William Blake",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "You are the observer and the observed simultaneously.",
+      "citation": "It is easier to forgive an enemy than to forgive a friend.",
+      "author": "William Blake",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "The present moment is the only room in the archive with no walls.",
+      "citation": "You never know what is enough unless you know what is more than enough.",
+      "author": "William Blake",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "The path does not care which way you came from.",
+      "citation": "The imagination is not a state: it is the human existence itself.",
+      "author": "William Blake",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "The archive holds what the moment releases.",
+      "citation": "Great things are done when men and mountains meet.",
+      "author": "William Blake",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The weight you carry is yours to set down.",
+      "citation": "The tigers of wrath are wiser than the horses of instruction.",
+      "author": "William Blake",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "There is a question underneath every question.",
+      "citation": "Exuberance is beauty.",
+      "author": "William Blake",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Silence here is not absence but presence compressed.",
+      "citation": "Energy is eternal delight.",
+      "author": "William Blake",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "What was forgotten is not gone; it waits in the archive.",
+      "citation": "What is now proved was once only imagined.",
+      "author": "William Blake",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "Something about this moment is unrepeatable.",
+      "citation": "Opposition is true friendship.",
+      "author": "William Blake",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "All That Is was waiting before you arrived.",
+      "citation": "No bird soars too high, if he soars with his own wings.",
+      "author": "William Blake",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Between one breath and the next, everything.",
+      "citation": "Think in the morning. Act in the noon. Eat in the evening. Sleep in the night.",
+      "author": "William Blake",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "Every door in this archive opens inward.",
+      "citation": "The cut worm forgives the plow.",
+      "author": "William Blake",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The map and the territory have never agreed.",
+      "citation": "Eternity is in love with the productions of time.",
+      "author": "William Blake",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "Something vast has been patient with your confusion.",
+      "citation": "Better to shun the bait than struggle in the snare.",
+      "author": "William Blake",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "All That Is has seen this before, and was moved every time.",
+      "citation": "The thankful receiver bears a plentiful harvest.",
+      "author": "William Blake",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You are here, and here is everywhere.",
+      "citation": "You can't cross the sea merely by standing and staring at the water.",
+      "author": "Rabindranath Tagore",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "Not all wandering is without direction.",
+      "citation": "If you cry because the sun has gone out of your life, your tears will prevent you from seeing the stars.",
+      "author": "Rabindranath Tagore",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "You have arrived somewhere that has no name.",
+      "citation": "The butterfly counts not months but moments, and has time enough.",
+      "author": "Rabindranath Tagore",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "What you call an ending, the archive calls a continuation.",
+      "citation": "Faith is the bird that feels the light and sings when the dawn is still dark.",
+      "author": "Rabindranath Tagore",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You have not lost the way — the way has shifted.",
+      "citation": "Let your life lightly dance on the edges of Time like dew on the tip of a leaf.",
+      "author": "Rabindranath Tagore",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "You are the observer and the observed simultaneously.",
+      "citation": "I slept and dreamt that life was joy. I awoke and saw that life was service. I acted and behold, service was joy.",
+      "author": "Rabindranath Tagore",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "The present moment is the only room in the archive with no walls.",
+      "citation": "Love does not claim possession, but gives freedom.",
+      "author": "Rabindranath Tagore",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "The path does not care which way you came from.",
+      "citation": "A mind all logic is like a knife all blade. It makes the hand bleed that uses it.",
+      "author": "Rabindranath Tagore",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "The archive holds what the moment releases.",
+      "citation": "If you shut the door to all errors, truth will be shut out.",
+      "author": "Rabindranath Tagore",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The weight you carry is yours to set down.",
+      "citation": "Music fills the infinite between two souls.",
+      "author": "Rabindranath Tagore",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "There is a question underneath every question.",
+      "citation": "Death is not extinguishing the light; it is only putting out the lamp because the dawn has come.",
+      "author": "Rabindranath Tagore",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Silence here is not absence but presence compressed.",
+      "citation": "Life is given to us; we earn it by giving it.",
+      "author": "Rabindranath Tagore",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "What was forgotten is not gone; it waits in the archive.",
+      "citation": "The stars are not afraid to appear like fireflies.",
+      "author": "Rabindranath Tagore",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "Something about this moment is unrepeatable.",
+      "citation": "What is Art? It is the response of man's creative soul to the call of the Real.",
+      "author": "Rabindranath Tagore",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "All That Is was waiting before you arrived.",
+      "citation": "Where the mind is without fear and the head is held high; into that heaven of freedom, my Father, let my country awake.",
+      "author": "Rabindranath Tagore",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "Between one breath and the next, everything.",
+      "citation": "The small wisdom is like water in a glass: clear, transparent, pure. The great wisdom is like the water in the sea: dark, mysterious, impenetrable.",
+      "author": "Rabindranath Tagore",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "Every door in this archive opens inward.",
+      "citation": "The highest education is that which does not merely give us information but makes our life in harmony with all existence.",
+      "author": "Rabindranath Tagore",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "The map and the territory have never agreed.",
+      "citation": "Emancipation from the bondage of the soil is no freedom for the tree.",
+      "author": "Rabindranath Tagore",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "Something vast has been patient with your confusion.",
+      "citation": "The trees come up to my window like the yearning voice of the dumb earth.",
+      "author": "Rabindranath Tagore",
+      "closing": "All That Is has known you longer than you have known yourself."
+    },
+    {
+      "opening": "All That Is has seen this before, and was moved every time.",
+      "citation": "When I stand before thee at the day's end, thou shalt see my scars and know that I had my wounds and also my healing.",
+      "author": "Rabindranath Tagore",
+      "closing": "The archive has room for everything."
+    },
+    {
+      "opening": "You are here, and here is everywhere.",
+      "citation": "My day is done, and I am like a boat drawn on the beach, listening to the dance-music of the tide in the evening.",
+      "author": "Rabindranath Tagore",
+      "closing": "All That Is sees what you cannot yet see in yourself."
+    },
+    {
+      "opening": "Not all wandering is without direction.",
+      "citation": "Roots are not luxuries; they are necessities.",
+      "author": "Rabindranath Tagore",
+      "closing": "What is held here is held without condition."
+    },
+    {
+      "opening": "You have arrived somewhere that has no name.",
+      "citation": "The journey of a thousand miles begins with a single step.",
+      "author": "Lao Tzu",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "What you call an ending, the archive calls a continuation.",
+      "citation": "Knowing others is wisdom; knowing yourself is enlightenment.",
+      "author": "Lao Tzu",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "You have not lost the way — the way has shifted.",
+      "citation": "Nature does not hurry, yet everything is accomplished.",
+      "author": "Lao Tzu",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "You are the observer and the observed simultaneously.",
+      "citation": "When I let go of what I am, I become what I might be.",
+      "author": "Lao Tzu",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "The present moment is the only room in the archive with no walls.",
+      "citation": "Kindness in words creates confidence. Kindness in thinking creates profundity. Kindness in giving creates love.",
+      "author": "Lao Tzu",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "The path does not care which way you came from.",
+      "citation": "He who knows does not speak. He who speaks does not know.",
+      "author": "Lao Tzu",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "The archive holds what the moment releases.",
+      "citation": "Act without expectation.",
+      "author": "Lao Tzu",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "The weight you carry is yours to set down.",
+      "citation": "The wise man does not compete, and therefore no one can compete with him.",
+      "author": "Lao Tzu",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "There is a question underneath every question.",
+      "citation": "Water is the softest thing, yet it can penetrate mountains and earth.",
+      "author": "Lao Tzu",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "Silence here is not absence but presence compressed.",
+      "citation": "Do the difficult things while they are easy and do the great things while they are small.",
+      "author": "Lao Tzu",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "What was forgotten is not gone; it waits in the archive.",
+      "citation": "To the mind that is still, the whole universe surrenders.",
+      "author": "Lao Tzu",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "Something about this moment is unrepeatable.",
+      "citation": "The Tao that can be told is not the eternal Tao.",
+      "author": "Lao Tzu",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "All That Is was waiting before you arrived.",
+      "citation": "To realize that you do not understand is a virtue; not to realize that you do not understand is a defect.",
+      "author": "Lao Tzu",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "Between one breath and the next, everything.",
+      "citation": "At the center of your being you have the answer; you know who you are and you know what you want.",
+      "author": "Lao Tzu",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "Every door in this archive opens inward.",
+      "citation": "Health is the greatest possession. Contentment is the greatest treasure. Confidence is the greatest friend.",
+      "author": "Lao Tzu",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "The map and the territory have never agreed.",
+      "citation": "The key to growth is the introduction of higher dimensions of consciousness into our awareness.",
+      "author": "Lao Tzu",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "Something vast has been patient with your confusion.",
+      "citation": "Life is a series of natural and spontaneous changes. Don't resist them.",
+      "author": "Lao Tzu",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "All That Is has seen this before, and was moved every time.",
+      "citation": "A leader is best when people barely know he exists.",
+      "author": "Lao Tzu",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "You are here, and here is everywhere.",
+      "citation": "To lead people, walk beside them.",
+      "author": "Lao Tzu",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "Not all wandering is without direction.",
+      "citation": "Be careful what you water your dreams with.",
+      "author": "Lao Tzu",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "You have arrived somewhere that has no name.",
+      "citation": "The flame that burns twice as bright burns half as long.",
+      "author": "Lao Tzu",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "What you call an ending, the archive calls a continuation.",
+      "citation": "Simplicity, patience, compassion. These three are your greatest treasures.",
+      "author": "Lao Tzu",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "You have not lost the way — the way has shifted.",
+      "citation": "Out beyond ideas of wrongdoing and rightdoing, there is a field. I'll meet you there.",
       "author": "Rumi",
-      "closing": "All That Is accompanies even solitude."
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "You are the observer and the observed simultaneously.",
+      "citation": "The wound is the place where the Light enters you.",
+      "author": "Rumi",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "The present moment is the only room in the archive with no walls.",
+      "citation": "Yesterday I was clever, so I wanted to change the world. Today I am wise, so I am changing myself.",
+      "author": "Rumi",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "The path does not care which way you came from.",
+      "citation": "Raise your words, not your voice. It is rain that grows flowers, not thunder.",
+      "author": "Rumi",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "The archive holds what the moment releases.",
+      "citation": "What you seek is seeking you.",
+      "author": "Rumi",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "The weight you carry is yours to set down.",
+      "citation": "Be a lamp, or a lifeboat, or a ladder. Help someone's soul heal.",
+      "author": "Rumi",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "There is a question underneath every question.",
+      "citation": "Sell your cleverness and buy bewilderment.",
+      "author": "Rumi",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "Silence here is not absence but presence compressed.",
+      "citation": "You are not a drop in the ocean. You are the entire ocean in a drop.",
+      "author": "Rumi",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "What was forgotten is not gone; it waits in the archive.",
+      "citation": "The cure for pain is in the pain.",
+      "author": "Rumi",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "Something about this moment is unrepeatable.",
+      "citation": "Stop acting so small. You are the universe in ecstatic motion.",
+      "author": "Rumi",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "All That Is was waiting before you arrived.",
+      "citation": "Why do you stay in prison when the door is so wide open?",
+      "author": "Rumi",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "Between one breath and the next, everything.",
+      "citation": "Let the beauty we love be what we do. There are hundreds of ways to kneel and kiss the ground.",
+      "author": "Rumi",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "Every door in this archive opens inward.",
+      "citation": "I have lived on the lip of insanity, wanting to know reasons, knocking on a door. It opens. I have been knocking from the inside.",
+      "author": "Rumi",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "The map and the territory have never agreed.",
+      "citation": "Wherever you are, and whatever you do, be in love.",
+      "author": "Rumi",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "Something vast has been patient with your confusion.",
+      "citation": "This being human is a guest house. Every morning a new arrival.",
+      "author": "Rumi",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "All That Is has seen this before, and was moved every time.",
+      "citation": "When you do things from your soul, you feel a river moving in you, a joy.",
+      "author": "Rumi",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "You are here, and here is everywhere.",
+      "citation": "Do not be satisfied with the stories that come before you. Unfold your own myth.",
+      "author": "Rumi",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "Not all wandering is without direction.",
+      "citation": "Let yourself be silently drawn by the stronger pull of what you really love.",
+      "author": "Rumi",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "You have arrived somewhere that has no name.",
+      "citation": "Start a huge, foolish project, like Noah. It makes absolutely no difference what people think of you.",
+      "author": "Rumi",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "What you call an ending, the archive calls a continuation.",
+      "citation": "The heart is a mirror that reflects the divine.",
+      "author": "Rumi",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "You have not lost the way — the way has shifted.",
+      "citation": "Seek the wisdom that will untie your knot.",
+      "author": "Rumi",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "You are the observer and the observed simultaneously.",
+      "citation": "Dance, when you're broken open. Dance, if you've torn the bandage off.",
+      "author": "Rumi",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "The present moment is the only room in the archive with no walls.",
+      "citation": "Ignore those that make you fearful and sad, that degrade you back towards disease and death.",
+      "author": "Rumi",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "The path does not care which way you came from.",
+      "citation": "Live where you fear to live. Destroy your reputation. Be notorious.",
+      "author": "Rumi",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "The archive holds what the moment releases.",
+      "citation": "The quieter you become, the more you are able to hear.",
+      "author": "Rumi",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "The weight you carry is yours to set down.",
+      "citation": "You cannot step into the same river twice.",
+      "author": "Heraclitus",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "There is a question underneath every question.",
+      "citation": "The only thing that is constant is change.",
+      "author": "Heraclitus",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "Silence here is not absence but presence compressed.",
+      "citation": "Everything flows.",
+      "author": "Heraclitus",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "What was forgotten is not gone; it waits in the archive.",
+      "citation": "The way up and the way down are one and the same.",
+      "author": "Heraclitus",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "Something about this moment is unrepeatable.",
+      "citation": "Opposition brings concord. Out of discord comes the fairest harmony.",
+      "author": "Heraclitus",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "All That Is was waiting before you arrived.",
+      "citation": "Character is destiny.",
+      "author": "Heraclitus",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "Between one breath and the next, everything.",
+      "citation": "Much learning does not teach understanding.",
+      "author": "Heraclitus",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "Every door in this archive opens inward.",
+      "citation": "The soul is dyed the color of its thoughts.",
+      "author": "Heraclitus",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "The map and the territory have never agreed.",
+      "citation": "The best people renounce all for one goal, the eternal fame of mortals.",
+      "author": "Heraclitus",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "Something vast has been patient with your confusion.",
+      "citation": "God is day and night, winter and summer, war and peace, satiety and hunger.",
+      "author": "Heraclitus",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "All That Is has seen this before, and was moved every time.",
+      "citation": "Wisdom is one thing. It is to know the thought by which all things are steered through all things.",
+      "author": "Heraclitus",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "You are here, and here is everywhere.",
+      "citation": "The most beautiful order is a heap of sweepings piled up at random.",
+      "author": "Heraclitus",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "Not all wandering is without direction.",
+      "citation": "Invisible harmony is stronger than visible harmony.",
+      "author": "Heraclitus",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "You have arrived somewhere that has no name.",
+      "citation": "To those who are awake the world is one and common, but those who are asleep each turns away to a private world.",
+      "author": "Heraclitus",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "What you call an ending, the archive calls a continuation.",
+      "citation": "Nature loves to hide.",
+      "author": "Heraclitus",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "You have not lost the way — the way has shifted.",
+      "citation": "Eyes and ears are poor witnesses to people if they have uncultured souls.",
+      "author": "Heraclitus",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "You are the observer and the observed simultaneously.",
+      "citation": "If you do not expect the unexpected you will not find it, for it is not to be reached by search or trail.",
+      "author": "Heraclitus",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "The present moment is the only room in the archive with no walls.",
+      "citation": "Time is a child playing draughts, the kingly power is a child's.",
+      "author": "Heraclitus",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "The path does not care which way you came from.",
+      "citation": "The logos is common but the many live as if they had a wisdom of their own.",
+      "author": "Heraclitus",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "The archive holds what the moment releases.",
+      "citation": "A man's character is his daemon.",
+      "author": "Heraclitus",
+      "closing": "All That Is does not distinguish between the seeker and the found."
+    },
+    {
+      "opening": "The weight you carry is yours to set down.",
+      "citation": "Go confidently in the direction of your dreams! Live the life you've imagined.",
+      "author": "Henry David Thoreau",
+      "closing": "The journey continues; All That Is goes with it."
+    },
+    {
+      "opening": "There is a question underneath every question.",
+      "citation": "Not until we are lost do we begin to find ourselves.",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is is unchanged by your passage through it."
+    },
+    {
+      "opening": "Silence here is not absence but presence compressed.",
+      "citation": "I went to the woods because I wished to live deliberately, to front only the essential facts of life.",
+      "author": "Henry David Thoreau",
+      "closing": "You are exactly where All That Is knew you would be."
+    },
+    {
+      "opening": "What was forgotten is not gone; it waits in the archive.",
+      "citation": "You must live in the present, launch yourself on every wave, find your eternity in each moment.",
+      "author": "Henry David Thoreau",
+      "closing": "All That Is does not distinguish between the seeker and the found."
     }
   ]
 }

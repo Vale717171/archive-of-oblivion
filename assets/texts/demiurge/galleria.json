@@ -5,73 +5,1201 @@
       "opening": "The frame is empty. Or perhaps it frames you.",
       "citation": "The painter has the universe in his mind and hands.",
       "author": "Leonardo da Vinci",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "The color you see may not be the color intended.",
+      "citation": "The noblest pleasure is the joy of understanding.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The canvas was white once. Now it is honest.",
+      "citation": "Learning never exhausts the mind.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "What survives the century is not always what was loved in its own time.",
+      "citation": "Simplicity is the ultimate sophistication.",
+      "author": "Leonardo da Vinci",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Not all who visit galleries are looking at the art.",
+      "citation": "Art is never finished, only abandoned.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "A single proportion, if wrong, undoes everything.",
+      "citation": "The supreme misfortune is when theory outstrips performance.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "This surface was worked until working could do no more.",
+      "citation": "Where the spirit does not work with the hand, there is no art.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "Light fell here and was not dismissed.",
+      "citation": "In rivers, the water that you touch is the last of what has passed and the first of that which comes; so with present time.",
+      "author": "Leonardo da Vinci",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Form is the argument; beauty is the conclusion.",
+      "citation": "A painter should begin every canvas with a wash of black, because all things in nature are dark except where exposed by the light.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "An angle here changed everything beyond this room.",
+      "citation": "Water is the driving force of all nature.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The eye moves. The painting stays. The encounter is entirely yours.",
+      "citation": "As a well-spent day brings happy sleep, so a life well spent brings happy death.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "What the hand learned, the mind had forgotten it knew.",
+      "citation": "Obstacles cannot crush me. Every obstacle yields to stern resolve.",
+      "author": "Leonardo da Vinci",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Beauty is an argument. This room has been making it for centuries.",
+      "citation": "Iron rusts from disuse; stagnant water loses its purity; even so does inaction sap the vigor of the mind.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "You stand where many have stood, looking at what few have seen.",
+      "citation": "A beautiful body perishes, but a work of art dies not.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "Every surface holds a ghost of what was made upon it.",
+      "citation": "Study without desire spoils the memory, and it retains nothing that it takes in.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "Something was carved away to reveal what was always there.",
+      "citation": "The greatest deception men suffer is from their own opinions.",
+      "author": "Leonardo da Vinci",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Proportion is the language the eye speaks before the mind wakes.",
+      "citation": "Nature never breaks her own laws.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "A line was drawn here with great deliberation.",
+      "citation": "There are three classes of people: those who see, those who see when they are shown, those who do not see.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The chisel is silent. The stone remembers every blow.",
+      "citation": "The truth of things is the chief nutriment of superior intellects.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "The sketch is truer than the painting; the idea, truer than both.",
+      "citation": "All our knowledge has its origins in our perceptions.",
+      "author": "Leonardo da Vinci",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "The frame is empty. Or perhaps it frames you.",
+      "citation": "Although nature commences with reason and ends in experience, it is necessary for us to do the opposite.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "The color you see may not be the color intended.",
+      "citation": "Make your work to be in keeping with your purpose.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The canvas was white once. Now it is honest.",
+      "citation": "The human foot is a masterpiece of engineering and a work of art.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "What survives the century is not always what was loved in its own time.",
+      "citation": "Time stays long enough for anyone who will use it.",
+      "author": "Leonardo da Vinci",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Not all who visit galleries are looking at the art.",
+      "citation": "He who is fixed to a star does not change his mind.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "A single proportion, if wrong, undoes everything.",
+      "citation": "Why does the eye see a thing more clearly in dreams than the imagination when awake?",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "This surface was worked until working could do no more.",
+      "citation": "Knowing is not enough; we must apply. Being willing is not enough; we must do.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "Light fell here and was not dismissed.",
+      "citation": "The depth and strength of a human character are defined by its moral reserves.",
+      "author": "Leonardo da Vinci",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Form is the argument; beauty is the conclusion.",
+      "citation": "I have been impressed with the urgency of doing.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "An angle here changed everything beyond this room.",
+      "citation": "Nothing strengthens authority so much as silence.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The eye moves. The painting stays. The encounter is entirely yours.",
+      "citation": "The greatest danger for most of us is not that our aim is too high and we miss it, but that it is too low and we reach it.",
+      "author": "Michelangelo",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "What the hand learned, the mind had forgotten it knew.",
+      "citation": "If people knew how hard I had to work to gain my mastery, it would not seem so wonderful at all.",
+      "author": "Michelangelo",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Beauty is an argument. This room has been making it for centuries.",
+      "citation": "I am still learning. Ancora imparo.",
+      "author": "Michelangelo",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "You stand where many have stood, looking at what few have seen.",
+      "citation": "Lord, grant that I may always desire more than I can accomplish.",
+      "author": "Michelangelo",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "Every surface holds a ghost of what was made upon it.",
+      "citation": "The marble not yet carved can hold the form of every thought the greatest artist has.",
+      "author": "Michelangelo",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "Something was carved away to reveal what was always there.",
+      "citation": "Every block of stone has a statue inside it and it is the task of the sculptor to discover it.",
+      "author": "Michelangelo",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Proportion is the language the eye speaks before the mind wakes.",
+      "citation": "Genius is eternal patience.",
+      "author": "Michelangelo",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "A line was drawn here with great deliberation.",
+      "citation": "A man paints with his brains and not with his hands.",
+      "author": "Michelangelo",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The chisel is silent. The stone remembers every blow.",
+      "citation": "The true work of art is but a shadow of the divine perfection.",
+      "author": "Michelangelo",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "The sketch is truer than the painting; the idea, truer than both.",
+      "citation": "I saw the angel in the marble and carved until I set him free.",
+      "author": "Michelangelo",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "The frame is empty. Or perhaps it frames you.",
+      "citation": "My soul can find no staircase to Heaven unless it be through Earth's loveliness.",
+      "author": "Michelangelo",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "The color you see may not be the color intended.",
+      "citation": "Trifles make perfection, and perfection is no trifle.",
+      "author": "Michelangelo",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The canvas was white once. Now it is honest.",
+      "citation": "There is no greater harm than that of time wasted.",
+      "author": "Michelangelo",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "What survives the century is not always what was loved in its own time.",
+      "citation": "Faith in oneself is the best and safest course.",
+      "author": "Michelangelo",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Not all who visit galleries are looking at the art.",
+      "citation": "The promises of this world are, for the most part, vain phantoms; and to confide in one's self, and become something of worth and value, is the best and safest course.",
+      "author": "Michelangelo",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "A single proportion, if wrong, undoes everything.",
+      "citation": "In every block of marble I see a statue as plain as though it stood before me, shaped and perfect in attitude and action.",
+      "author": "Michelangelo",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "This surface was worked until working could do no more.",
+      "citation": "Without mathematics there is no art.",
+      "author": "Luca Pacioli",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "Light fell here and was not dismissed.",
+      "citation": "The divine proportion is the key to the harmony of the world.",
+      "author": "Luca Pacioli",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Form is the argument; beauty is the conclusion.",
+      "citation": "He who does not know mathematics cannot understand art.",
+      "author": "Luca Pacioli",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "An angle here changed everything beyond this room.",
+      "citation": "Geometry is the foundation of all painting.",
+      "author": "Luca Pacioli",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The eye moves. The painting stays. The encounter is entirely yours.",
+      "citation": "In numbers and measures rests all science.",
+      "author": "Luca Pacioli",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "What the hand learned, the mind had forgotten it knew.",
+      "citation": "The proportions of the human body reflect the proportions of the universe.",
+      "author": "Luca Pacioli",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Beauty is an argument. This room has been making it for centuries.",
+      "citation": "Nothing in nature lacks proportion.",
+      "author": "Luca Pacioli",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "You stand where many have stood, looking at what few have seen.",
+      "citation": "Double-entry bookkeeping is the means by which the truth of commerce is preserved.",
+      "author": "Luca Pacioli",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "Every surface holds a ghost of what was made upon it.",
+      "citation": "God works by geometry.",
+      "author": "Luca Pacioli",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "Something was carved away to reveal what was always there.",
+      "citation": "The proportion that governs the heavens governs the canvas too.",
+      "author": "Luca Pacioli",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Proportion is the language the eye speaks before the mind wakes.",
+      "citation": "A man without arithmetic is a man without a measure of the world.",
+      "author": "Luca Pacioli",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "A line was drawn here with great deliberation.",
+      "citation": "The divine ratio is neither more nor less than the breath of creation made visible.",
+      "author": "Luca Pacioli",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The chisel is silent. The stone remembers every blow.",
+      "citation": "Art is the companion of virtue.",
+      "author": "Giorgio Vasari",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "The sketch is truer than the painting; the idea, truer than both.",
+      "citation": "Nature herself has made him who works well a gift of that gift which we call genius.",
+      "author": "Giorgio Vasari",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "The frame is empty. Or perhaps it frames you.",
+      "citation": "Every artist who works well shows us what nature truly is.",
+      "author": "Giorgio Vasari",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "The color you see may not be the color intended.",
+      "citation": "The hand must be guided by a mind that knows what it wants.",
+      "author": "Giorgio Vasari",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The canvas was white once. Now it is honest.",
+      "citation": "In order to know a painter's qualities, one must look at his work.",
+      "author": "Giorgio Vasari",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "What survives the century is not always what was loved in its own time.",
+      "citation": "Those who work with love leave a trace that outlasts them.",
+      "author": "Giorgio Vasari",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Not all who visit galleries are looking at the art.",
+      "citation": "Drawing is the foundation of all visual art.",
+      "author": "Giorgio Vasari",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "A single proportion, if wrong, undoes everything.",
+      "citation": "No style endures unless it is grounded in truth.",
+      "author": "Giorgio Vasari",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "This surface was worked until working could do no more.",
+      "citation": "The rebirth of the arts is the rebirth of the human spirit.",
+      "author": "Giorgio Vasari",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "Light fell here and was not dismissed.",
+      "citation": "It is the hand guided by love that produces what endures.",
+      "author": "Giorgio Vasari",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Form is the argument; beauty is the conclusion.",
+      "citation": "He who imitates nature and surpasses his master has truly learned.",
+      "author": "Giorgio Vasari",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "An angle here changed everything beyond this room.",
+      "citation": "An artist's life is the best commentary on his work.",
+      "author": "Giorgio Vasari",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The eye moves. The painting stays. The encounter is entirely yours.",
+      "citation": "The art of painting cannot be fully attained by anyone who has not studied it diligently.",
+      "author": "Albrecht Dürer",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "What the hand learned, the mind had forgotten it knew.",
+      "citation": "Without a guide, it will take too long to arrive at certainty.",
+      "author": "Albrecht Dürer",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Beauty is an argument. This room has been making it for centuries.",
+      "citation": "I hold that the perfection of form and beauty is contained in the sum of all men.",
+      "author": "Albrecht Dürer",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "You stand where many have stood, looking at what few have seen.",
+      "citation": "What beauty is, I know not, though it adheres to many things.",
+      "author": "Albrecht Dürer",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "Every surface holds a ghost of what was made upon it.",
+      "citation": "The more you try to master the art of painting, the deeper you will sink into it.",
+      "author": "Albrecht Dürer",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "Something was carved away to reveal what was always there.",
+      "citation": "Every figure shall have its own proper motion.",
+      "author": "Albrecht Dürer",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "Proportion is the language the eye speaks before the mind wakes.",
+      "citation": "Good work requires not only skill but also thought.",
+      "author": "Albrecht Dürer",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "A line was drawn here with great deliberation.",
+      "citation": "The power of art lies in knowledge of nature.",
+      "author": "Albrecht Dürer",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "The chisel is silent. The stone remembers every blow.",
+      "citation": "Great art is never the product of imitation alone.",
+      "author": "Albrecht Dürer",
+      "closing": "All That Is does not distinguish between the brushstroke and the intention."
+    },
+    {
+      "opening": "The sketch is truer than the painting; the idea, truer than both.",
+      "citation": "I shall show in a few words how the best painters always seek that which is highest.",
+      "author": "Albrecht Dürer",
+      "closing": "The frame and the frameless are both contained by All That Is."
+    },
+    {
+      "opening": "The frame is empty. Or perhaps it frames you.",
+      "citation": "He who would be an artist must first be a craftsman.",
+      "author": "Albrecht Dürer",
+      "closing": "What was made in silence is held in silence by All That Is."
+    },
+    {
+      "opening": "The color you see may not be the color intended.",
+      "citation": "Measure all things: that is the beginning of mastery.",
+      "author": "Albrecht Dürer",
+      "closing": "All That Is finds the angel in every uncarved block."
+    },
+    {
+      "opening": "An angle here changed everything beyond this room.",
+      "citation": "The painter has the universe in his mind and hands.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The eye moves. The painting stays. The encounter is entirely yours.",
+      "citation": "The noblest pleasure is the joy of understanding.",
+      "author": "Leonardo da Vinci",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "What the hand learned, the mind had forgotten it knew.",
+      "citation": "Learning never exhausts the mind.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Beauty is an argument. This room has been making it for centuries.",
+      "citation": "Simplicity is the ultimate sophistication.",
+      "author": "Leonardo da Vinci",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "You stand where many have stood, looking at what few have seen.",
+      "citation": "Art is never finished, only abandoned.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "Every surface holds a ghost of what was made upon it.",
+      "citation": "The supreme misfortune is when theory outstrips performance.",
+      "author": "Leonardo da Vinci",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "Something was carved away to reveal what was always there.",
+      "citation": "Where the spirit does not work with the hand, there is no art.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Proportion is the language the eye speaks before the mind wakes.",
+      "citation": "In rivers, the water that you touch is the last of what has passed and the first of that which comes; so with present time.",
+      "author": "Leonardo da Vinci",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "A line was drawn here with great deliberation.",
+      "citation": "A painter should begin every canvas with a wash of black, because all things in nature are dark except where exposed by the light.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The chisel is silent. The stone remembers every blow.",
+      "citation": "Water is the driving force of all nature.",
+      "author": "Leonardo da Vinci",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "The sketch is truer than the painting; the idea, truer than both.",
+      "citation": "As a well-spent day brings happy sleep, so a life well spent brings happy death.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "The frame is empty. Or perhaps it frames you.",
+      "citation": "Obstacles cannot crush me. Every obstacle yields to stern resolve.",
+      "author": "Leonardo da Vinci",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "The color you see may not be the color intended.",
+      "citation": "Iron rusts from disuse; stagnant water loses its purity; even so does inaction sap the vigor of the mind.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The canvas was white once. Now it is honest.",
+      "citation": "A beautiful body perishes, but a work of art dies not.",
+      "author": "Leonardo da Vinci",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "What survives the century is not always what was loved in its own time.",
+      "citation": "Study without desire spoils the memory, and it retains nothing that it takes in.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Not all who visit galleries are looking at the art.",
+      "citation": "The greatest deception men suffer is from their own opinions.",
+      "author": "Leonardo da Vinci",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "A single proportion, if wrong, undoes everything.",
+      "citation": "Nature never breaks her own laws.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "This surface was worked until working could do no more.",
+      "citation": "There are three classes of people: those who see, those who see when they are shown, those who do not see.",
+      "author": "Leonardo da Vinci",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "Light fell here and was not dismissed.",
+      "citation": "The truth of things is the chief nutriment of superior intellects.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Form is the argument; beauty is the conclusion.",
+      "citation": "All our knowledge has its origins in our perceptions.",
+      "author": "Leonardo da Vinci",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "An angle here changed everything beyond this room.",
+      "citation": "Although nature commences with reason and ends in experience, it is necessary for us to do the opposite.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The eye moves. The painting stays. The encounter is entirely yours.",
+      "citation": "Make your work to be in keeping with your purpose.",
+      "author": "Leonardo da Vinci",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "What the hand learned, the mind had forgotten it knew.",
+      "citation": "The human foot is a masterpiece of engineering and a work of art.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Beauty is an argument. This room has been making it for centuries.",
+      "citation": "Time stays long enough for anyone who will use it.",
+      "author": "Leonardo da Vinci",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "You stand where many have stood, looking at what few have seen.",
+      "citation": "He who is fixed to a star does not change his mind.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "Every surface holds a ghost of what was made upon it.",
+      "citation": "Why does the eye see a thing more clearly in dreams than the imagination when awake?",
+      "author": "Leonardo da Vinci",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "Something was carved away to reveal what was always there.",
+      "citation": "Knowing is not enough; we must apply. Being willing is not enough; we must do.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Proportion is the language the eye speaks before the mind wakes.",
+      "citation": "The depth and strength of a human character are defined by its moral reserves.",
+      "author": "Leonardo da Vinci",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "A line was drawn here with great deliberation.",
+      "citation": "I have been impressed with the urgency of doing.",
+      "author": "Leonardo da Vinci",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The chisel is silent. The stone remembers every blow.",
+      "citation": "Nothing strengthens authority so much as silence.",
+      "author": "Leonardo da Vinci",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "The sketch is truer than the painting; the idea, truer than both.",
+      "citation": "The greatest danger for most of us is not that our aim is too high and we miss it, but that it is too low and we reach it.",
+      "author": "Michelangelo",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "The frame is empty. Or perhaps it frames you.",
+      "citation": "If people knew how hard I had to work to gain my mastery, it would not seem so wonderful at all.",
+      "author": "Michelangelo",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "The color you see may not be the color intended.",
+      "citation": "I am still learning. Ancora imparo.",
+      "author": "Michelangelo",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The canvas was white once. Now it is honest.",
+      "citation": "Lord, grant that I may always desire more than I can accomplish.",
+      "author": "Michelangelo",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "What survives the century is not always what was loved in its own time.",
+      "citation": "The marble not yet carved can hold the form of every thought the greatest artist has.",
+      "author": "Michelangelo",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Not all who visit galleries are looking at the art.",
+      "citation": "Every block of stone has a statue inside it and it is the task of the sculptor to discover it.",
+      "author": "Michelangelo",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "A single proportion, if wrong, undoes everything.",
+      "citation": "Genius is eternal patience.",
+      "author": "Michelangelo",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "This surface was worked until working could do no more.",
+      "citation": "A man paints with his brains and not with his hands.",
+      "author": "Michelangelo",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "Light fell here and was not dismissed.",
+      "citation": "The true work of art is but a shadow of the divine perfection.",
+      "author": "Michelangelo",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Form is the argument; beauty is the conclusion.",
+      "citation": "I saw the angel in the marble and carved until I set him free.",
+      "author": "Michelangelo",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "An angle here changed everything beyond this room.",
+      "citation": "My soul can find no staircase to Heaven unless it be through Earth's loveliness.",
+      "author": "Michelangelo",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The eye moves. The painting stays. The encounter is entirely yours.",
+      "citation": "Trifles make perfection, and perfection is no trifle.",
+      "author": "Michelangelo",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "What the hand learned, the mind had forgotten it knew.",
+      "citation": "There is no greater harm than that of time wasted.",
+      "author": "Michelangelo",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Beauty is an argument. This room has been making it for centuries.",
+      "citation": "Faith in oneself is the best and safest course.",
+      "author": "Michelangelo",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "You stand where many have stood, looking at what few have seen.",
+      "citation": "The promises of this world are, for the most part, vain phantoms; and to confide in one's self, and become something of worth and value, is the best and safest course.",
+      "author": "Michelangelo",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "Every surface holds a ghost of what was made upon it.",
+      "citation": "In every block of marble I see a statue as plain as though it stood before me, shaped and perfect in attitude and action.",
+      "author": "Michelangelo",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "Something was carved away to reveal what was always there.",
+      "citation": "Without mathematics there is no art.",
+      "author": "Luca Pacioli",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Proportion is the language the eye speaks before the mind wakes.",
+      "citation": "The divine proportion is the key to the harmony of the world.",
+      "author": "Luca Pacioli",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "A line was drawn here with great deliberation.",
+      "citation": "He who does not know mathematics cannot understand art.",
+      "author": "Luca Pacioli",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The chisel is silent. The stone remembers every blow.",
+      "citation": "Geometry is the foundation of all painting.",
+      "author": "Luca Pacioli",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "The sketch is truer than the painting; the idea, truer than both.",
+      "citation": "In numbers and measures rests all science.",
+      "author": "Luca Pacioli",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "The frame is empty. Or perhaps it frames you.",
+      "citation": "The proportions of the human body reflect the proportions of the universe.",
+      "author": "Luca Pacioli",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "The color you see may not be the color intended.",
+      "citation": "Nothing in nature lacks proportion.",
+      "author": "Luca Pacioli",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The canvas was white once. Now it is honest.",
+      "citation": "Double-entry bookkeeping is the means by which the truth of commerce is preserved.",
+      "author": "Luca Pacioli",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "What survives the century is not always what was loved in its own time.",
+      "citation": "God works by geometry.",
+      "author": "Luca Pacioli",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Not all who visit galleries are looking at the art.",
+      "citation": "The proportion that governs the heavens governs the canvas too.",
+      "author": "Luca Pacioli",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "A single proportion, if wrong, undoes everything.",
+      "citation": "A man without arithmetic is a man without a measure of the world.",
+      "author": "Luca Pacioli",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "This surface was worked until working could do no more.",
+      "citation": "The divine ratio is neither more nor less than the breath of creation made visible.",
+      "author": "Luca Pacioli",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "Light fell here and was not dismissed.",
+      "citation": "Art is the companion of virtue.",
+      "author": "Giorgio Vasari",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Form is the argument; beauty is the conclusion.",
+      "citation": "Nature herself has made him who works well a gift of that gift which we call genius.",
+      "author": "Giorgio Vasari",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "An angle here changed everything beyond this room.",
+      "citation": "Every artist who works well shows us what nature truly is.",
+      "author": "Giorgio Vasari",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The eye moves. The painting stays. The encounter is entirely yours.",
+      "citation": "The hand must be guided by a mind that knows what it wants.",
+      "author": "Giorgio Vasari",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "What the hand learned, the mind had forgotten it knew.",
+      "citation": "In order to know a painter's qualities, one must look at his work.",
+      "author": "Giorgio Vasari",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Beauty is an argument. This room has been making it for centuries.",
+      "citation": "Those who work with love leave a trace that outlasts them.",
+      "author": "Giorgio Vasari",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "You stand where many have stood, looking at what few have seen.",
+      "citation": "Drawing is the foundation of all visual art.",
+      "author": "Giorgio Vasari",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "Every surface holds a ghost of what was made upon it.",
+      "citation": "No style endures unless it is grounded in truth.",
+      "author": "Giorgio Vasari",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "Something was carved away to reveal what was always there.",
+      "citation": "The rebirth of the arts is the rebirth of the human spirit.",
+      "author": "Giorgio Vasari",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Proportion is the language the eye speaks before the mind wakes.",
+      "citation": "It is the hand guided by love that produces what endures.",
+      "author": "Giorgio Vasari",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "A line was drawn here with great deliberation.",
+      "citation": "He who imitates nature and surpasses his master has truly learned.",
+      "author": "Giorgio Vasari",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The chisel is silent. The stone remembers every blow.",
+      "citation": "An artist's life is the best commentary on his work.",
+      "author": "Giorgio Vasari",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "The sketch is truer than the painting; the idea, truer than both.",
+      "citation": "The art of painting cannot be fully attained by anyone who has not studied it diligently.",
+      "author": "Albrecht Dürer",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "The frame is empty. Or perhaps it frames you.",
+      "citation": "Without a guide, it will take too long to arrive at certainty.",
+      "author": "Albrecht Dürer",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "The color you see may not be the color intended.",
+      "citation": "I hold that the perfection of form and beauty is contained in the sum of all men.",
+      "author": "Albrecht Dürer",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The canvas was white once. Now it is honest.",
+      "citation": "What beauty is, I know not, though it adheres to many things.",
+      "author": "Albrecht Dürer",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "What survives the century is not always what was loved in its own time.",
+      "citation": "The more you try to master the art of painting, the deeper you will sink into it.",
+      "author": "Albrecht Dürer",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Not all who visit galleries are looking at the art.",
+      "citation": "Every figure shall have its own proper motion.",
+      "author": "Albrecht Dürer",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "A single proportion, if wrong, undoes everything.",
+      "citation": "Good work requires not only skill but also thought.",
+      "author": "Albrecht Dürer",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "This surface was worked until working could do no more.",
+      "citation": "The power of art lies in knowledge of nature.",
+      "author": "Albrecht Dürer",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "Light fell here and was not dismissed.",
+      "citation": "Great art is never the product of imitation alone.",
+      "author": "Albrecht Dürer",
+      "closing": "All That Is is the proportion no instrument can fully measure."
+    },
+    {
+      "opening": "Form is the argument; beauty is the conclusion.",
+      "citation": "I shall show in a few words how the best painters always seek that which is highest.",
+      "author": "Albrecht Dürer",
+      "closing": "The beauty that endures is the beauty All That Is intended."
+    },
+    {
+      "opening": "An angle here changed everything beyond this room.",
+      "citation": "He who would be an artist must first be a craftsman.",
+      "author": "Albrecht Dürer",
+      "closing": "What was abandoned is not lost — All That Is holds it still."
+    },
+    {
+      "opening": "The eye moves. The painting stays. The encounter is entirely yours.",
+      "citation": "Measure all things: that is the beginning of mastery.",
+      "author": "Albrecht Dürer",
+      "closing": "What endures does so because All That Is recognized it."
+    },
+    {
+      "opening": "The chisel is silent. The stone remembers every blow.",
+      "citation": "The painter has the universe in his mind and hands.",
+      "author": "Leonardo da Vinci",
+      "closing": "The gallery remembers everything it has witnessed."
+    },
+    {
+      "opening": "The sketch is truer than the painting; the idea, truer than both.",
+      "citation": "The noblest pleasure is the joy of understanding.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is present in every ratio, every golden mean."
+    },
+    {
+      "opening": "The frame is empty. Or perhaps it frames you.",
+      "citation": "Learning never exhausts the mind.",
+      "author": "Leonardo da Vinci",
+      "closing": "Every proportion that sings is a note in the score of All That Is."
+    },
+    {
+      "opening": "The color you see may not be the color intended.",
+      "citation": "Simplicity is the ultimate sophistication.",
+      "author": "Leonardo da Vinci",
       "closing": "All That Is sees every canvas, even the blank ones."
     },
     {
-      "opening": "A brushstroke lingers in the air, unsigned.",
-      "citation": "Without proportion, no form can be perfect.",
-      "author": "Luca Pacioli",
-      "closing": "The Gallery does not distinguish between the artist and the art."
-    },
-    {
-      "opening": "The light here falls as if it were composed.",
-      "citation": "Simplicity is the ultimate sophistication.",
-      "author": "Leonardo da Vinci",
-      "closing": "All That Is curates even the shadows."
-    },
-    {
-      "opening": "A colour you cannot name darkens the wall.",
-      "citation": "Every block of stone has a statue inside it, and it is the task of the sculptor to discover it.",
-      "author": "Michelangelo",
-      "closing": "Even emptiness has form here."
-    },
-    {
-      "opening": "The echo of a chisel, centuries old.",
+      "opening": "The canvas was white once. Now it is honest.",
       "citation": "Art is never finished, only abandoned.",
       "author": "Leonardo da Vinci",
-      "closing": "All That Is preserves even the abandoned."
+      "closing": "The gallery remembers everything it has witnessed."
     },
     {
-      "opening": "The perspective lines converge on a point you cannot reach.",
-      "citation": "He who does not know his own proportions knows nothing of himself.",
-      "author": "Luca Pacioli",
-      "closing": "The vanishing point is also a beginning."
+      "opening": "What survives the century is not always what was loved in its own time.",
+      "citation": "The supreme misfortune is when theory outstrips performance.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is present in every ratio, every golden mean."
     },
     {
-      "opening": "A reflection moves in the glass, but it is not yours.",
+      "opening": "Not all who visit galleries are looking at the art.",
       "citation": "Where the spirit does not work with the hand, there is no art.",
       "author": "Leonardo da Vinci",
-      "closing": "All That Is recognizes every reflection."
+      "closing": "Every proportion that sings is a note in the score of All That Is."
     },
     {
-      "opening": "The gilded frame contains nothing — and everything.",
-      "citation": "The true work of art is but a shadow of the divine perfection.",
-      "author": "Michelangelo",
-      "closing": "What is absent is also exhibited."
-    },
-    {
-      "opening": "Someone has rearranged the paintings while you looked away.",
-      "citation": "Painting is silent poetry, and poetry is painting that speaks.",
-      "author": "Plutarch",
-      "closing": "All That Is hangs no work in the wrong place."
-    },
-    {
-      "opening": "The marble breathes. You are certain of it.",
-      "citation": "I saw the angel in the marble and carved until I set him free.",
-      "author": "Michelangelo",
-      "closing": "All That Is sees the form within the formless."
-    },
-    {
-      "opening": "A sketch, half-finished, seems to depict your silhouette.",
-      "citation": "Learn to see. Realize that everything connects to everything else.",
+      "opening": "A single proportion, if wrong, undoes everything.",
+      "citation": "In rivers, the water that you touch is the last of what has passed and the first of that which comes; so with present time.",
       "author": "Leonardo da Vinci",
-      "closing": "The Gallery remembers what you have yet to create."
+      "closing": "All That Is sees every canvas, even the blank ones."
     },
     {
-      "opening": "Gold leaf drifts from the ceiling like autumn.",
-      "citation": "The aim of art is to represent not the outward appearance of things, but their inward significance.",
-      "author": "Aristotle",
-      "closing": "All That Is gilds even the ordinary."
+      "opening": "This surface was worked until working could do no more.",
+      "citation": "A painter should begin every canvas with a wash of black, because all things in nature are dark except where exposed by the light.",
+      "author": "Leonardo da Vinci",
+      "closing": "The gallery remembers everything it has witnessed."
+    },
+    {
+      "opening": "Light fell here and was not dismissed.",
+      "citation": "Water is the driving force of all nature.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is present in every ratio, every golden mean."
+    },
+    {
+      "opening": "Form is the argument; beauty is the conclusion.",
+      "citation": "As a well-spent day brings happy sleep, so a life well spent brings happy death.",
+      "author": "Leonardo da Vinci",
+      "closing": "Every proportion that sings is a note in the score of All That Is."
+    },
+    {
+      "opening": "An angle here changed everything beyond this room.",
+      "citation": "Obstacles cannot crush me. Every obstacle yields to stern resolve.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is sees every canvas, even the blank ones."
+    },
+    {
+      "opening": "The eye moves. The painting stays. The encounter is entirely yours.",
+      "citation": "Iron rusts from disuse; stagnant water loses its purity; even so does inaction sap the vigor of the mind.",
+      "author": "Leonardo da Vinci",
+      "closing": "The gallery remembers everything it has witnessed."
+    },
+    {
+      "opening": "What the hand learned, the mind had forgotten it knew.",
+      "citation": "A beautiful body perishes, but a work of art dies not.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is present in every ratio, every golden mean."
+    },
+    {
+      "opening": "Beauty is an argument. This room has been making it for centuries.",
+      "citation": "Study without desire spoils the memory, and it retains nothing that it takes in.",
+      "author": "Leonardo da Vinci",
+      "closing": "Every proportion that sings is a note in the score of All That Is."
+    },
+    {
+      "opening": "You stand where many have stood, looking at what few have seen.",
+      "citation": "The greatest deception men suffer is from their own opinions.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is sees every canvas, even the blank ones."
+    },
+    {
+      "opening": "Every surface holds a ghost of what was made upon it.",
+      "citation": "Nature never breaks her own laws.",
+      "author": "Leonardo da Vinci",
+      "closing": "The gallery remembers everything it has witnessed."
+    },
+    {
+      "opening": "Something was carved away to reveal what was always there.",
+      "citation": "There are three classes of people: those who see, those who see when they are shown, those who do not see.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is present in every ratio, every golden mean."
+    },
+    {
+      "opening": "Proportion is the language the eye speaks before the mind wakes.",
+      "citation": "The truth of things is the chief nutriment of superior intellects.",
+      "author": "Leonardo da Vinci",
+      "closing": "Every proportion that sings is a note in the score of All That Is."
+    },
+    {
+      "opening": "A line was drawn here with great deliberation.",
+      "citation": "All our knowledge has its origins in our perceptions.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is sees every canvas, even the blank ones."
+    },
+    {
+      "opening": "The chisel is silent. The stone remembers every blow.",
+      "citation": "Although nature commences with reason and ends in experience, it is necessary for us to do the opposite.",
+      "author": "Leonardo da Vinci",
+      "closing": "The gallery remembers everything it has witnessed."
+    },
+    {
+      "opening": "The sketch is truer than the painting; the idea, truer than both.",
+      "citation": "Make your work to be in keeping with your purpose.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is present in every ratio, every golden mean."
+    },
+    {
+      "opening": "The frame is empty. Or perhaps it frames you.",
+      "citation": "The human foot is a masterpiece of engineering and a work of art.",
+      "author": "Leonardo da Vinci",
+      "closing": "Every proportion that sings is a note in the score of All That Is."
+    },
+    {
+      "opening": "The color you see may not be the color intended.",
+      "citation": "Time stays long enough for anyone who will use it.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is sees every canvas, even the blank ones."
+    },
+    {
+      "opening": "The canvas was white once. Now it is honest.",
+      "citation": "He who is fixed to a star does not change his mind.",
+      "author": "Leonardo da Vinci",
+      "closing": "The gallery remembers everything it has witnessed."
+    },
+    {
+      "opening": "What survives the century is not always what was loved in its own time.",
+      "citation": "Why does the eye see a thing more clearly in dreams than the imagination when awake?",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is present in every ratio, every golden mean."
+    },
+    {
+      "opening": "Not all who visit galleries are looking at the art.",
+      "citation": "Knowing is not enough; we must apply. Being willing is not enough; we must do.",
+      "author": "Leonardo da Vinci",
+      "closing": "Every proportion that sings is a note in the score of All That Is."
+    },
+    {
+      "opening": "A single proportion, if wrong, undoes everything.",
+      "citation": "The depth and strength of a human character are defined by its moral reserves.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is sees every canvas, even the blank ones."
+    },
+    {
+      "opening": "This surface was worked until working could do no more.",
+      "citation": "I have been impressed with the urgency of doing.",
+      "author": "Leonardo da Vinci",
+      "closing": "The gallery remembers everything it has witnessed."
+    },
+    {
+      "opening": "Light fell here and was not dismissed.",
+      "citation": "Nothing strengthens authority so much as silence.",
+      "author": "Leonardo da Vinci",
+      "closing": "All That Is is present in every ratio, every golden mean."
+    },
+    {
+      "opening": "Form is the argument; beauty is the conclusion.",
+      "citation": "The greatest danger for most of us is not that our aim is too high and we miss it, but that it is too low and we reach it.",
+      "author": "Michelangelo",
+      "closing": "Every proportion that sings is a note in the score of All That Is."
+    },
+    {
+      "opening": "An angle here changed everything beyond this room.",
+      "citation": "If people knew how hard I had to work to gain my mastery, it would not seem so wonderful at all.",
+      "author": "Michelangelo",
+      "closing": "All That Is sees every canvas, even the blank ones."
+    },
+    {
+      "opening": "The eye moves. The painting stays. The encounter is entirely yours.",
+      "citation": "I am still learning. Ancora imparo.",
+      "author": "Michelangelo",
+      "closing": "The gallery remembers everything it has witnessed."
+    },
+    {
+      "opening": "What the hand learned, the mind had forgotten it knew.",
+      "citation": "Lord, grant that I may always desire more than I can accomplish.",
+      "author": "Michelangelo",
+      "closing": "All That Is is present in every ratio, every golden mean."
+    },
+    {
+      "opening": "Beauty is an argument. This room has been making it for centuries.",
+      "citation": "The marble not yet carved can hold the form of every thought the greatest artist has.",
+      "author": "Michelangelo",
+      "closing": "Every proportion that sings is a note in the score of All That Is."
+    },
+    {
+      "opening": "You stand where many have stood, looking at what few have seen.",
+      "citation": "Every block of stone has a statue inside it and it is the task of the sculptor to discover it.",
+      "author": "Michelangelo",
+      "closing": "All That Is sees every canvas, even the blank ones."
     }
   ]
 }
