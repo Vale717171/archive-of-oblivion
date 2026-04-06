@@ -1,6 +1,6 @@
 # Work Log — L'Archivio dell'Oblio
 *Registro cronologico delle sessioni di sviluppo. Non modificare le voci esistenti.*
-*GDD completo: [`claude.md`](../claude.md)*
+*GDD completo: [`gdd.md`](gdd.md)*
 
 ---
 
@@ -15,7 +15,7 @@
 - **Added a default startup background path** — `BackgroundService` now exposes
   `defaultBackgroundAsset`, `allBackgroundAssets`, and `getBackgroundForNodeOrDefault(...)` so
   the UI always has a valid image, falling back to `bg_soglia.jpg` when the node is not ready.
-- **Precached all 7 background assets** in `GameScreen.didChangeDependencies()` to reduce
+- **Precached all 7 background assets** from `GameScreen.initState()` after the first frame to reduce
   first-render delay and avoid visible flicker during sector changes.
 - **Made background rendering unconditional** — `game_screen.dart` now always paints the
   background layer and enables `gaplessPlayback` for smoother transitions.

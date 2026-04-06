@@ -37,7 +37,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
   final _focusNode = FocusNode();
-  bool _backgroundsPrecached = false;
 
   // Typewriter state for the last narrative message
   String _typewriterBuffer = '';
@@ -51,18 +50,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     super.initState();
     // Request input focus after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       _focusNode.requestFocus();
+      for (final assetPath in BackgroundService.allBackgroundAssets) {
+        precacheImage(AssetImage(assetPath), context);
+      }
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_backgroundsPrecached) return;
-    _backgroundsPrecached = true;
-    for (final assetPath in BackgroundService.allBackgroundAssets) {
-      precacheImage(AssetImage(assetPath), context);
-    }
   }
 
   @override
