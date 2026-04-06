@@ -25,6 +25,15 @@ import 'background_service.dart';
 const int _panicAnxietyThreshold = 70; // anxiety > this → reddish text
 const int _lowLucidityThreshold = 30; // lucidity < this → grey text
 const int _highOblivionThreshold = 60; // oblivionLevel > this → blue-grey text
+const double _backgroundImageOpacity = 0.15;
+// 5×4 color matrix: +18% RGB gain plus a small +18 luminance lift keeps the
+// mandated 0.15-opacity artwork readable on dimmer screens without making it loud.
+const List<double> _backgroundImageBrightnessMatrix = [
+  1.18, 0, 0, 0, 18,
+  0, 1.18, 0, 0, 18,
+  0, 0, 1.18, 0, 18,
+  0, 0, 0, 1, 0,
+];
 
 class GameScreen extends ConsumerStatefulWidget {
   const GameScreen({super.key});
@@ -80,9 +89,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   /// Subtle background tint — deepens as oblivion rises.
   Color _backgroundColor(PsychoProfile? profile) {
-    if (profile == null) return Colors.black;
-    final t = (profile.oblivionLevel / 100).clamp(0.0, 0.3);
-    return Color.lerp(Colors.black, const Color(0xFF050A14), t)!;
+    const baseColor = Color(0xFF080A0F);
+    const deepColor = Color(0xFF101726);
+    if (profile == null) return baseColor;
+    final t = (profile.oblivionLevel / 100).clamp(0.0, 0.35);
+    return Color.lerp(baseColor, deepColor, t)!;
   }
 
   // ── Typewriter ──────────────────────────────────────────────────────────
@@ -213,11 +224,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             // Background image — subtle sector atmosphere
             Positioned.fill(
               child: Opacity(
-                opacity: 0.15,
-                child: Image.asset(
-                  backgroundPath,
-                  fit: BoxFit.cover,
-                  gaplessPlayback: true,
+                opacity: _backgroundImageOpacity,
+                child: ColorFiltered(
+                  colorFilter: const ColorFilter.matrix(
+                    _backgroundImageBrightnessMatrix,
+                  ),
+                  child: Image.asset(
+                    backgroundPath,
+                    fit: BoxFit.cover,
+                    gaplessPlayback: true,
+                  ),
                 ),
               ),
             ),
