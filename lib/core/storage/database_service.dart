@@ -9,6 +9,12 @@ class DatabaseService {
   static const int defaultLucidity = 50;
   static const int defaultOblivionLevel = 0;
   static const int defaultAnxiety = 10;
+  static const Map<String, Object?> defaultPsychoProfileRow = {
+    'id': 1,
+    'lucidity': defaultLucidity,
+    'oblivion_level': defaultOblivionLevel,
+    'anxiety': defaultAnxiety,
+  };
 
   // Singleton pattern per evitare accessi concorrenti non sicuri
   DatabaseService._privateConstructor();
@@ -92,12 +98,7 @@ class DatabaseService {
     ''');
 
     // Inizializza il profilo psicologico di base
-    await db.insert('psycho_profile', {
-      'id': 1,
-      'lucidity': defaultLucidity,
-      'oblivion_level': defaultOblivionLevel,
-      'anxiety': defaultAnxiety,
-    });
+    await db.insert('psycho_profile', defaultPsychoProfileRow);
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {

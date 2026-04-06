@@ -25,12 +25,6 @@ class PsychoProfile {
 // Il Notifier che gestisce lo stato asincrono
 class PsychoProfileNotifier extends AsyncNotifier<PsychoProfile> {
   final _dbService = DatabaseService.instance;
-  static const _defaultProfileRow = {
-    'id': 1,
-    'lucidity': DatabaseService.defaultLucidity,
-    'oblivion_level': DatabaseService.defaultOblivionLevel,
-    'anxiety': DatabaseService.defaultAnxiety,
-  };
 
   @override
   Future<PsychoProfile> build() async {
@@ -75,7 +69,7 @@ class PsychoProfileNotifier extends AsyncNotifier<PsychoProfile> {
     final db = await _dbService.database;
     await db.insert(
       'psycho_profile',
-      _defaultProfileRow,
+      DatabaseService.defaultPsychoProfileRow,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
     state = AsyncValue.data(await _fetchProfile());
