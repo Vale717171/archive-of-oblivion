@@ -4,6 +4,66 @@
 
 ---
 
+### 2026-04-06 — GitHub Copilot (Shared psycho defaults cleanup)
+**Role:** Review follow-up
+
+**Done:**
+
+- **Removed duplicate psycho-profile reset data** by exposing a shared
+  `DatabaseService.defaultPsychoProfileRow` and reusing it for both DB initialization and reset.
+
+---
+
+### 2026-04-06 — GitHub Copilot (New game guard message polish)
+**Role:** Review follow-up
+
+**Done:**
+
+- **Improved the reset guard error message** in `GameEngineNotifier.startNewGame()` so a missing
+  `intro_void` definition now reports the likely fix (`_nodes` initialization) instead of a terse
+  null-assert style failure.
+
+---
+
+### 2026-04-06 — GitHub Copilot (New game reset follow-up)
+**Role:** Review follow-up
+
+**Done:**
+
+- **Aligned psycho-profile reset with the repository single-row pattern** — reset now uses
+  `insert(..., conflictAlgorithm: replace)` instead of an inline `WHERE id = 1` update.
+- **Centralised default psycho values** in `DatabaseService` and reused them from
+  `PsychoProfileNotifier` so initialization, fallback, and reset share the same defaults.
+- **Hardened the new-game engine reset** — `startNewGame()` now throws a clear `StateError` if the
+  `intro_void` node definition is ever removed or renamed, instead of relying on a bare `!`.
+
+---
+
+### 2026-04-06 — GitHub Copilot (New game reset action)
+**Role:** UI + persistence
+
+**Done:**
+
+- **Added a top-level `New game` action** in `game_screen.dart`, positioned at the top of the
+  screen and gated behind a confirmation dialog.
+- **Implemented full run reset flow** — `GameEngineNotifier.startNewGame()` now clears dialogue
+  history, clears saved player memories, resets the psycho profile, resets the persisted engine
+  state to `intro_void`, and rebuilds the opening narrative in-memory.
+- **Ensured startup background falls back to "la soglia" after reset** — the new-game flow writes
+  `currentNode: 'intro_void'`, which maps through `BackgroundService` to `bg_soglia.jpg`, so the
+  first screen can be re-tested from the initial state without reinstalling the app.
+- **Persistence helpers added** — `GameStateNotifier.resetGameState()`,
+  `PsychoProfileNotifier.resetProfile()`, and `DatabaseService.clearAllMemories()` provide a small,
+  explicit reset surface without changing normal autosave behavior.
+
+**Architecture snapshot:**
+New-game orchestration now lives in `GameEngineNotifier`, not the UI. `GameScreen` only asks for
+confirmation and delegates the reset. Persisted restart state remains aligned with the existing
+startup path: `gameStateProvider` reloads `intro_void`, and the background layer resolves that node
+to the soglia image.
+
+---
+
 ### 2026-04-06 — GitHub Copilot (Background startup image fix)
 **Role:** UI bugfix
 

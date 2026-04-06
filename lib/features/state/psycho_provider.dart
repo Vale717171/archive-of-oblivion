@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sqflite/sqflite.dart';
 import '../../core/storage/database_service.dart';
 
 // Modello dati
@@ -38,7 +39,11 @@ class PsychoProfileNotifier extends AsyncNotifier<PsychoProfile> {
       return PsychoProfile.fromMap(maps.first);
     }
     // Fallback di sicurezza, non dovrebbe mai accadere data l'inizializzazione del DB
-    return PsychoProfile(lucidity: 50, oblivionLevel: 0, anxiety: 10);
+    return PsychoProfile(
+      lucidity: DatabaseService.defaultLucidity,
+      oblivionLevel: DatabaseService.defaultOblivionLevel,
+      anxiety: DatabaseService.defaultAnxiety,
+    );
   }
 
   // Metodo per aggiornare un parametro dinamicamente (es. quando l'utente scrive frasi senza senso)
@@ -58,6 +63,16 @@ class PsychoProfileNotifier extends AsyncNotifier<PsychoProfile> {
       state = const AsyncValue.loading();
       state = AsyncValue.data(await _fetchProfile());
     }
+  }
+
+  Future<void> resetProfile() async {
+    final db = await _dbService.database;
+    await db.insert(
+      'psycho_profile',
+      DatabaseService.defaultPsychoProfileRow,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    state = AsyncValue.data(await _fetchProfile());
   }
 }
 
