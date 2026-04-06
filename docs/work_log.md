@@ -4,6 +4,16 @@
 
 ---
 
+### 2026-04-06 — GitHub Copilot (Shared psycho defaults cleanup)
+**Role:** Review follow-up
+
+**Done:**
+
+- **Removed duplicate psycho-profile reset data** by exposing a shared
+  `DatabaseService.defaultPsychoProfileRow` and reusing it for both DB initialization and reset.
+
+---
+
 ### 2026-04-06 — GitHub Copilot (New game guard message polish)
 **Role:** Review follow-up
 
