@@ -1130,7 +1130,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   Future<void> startNewGame() async {
-    final introNode = _nodes['intro_void']!;
+    final introNode = _nodes['intro_void'];
+    if (introNode == null) {
+      throw StateError('Missing intro_void node definition');
+    }
     final introText = _enterNode(introNode);
 
     await _history.clear();

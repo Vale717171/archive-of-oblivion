@@ -6,6 +6,9 @@ import 'package:path/path.dart';
 class DatabaseService {
   static const _databaseName = "oblivion_archive.db";
   static const _databaseVersion = 3;
+  static const int defaultLucidity = 50;
+  static const int defaultOblivionLevel = 0;
+  static const int defaultAnxiety = 10;
 
   // Singleton pattern per evitare accessi concorrenti non sicuri
   DatabaseService._privateConstructor();
@@ -89,7 +92,12 @@ class DatabaseService {
     ''');
 
     // Inizializza il profilo psicologico di base
-    await db.insert('psycho_profile', {'id': 1});
+    await db.insert('psycho_profile', {
+      'id': 1,
+      'lucidity': defaultLucidity,
+      'oblivion_level': defaultOblivionLevel,
+      'anxiety': defaultAnxiety,
+    });
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
