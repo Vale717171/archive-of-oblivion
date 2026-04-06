@@ -4,6 +4,20 @@
 
 ---
 
+### 2026-04-06 — GitHub Copilot (New game reset follow-up)
+**Role:** Review follow-up
+
+**Done:**
+
+- **Aligned psycho-profile reset with the repository single-row pattern** — reset now uses
+  `insert(..., conflictAlgorithm: replace)` instead of an inline `WHERE id = 1` update.
+- **Centralised default psycho values** in `DatabaseService` and reused them from
+  `PsychoProfileNotifier` so initialization, fallback, and reset share the same defaults.
+- **Hardened the new-game engine reset** — `startNewGame()` now throws a clear `StateError` if the
+  `intro_void` node definition is ever removed or renamed, instead of relying on a bare `!`.
+
+---
+
 ### 2026-04-06 — GitHub Copilot (New game reset action)
 **Role:** UI + persistence
 
