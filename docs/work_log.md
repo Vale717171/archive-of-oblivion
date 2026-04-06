@@ -4,6 +4,17 @@
 
 ---
 
+### 2026-04-06 — GitHub Copilot (New game guard message polish)
+**Role:** Review follow-up
+
+**Done:**
+
+- **Improved the reset guard error message** in `GameEngineNotifier.startNewGame()` so a missing
+  `intro_void` definition now reports the likely fix (`_nodes` initialization) instead of a terse
+  null-assert style failure.
+
+---
+
 ### 2026-04-06 — GitHub Copilot (New game reset follow-up)
 **Role:** Review follow-up
 
