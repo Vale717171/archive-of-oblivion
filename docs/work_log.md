@@ -4,6 +4,23 @@
 
 ---
 
+### 2026-04-06 — GitHub Copilot (Background visibility rebalance)
+**Role:** UI polish
+
+**Done:**
+
+- **Rebalanced the game-screen backdrop** so sector images stay subtle but are no longer crushed
+  into near-black on typical phone brightness settings.
+- **Kept the mandated 0.15 image opacity** while brightening the rendered artwork itself with a
+  light color-matrix pass, avoiding a harsher full-opacity look.
+- **Softened the underlying scaffold tint** from pure black to a slightly lifted blue-black range,
+  giving the background art more room to read without compromising text contrast.
+
+**Validation note:** `flutter analyze` and `flutter test` were attempted in this sandbox, but the
+`flutter` CLI is not installed here (`flutter: command not found`).
+
+---
+
 ### 2026-04-06 — GitHub Copilot (Shared psycho defaults cleanup)
 **Role:** Review follow-up
 
