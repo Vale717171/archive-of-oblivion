@@ -4,6 +4,29 @@
 
 ---
 
+### 2026-04-06 — GitHub Copilot (Background startup image fix)
+**Role:** UI bugfix
+
+**Done:**
+
+- **Found the startup background bug** — `game_screen.dart` only rendered a background when
+  `gameStateProvider` had already resolved a non-null `currentNode`. On first app launch, that
+  async state can still be loading for the first frames, so no image was painted at all.
+- **Added a default startup background path** — `BackgroundService` now exposes
+  `defaultBackgroundAsset`, `allBackgroundAssets`, and `getBackgroundForNodeOrDefault(...)` so
+  the UI always has a valid image, falling back to `bg_soglia.jpg` when the node is not ready.
+- **Precached all 7 background assets** in `GameScreen.didChangeDependencies()` to reduce
+  first-render delay and avoid visible flicker during sector changes.
+- **Made background rendering unconditional** — `game_screen.dart` now always paints the
+  background layer and enables `gaplessPlayback` for smoother transitions.
+
+**Architecture snapshot:**
+The background layer is now resilient to async startup timing. `GameScreen` no longer depends on a
+resolved `gameStateProvider` value before painting an image; it asks `BackgroundService` for a
+safe default and preloads all sector assets once per widget lifecycle.
+
+---
+
 ### 2026-04-06 — GitHub Copilot (Verify real artwork & confirm UI integration)
 **Role:** Asset verification + integration audit
 

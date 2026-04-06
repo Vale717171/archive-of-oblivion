@@ -37,6 +37,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
   final _focusNode = FocusNode();
+  bool _backgroundsPrecached = false;
 
   // Typewriter state for the last narrative message
   String _typewriterBuffer = '';
@@ -52,6 +53,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_backgroundsPrecached) return;
+    _backgroundsPrecached = true;
+    for (final assetPath in BackgroundService.allBackgroundAssets) {
+      precacheImage(AssetImage(assetPath), context);
+    }
   }
 
   @override
@@ -166,10 +177,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final narrativeColor = _narrativeColor(profile);
 
     // Resolve background image from current node
-    final currentNode = gameStateAsync.valueOrNull?.currentNode;
-    final backgroundPath = currentNode != null
-        ? BackgroundService.getBackgroundForNode(currentNode)
-        : null;
+    final backgroundPath = BackgroundService.getBackgroundForNodeOrDefault(
+      gameStateAsync.valueOrNull?.currentNode,
+    );
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -177,16 +187,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         child: Stack(
           children: [
             // Background image — subtle sector atmosphere
-            if (backgroundPath != null)
-              Positioned.fill(
-                child: Opacity(
-                  opacity: 0.15,
-                  child: Image.asset(
-                    backgroundPath,
-                    fit: BoxFit.cover,
-                  ),
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.15,
+                child: Image.asset(
+                  backgroundPath,
+                  fit: BoxFit.cover,
+                  gaplessPlayback: true,
                 ),
               ),
+            ),
             // Game content on top — unchanged
             engineAsync.when(
               loading: () => Center(
