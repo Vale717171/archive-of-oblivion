@@ -1129,6 +1129,28 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
   }
 
+  Future<void> startNewGame() async {
+    final introNode = _nodes['intro_void']!;
+    final introText = _enterNode(introNode);
+
+    await _history.clear();
+    await DatabaseService.instance.clearAllMemories();
+    await ref.read(psychoProfileProvider.notifier).resetProfile();
+    await ref.read(gameStateProvider.notifier).resetGameState();
+    await _history.save(role: 'system', content: 'Session started: ${introNode.title}');
+
+    state = AsyncValue.data(
+      GameEngineState(
+        messages: [GameMessage(text: introText, role: MessageRole.narrative)],
+        phase: ParserPhase.idle,
+        inventory: const ['notebook'],
+        completedPuzzles: const {},
+        puzzleCounters: const {},
+        psychoWeight: 0,
+      ),
+    );
+  }
+
   // ── processInput ────────────────────────────────────────────────────────────
 
   Future<void> processInput(String raw) async {

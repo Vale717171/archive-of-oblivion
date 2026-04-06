@@ -163,4 +163,10 @@ class DatabaseService {
         r['memory_key'] as String: r['content'] as String,
     };
   }
+
+  /// Deletes all saved player memories.
+  Future<void> clearAllMemories() async {
+    final db = await database;
+    await db.delete('player_memories');
+  }
 }

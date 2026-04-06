@@ -157,6 +157,37 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     SystemChannels.textInput.invokeMethod('TextInput.show');
   }
 
+  Future<void> _startNewGame() async {
+    _skipTypewriter();
+    final shouldReset = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF111111),
+        title: const Text('New game'),
+        content: const Text(
+          'Start over from the beginning? Your current progress will be replaced.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Start over'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldReset != true || !mounted) return;
+
+    FocusScope.of(context).unfocus();
+    await ref.read(gameEngineProvider.notifier).startNewGame();
+    if (!mounted) return;
+    _focusNode.requestFocus();
+  }
+
   // ── Build ────────────────────────────────────────────────────────────────
 
   @override
@@ -222,6 +253,22 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
                 return Column(
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton.icon(
+                          onPressed: engine.phase == ParserPhase.idle
+                              ? _startNewGame
+                              : null,
+                          icon: const Icon(Icons.refresh, size: 16),
+                          label: const Text('New game'),
+                          style: TextButton.styleFrom(
+                            foregroundColor: narrativeColor.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ),
+                    ),
                     // ── Message history ──────────────────────────────────────
                     Expanded(
                       child: GestureDetector(

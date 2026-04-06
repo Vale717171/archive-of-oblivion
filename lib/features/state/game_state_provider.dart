@@ -99,6 +99,16 @@ class GameStateNotifier extends AsyncNotifier<GameState> {
       psychoWeight:     current?.psychoWeight      ?? 0,
     );
   }
+
+  Future<void> resetGameState() async {
+    await saveEngineState(
+      currentNode: 'intro_void',
+      completedPuzzles: const {},
+      puzzleCounters: const {},
+      inventory: const ['notebook'],
+      psychoWeight: 0,
+    );
+  }
 }
 
 final gameStateProvider =

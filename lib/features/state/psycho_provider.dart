@@ -59,6 +59,20 @@ class PsychoProfileNotifier extends AsyncNotifier<PsychoProfile> {
       state = AsyncValue.data(await _fetchProfile());
     }
   }
+
+  Future<void> resetProfile() async {
+    final db = await _dbService.database;
+    await db.update(
+      'psycho_profile',
+      {
+        'lucidity': 50,
+        'oblivion_level': 0,
+        'anxiety': 10,
+      },
+      where: 'id = 1',
+    );
+    state = AsyncValue.data(await _fetchProfile());
+  }
 }
 
 // Il provider globale da usare nell'app
