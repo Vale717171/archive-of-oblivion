@@ -31,4 +31,11 @@ flutter:
     - assets/texts/demiurge/
     - assets/prompts/
     - assets/config/
+    - assets/images/bg_soglia.jpg
+    - assets/images/bg_giardino.jpg
+    - assets/images/bg_osservatorio.jpg
+    - assets/images/bg_galleria.jpg
+    - assets/images/bg_laboratorio.jpg
+    - assets/images/bg_memoria.jpg
+    - assets/images/bg_zona.jpg
     # assets/llm/ escluso — modelli .gguf troppo grandi per git

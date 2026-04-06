@@ -6,7 +6,7 @@
 //   - Text input at the bottom
 //   - Typewriter effect for incoming narrative messages
 //   - Colour palette that shifts subtly with PsychoProfile
-//   - No images — only text and sound (GDD section 1)
+//   - Subtle sector background image (opacity 0.15) behind the text
 
 import 'dart:async';
 
@@ -16,7 +16,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../game/game_engine_provider.dart';
 import '../parser/parser_state.dart';
+import '../state/game_state_provider.dart';
 import '../state/psycho_provider.dart';
+import 'background_service.dart';
 
 // PsychoProfile thresholds that drive the UI colour palette (mirror GDD section 6)
 const int _panicAnxietyThreshold = 70; // anxiety > this → reddish text
@@ -155,95 +157,118 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Widget build(BuildContext context) {
     final engineAsync = ref.watch(gameEngineProvider);
     final psychoAsync = ref.watch(psychoProfileProvider);
+    final gameStateAsync = ref.watch(gameStateProvider);
     final profile = psychoAsync.valueOrNull;
 
     final bgColor = _backgroundColor(profile);
     final narrativeColor = _narrativeColor(profile);
 
+    // Resolve background image from current node
+    final currentNode = gameStateAsync.valueOrNull?.currentNode;
+    final backgroundPath = currentNode != null
+        ? BackgroundService.getBackgroundForNode(currentNode)
+        : null;
+
     return Scaffold(
       backgroundColor: bgColor,
       body: SafeArea(
-        child: engineAsync.when(
-          loading: () => Center(
-            child: Text(
-              '…',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.4),
-                fontSize: 24,
-                fontFamily: 'monospace',
+        child: Stack(
+          children: [
+            // Background image — very subtle, almost invisible
+            if (backgroundPath != null)
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.15,
+                  child: Image.asset(
+                    backgroundPath,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
-          ),
-          error: (e, _) => Center(
-            child: Text(
-              'The Archive is inaccessible.\n$e',
-              style: const TextStyle(color: Colors.red, fontFamily: 'monospace'),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          data: (engine) {
-            // Start typewriter for the latest narrative message when it arrives
-            final lastNarrative = engine.messages.lastOrNull;
-            if (lastNarrative != null &&
-                lastNarrative.role == MessageRole.narrative &&
-                _typewriterTarget != lastNarrative.text) {
-              WidgetsBinding.instance.addPostFrameCallback(
-                (_) => _startTypewriter(lastNarrative.text),
-              );
-            }
+            // Game content on top — unchanged
+            engineAsync.when(
+              loading: () => Center(
+                child: Text(
+                  '…',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.4),
+                    fontSize: 24,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+              ),
+              error: (e, _) => Center(
+                child: Text(
+                  'The Archive is inaccessible.\n$e',
+                  style: const TextStyle(color: Colors.red, fontFamily: 'monospace'),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              data: (engine) {
+                // Start typewriter for the latest narrative message when it arrives
+                final lastNarrative = engine.messages.lastOrNull;
+                if (lastNarrative != null &&
+                    lastNarrative.role == MessageRole.narrative &&
+                    _typewriterTarget != lastNarrative.text) {
+                  WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => _startTypewriter(lastNarrative.text),
+                  );
+                }
 
-            return Column(
-              children: [
-                // ── Message history ──────────────────────────────────────
-                Expanded(
-                  child: GestureDetector(
-                    onTap: _skipTypewriter,
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.fromLTRB(20, 32, 20, 8),
-                      itemCount: engine.messages.length,
-                      itemBuilder: (context, index) {
-                        final msg = engine.messages[index];
-                        final isLast = index == engine.messages.length - 1;
-                        final isLastNarrative =
-                            isLast && msg.role == MessageRole.narrative;
+                return Column(
+                  children: [
+                    // ── Message history ──────────────────────────────────────
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: _skipTypewriter,
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.fromLTRB(20, 32, 20, 8),
+                          itemCount: engine.messages.length,
+                          itemBuilder: (context, index) {
+                            final msg = engine.messages[index];
+                            final isLast = index == engine.messages.length - 1;
+                            final isLastNarrative =
+                                isLast && msg.role == MessageRole.narrative;
 
-                        // Display typewriter buffer for the last narrative message
-                        final displayText =
-                            isLastNarrative ? _typewriterBuffer : msg.text;
+                            // Display typewriter buffer for the last narrative message
+                            final displayText =
+                                isLastNarrative ? _typewriterBuffer : msg.text;
 
-                        return _MessageTile(
-                          text: displayText,
-                          role: msg.role,
-                          narrativeColor: narrativeColor,
-                          showCursor: isLastNarrative && _typewriterRunning,
-                        );
-                      },
+                            return _MessageTile(
+                              text: displayText,
+                              role: msg.role,
+                              narrativeColor: narrativeColor,
+                              showCursor: isLastNarrative && _typewriterRunning,
+                            );
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                ),
 
-                // ── Status bar ───────────────────────────────────────────
-                if (engine.inventory.isNotEmpty || engine.psychoWeight > 0)
-                  _StatusBar(
-                    weight: engine.psychoWeight,
-                    itemCount: engine.inventory.length,
-                    color: narrativeColor.withOpacity(0.4),
-                  ),
+                    // ── Status bar ───────────────────────────────────────────
+                    if (engine.inventory.isNotEmpty || engine.psychoWeight > 0)
+                      _StatusBar(
+                        weight: engine.psychoWeight,
+                        itemCount: engine.inventory.length,
+                        color: narrativeColor.withOpacity(0.4),
+                      ),
 
-                // ── Input field ──────────────────────────────────────────
-                _InputRow(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  onSubmit: _submit,
-                  enabled: engine.phase == ParserPhase.idle,
-                  narrativeColor: narrativeColor,
-                ),
+                    // ── Input field ──────────────────────────────────────────
+                    _InputRow(
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      onSubmit: _submit,
+                      enabled: engine.phase == ParserPhase.idle,
+                      narrativeColor: narrativeColor,
+                    ),
 
-                const SizedBox(height: 8),
-              ],
-            );
-          },
+                    const SizedBox(height: 8),
+                  ],
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
