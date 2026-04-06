@@ -176,11 +176,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Background image — very subtle, almost invisible
+            // Background image — subtle sector atmosphere
             if (backgroundPath != null)
               Positioned.fill(
                 child: Opacity(
-                  opacity: 0.15,
+                  opacity: 0.30,
                   child: Image.asset(
                     backgroundPath,
                     fit: BoxFit.cover,

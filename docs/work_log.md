@@ -4,6 +4,16 @@
 
 ---
 
+### 2026-04-06 — Claude Code (Replace placeholder images with final artwork)
+**Role:** Asset replacement + commit
+
+**Done:**
+
+- **Replaced all 7 sector background JPEGs** with final artwork assets copied from `Downloads/X PROTON/DA RINOMINARE/`: `bg_soglia.jpg`, `bg_giardino.jpg`, `bg_osservatorio.jpg`, `bg_galleria.jpg`, `bg_laboratorio.jpg`, `bg_memoria.jpg`, `bg_zona.jpg`. File sizes 99K–166K, appropriate for mobile.
+- Committed and pushed: `7b333ee feat: replace placeholder images with real artwork`.
+
+---
+
 ### 2026-04-06 — Claude Code (Background images — verify, analyze clean, polish)
 **Role:** Integration verification + static analysis cleanup
 
