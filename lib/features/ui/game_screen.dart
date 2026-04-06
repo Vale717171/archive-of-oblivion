@@ -26,7 +26,8 @@ const int _panicAnxietyThreshold = 70; // anxiety > this → reddish text
 const int _lowLucidityThreshold = 30; // lucidity < this → grey text
 const int _highOblivionThreshold = 60; // oblivionLevel > this → blue-grey text
 const double _backgroundImageOpacity = 0.15;
-// 5×4 color matrix: a small RGB lift keeps the mandated 0.15-opacity artwork readable.
+// 5×4 color matrix: +18% RGB gain plus a small +18 luminance lift keeps the
+// mandated 0.15-opacity artwork readable on dimmer screens without making it loud.
 const List<double> _backgroundImageBrightnessMatrix = [
   1.18, 0, 0, 0, 18,
   0, 1.18, 0, 0, 18,
