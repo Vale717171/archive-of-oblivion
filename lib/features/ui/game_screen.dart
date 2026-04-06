@@ -12,6 +12,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../game/game_engine_provider.dart';
@@ -149,6 +150,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     _controller.clear();
     ref.read(gameEngineProvider.notifier).processInput(text);
     _focusNode.requestFocus();
+    SystemChannels.textInput.invokeMethod('TextInput.show');
   }
 
   // ── Build ────────────────────────────────────────────────────────────────
@@ -419,6 +421,8 @@ class _InputRow extends StatelessWidget {
               controller: controller,
               focusNode: focusNode,
               enabled: enabled,
+              autofocus: true,
+              textInputAction: TextInputAction.send,
               onSubmitted: (_) => onSubmit(),
               style: TextStyle(
                 color: narrativeColor,

@@ -4,6 +4,59 @@
 
 ---
 
+### 2026-04-06 — Claude Code (End-to-end Android playtest — all 10 scenarios)
+**Role:** QA / playtest engineer — full end-to-end test on Android emulator (API 35)
+
+**Done:**
+
+- **Gradle migration** — Rewrote `android/settings.gradle` and `android/app/build.gradle` from
+  deprecated `apply from:` imperative style to declarative `pluginManagement` + `plugins {}` blocks.
+  Bumped AGP 8.1.0 → 8.7.0, Gradle wrapper 8.3 → 8.9 (required by AGP 8.7.0).
+- **Android launcher icons** — Created adaptive icon XMLs in `mipmap-anydpi-v26/` (sufficient for
+  minSdk 26): dark `#1A1A1A` background + gold star foreground vector.
+- **`flutter_llama` removal** — Dropped dependency from `pubspec.yaml`; stubbed `llm_service.dart`
+  (all methods return false/empty). File kept per CLAUDE.md "do not delete" rule.
+- **Keyboard persistence fix** (`game_screen.dart`) — Added `SystemChannels.textInput.invokeMethod
+  ('TextInput.show')` after submit so the keyboard stays open on Android; added `autofocus: true`
+  and `textInputAction: TextInputAction.send` to the TextField.
+- **Deposit inventory bug fix** — Found and fixed a critical bug where `processInput()` cleared
+  the inventory on *any* `CommandVerb.deposit`, including failed deposits. Added
+  `clearInventoryOnDeposit: bool = false` to `EngineResponse` (`parser_state.dart`); changed
+  the engine to only clear when the flag is `true`; set the flag only on the two success paths
+  (garden deposit + il_nucleo deposit). Effect: failed deposits no longer wipe the player's items.
+- **ADB test harness** — Established reliable Flutter TextField input method: `adb shell input text`
+  for short strings, per-character keyevents (A=29…Z=54, space=62, enter=66) with 0.1 s delay for
+  longer inputs. DB state manipulation via `adb exec-out/in run-as` + local sqlite3 to skip
+  tedious puzzle sequences and test specific branches.
+
+**Test results — all 10 scenarios PASS ✅:**
+
+| # | Scenario | Result |
+|---|---|---|
+| 1 | La Soglia — commands, Demiurge, navigation | ✅ |
+| 2 | Il Giardino — puzzles, weight, Ataraxia grant | ✅ |
+| 3 | Observatory — lenses + void → The Constant | ✅ |
+| 4 | Gallery — break mirror → The Proportion | ✅ |
+| 5 | Laboratorio — blow alembic → The Catalyst | ✅ |
+| 6 | La Zona — probabilistic activation, evasive + full responses | ✅ |
+| 7 | Quinto Settore — ritual with all 4 simulacra | ✅ |
+| 8 | Il Nucleo — all 3 finali (Acceptance / Oblivion / Eternal Zone) | ✅ |
+| 9 | Demiurge anti-repetition — 5 nonsense commands, 3 distinct citations | ✅ |
+| 10 | Audio crash resistance — non-fatal try/catch at all levels confirmed | ✅ |
+
+**Bugs found during testing:**
+- **Deposit bug** (fixed above): `List.every()` on empty list returns `true` vacuously, so a
+  failed deposit before both alcoves were walked could grant Ataraxia on the *second* (now
+  empty) deposit. Fixed via `clearInventoryOnDeposit` flag.
+- **Node ID mismatch**: `garden_north` does not exist; correct ID is `garden_portico`. Test
+  harness corrected; game code unaffected (correct node IDs were already used in gameplay paths).
+
+**Architecture snapshot (no changes to core game logic):**
+`EngineResponse.clearInventoryOnDeposit` is the only new field. The deposit guard in
+`processInput()` now reads: `if (cmd.verb == CommandVerb.deposit && response.clearInventoryOnDeposit)`.
+
+---
+
 ### 2026-04-06 — GitHub Copilot (Background image integration)
 **Role:** UI enhancement — sector-mapped background images at 0.15 opacity
 

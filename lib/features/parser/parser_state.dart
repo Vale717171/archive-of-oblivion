@@ -102,6 +102,11 @@ class EngineResponse {
   /// under this key (e.g. 'memory_childhood', 'zone_1').
   final String? playerMemoryKey;
 
+  /// When true, processInput will clear mundane items from inventory after a
+  /// successful deposit command. Must be set explicitly on deposit success
+  /// responses so that failed deposits do not accidentally wipe inventory.
+  final bool clearInventoryOnDeposit;
+
   const EngineResponse({
     required this.narrativeText,
     this.needsLlm = false,
@@ -115,6 +120,7 @@ class EngineResponse {
     this.completePuzzle,
     this.incrementCounter,
     this.playerMemoryKey,
+    this.clearInventoryOnDeposit = false,
   });
 }
 

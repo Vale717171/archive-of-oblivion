@@ -1174,9 +1174,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         currentNodeId != 'quinto_ritual_chamber') {
       newInventory.remove(cmd.args.join(' '));
     }
-    // deposit clears mundane items, re-adds granted simulacrum.
+    // deposit clears mundane items only when the deposit actually succeeds.
+    // Failed deposits (wrong node, alcoves not walked, etc.) must NOT clear
+    // inventory — the player would lose all items with no benefit.
     // In boss context (il_nucleo): preserve simulacra — only remove mundane items.
-    if (cmd.verb == CommandVerb.deposit) {
+    if (cmd.verb == CommandVerb.deposit && response.clearInventoryOnDeposit) {
       if (currentNodeId == 'il_nucleo') {
         newInventory = newInventory.where(_isSimulacrum).toList();
       } else {
@@ -1803,12 +1805,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The expression on the statue\'s face does not change. '
           'You feel, for the first time in this place, something that resembles relief.\n\n'
           'In one of the open hands: a glass sphere, perfectly empty. Ataraxia.',
-      needsLlm:       true,
-      lucidityDelta:  10,
-      anxietyDelta:   -20,
-      audioTrigger:   'calm',
-      grantItem:      'ataraxia',
-      completePuzzle: 'garden_complete',
+      needsLlm:               true,
+      lucidityDelta:          10,
+      anxietyDelta:           -20,
+      audioTrigger:           'calm',
+      grantItem:              'ataraxia',
+      completePuzzle:         'garden_complete',
+      clearInventoryOnDeposit: true,
     );
   }
 
@@ -2939,10 +2942,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Your hands are empty. The weight is gone.\n\n'
             'The Antagonist looks at you differently.\n\n'
             '"That," it says, "changes the argument."',
-        lucidityDelta:  10,
-        anxietyDelta:   -15,
-        needsLlm:       true,
-        audioTrigger:   'calm',
+        lucidityDelta:           10,
+        anxietyDelta:            -15,
+        needsLlm:                true,
+        audioTrigger:            'calm',
+        clearInventoryOnDeposit: true,
       );
     }
 
