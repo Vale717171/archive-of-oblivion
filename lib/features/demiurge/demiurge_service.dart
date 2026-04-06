@@ -86,6 +86,7 @@ class DemiurgeService {
       _recentIndices[sector] = [];
     } catch (e) {
       // Bundle missing or malformed — pool stays empty; log for debugging.
+      // ignore: avoid_print
       assert(() { print('DemiurgeService: failed to load $sector — $e'); return true; }());
       _pools[sector] = [];
       _recentIndices[sector] = [];

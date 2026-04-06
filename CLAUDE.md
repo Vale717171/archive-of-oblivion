@@ -11,7 +11,7 @@
 
 A psycho-philosophical text adventure for Android.
 **Stack:** Flutter + Riverpod + sqflite + just_audio + DemiurgeService (deterministic, fully offline).
-No images — only text and Bach's music. English text only.
+Text and Bach's music. Subtle sector background images at 0.15 opacity. English text only.
 
 ---
 
@@ -71,7 +71,10 @@ Pure synchronous parser. `ParsedCommand` carries `verb`, `args`. `EngineResponse
 Tracks psychological weight (0–100). Drives the psycho-profile used for audio ambience selection.
 
 ### `lib/features/ui/game_screen.dart`
-Single-screen UI — text output + command input. Typewriter effect uses `dart:async Timer` (not `Future.delayed`), with `_typewriterTimer` cancelled in `dispose()` and `_skipTypewriter()` to prevent setState-on-disposed-widget.
+Single-screen UI — text output + command input. Typewriter effect uses `dart:async Timer` (not `Future.delayed`), with `_typewriterTimer` cancelled in `dispose()` and `_skipTypewriter()` to prevent setState-on-disposed-widget. Displays sector background image at 0.15 opacity via `BackgroundService.getBackgroundForNode()`, updated via `gameStateProvider`.
+
+### `lib/features/ui/background_service.dart`
+Static utility mapping game node IDs → sector background asset paths (`assets/images/bg_*.jpg`). Node families: `intro_void`/`la_soglia` → soglia, `garden*` → giardino, `obs_*` → osservatorio, `gal_*`/`gallery_*` → galleria, `lab_*` → laboratorio, `quinto_*`/`il_nucleo`/`finale_*`/`memory_*` → memoria, `la_zona` → la_zona.
 
 ---
 
@@ -210,13 +213,12 @@ tools/
 | Demiurge call site | `_callDemiurge(fallbackText, nodeId)` in `game_engine_provider.dart` (sync) |
 | Target Android | API 26+, mid-range 3 GB RAM |
 | Game text language | English only |
-| No images | Text-only UI — never suggest adding images or visual assets |
+| Background images | 7 JPEGs in `assets/images/`, shown at 0.15 opacity via `BackgroundService` |
 
 ---
 
 ## Rules — mandatory for every session
 
 - **Never wipe or replace** existing `docs/work_log.md` entries — only prepend new ones at the top.
-- **Never suggest adding images** or any visual assets.
 - **The Demiurge ("All That Is") is the game's narrative voice** — fully deterministic, no LLM required.
 - **End every session with a work log entry** in `docs/work_log.md` (see format of existing entries: date, agent role, done list, architecture snapshot if relevant).

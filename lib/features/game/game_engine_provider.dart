@@ -24,7 +24,6 @@ class _NodeDef {
   final Map<String, String> exits;
   final Map<String, String> examines;
   final Set<String> takeable;
-  final Set<String> simulacra;
 
   const _NodeDef({
     required this.title,
@@ -32,7 +31,6 @@ class _NodeDef {
     required this.exits,
     this.examines = const <String, String>{},
     this.takeable = const <String>{},
-    this.simulacra = const <String>{},
   });
 }
 
@@ -1669,22 +1667,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (cmd.args.isEmpty) return const EngineResponse(narrativeText: 'Take what?');
     final target = cmd.args.join(' ');
 
-    // Simulacra first (0 weight) — fix for simulacra inventory bug
-    final simMatch = node.simulacra
-        .where((n) => n.contains(target) || target.contains(n))
-        .firstOrNull;
-    if (simMatch != null) {
-      if (s.inventory.contains(simMatch)) {
-        return EngineResponse(narrativeText: 'You already carry the $simMatch.');
-      }
-      return EngineResponse(
-        narrativeText: 'You take the $simMatch. It weighs nothing.',
-        needsLlm:  true,
-        weightDelta: 0,
-        grantItem:   simMatch,
-      );
-    }
-
     // Takeable objects (+1 weight)
     final takeMatch = node.takeable
         .where((t) => t.contains(target) || target.contains(t))
@@ -2445,7 +2427,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           completePuzzle: 'alembic_temperature_set',
         );
       }
-      return EngineResponse(
+      return const EngineResponse(
         narrativeText: 'The liquid recoils.\n\n'
             'The scale: Cold, Gentle, Warm, Hot, Intense, Fierce, Total.\n'
             'The bain-marie of alchemical tradition uses the gentlest degree.',

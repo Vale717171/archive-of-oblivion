@@ -4,6 +4,37 @@
 
 ---
 
+### 2026-04-06 — Claude Code (Background images — verify, analyze clean, polish)
+**Role:** Integration verification + static analysis cleanup
+
+**Done:**
+
+- **Verified existing background image integration** (committed in PR #11 by Copilot) — all three
+  components were already in place: `pubspec.yaml` (7 assets), `background_service.dart` (sector/node
+  map), `game_screen.dart` (Stack + Opacity 0.15 + gameStateProvider wiring). No re-work needed.
+- **`analysis_options.yaml`** — new file at project root; excludes `tools/**` from `flutter analyze`
+  (the legacy `tools/fase_0_omega/` apps reference removed packages `flutter_llama` and
+  `mediapipe_genai` and cannot be analyzed without them).
+- **`lib/features/ui/game_screen.dart`** — replaced 6 `Color.withOpacity()` calls with
+  `.withValues(alpha:)` (deprecated API, analyzer `info`-level).
+- **`lib/features/game/game_engine_provider.dart`** — removed `_NodeDef.simulacra` field and the
+  unreachable `_handleTake` simulacra-check branch (field was always the empty default; analyzer
+  `warning`-level unused parameter). Simulacra are granted exclusively via `grantItem` in engine
+  responses, never via `take` commands. Added `const` to one `EngineResponse(...)` constructor call.
+- **`lib/features/demiurge/demiurge_service.dart`** — added `// ignore: avoid_print` on the
+  debug-only assert print to silence the linter.
+- **`CLAUDE.md`** — updated to reflect images are now part of the project: removed "No images" rule
+  and convention row; added `BackgroundService` entry; updated project description.
+- **`flutter analyze`** → `No issues found!`
+
+**Architecture snapshot:**
+`BackgroundService` is a pure static utility (no Riverpod provider). `getBackgroundForNode(nodeId)`
+derives a sector string then delegates to `getBackgroundForSector()`. In `game_screen.dart`, the
+background is resolved inside `build()` from `gameStateAsync.valueOrNull?.currentNode` — it updates
+automatically on every node transition because `gameStateProvider` is watched.
+
+---
+
 ### 2026-04-06 — Claude Code (End-to-end Android playtest — all 10 scenarios)
 **Role:** QA / playtest engineer — full end-to-end test on Android emulator (API 35)
 

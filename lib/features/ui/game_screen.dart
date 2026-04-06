@@ -193,7 +193,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 child: Text(
                   '…',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.4),
+                    color: Colors.white.withValues(alpha: 0.4),
                     fontSize: 24,
                     fontFamily: 'monospace',
                   ),
@@ -253,7 +253,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       _StatusBar(
                         weight: engine.psychoWeight,
                         itemCount: engine.inventory.length,
-                        color: narrativeColor.withOpacity(0.4),
+                        color: narrativeColor.withValues(alpha: 0.4),
                       ),
 
                     // ── Input field ──────────────────────────────────────────
@@ -301,7 +301,7 @@ class _MessageTile extends StatelessWidget {
           child: Text(
             text,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.55),
+              color: Colors.white.withValues(alpha: 0.55),
               fontFamily: 'monospace',
               fontSize: 14,
               letterSpacing: 0.5,
@@ -327,7 +327,7 @@ class _MessageTile extends StatelessWidget {
                       TextSpan(
                         text: '▌',
                         style: TextStyle(
-                          color: narrativeColor.withOpacity(0.7),
+                          color: narrativeColor.withValues(alpha: 0.7),
                           fontSize: 14,
                         ),
                       )
@@ -410,7 +410,7 @@ class _InputRow extends StatelessWidget {
           Text(
             '>',
             style: TextStyle(
-              color: narrativeColor.withOpacity(enabled ? 0.8 : 0.3),
+              color: narrativeColor.withValues(alpha: enabled ? 0.8 : 0.3),
               fontFamily: 'monospace',
               fontSize: 16,
             ),
@@ -434,7 +434,7 @@ class _InputRow extends StatelessWidget {
                 border: InputBorder.none,
                 hintText: enabled ? '' : '…',
                 hintStyle: TextStyle(
-                  color: narrativeColor.withOpacity(0.25),
+                  color: narrativeColor.withValues(alpha: 0.25),
                   fontFamily: 'monospace',
                 ),
               ),
