@@ -4,6 +4,29 @@
 
 ---
 
+### 2026-04-06 — GitHub Copilot (Background image investigation + opacity fix)
+**Role:** Asset verification + code fix
+
+**Done:**
+
+- **Investigated all 7 background images** (`assets/images/bg_*.jpg`) using `file`, pixel
+  analysis (PIL), and ASCII-art visualisation. **Finding: all 7 images are programmatically
+  generated radial/elliptical gradient patterns** (diamond-shaped, sector-coloured), NOT real
+  artwork. Typical signs: very low unique-color counts (822–8 370 vs hundreds of thousands
+  for a real photograph), perfectly smooth gradient transitions, diamond-pattern scores up to
+  37.7%. This is why the emulator shows "grid patterns" — they *are* grid-like gradients.
+- **Flutter integration is correct** — `pubspec.yaml` (7 asset declarations),
+  `background_service.dart` (sector/node mapping), and `game_screen.dart`
+  (Stack → Positioned.fill → Opacity → Image.asset, fit: BoxFit.cover) are all properly
+  wired. No code-level bug causes the visual issue.
+- **Fixed opacity mismatch** — `game_screen.dart` had `opacity: 0.30` but CLAUDE.md
+  specifies 0.15 in three places. Restored to `0.15`.
+- **Action required:** The 7 placeholder gradient JPEGs must be replaced manually with real
+  artwork files. The code is ready — just drop real 1080×1920 JPEGs with the same filenames
+  into `assets/images/`.
+
+---
+
 ### 2026-04-06 — Claude Code (Replace placeholder images with final artwork)
 **Role:** Asset replacement + commit
 
