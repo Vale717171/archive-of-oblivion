@@ -2,6 +2,18 @@
 // Maps sector/node IDs to background image asset paths.
 
 class BackgroundService {
+  static const String defaultBackgroundAsset = 'assets/images/bg_soglia.jpg';
+
+  static const List<String> allBackgroundAssets = [
+    'assets/images/bg_soglia.jpg',
+    'assets/images/bg_giardino.jpg',
+    'assets/images/bg_osservatorio.jpg',
+    'assets/images/bg_galleria.jpg',
+    'assets/images/bg_laboratorio.jpg',
+    'assets/images/bg_memoria.jpg',
+    'assets/images/bg_zona.jpg',
+  ];
+
   /// Returns the background image asset path for the given sector ID, or null
   /// if no image is mapped for that sector.
   static String? getBackgroundForSector(String sectorId) {
@@ -29,6 +41,15 @@ class BackgroundService {
   /// corresponding asset path, or null when no image is available.
   static String? getBackgroundForNode(String nodeId) {
     return getBackgroundForSector(_sectorForNode(nodeId));
+  }
+
+  /// Returns the background image for the current node, or the startup image
+  /// when the node is still unavailable.
+  static String getBackgroundForNodeOrDefault(String? nodeId) {
+    if (nodeId == null || nodeId.isEmpty) {
+      return defaultBackgroundAsset;
+    }
+    return getBackgroundForNode(nodeId) ?? defaultBackgroundAsset;
   }
 
   static String _sectorForNode(String nodeId) {
