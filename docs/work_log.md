@@ -4,6 +4,38 @@
 
 ---
 
+### 2026-04-06 — GitHub Copilot (Background image integration)
+**Role:** UI enhancement — sector-mapped background images at 0.15 opacity
+
+**Done:**
+
+- **`assets/images/`** — Created directory with 7 placeholder JPEGs (1×1 px black):
+  `bg_soglia.jpg`, `bg_giardino.jpg`, `bg_osservatorio.jpg`, `bg_galleria.jpg`,
+  `bg_laboratorio.jpg`, `bg_memoria.jpg`, `bg_zona.jpg`.
+  Replace placeholders with real artwork before final release.
+- **`pubspec.yaml`** — Added all 7 image assets to the `flutter.assets` section.
+- **`lib/features/ui/background_service.dart`** — New service with two static methods:
+  - `getBackgroundForSector(sectorId)` — maps sector IDs → asset path.
+  - `getBackgroundForNode(nodeId)` — derives sector from node prefix then delegates;
+    handles all node families: `la_soglia`/`intro_void` → `soglia`, `garden*` → `giardino`,
+    `obs_*` → `osservatorio`, `gal_*`/`gallery_*` → `galleria`, `lab_*` → `laboratorio`,
+    `quinto_*`/`il_nucleo`/`finale_*`/`memory_*` → `memoria`, `la_zona` → `la_zona`.
+- **`lib/features/ui/game_screen.dart`** — Background wiring:
+  - Added `import` for `game_state_provider.dart` and `background_service.dart`.
+  - `build()` now watches `gameStateProvider` to read `currentNode`.
+  - Resolves `backgroundPath` via `BackgroundService.getBackgroundForNode()`.
+  - Wrapped `SafeArea` content in a `Stack`; `Positioned.fill` + `Opacity(0.15)` +
+    `Image.asset(…, fit: BoxFit.cover)` sits beneath the game text layer.
+  - All existing game content (typewriter, message list, status bar, input row) is
+    unchanged and rendered on top at full opacity.
+
+**Architecture snapshot:** `BackgroundService` is a pure static utility — no Riverpod
+provider needed; the node → sector mapping mirrors `DemiurgeService.sectorForNode()`
+but adds `soglia`, `memoria`, and `la_zona` buckets absent from the Demiurge mapping.
+
+---
+
+
 ### 2026-04-05 — GitHub Copilot (Repository code review — logic/persistence/audio fixes)
 **Role:** Full-repository review + targeted bug fixes across Demiurge, La Zona, persistence, and finale flow
 
