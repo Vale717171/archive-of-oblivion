@@ -180,7 +180,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             if (backgroundPath != null)
               Positioned.fill(
                 child: Opacity(
-                  opacity: 0.30,
+                  opacity: 0.15,
                   child: Image.asset(
                     backgroundPath,
                     fit: BoxFit.cover,

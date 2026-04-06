@@ -4,6 +4,49 @@
 
 ---
 
+### 2026-04-06 — GitHub Copilot (Verify real artwork & confirm UI integration)
+**Role:** Asset verification + integration audit
+
+**Done:**
+
+- **Verified new real AI-generated artwork** — All 7 background images (`bg_*.jpg`) replaced
+  with real AI-generated artwork (commit `91b9d81` on main). New files: 720×1280, 560–768 KB,
+  with Exif metadata and complex visual scenes (vs old 100–170 KB gradient placeholders).
+- **Full integration audit passed** — Cross-verified all 47 game node IDs against
+  `BackgroundService._sectorForNode()` mappings: zero gaps. All sectors covered: soglia,
+  giardino, osservatorio, galleria, laboratorio, memoria, la_zona.
+- **UI rendering confirmed correct** — `game_screen.dart` displays background via
+  `Positioned.fill → Opacity(0.15) → Image.asset(BoxFit.cover)`, watched reactively through
+  `gameStateProvider`. Background changes automatically on sector navigation.
+- **Null safety verified** — Unknown/empty node IDs return null from `getBackgroundForNode()`;
+  UI conditionally skips rendering (`if (backgroundPath != null)`). No crash risk.
+- **pubspec.yaml** — All 7 image assets declared individually. No changes needed.
+
+---
+
+### 2026-04-06 — GitHub Copilot (Background image investigation + opacity fix)
+**Role:** Asset verification + code fix
+
+**Done:**
+
+- **Investigated all 7 background images** (`assets/images/bg_*.jpg`) using `file`, pixel
+  analysis (PIL), and ASCII-art visualisation. **Finding: all 7 images are programmatically
+  generated radial/elliptical gradient patterns** (diamond-shaped, sector-coloured), NOT real
+  artwork. Typical signs: very low unique-color counts (822–8 370 vs hundreds of thousands
+  for a real photograph), perfectly smooth gradient transitions, diamond-pattern scores up to
+  37.7%. This is why the emulator shows "grid patterns" — they *are* grid-like gradients.
+- **Flutter integration is correct** — `pubspec.yaml` (7 asset declarations),
+  `background_service.dart` (sector/node mapping), and `game_screen.dart`
+  (Stack → Positioned.fill → Opacity → Image.asset, fit: BoxFit.cover) are all properly
+  wired. No code-level bug causes the visual issue.
+- **Fixed opacity mismatch** — `game_screen.dart` had `opacity: 0.30` but CLAUDE.md
+  specifies 0.15 in three places. Restored to `0.15`.
+- **Action required:** The 7 placeholder gradient JPEGs must be replaced manually with real
+  artwork files. The code is ready — just drop real 1080×1920 JPEGs with the same filenames
+  into `assets/images/`.
+
+---
+
 ### 2026-04-06 — Claude Code (Replace placeholder images with final artwork)
 **Role:** Asset replacement + commit
 
