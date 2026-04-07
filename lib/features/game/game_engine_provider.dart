@@ -1284,7 +1284,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     // ── Audio trigger ────────────────────────────────────────────────────────
     await AudioService().handleTrigger(response.audioTrigger);
 
+    final psychoProfileChanged = response.anxietyDelta != null ||
+        response.lucidityDelta != null ||
+        response.oblivionDelta != null;
+
     // ── Player memory (proustian responses + zone responses) ─────────────────
+    var memoryWasSaved = false;
     if (response.playerMemoryKey != null) {
       final memoryContent = cmd.verb == CommandVerb.unknown
           ? trimmed
@@ -1294,6 +1299,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           key:     response.playerMemoryKey!,
           content: memoryContent,
         );
+        memoryWasSaved = true;
       }
     }
 
@@ -1325,7 +1331,9 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     final shouldResetScreen = _shouldResetVisibleTranscript(
       before: withPlayer,
       after: finalState,
-      response: response,
+      nodeChanged: savedNodeId != currentNodeId,
+      memoryWasSaved: memoryWasSaved,
+      psychoProfileChanged: psychoProfileChanged,
     );
     final withNarrative = shouldResetScreen
         ? finalState.copyWith(
@@ -3195,13 +3203,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   bool _shouldResetVisibleTranscript({
     required GameEngineState before,
     required GameEngineState after,
-    required EngineResponse response,
+    required bool nodeChanged,
+    required bool memoryWasSaved,
+    required bool psychoProfileChanged,
   }) {
-    return response.newNode != null ||
-        response.playerMemoryKey != null ||
-        response.lucidityDelta != null ||
-        response.anxietyDelta != null ||
-        response.oblivionDelta != null ||
+    return nodeChanged ||
+        memoryWasSaved ||
+        psychoProfileChanged ||
         !listEquals(before.inventory, after.inventory) ||
         !setEquals(before.completedPuzzles, after.completedPuzzles) ||
         !mapEquals(before.puzzleCounters, after.puzzleCounters) ||
