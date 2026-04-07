@@ -30,6 +30,7 @@ class AudioService {
   final AudioPlayer _backgroundPlayer = AudioPlayer();
   final Set<String> _availableAssets = <String>{};
   final Set<String> _missingAssets = <String>{};
+  Future<void> _audioOperationQueue = Future.value();
   ProviderSubscription<AsyncValue<GameState>>? _gameStateSubscription;
   ProviderSubscription<AsyncValue<PsychoProfile>>? _psychoSubscription;
   PsychoProfile? _lastProfile;
@@ -82,15 +83,18 @@ class AudioService {
   }
 
   Future<void> syncForNode(String nodeId) async {
-    final trackKey = AudioTrackCatalog.trackForNode(nodeId);
-    if (trackKey == null) return;
-    if (_currentNodeId == nodeId && _currentAmbienceKey == trackKey) return;
-    _currentNodeId = nodeId;
-    if (trackKey == 'silence') {
-      await _handleSilenceEnding();
-      return;
-    }
-    await _crossfadeTo(trackKey);
+    await _enqueueAudioOperation(() async {
+      final trackKey = AudioTrackCatalog.trackForNode(nodeId);
+      if (trackKey == null) return;
+      if (_currentNodeId == nodeId && _currentAmbienceKey == trackKey) return;
+      if (trackKey == 'silence') {
+        final applied = await _handleSilenceEnding();
+        if (applied) _currentNodeId = nodeId;
+        return;
+      }
+      final applied = await _crossfadeTo(trackKey);
+      if (applied) _currentNodeId = nodeId;
+    });
   }
 
   /// Processes an [audioTrigger] string emitted by [EngineResponse].
@@ -104,60 +108,66 @@ class AudioService {
   ///   - 'silence' → 30 s of silence followed by white-noise fade-in
   ///     (Finale 2 — Oblivion ending).
   Future<void> handleTrigger(String? trigger) async {
-    if (trigger == null) return;
-    if (trigger.startsWith('sfx:')) {
-      final sfxKey = trigger.substring(4); // strip 'sfx:' prefix
-      final asset  = _sfxAssets[sfxKey];
-      if (asset != null) await playSFX(asset);
-      return;
-    }
-    if (trigger == 'silence') {
-      await _handleSilenceEnding();
-      return;
-    }
-    if (trigger == 'calm') {
-      await _applyCurrentMix();
-      return;
-    }
-    if (trigger == 'anxious') {
-      await _applyCurrentMix(intensityOffset: _anxietyTriggerBoost);
-      return;
-    }
-    if (AudioTrackCatalog.isExplicitTrack(trigger)) {
-      await _crossfadeTo(trigger);
-    }
+    await _enqueueAudioOperation(() async {
+      if (trigger == null) return;
+      if (trigger.startsWith('sfx:')) {
+        final sfxKey = trigger.substring(4); // strip 'sfx:' prefix
+        final asset  = _sfxAssets[sfxKey];
+        if (asset != null) await playSFX(asset);
+        return;
+      }
+      if (trigger == 'silence') {
+        await _handleSilenceEnding();
+        return;
+      }
+      if (trigger == 'calm') {
+        await _applyCurrentMix();
+        return;
+      }
+      if (trigger == 'anxious') {
+        await _applyCurrentMix(intensityOffset: _anxietyTriggerBoost);
+        return;
+      }
+      if (AudioTrackCatalog.isExplicitTrack(trigger)) {
+        await _crossfadeTo(trigger);
+      }
+    });
   }
 
   Future<void> _updateMixFromProfile(PsychoProfile profile) async {
-    // Profile-driven updates modulate the active room track, but never replace
-    // explicit finale/memory cues.
-    if (_currentAmbienceKey == null ||
-        AudioTrackCatalog.specialTracks.contains(_currentAmbienceKey)) {
-      return;
-    }
-    await _applyCurrentMix();
+    await _enqueueAudioOperation(() async {
+      // Profile-driven updates modulate the active room track, but never
+      // replace explicit finale/memory cues.
+      if (_currentAmbienceKey == null ||
+          AudioTrackCatalog.specialTracks.contains(_currentAmbienceKey)) {
+        return;
+      }
+      await _applyCurrentMix();
+    });
   }
 
-  Future<void> _crossfadeTo(String key) async {
-    if (_currentAmbienceKey == key) return;
+  Future<bool> _crossfadeTo(String key) async {
+    if (_currentAmbienceKey == key) return true;
     final asset = AudioTrackCatalog.assetForKey(key);
-    if (asset == null || !await _assetExists(asset)) return;
+    if (asset == null || !await _assetExists(asset)) return false;
     try {
       await _rampVolume(0.0);
       await _backgroundPlayer.setAsset(asset);
       await _backgroundPlayer.play();
       await _rampVolume(_targetVolumeFor(key));
       _currentAmbienceKey = key;
+      return true;
     } catch (e) {
       // Fallback silenzioso — non crasha mai su 3 GB RAM
       // ignore: avoid_print
       print('Audio fallback [$key]: $e');
+      return false;
     }
   }
 
   /// Finale 2 (Oblivion): 30 s silence → white-noise fade-in.
   /// Uses a separate one-shot player to avoid disrupting the background loop.
-  Future<void> _handleSilenceEnding() async {
+  Future<bool> _handleSilenceEnding() async {
     try {
       await _rampVolume(0.0);
       await _backgroundPlayer.stop();
@@ -165,15 +175,24 @@ class AudioService {
       await Future.delayed(const Duration(seconds: 30));
       // White noise / echo chamber is the closest available ambient track
       final oblivionAsset = AudioTrackCatalog.assetForKey('oblivion');
-      if (oblivionAsset == null || !await _assetExists(oblivionAsset)) return;
+      if (oblivionAsset == null || !await _assetExists(oblivionAsset)) {
+        return false;
+      }
       await _backgroundPlayer.setAsset(oblivionAsset);
       await _backgroundPlayer.setLoopMode(LoopMode.one);
       await _backgroundPlayer.play();
       await _rampVolume(0.3); // deliberately low — it is aftermath
+      return true;
     } catch (e) {
       // ignore: avoid_print
       print('Audio silence-ending fallback: $e');
+      return false;
     }
+  }
+
+  Future<void> _enqueueAudioOperation(Future<void> Function() operation) {
+    _audioOperationQueue = _audioOperationQueue.then((_) => operation()).catchError((_) {});
+    return _audioOperationQueue;
   }
 
   Future<void> _applyCurrentMix({double intensityOffset = 0.0}) async {
