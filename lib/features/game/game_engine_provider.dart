@@ -3210,6 +3210,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return nodeChanged ||
         memoryWasSaved ||
         hasPsychoProfileDelta ||
+        // Inventory burden is tracked separately from the psycho-profile sliders.
         before.psychoWeight != after.psychoWeight ||
         !listEquals(before.inventory, after.inventory) ||
         !setEquals(before.completedPuzzles, after.completedPuzzles) ||

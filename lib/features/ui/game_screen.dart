@@ -59,6 +59,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Timer? _backgroundFlashTimer;
   bool _backgroundFlashActive = false;
   int _lastScreenResetCount = 0;
+  int _lastQueuedScreenResetCount = 0;
   final Queue<int> _pendingScreenResetCounts = Queue<int>();
   bool _screenResetCallbackScheduled = false;
 
@@ -183,8 +184,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   }
 
   void _scheduleScreenResetCue(int screenResetCount) {
-    if (_pendingScreenResetCounts.contains(screenResetCount)) return;
+    if (screenResetCount <= _lastQueuedScreenResetCount) return;
     _pendingScreenResetCounts.addLast(screenResetCount);
+    _lastQueuedScreenResetCount = screenResetCount;
     if (_screenResetCallbackScheduled) return;
     _screenResetCallbackScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) => _consumeScreenResetCue());
