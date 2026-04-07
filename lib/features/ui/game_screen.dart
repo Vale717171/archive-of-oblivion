@@ -60,6 +60,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   bool _backgroundFlashActive = false;
   int _processedScreenResetCount = 0;
   int _queuedScreenResetCount = 0;
+  // The engine emits monotonically increasing reset counts, so queue order
+  // preserves the order of successful commands when several land in one frame.
   final Queue<int> _pendingScreenResetCounts = Queue<int>();
   bool _screenResetCallbackScheduled = false;
 
@@ -186,6 +188,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   void _scheduleScreenResetCue(int screenResetCount) {
     // Preserve the reset counts so rapid successive successes can still be
     // flashed in order instead of collapsing into a single generic flag.
+    // Counts are monotonic and only increase inside the engine.
     if (screenResetCount <= _queuedScreenResetCount) return;
     _pendingScreenResetCounts.addLast(screenResetCount);
     _queuedScreenResetCount = screenResetCount;

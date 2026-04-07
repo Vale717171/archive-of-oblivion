@@ -1289,7 +1289,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         response.oblivionDelta != null;
 
     // ── Player memory (proustian responses + zone responses) ─────────────────
-    var memoryWasSaved = false;
+    bool memoryWasSaved = false;
     if (response.playerMemoryKey != null) {
       final memoryContent = cmd.verb == CommandVerb.unknown
           ? trimmed
@@ -1331,8 +1331,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     // Compare the pre-display engine snapshot against the post-logic snapshot
     // so the cue reacts only to gameplay state changes, not to appended UI text.
     final shouldResetScreen = _shouldResetVisibleTranscript(
-      before: withPlayer,
-      after: finalState,
+      previousState: withPlayer,
+      currentState: finalState,
       nodeChanged: savedNodeId != currentNodeId,
       memoryWasSaved: memoryWasSaved,
       hasPsychoProfileDelta: hasPsychoProfileDelta,
@@ -3203,8 +3203,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   bool _shouldResetVisibleTranscript({
-    required GameEngineState before,
-    required GameEngineState after,
+    required GameEngineState previousState,
+    required GameEngineState currentState,
     required bool nodeChanged,
     required bool memoryWasSaved,
     required bool hasPsychoProfileDelta,
@@ -3213,10 +3213,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         memoryWasSaved ||
         hasPsychoProfileDelta ||
         // Inventory burden is tracked separately from the psycho-profile sliders.
-        before.psychoWeight != after.psychoWeight ||
-        !listEquals(before.inventory, after.inventory) ||
-        !setEquals(before.completedPuzzles, after.completedPuzzles) ||
-        !mapEquals(before.puzzleCounters, after.puzzleCounters);
+        previousState.psychoWeight != currentState.psychoWeight ||
+        !listEquals(previousState.inventory, currentState.inventory) ||
+        !setEquals(previousState.completedPuzzles, currentState.completedPuzzles) ||
+        !mapEquals(previousState.puzzleCounters, currentState.puzzleCounters);
   }
 
   /// Returns a Demiurge ("All That Is") narrative response for the given node.
