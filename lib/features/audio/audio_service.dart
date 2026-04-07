@@ -19,6 +19,11 @@ class AudioService {
   static const double _anxietyVolumeScale = 0.08;
   static const double _oblivionVolumeScale = 0.12;
   static const double _lucidityVolumeScale = 0.04;
+  static const double _baseTrackVolume = 0.74;
+  static const double _ariaGoldbergVolume = 0.85;
+  static const double _sicilianoVolume = 0.78;
+  static const double _oblivionVolume = 0.50;
+  static const double _zoneVolume = 0.68;
   factory AudioService() => _instance;
   AudioService._internal();
 
@@ -51,7 +56,6 @@ class AudioService {
           unawaited(syncForNode(gameState.currentNode));
         }
       },
-      fireImmediately: true,
     );
 
     // Ascolta psychoProfileProvider tramite ProviderContainer
@@ -65,8 +69,16 @@ class AudioService {
           unawaited(_updateMixFromProfile(profile));
         }
       },
-      fireImmediately: true,
     );
+
+    final initialProfile = container.read(psychoProfileProvider).valueOrNull;
+    if (initialProfile != null) {
+      _lastProfile = initialProfile;
+    }
+    final initialGameState = container.read(gameStateProvider).valueOrNull;
+    if (initialGameState != null) {
+      unawaited(syncForNode(initialGameState.currentNode));
+    }
   }
 
   Future<void> syncForNode(String nodeId) async {
@@ -171,13 +183,13 @@ class AudioService {
   }
 
   double _targetVolumeFor(String key, {double intensityOffset = 0.0}) {
-    if (key == 'aria_goldberg') return 0.85;
-    if (key == 'siciliano') return 0.78;
-    if (key == 'oblivion') return 0.50;
-    if (key == 'zona' || key == 'zona_eternal') return 0.68;
+    if (key == 'aria_goldberg') return _ariaGoldbergVolume;
+    if (key == 'siciliano') return _sicilianoVolume;
+    if (key == 'oblivion') return _oblivionVolume;
+    if (key == 'zona' || key == 'zona_eternal') return _zoneVolume;
 
     final profile = _lastProfile;
-    var target = 0.74;
+    var target = _baseTrackVolume;
     if (profile != null) {
       target += (profile.anxiety / 100) * _anxietyVolumeScale;
       target -= (profile.oblivionLevel / 100) * _oblivionVolumeScale;

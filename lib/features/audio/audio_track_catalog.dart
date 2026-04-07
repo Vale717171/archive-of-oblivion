@@ -28,14 +28,13 @@ class AudioTrackCatalog {
     'aria_goldberg': 'assets/audio/bach_aria_goldberg.ogg',
   };
 
-  static const Map<String, String> _sectorBaseKeys = {
-    'soglia': 'soglia',
-    'giardino': 'giardino',
-    'osservatorio': 'osservatorio',
-    'galleria': 'galleria',
-    'laboratorio': 'laboratorio',
-    'memoria': 'memoria',
-    'la_zona': 'zona',
+  static const Set<String> _directSectorTrackKeys = {
+    'soglia',
+    'giardino',
+    'osservatorio',
+    'galleria',
+    'laboratorio',
+    'memoria',
   };
 
   static const Map<String, String> _nodeOverrides = {
@@ -74,7 +73,10 @@ class AudioTrackCatalog {
   static String? trackForNode(String nodeId) {
     final override = _nodeOverrides[nodeId];
     if (override != null) return override;
-    return _sectorBaseKeys[sectorForNode(nodeId)];
+    final sector = sectorForNode(nodeId);
+    if (sector == 'la_zona') return 'zona';
+    if (_directSectorTrackKeys.contains(sector)) return sector;
+    return null;
   }
 
   static String sectorForNode(String nodeId) {

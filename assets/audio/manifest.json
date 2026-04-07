@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "purpose": "Planning scaffold for the sector-first soundtrack catalog until final audio masters are added to the repository.",
   "strategy": {
     "base": "sector-first",
     "overrides": "room-specific",
