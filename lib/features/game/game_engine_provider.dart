@@ -1328,6 +1328,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       psychoWeight:     newWeight,
     );
 
+    // Compare the pre-display engine snapshot against the post-logic snapshot
+    // so the cue reacts only to gameplay state changes, not to appended UI text.
     final shouldResetScreen = _shouldResetVisibleTranscript(
       before: withPlayer,
       after: finalState,

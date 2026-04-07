@@ -58,8 +58,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Timer? _typewriterTimer;
   Timer? _backgroundFlashTimer;
   bool _backgroundFlashActive = false;
-  int _lastScreenResetCount = 0;
-  int _lastQueuedScreenResetCount = 0;
+  int _processedScreenResetCount = 0;
+  int _queuedScreenResetCount = 0;
   final Queue<int> _pendingScreenResetCounts = Queue<int>();
   bool _screenResetCallbackScheduled = false;
 
@@ -184,9 +184,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   }
 
   void _scheduleScreenResetCue(int screenResetCount) {
-    if (screenResetCount <= _lastQueuedScreenResetCount) return;
+    // Preserve the reset counts so rapid successive successes can still be
+    // flashed in order instead of collapsing into a single generic flag.
+    if (screenResetCount <= _queuedScreenResetCount) return;
     _pendingScreenResetCounts.addLast(screenResetCount);
-    _lastQueuedScreenResetCount = screenResetCount;
+    _queuedScreenResetCount = screenResetCount;
     if (_screenResetCallbackScheduled) return;
     _screenResetCallbackScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) => _consumeScreenResetCue());
@@ -202,7 +204,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       _screenResetCallbackScheduled = false;
       return;
     }
-    _lastScreenResetCount = _pendingScreenResetCounts.removeFirst();
+    _processedScreenResetCount = _pendingScreenResetCounts.removeFirst();
     _triggerSuccessVisualCue();
     if (_pendingScreenResetCounts.isEmpty) {
       _screenResetCallbackScheduled = false;
@@ -303,7 +305,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 ),
               ),
               data: (engine) {
-                if (engine.screenResetCount != _lastScreenResetCount) {
+                if (engine.screenResetCount != _processedScreenResetCount) {
                   _scheduleScreenResetCue(engine.screenResetCount);
                 }
 
