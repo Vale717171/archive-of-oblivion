@@ -5,6 +5,7 @@
 
 import 'dart:math' show Random;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/storage/database_service.dart';
@@ -1043,6 +1044,7 @@ class GameEngineState {
   final ParserPhase phase;
   final int psychoWeight;
   final List<String> inventory;
+  final int screenResetCount;
 
   /// Puzzle IDs that have been solved, e.g. 'leaves_arranged'.
   final Set<String> completedPuzzles;
@@ -1055,6 +1057,7 @@ class GameEngineState {
     this.phase = ParserPhase.idle,
     this.psychoWeight = 0,
     this.inventory = const [],
+    this.screenResetCount = 0,
     this.completedPuzzles = const {},
     this.puzzleCounters = const {},
   });
@@ -1064,6 +1067,7 @@ class GameEngineState {
     ParserPhase? phase,
     int? psychoWeight,
     List<String>? inventory,
+    int? screenResetCount,
     Set<String>? completedPuzzles,
     Map<String, int>? puzzleCounters,
   }) {
@@ -1072,6 +1076,7 @@ class GameEngineState {
       phase:            phase            ?? this.phase,
       psychoWeight:     psychoWeight     ?? this.psychoWeight,
       inventory:        inventory        ?? this.inventory,
+      screenResetCount: screenResetCount ?? this.screenResetCount,
       completedPuzzles: completedPuzzles ?? this.completedPuzzles,
       puzzleCounters:   puzzleCounters   ?? this.puzzleCounters,
     );
@@ -1279,7 +1284,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     // ── Audio trigger ────────────────────────────────────────────────────────
     await AudioService().handleTrigger(response.audioTrigger);
 
+    final psychoProfileFieldsPresent = response.anxietyDelta != null ||
+        response.lucidityDelta != null ||
+        response.oblivionDelta != null;
+
     // ── Player memory (proustian responses + zone responses) ─────────────────
+    bool memoryWasSaved = false;
     if (response.playerMemoryKey != null) {
       final memoryContent = cmd.verb == CommandVerb.unknown
           ? trimmed
@@ -1289,6 +1299,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           key:     response.playerMemoryKey!,
           content: memoryContent,
         );
+        memoryWasSaved = true;
       }
     }
 
@@ -1317,10 +1328,24 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       psychoWeight:     newWeight,
     );
 
-    final withNarrative = _appendMessage(
-      finalState,
-      GameMessage(text: narrativeText, role: MessageRole.narrative),
+    // Compare the pre-display engine snapshot against the post-logic snapshot
+    // so the cue reacts only to gameplay state changes, not to appended UI text.
+    final shouldResetScreen = _shouldResetVisibleTranscript(
+      previousState: withPlayer,
+      currentState: finalState,
+      nodeChanged: savedNodeId != currentNodeId,
+      memoryWasSaved: memoryWasSaved,
+      psychoProfileFieldsPresent: psychoProfileFieldsPresent,
     );
+    final withNarrative = shouldResetScreen
+        ? finalState.copyWith(
+            messages: [GameMessage(text: narrativeText, role: MessageRole.narrative)],
+            screenResetCount: current.screenResetCount + 1,
+          )
+        : _appendMessage(
+            finalState,
+            GameMessage(text: narrativeText, role: MessageRole.narrative),
+          );
     state = AsyncValue.data(withNarrative);
     await Future.delayed(const Duration(milliseconds: 100));
     state = AsyncValue.data(withNarrative.copyWith(phase: ParserPhase.idle));
@@ -3175,6 +3200,23 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   GameEngineState _appendMessage(GameEngineState s, GameMessage msg) {
     return s.copyWith(messages: [...s.messages, msg]);
+  }
+
+  bool _shouldResetVisibleTranscript({
+    required GameEngineState previousState,
+    required GameEngineState currentState,
+    required bool nodeChanged,
+    required bool memoryWasSaved,
+    required bool psychoProfileFieldsPresent,
+  }) {
+    return nodeChanged ||
+        memoryWasSaved ||
+        psychoProfileFieldsPresent ||
+        // Inventory burden is tracked separately from the psycho-profile sliders.
+        previousState.psychoWeight != currentState.psychoWeight ||
+        !listEquals(previousState.inventory, currentState.inventory) ||
+        !setEquals(previousState.completedPuzzles, currentState.completedPuzzles) ||
+        !mapEquals(previousState.puzzleCounters, currentState.puzzleCounters);
   }
 
   /// Returns a Demiurge ("All That Is") narrative response for the given node.

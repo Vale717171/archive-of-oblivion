@@ -4,6 +4,32 @@
 
 ---
 
+### 2026-04-07 — GitHub Copilot (Correct-answer screen reset cue)
+**Role:** UI + engine feedback
+
+**Done:**
+
+- **Added a success-only transcript reset cue** in `game_engine_provider.dart` so commands that
+  materially advance the game now replace the visible on-screen history with the new narrative
+  instead of appending to it.
+- **Kept failed / non-advancing commands cumulative** — wrong answers and neutral interactions still
+  stack in the history exactly as before.
+- **Added a temporary background reveal in `game_screen.dart`** so each successful command restarts
+  the text from the top and briefly shows the full sector image before fading back to the mandated
+  subtle presentation.
+
+**Validation note:** `git diff --check` passed. `flutter analyze` and `flutter test` were attempted
+again in this sandbox, but the `flutter` CLI is still unavailable here (`flutter: command not
+found`).
+
+**Architecture snapshot:**
+`GameEngineState` now carries a transient `screenResetCount` UI signal. The engine increments it
+only when the command changes node/progression/psychological state/inventory, and `GameScreen`
+reacts by resetting scroll position and flashing the current background at full visibility before
+fading back to 0.15 opacity.
+
+---
+
 ### 2026-04-06 — GitHub Copilot (Background visibility rebalance)
 **Role:** UI polish
 

@@ -9,6 +9,7 @@
 //   - Subtle sector background image (opacity 0.15) behind the text
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -26,6 +27,8 @@ const int _panicAnxietyThreshold = 70; // anxiety > this → reddish text
 const int _lowLucidityThreshold = 30; // lucidity < this → grey text
 const int _highOblivionThreshold = 60; // oblivionLevel > this → blue-grey text
 const double _backgroundImageOpacity = 0.15;
+const Duration _backgroundFlashHoldDuration = Duration(milliseconds: 180);
+const Duration _backgroundFadeDuration = Duration(milliseconds: 900);
 // 5×4 color matrix: +18% RGB gain plus a small +18 luminance lift keeps the
 // mandated 0.15-opacity artwork readable on dimmer screens without making it loud.
 const List<double> _backgroundImageBrightnessMatrix = [
@@ -53,6 +56,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   bool _typewriterRunning = false;
   String? _typewriterTarget;
   Timer? _typewriterTimer;
+  Timer? _backgroundFlashTimer;
+  bool _backgroundFlashActive = false;
+  int _processedScreenResetCount = 0;
+  int _queuedScreenResetCount = 0;
+  // The engine emits monotonically increasing reset counts, so queue order
+  // preserves the order of successful commands when several land in one frame.
+  final Queue<int> _pendingScreenResetCounts = Queue<int>();
+  bool _screenResetCallbackScheduled = false;
 
   @override
   void initState() {
@@ -70,6 +81,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void dispose() {
     _typewriterTimer?.cancel();
+    _backgroundFlashTimer?.cancel();
     _controller.dispose();
     _scrollController.dispose();
     _focusNode.dispose();
@@ -153,6 +165,61 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     });
   }
 
+  void _scrollToTop() {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(0);
+      }
+    });
+  }
+
+  void _triggerSuccessVisualCue() {
+    _backgroundFlashTimer?.cancel();
+    setState(() {
+      _backgroundFlashActive = true;
+    });
+    _scrollToTop();
+    _backgroundFlashTimer = Timer(_backgroundFlashHoldDuration, () {
+      if (!mounted) return;
+      setState(() => _backgroundFlashActive = false);
+    });
+  }
+
+  void _scheduleScreenResetCue(int screenResetCount) {
+    // Preserve the reset counts so rapid successive successes can still be
+    // flashed in order instead of collapsing into a single generic flag.
+    // Counts are monotonic and only increase inside the engine.
+    if (screenResetCount <= _queuedScreenResetCount) return;
+    _pendingScreenResetCounts.addLast(screenResetCount);
+    _queuedScreenResetCount = screenResetCount;
+    if (_screenResetCallbackScheduled) return;
+    _screenResetCallbackScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _consumeScreenResetCue());
+  }
+
+  void _clearScheduledScreenResetCue() {
+    _screenResetCallbackScheduled = false;
+  }
+
+  void _consumeScreenResetCue() {
+    if (!mounted) {
+      _pendingScreenResetCounts.clear();
+      _clearScheduledScreenResetCue();
+      return;
+    }
+    if (_pendingScreenResetCounts.isEmpty) {
+      _clearScheduledScreenResetCue();
+      return;
+    }
+    _processedScreenResetCount = _pendingScreenResetCounts.removeFirst();
+    _triggerSuccessVisualCue();
+    if (_pendingScreenResetCounts.isEmpty) {
+      _clearScheduledScreenResetCue();
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _consumeScreenResetCue());
+  }
+
   // ── Input ────────────────────────────────────────────────────────────────
 
   void _submit() {
@@ -221,21 +288,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Background image — subtle sector atmosphere
-            Positioned.fill(
-              child: Opacity(
-                opacity: _backgroundImageOpacity,
-                child: ColorFiltered(
-                  colorFilter: const ColorFilter.matrix(
-                    _backgroundImageBrightnessMatrix,
-                  ),
-                  child: Image.asset(
-                    backgroundPath,
-                    fit: BoxFit.cover,
-                    gaplessPlayback: true,
-                  ),
-                ),
-              ),
+            _BackgroundLayer(
+              backgroundPath: backgroundPath,
+              flashActive: _backgroundFlashActive,
             ),
             // Game content on top — unchanged
             engineAsync.when(
@@ -257,6 +312,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 ),
               ),
               data: (engine) {
+                if (engine.screenResetCount != _processedScreenResetCount) {
+                  _scheduleScreenResetCue(engine.screenResetCount);
+                }
+
                 // Start typewriter for the latest narrative message when it arrives
                 final lastNarrative = engine.messages.lastOrNull;
                 if (lastNarrative != null &&
@@ -344,6 +403,42 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 }
 
 // ── Sub-widgets ──────────────────────────────────────────────────────────────
+
+class _BackgroundLayer extends StatelessWidget {
+  final String backgroundPath;
+  final bool flashActive;
+
+  const _BackgroundLayer({
+    required this.backgroundPath,
+    required this.flashActive,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final image = Image.asset(
+      backgroundPath,
+      fit: BoxFit.cover,
+      gaplessPlayback: true,
+    );
+    final child = flashActive
+        ? image
+        : ColorFiltered(
+            colorFilter: const ColorFilter.matrix(
+              _backgroundImageBrightnessMatrix,
+            ),
+            child: image,
+          );
+
+    return Positioned.fill(
+      child: AnimatedOpacity(
+        opacity: flashActive ? 1.0 : _backgroundImageOpacity,
+        duration: flashActive ? Duration.zero : _backgroundFadeDuration,
+        curve: Curves.easeOut,
+        child: child,
+      ),
+    );
+  }
+}
 
 class _MessageTile extends StatelessWidget {
   final String text;
