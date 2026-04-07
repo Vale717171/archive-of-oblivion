@@ -29,8 +29,8 @@ class AudioService {
   AudioService._internal();
 
   final AudioPlayer _backgroundPlayer = AudioPlayer();
-  final Set<String> _availableAssets = <String>{};
-  final Set<String> _missingAssets = <String>{};
+  final Set<String> _availableAssets = {};
+  final Set<String> _missingAssets = {};
   Future<void> _audioOperationQueue = Future.value();
   ProviderSubscription<AsyncValue<GameState>>? _gameStateSubscription;
   ProviderSubscription<AsyncValue<PsychoProfile>>? _psychoSubscription;
@@ -55,7 +55,7 @@ class AudioService {
       (_, next) {
         final gameState = next.valueOrNull;
         if (gameState != null) {
-          _runInBackground(syncForNode(gameState.currentNode), 'syncForNode listener');
+          syncForNode(gameState.currentNode);
         }
       },
     );
@@ -68,7 +68,7 @@ class AudioService {
         final profile = next.valueOrNull;
         if (profile != null) {
           _lastProfile = profile;
-          _runInBackground(_updateMixFromProfile(profile), 'psycho mix listener');
+          _updateMixFromProfile(profile);
         }
       },
     );
@@ -79,7 +79,7 @@ class AudioService {
     }
     final initialGameState = container.read(gameStateProvider).valueOrNull;
     if (initialGameState != null) {
-      _runInBackground(syncForNode(initialGameState.currentNode), 'initial node sync');
+      syncForNode(initialGameState.currentNode);
     }
   }
 
@@ -192,18 +192,12 @@ class AudioService {
   }
 
   Future<void> _enqueueAudioOperation(Future<void> Function() operation) {
-    _audioOperationQueue = _audioOperationQueue.then((_) => operation()).catchError((error, stackTrace) {
+    _audioOperationQueue =
+        _audioOperationQueue.then((_ignored) => operation()).catchError((error, stackTrace) {
       // ignore: avoid_print
       print('Queued audio operation failed: $error\n$stackTrace');
     });
     return _audioOperationQueue;
-  }
-
-  void _runInBackground(Future<void> future, String label) {
-    future.catchError((error, stackTrace) {
-      // ignore: avoid_print
-      print('Background audio task failed [$label]: $error\n$stackTrace');
-    });
   }
 
   Future<void> _applyCurrentMix({double intensityOffset = 0.0}) async {
