@@ -43,6 +43,9 @@ class GameScreen extends ConsumerStatefulWidget {
 }
 
 class _GameScreenState extends ConsumerState<GameScreen> {
+  static const Duration _backgroundFlashHold = Duration(milliseconds: 180);
+  static const Duration _backgroundFadeDuration = Duration(milliseconds: 900);
+
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
   final _focusNode = FocusNode();
@@ -53,6 +56,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   bool _typewriterRunning = false;
   String? _typewriterTarget;
   Timer? _typewriterTimer;
+  Timer? _backgroundFlashTimer;
+  bool _backgroundFlashActive = false;
+  int _lastScreenResetCount = 0;
 
   @override
   void initState() {
@@ -70,6 +76,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void dispose() {
     _typewriterTimer?.cancel();
+    _backgroundFlashTimer?.cancel();
     _controller.dispose();
     _scrollController.dispose();
     _focusNode.dispose();
@@ -153,6 +160,28 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     });
   }
 
+  void _scrollToTop() {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(0);
+      }
+    });
+  }
+
+  void _triggerSuccessVisualCue(int screenResetCount) {
+    if (_lastScreenResetCount == screenResetCount) return;
+    _backgroundFlashTimer?.cancel();
+    setState(() {
+      _lastScreenResetCount = screenResetCount;
+      _backgroundFlashActive = true;
+    });
+    _scrollToTop();
+    _backgroundFlashTimer = Timer(_backgroundFlashHold, () {
+      if (!mounted) return;
+      setState(() => _backgroundFlashActive = false);
+    });
+  }
+
   // ── Input ────────────────────────────────────────────────────────────────
 
   void _submit() {
@@ -221,21 +250,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Background image — subtle sector atmosphere
-            Positioned.fill(
-              child: Opacity(
-                opacity: _backgroundImageOpacity,
-                child: ColorFiltered(
-                  colorFilter: const ColorFilter.matrix(
-                    _backgroundImageBrightnessMatrix,
-                  ),
-                  child: Image.asset(
-                    backgroundPath,
-                    fit: BoxFit.cover,
-                    gaplessPlayback: true,
-                  ),
-                ),
-              ),
+            _BackgroundLayer(
+              backgroundPath: backgroundPath,
+              flashActive: _backgroundFlashActive,
             ),
             // Game content on top — unchanged
             engineAsync.when(
@@ -257,6 +274,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 ),
               ),
               data: (engine) {
+                if (engine.screenResetCount != _lastScreenResetCount) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (!mounted) return;
+                    _triggerSuccessVisualCue(engine.screenResetCount);
+                  });
+                }
+
                 // Start typewriter for the latest narrative message when it arrives
                 final lastNarrative = engine.messages.lastOrNull;
                 if (lastNarrative != null &&
@@ -344,6 +368,45 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 }
 
 // ── Sub-widgets ──────────────────────────────────────────────────────────────
+
+class _BackgroundLayer extends StatelessWidget {
+  final String backgroundPath;
+  final bool flashActive;
+
+  const _BackgroundLayer({
+    required this.backgroundPath,
+    required this.flashActive,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final child = flashActive
+        ? Image.asset(
+            backgroundPath,
+            fit: BoxFit.cover,
+            gaplessPlayback: true,
+          )
+        : ColorFiltered(
+            colorFilter: const ColorFilter.matrix(
+              _backgroundImageBrightnessMatrix,
+            ),
+            child: Image.asset(
+              backgroundPath,
+              fit: BoxFit.cover,
+              gaplessPlayback: true,
+            ),
+          );
+
+    return Positioned.fill(
+      child: AnimatedOpacity(
+        opacity: flashActive ? 1.0 : _backgroundImageOpacity,
+        duration: flashActive ? Duration.zero : _GameScreenState._backgroundFadeDuration,
+        curve: Curves.easeOut,
+        child: child,
+      ),
+    );
+  }
+}
 
 class _MessageTile extends StatelessWidget {
   final String text;
