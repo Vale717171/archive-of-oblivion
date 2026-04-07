@@ -24,6 +24,8 @@ class AudioService {
   static const double _sicilianoVolume = 0.78;
   static const double _oblivionVolume = 0.50;
   static const double _zoneVolume = 0.68;
+  static const double _minMixVolume = 0.25;
+  static const double _maxMixVolume = 0.90;
   factory AudioService() => _instance;
   AudioService._internal();
 
@@ -191,7 +193,10 @@ class AudioService {
   }
 
   Future<void> _enqueueAudioOperation(Future<void> Function() operation) {
-    _audioOperationQueue = _audioOperationQueue.then((_) => operation()).catchError((_) {});
+    _audioOperationQueue = _audioOperationQueue.then((_) => operation()).catchError((error) {
+      // ignore: avoid_print
+      print('Queued audio operation failed: $error');
+    });
     return _audioOperationQueue;
   }
 
@@ -214,7 +219,7 @@ class AudioService {
       target -= (profile.oblivionLevel / 100) * _oblivionVolumeScale;
       target += (profile.lucidity / 100) * _lucidityVolumeScale;
     }
-    return (target + intensityOffset).clamp(0.25, 0.9);
+    return (target + intensityOffset).clamp(_minMixVolume, _maxMixVolume);
   }
 
   Future<bool> _assetExists(String asset) async {
