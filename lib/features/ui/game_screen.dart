@@ -9,6 +9,7 @@
 //   - Subtle sector background image (opacity 0.15) behind the text
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -58,7 +59,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Timer? _backgroundFlashTimer;
   bool _backgroundFlashActive = false;
   int _lastScreenResetCount = 0;
-  int? _pendingScreenResetCount;
+  final Queue<int> _pendingScreenResetCounts = Queue<int>();
+  bool _screenResetCallbackScheduled = false;
 
   @override
   void initState() {
@@ -180,6 +182,33 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     });
   }
 
+  void _scheduleScreenResetCue(int screenResetCount) {
+    if (_pendingScreenResetCounts.contains(screenResetCount)) return;
+    _pendingScreenResetCounts.addLast(screenResetCount);
+    if (_screenResetCallbackScheduled) return;
+    _screenResetCallbackScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _consumeScreenResetCue());
+  }
+
+  void _consumeScreenResetCue() {
+    if (!mounted) {
+      _pendingScreenResetCounts.clear();
+      _screenResetCallbackScheduled = false;
+      return;
+    }
+    if (_pendingScreenResetCounts.isEmpty) {
+      _screenResetCallbackScheduled = false;
+      return;
+    }
+    _lastScreenResetCount = _pendingScreenResetCounts.removeFirst();
+    _triggerSuccessVisualCue();
+    if (_pendingScreenResetCounts.isEmpty) {
+      _screenResetCallbackScheduled = false;
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _consumeScreenResetCue());
+  }
+
   // ── Input ────────────────────────────────────────────────────────────────
 
   void _submit() {
@@ -272,20 +301,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 ),
               ),
               data: (engine) {
-                if (engine.screenResetCount != _lastScreenResetCount &&
-                    engine.screenResetCount != _pendingScreenResetCount) {
-                  _pendingScreenResetCount = engine.screenResetCount;
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (!mounted) return;
-                    final pendingScreenResetCount = _pendingScreenResetCount;
-                    _pendingScreenResetCount = null;
-                    if (pendingScreenResetCount == null ||
-                        pendingScreenResetCount == _lastScreenResetCount) {
-                      return;
-                    }
-                    _lastScreenResetCount = pendingScreenResetCount;
-                    _triggerSuccessVisualCue();
-                  });
+                if (engine.screenResetCount != _lastScreenResetCount) {
+                  _scheduleScreenResetCue(engine.screenResetCount);
                 }
 
                 // Start typewriter for the latest narrative message when it arrives
@@ -387,21 +404,18 @@ class _BackgroundLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final image = Image.asset(
+      backgroundPath,
+      fit: BoxFit.cover,
+      gaplessPlayback: true,
+    );
     final child = flashActive
-        ? Image.asset(
-            backgroundPath,
-            fit: BoxFit.cover,
-            gaplessPlayback: true,
-          )
+        ? image
         : ColorFiltered(
             colorFilter: const ColorFilter.matrix(
               _backgroundImageBrightnessMatrix,
             ),
-            child: Image.asset(
-              backgroundPath,
-              fit: BoxFit.cover,
-              gaplessPlayback: true,
-            ),
+            child: image,
           );
 
     return Positioned.fill(
