@@ -1284,7 +1284,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     // ── Audio trigger ────────────────────────────────────────────────────────
     await AudioService().handleTrigger(response.audioTrigger);
 
-    final hasPsychoProfileDelta = response.anxietyDelta != null ||
+    final psychoProfileFieldsPresent = response.anxietyDelta != null ||
         response.lucidityDelta != null ||
         response.oblivionDelta != null;
 
@@ -1335,7 +1335,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       currentState: finalState,
       nodeChanged: savedNodeId != currentNodeId,
       memoryWasSaved: memoryWasSaved,
-      hasPsychoProfileDelta: hasPsychoProfileDelta,
+      psychoProfileFieldsPresent: psychoProfileFieldsPresent,
     );
     final withNarrative = shouldResetScreen
         ? finalState.copyWith(
@@ -3207,11 +3207,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     required GameEngineState currentState,
     required bool nodeChanged,
     required bool memoryWasSaved,
-    required bool hasPsychoProfileDelta,
+    required bool psychoProfileFieldsPresent,
   }) {
     return nodeChanged ||
         memoryWasSaved ||
-        hasPsychoProfileDelta ||
+        psychoProfileFieldsPresent ||
         // Inventory burden is tracked separately from the psycho-profile sliders.
         previousState.psychoWeight != currentState.psychoWeight ||
         !listEquals(previousState.inventory, currentState.inventory) ||

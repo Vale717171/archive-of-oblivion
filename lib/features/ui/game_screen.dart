@@ -197,20 +197,24 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _consumeScreenResetCue());
   }
 
+  void _clearScheduledScreenResetCue() {
+    _screenResetCallbackScheduled = false;
+  }
+
   void _consumeScreenResetCue() {
     if (!mounted) {
       _pendingScreenResetCounts.clear();
-      _screenResetCallbackScheduled = false;
+      _clearScheduledScreenResetCue();
       return;
     }
     if (_pendingScreenResetCounts.isEmpty) {
-      _screenResetCallbackScheduled = false;
+      _clearScheduledScreenResetCue();
       return;
     }
     _processedScreenResetCount = _pendingScreenResetCounts.removeFirst();
     _triggerSuccessVisualCue();
     if (_pendingScreenResetCounts.isEmpty) {
-      _screenResetCallbackScheduled = false;
+      _clearScheduledScreenResetCue();
       return;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) => _consumeScreenResetCue());
