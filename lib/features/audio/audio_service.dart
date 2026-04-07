@@ -11,7 +11,6 @@ import 'package:audio_session/audio_session.dart';
 import 'audio_track_catalog.dart';
 import '../state/game_state_provider.dart';
 import '../state/psycho_provider.dart';
-import 'dart:async';
 
 class AudioService {
   static final AudioService _instance = AudioService._internal();
@@ -56,7 +55,7 @@ class AudioService {
       (_, next) {
         final gameState = next.valueOrNull;
         if (gameState != null) {
-          unawaited(syncForNode(gameState.currentNode));
+          _runInBackground(syncForNode(gameState.currentNode), 'syncForNode listener');
         }
       },
     );
@@ -69,7 +68,7 @@ class AudioService {
         final profile = next.valueOrNull;
         if (profile != null) {
           _lastProfile = profile;
-          unawaited(_updateMixFromProfile(profile));
+          _runInBackground(_updateMixFromProfile(profile), 'psycho mix listener');
         }
       },
     );
@@ -80,7 +79,7 @@ class AudioService {
     }
     final initialGameState = container.read(gameStateProvider).valueOrNull;
     if (initialGameState != null) {
-      unawaited(syncForNode(initialGameState.currentNode));
+      _runInBackground(syncForNode(initialGameState.currentNode), 'initial node sync');
     }
   }
 
@@ -193,11 +192,18 @@ class AudioService {
   }
 
   Future<void> _enqueueAudioOperation(Future<void> Function() operation) {
-    _audioOperationQueue = _audioOperationQueue.then((_) => operation()).catchError((error) {
+    _audioOperationQueue = _audioOperationQueue.then((_) => operation()).catchError((error, stackTrace) {
       // ignore: avoid_print
-      print('Queued audio operation failed: $error');
+      print('Queued audio operation failed: $error\n$stackTrace');
     });
     return _audioOperationQueue;
+  }
+
+  void _runInBackground(Future<void> future, String label) {
+    future.catchError((error, stackTrace) {
+      // ignore: avoid_print
+      print('Background audio task failed [$label]: $error\n$stackTrace');
+    });
   }
 
   Future<void> _applyCurrentMix({double intensityOffset = 0.0}) async {
