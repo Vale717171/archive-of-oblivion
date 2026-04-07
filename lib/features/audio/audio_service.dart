@@ -15,6 +15,10 @@ import 'dart:async';
 
 class AudioService {
   static final AudioService _instance = AudioService._internal();
+  static const double _anxietyTriggerBoost = 0.08;
+  static const double _anxietyVolumeScale = 0.08;
+  static const double _oblivionVolumeScale = 0.12;
+  static const double _lucidityVolumeScale = 0.04;
   factory AudioService() => _instance;
   AudioService._internal();
 
@@ -68,10 +72,7 @@ class AudioService {
   Future<void> syncForNode(String nodeId) async {
     final trackKey = AudioTrackCatalog.trackForNode(nodeId);
     if (trackKey == null) return;
-    if (_currentNodeId == nodeId && _currentAmbienceKey == trackKey) {
-      await _applyCurrentMix();
-      return;
-    }
+    if (_currentNodeId == nodeId && _currentAmbienceKey == trackKey) return;
     _currentNodeId = nodeId;
     if (trackKey == 'silence') {
       await _handleSilenceEnding();
@@ -107,7 +108,7 @@ class AudioService {
       return;
     }
     if (trigger == 'anxious') {
-      await _applyCurrentMix(intensityOffset: 0.08);
+      await _applyCurrentMix(intensityOffset: _anxietyTriggerBoost);
       return;
     }
     if (AudioTrackCatalog.isExplicitTrack(trigger)) {
@@ -178,9 +179,9 @@ class AudioService {
     final profile = _lastProfile;
     var target = 0.74;
     if (profile != null) {
-      target += (profile.anxiety / 100) * 0.08;
-      target -= (profile.oblivionLevel / 100) * 0.12;
-      target += (profile.lucidity / 100) * 0.04;
+      target += (profile.anxiety / 100) * _anxietyVolumeScale;
+      target -= (profile.oblivionLevel / 100) * _oblivionVolumeScale;
+      target += (profile.lucidity / 100) * _lucidityVolumeScale;
     }
     return (target + intensityOffset).clamp(0.25, 0.9);
   }
