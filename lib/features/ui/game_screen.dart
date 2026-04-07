@@ -26,6 +26,8 @@ const int _panicAnxietyThreshold = 70; // anxiety > this → reddish text
 const int _lowLucidityThreshold = 30; // lucidity < this → grey text
 const int _highOblivionThreshold = 60; // oblivionLevel > this → blue-grey text
 const double _backgroundImageOpacity = 0.15;
+const Duration _backgroundFlashHoldDuration = Duration(milliseconds: 180);
+const Duration _backgroundFadeDuration = Duration(milliseconds: 900);
 // 5×4 color matrix: +18% RGB gain plus a small +18 luminance lift keeps the
 // mandated 0.15-opacity artwork readable on dimmer screens without making it loud.
 const List<double> _backgroundImageBrightnessMatrix = [
@@ -43,9 +45,6 @@ class GameScreen extends ConsumerStatefulWidget {
 }
 
 class _GameScreenState extends ConsumerState<GameScreen> {
-  static const Duration _backgroundFlashHold = Duration(milliseconds: 180);
-  static const Duration _backgroundFadeDuration = Duration(milliseconds: 900);
-
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
   final _focusNode = FocusNode();
@@ -59,7 +58,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Timer? _backgroundFlashTimer;
   bool _backgroundFlashActive = false;
   int _lastScreenResetCount = 0;
-  int? _scheduledScreenResetCount;
 
   @override
   void initState() {
@@ -169,15 +167,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     });
   }
 
-  void _triggerSuccessVisualCue(int screenResetCount) {
-    if (_lastScreenResetCount == screenResetCount) return;
+  void _triggerSuccessVisualCue() {
     _backgroundFlashTimer?.cancel();
     setState(() {
-      _lastScreenResetCount = screenResetCount;
       _backgroundFlashActive = true;
     });
     _scrollToTop();
-    _backgroundFlashTimer = Timer(_backgroundFlashHold, () {
+    _backgroundFlashTimer = Timer(_backgroundFlashHoldDuration, () {
       if (!mounted) return;
       setState(() => _backgroundFlashActive = false);
     });
@@ -275,15 +271,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 ),
               ),
               data: (engine) {
-                if (engine.screenResetCount != _lastScreenResetCount &&
-                    _scheduledScreenResetCount != engine.screenResetCount) {
-                  _scheduledScreenResetCount = engine.screenResetCount;
+                if (engine.screenResetCount != _lastScreenResetCount) {
+                  _lastScreenResetCount = engine.screenResetCount;
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (!mounted) return;
-                    final screenResetCount = _scheduledScreenResetCount;
-                    _scheduledScreenResetCount = null;
-                    if (screenResetCount == null) return;
-                    _triggerSuccessVisualCue(screenResetCount);
+                    _triggerSuccessVisualCue();
                   });
                 }
 
@@ -406,7 +398,7 @@ class _BackgroundLayer extends StatelessWidget {
     return Positioned.fill(
       child: AnimatedOpacity(
         opacity: flashActive ? 1.0 : _backgroundImageOpacity,
-        duration: flashActive ? Duration.zero : _GameScreenState._backgroundFadeDuration,
+        duration: flashActive ? Duration.zero : _backgroundFadeDuration,
         curve: Curves.easeOut,
         child: child,
       ),
