@@ -58,6 +58,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Timer? _backgroundFlashTimer;
   bool _backgroundFlashActive = false;
   int _lastScreenResetCount = 0;
+  int? _pendingScreenResetCount;
 
   @override
   void initState() {
@@ -271,10 +272,18 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 ),
               ),
               data: (engine) {
-                if (engine.screenResetCount != _lastScreenResetCount) {
-                  _lastScreenResetCount = engine.screenResetCount;
+                if (engine.screenResetCount != _lastScreenResetCount &&
+                    engine.screenResetCount != _pendingScreenResetCount) {
+                  _pendingScreenResetCount = engine.screenResetCount;
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (!mounted) return;
+                    final pendingScreenResetCount = _pendingScreenResetCount;
+                    _pendingScreenResetCount = null;
+                    if (pendingScreenResetCount == null ||
+                        pendingScreenResetCount == _lastScreenResetCount) {
+                      return;
+                    }
+                    _lastScreenResetCount = pendingScreenResetCount;
                     _triggerSuccessVisualCue();
                   });
                 }

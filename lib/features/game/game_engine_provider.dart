@@ -1284,7 +1284,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     // ── Audio trigger ────────────────────────────────────────────────────────
     await AudioService().handleTrigger(response.audioTrigger);
 
-    final psychoProfileChanged = response.anxietyDelta != null ||
+    final hasPsychoProfileDelta = response.anxietyDelta != null ||
         response.lucidityDelta != null ||
         response.oblivionDelta != null;
 
@@ -1333,7 +1333,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       after: finalState,
       nodeChanged: savedNodeId != currentNodeId,
       memoryWasSaved: memoryWasSaved,
-      psychoProfileChanged: psychoProfileChanged,
+      hasPsychoProfileDelta: hasPsychoProfileDelta,
     );
     final withNarrative = shouldResetScreen
         ? finalState.copyWith(
@@ -3205,15 +3205,15 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     required GameEngineState after,
     required bool nodeChanged,
     required bool memoryWasSaved,
-    required bool psychoProfileChanged,
+    required bool hasPsychoProfileDelta,
   }) {
     return nodeChanged ||
         memoryWasSaved ||
-        psychoProfileChanged ||
+        hasPsychoProfileDelta ||
+        before.psychoWeight != after.psychoWeight ||
         !listEquals(before.inventory, after.inventory) ||
         !setEquals(before.completedPuzzles, after.completedPuzzles) ||
-        !mapEquals(before.puzzleCounters, after.puzzleCounters) ||
-        before.psychoWeight != after.psychoWeight;
+        !mapEquals(before.puzzleCounters, after.puzzleCounters);
   }
 
   /// Returns a Demiurge ("All That Is") narrative response for the given node.
