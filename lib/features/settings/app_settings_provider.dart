@@ -81,7 +81,7 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
       reduceMotion: reduceMotion,
       highContrast: highContrast,
       commandAssist: commandAssist,
-      textScale: textScale == null ? null : textScale.clamp(0.9, 1.4).toDouble(),
+      textScale: textScale == null ? null : textScale.clamp(0.9, 1.4),
       typewriterMillis: typewriterMillis == null ? null : typewriterMillis.clamp(8, 40),
     );
 

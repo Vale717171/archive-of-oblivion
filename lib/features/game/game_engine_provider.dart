@@ -41,6 +41,8 @@ const Set<String> _simulacraNames = {
   'ataraxia', 'the constant', 'the proportion', 'the catalyst',
 };
 
+const Set<String> simulacraItemNames = _simulacraNames;
+
 // ── Boss fight — resolution and surrender keywords (GDD §12) ─────────────────
 
 const Set<String> _resolutionKeywords = {
@@ -3515,6 +3517,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   String _selectHint(int level, List<String> hints) {
+    if (hints.isEmpty) return 'No hint available.';
     final index = (level - 1).clamp(0, hints.length - 1);
     return 'Hint ${index + 1}/${hints.length}\n\n${hints[index]}';
   }

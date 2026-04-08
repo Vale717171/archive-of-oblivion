@@ -433,10 +433,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     } else if (nodeId == 'il_nucleo' &&
         engine.inventory.any(
           (item) =>
-              item != 'ataraxia' &&
-              item != 'the constant' &&
-              item != 'the proportion' &&
-              item != 'the catalyst',
+              !simulacraItemNames.contains(item),
         )) {
       commands.insertAll(0, const [
         _QuickCommand('Deposit', 'deposit everything'),
