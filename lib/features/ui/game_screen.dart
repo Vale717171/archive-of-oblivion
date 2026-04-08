@@ -18,8 +18,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../game/game_engine_provider.dart';
 import '../parser/parser_state.dart';
+import '../settings/app_settings_provider.dart';
 import '../state/game_state_provider.dart';
 import '../state/psycho_provider.dart';
+import 'archive_panels.dart';
 import 'background_service.dart';
 
 // PsychoProfile thresholds that drive the UI colour palette (mirror GDD section 6)
@@ -58,6 +60,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Timer? _typewriterTimer;
   Timer? _backgroundFlashTimer;
   bool _backgroundFlashActive = false;
+  String? _lastSubmittedCommand;
   int _processedScreenResetCount = 0;
   int _queuedScreenResetCount = 0;
   // The engine emits monotonically increasing reset counts, so queue order
@@ -111,6 +114,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   // ── Typewriter ──────────────────────────────────────────────────────────
 
   void _startTypewriter(String text) {
+    final settings = ref.read(appSettingsProvider).valueOrNull;
+    if (settings?.instantText ?? false) {
+      setState(() {
+        _typewriterTarget = text;
+        _typewriterBuffer = text;
+        _typewriterIndex = text.length;
+        _typewriterRunning = false;
+      });
+      return;
+    }
     if (_typewriterTarget == text && _typewriterRunning) return;
     _typewriterTarget = text;
     _typewriterBuffer = '';
@@ -127,7 +140,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
     // Variable speed: faster for spaces/punctuation, slower for letters
     final ch = _typewriterTarget![_typewriterIndex];
-    final delay = (ch == ' ' || ch == '\n') ? 10 : 22;
+    final settings = ref.read(appSettingsProvider).valueOrNull;
+    final baseDelay = settings?.typewriterMillis ?? 22;
+    final delay = (ch == ' ' || ch == '\n')
+        ? ((baseDelay ~/ 2).clamp(4, 20) as int)
+        : baseDelay;
 
     _typewriterTimer?.cancel();
     _typewriterTimer = Timer(Duration(milliseconds: delay), () {
@@ -175,6 +192,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   void _triggerSuccessVisualCue() {
     _backgroundFlashTimer?.cancel();
+    final settings = ref.read(appSettingsProvider).valueOrNull;
+    if (settings?.reduceMotion ?? false) {
+      _scrollToTop();
+      return;
+    }
     setState(() {
       _backgroundFlashActive = true;
     });
@@ -230,9 +252,24 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
     _controller.clear();
+    _lastSubmittedCommand = text;
     ref.read(gameEngineProvider.notifier).processInput(text);
     _focusNode.requestFocus();
     SystemChannels.textInput.invokeMethod('TextInput.show');
+  }
+
+  void _queueQuickCommand(String command, {bool submit = true}) {
+    if (_typewriterRunning) {
+      _skipTypewriter();
+    }
+    _controller
+      ..text = command
+      ..selection = TextSelection.collapsed(offset: command.length);
+    if (submit) {
+      _submit();
+    } else {
+      _focusNode.requestFocus();
+    }
   }
 
   Future<void> _startNewGame() async {
@@ -266,6 +303,150 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     _focusNode.requestFocus();
   }
 
+  Future<void> _handleMenuAction(_GameMenuAction action) async {
+    switch (action) {
+      case _GameMenuAction.newGame:
+        return _startNewGame();
+      case _GameMenuAction.howToPlay:
+        return ArchivePanels.showHowToPlay(context);
+      case _GameMenuAction.settings:
+        return ArchivePanels.showSettings(context);
+      case _GameMenuAction.credits:
+        return ArchivePanels.showCredits(context);
+      case _GameMenuAction.title:
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+        return;
+    }
+  }
+
+  String? _findLastPlayerCommand(List<GameMessage> messages) {
+    for (final message in messages.reversed) {
+      if (message.role == MessageRole.player) {
+        return message.text.replaceFirst(RegExp(r'^>\s*'), '');
+      }
+    }
+    return _lastSubmittedCommand;
+  }
+
+  String _inputHintForNode(String nodeId) {
+    if (nodeId == 'intro_void') return 'try: go north';
+    if (nodeId == 'la_soglia') return 'try: go north / east / south / west';
+    if (nodeId == 'garden_cypress') return 'try: examine leaves';
+    if (nodeId == 'garden_fountain') return 'try: wait';
+    if (nodeId == 'obs_antechamber') return 'try: combine moon mercury sun';
+    if (nodeId == 'gallery_hall') return 'try: walk backward';
+    if (nodeId == 'lab_substances') return 'try: decipher symbols';
+    if (nodeId == 'quinto_ritual_chamber') return 'try: hint';
+    if (nodeId == 'il_nucleo') return 'try: answer, drop, or deposit';
+    return 'type a command';
+  }
+
+  List<_QuickCommand> _quickCommandsForNode(String nodeId, GameEngineState engine) {
+    final commands = <_QuickCommand>[
+      const _QuickCommand('Look', 'look'),
+      const _QuickCommand('Inventory', 'inventory'),
+      const _QuickCommand('Hint', 'hint'),
+      const _QuickCommand('Help', 'help'),
+    ];
+
+    if (nodeId == 'intro_void') {
+      commands.insert(0, const _QuickCommand('Go north', 'go north'));
+    } else if (nodeId == 'la_soglia') {
+      commands.insertAll(0, const [
+        _QuickCommand('North', 'go north'),
+        _QuickCommand('East', 'go east'),
+        _QuickCommand('South', 'go south'),
+        _QuickCommand('West', 'go west'),
+      ]);
+    } else if (nodeId == 'garden_cypress') {
+      commands.insertAll(0, const [
+        _QuickCommand('Examine leaves', 'examine leaves'),
+        _QuickCommand('Arrange leaves', 'arrange leaves'),
+      ]);
+    } else if (nodeId == 'garden_fountain') {
+      commands.insertAll(0, const [
+        _QuickCommand('Wait', 'wait'),
+        _QuickCommand('Hint full', 'hint full'),
+      ]);
+    } else if (nodeId == 'garden_grove') {
+      commands.insertAll(0, const [
+        _QuickCommand('Deposit everything', 'deposit everything'),
+        _QuickCommand('Go east', 'go east'),
+        _QuickCommand('Go west', 'go west'),
+      ]);
+    } else if (nodeId == 'obs_antechamber') {
+      commands.insertAll(0, const [
+        _QuickCommand('Combine lenses', 'combine moon mercury sun'),
+        _QuickCommand('Go north', 'go north'),
+      ]);
+    } else if (nodeId == 'obs_void') {
+      commands.insertAll(0, const [
+        _QuickCommand('Wait', 'wait'),
+        _QuickCommand('Measure', 'measure fluctuation'),
+      ]);
+    } else if (nodeId == 'obs_dome') {
+      commands.insertAll(0, const [
+        _QuickCommand('Invert mirror', 'invert mirror'),
+        _QuickCommand('Confirm', 'confirm'),
+        _QuickCommand('Observe', 'observe'),
+      ]);
+    } else if (nodeId == 'gallery_hall') {
+      commands.insertAll(0, const [
+        _QuickCommand('Walk backward', 'walk backward'),
+        _QuickCommand('Observe', 'observe'),
+      ]);
+    } else if (nodeId == 'gallery_corridor') {
+      commands.insertAll(0, const [
+        _QuickCommand('Press tile', 'press anomalous tile'),
+        _QuickCommand('Hint full', 'hint full'),
+      ]);
+    } else if (nodeId == 'gallery_central') {
+      commands.insertAll(0, const [
+        _QuickCommand('Break mirror', 'break mirror'),
+        _QuickCommand('Hint full', 'hint full'),
+      ]);
+    } else if (nodeId == 'lab_substances') {
+      commands.insertAll(0, const [
+        _QuickCommand('Decipher', 'decipher symbols'),
+        _QuickCommand('Collect mercury', 'collect mercury'),
+        _QuickCommand('Collect sulphur', 'collect sulphur'),
+        _QuickCommand('Collect salt', 'collect salt'),
+      ]);
+    } else if (nodeId == 'lab_furnace') {
+      commands.insertAll(0, const [
+        _QuickCommand('Calcinate', 'calcinate'),
+        _QuickCommand('Wait', 'wait'),
+      ]);
+    } else if (nodeId == 'quinto_maturity') {
+      commands.insertAll(0, const [
+        _QuickCommand('Say …', 'say '),
+        _QuickCommand('Write …', 'write '),
+      ]);
+    } else if (nodeId == 'quinto_ritual_chamber') {
+      commands.insertAll(0, const [
+        _QuickCommand('Place simulacrum', 'place ataraxia in cup'),
+        _QuickCommand('Stir', 'stir'),
+        _QuickCommand('Drink', 'drink'),
+      ]);
+    } else if (nodeId == 'il_nucleo' &&
+        engine.inventory.any(
+          (item) =>
+              item != 'ataraxia' &&
+              item != 'the constant' &&
+              item != 'the proportion' &&
+              item != 'the catalyst',
+        )) {
+      commands.insertAll(0, const [
+        _QuickCommand('Deposit', 'deposit everything'),
+        _QuickCommand('Drop item', 'drop notebook'),
+      ]);
+    }
+
+    return commands.take(6).toList(growable: false);
+  }
+
   // ── Build ────────────────────────────────────────────────────────────────
 
   @override
@@ -273,14 +454,20 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final engineAsync = ref.watch(gameEngineProvider);
     final psychoAsync = ref.watch(psychoProfileProvider);
     final gameStateAsync = ref.watch(gameStateProvider);
+    final settingsAsync = ref.watch(appSettingsProvider);
     final profile = psychoAsync.valueOrNull;
+    final settings = settingsAsync.valueOrNull;
+    final textScale = settings?.textScale ?? 1.0;
+    final highContrast = settings?.highContrast ?? false;
+    final currentNode = gameStateAsync.valueOrNull?.currentNode ?? 'intro_void';
 
     final bgColor = _backgroundColor(profile);
-    final narrativeColor = _narrativeColor(profile);
+    final narrativeColor =
+        highContrast ? const Color(0xFFF6F2E8) : _narrativeColor(profile);
 
     // Resolve background image from current node
     final backgroundPath = BackgroundService.getBackgroundForNodeOrDefault(
-      gameStateAsync.valueOrNull?.currentNode,
+      currentNode,
     );
 
     return Scaffold(
@@ -315,6 +502,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 if (engine.screenResetCount != _processedScreenResetCount) {
                   _scheduleScreenResetCue(engine.screenResetCount);
                 }
+                final quickCommands = (settings?.commandAssist ?? true)
+                    ? _quickCommandsForNode(currentNode, engine)
+                    : const <_QuickCommand>[];
+                final lastCommand = _findLastPlayerCommand(engine.messages);
 
                 // Start typewriter for the latest narrative message when it arrives
                 final lastNarrative = engine.messages.lastOrNull;
@@ -329,28 +520,58 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 return Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton.icon(
-                          onPressed: engine.phase == ParserPhase.idle
-                              ? _startNewGame
-                              : null,
-                          icon: const Icon(Icons.refresh, size: 16),
-                          label: const Text('New game'),
-                          style: TextButton.styleFrom(
-                            foregroundColor: narrativeColor.withValues(alpha: 0.8),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                      child: _TopHud(
+                        sectorLabel: gameSectorLabel(currentNode),
+                        nodeTitle: gameNodeTitle(currentNode),
+                        narrativeColor: narrativeColor,
+                        textScale: textScale,
+                        onMenuSelected: _handleMenuAction,
+                        canReturnToTitle: Navigator.of(context).canPop(),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                      child: _SessionCard(
+                        sectorLabel: gameSectorLabel(currentNode),
+                        nodeTitle: gameNodeTitle(currentNode),
+                        itemCount: engine.inventory.length,
+                        weight: engine.psychoWeight,
+                        narrativeColor: narrativeColor,
+                        textScale: textScale,
+                        showAssist: settings?.commandAssist ?? true,
+                        typewriterRunning: _typewriterRunning,
+                      ),
+                    ),
+                    if (quickCommands.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                        child: _QuickCommandBar(
+                          commands: quickCommands,
+                          onCommand: _queueQuickCommand,
+                          narrativeColor: narrativeColor,
+                        ),
+                      ),
+                    if (lastCommand != null)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: ActionChip(
+                            label: Text('Reuse: $lastCommand'),
+                            onPressed: () => _queueQuickCommand(lastCommand, submit: false),
+                            backgroundColor: Colors.white.withValues(alpha: 0.05),
+                            side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
                           ),
                         ),
                       ),
-                    ),
                     // ── Message history ──────────────────────────────────────
                     Expanded(
                       child: GestureDetector(
                         onTap: _skipTypewriter,
                         child: ListView.builder(
                           controller: _scrollController,
-                          padding: const EdgeInsets.fromLTRB(20, 32, 20, 8),
+                          padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
                           itemCount: engine.messages.length,
                           itemBuilder: (context, index) {
                             final msg = engine.messages[index];
@@ -367,6 +588,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                               role: msg.role,
                               narrativeColor: narrativeColor,
                               showCursor: isLastNarrative && _typewriterRunning,
+                              textScale: textScale,
                             );
                           },
                         ),
@@ -374,12 +596,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     ),
 
                     // ── Status bar ───────────────────────────────────────────
-                    if (engine.inventory.isNotEmpty || engine.psychoWeight > 0)
-                      _StatusBar(
-                        weight: engine.psychoWeight,
-                        itemCount: engine.inventory.length,
-                        color: narrativeColor.withValues(alpha: 0.4),
-                      ),
+                    _StatusBar(
+                      weight: engine.psychoWeight,
+                      itemCount: engine.inventory.length,
+                      color: narrativeColor.withValues(alpha: 0.72),
+                      textScale: textScale,
+                      lastCommand: _lastSubmittedCommand,
+                    ),
 
                     // ── Input field ──────────────────────────────────────────
                     _InputRow(
@@ -388,6 +611,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       onSubmit: _submit,
                       enabled: engine.phase == ParserPhase.idle,
                       narrativeColor: narrativeColor,
+                      textScale: textScale,
+                      hintText: _inputHintForNode(currentNode),
+                      onRecallLast: lastCommand == null
+                          ? null
+                          : () => _queueQuickCommand(lastCommand, submit: false),
                     ),
 
                     const SizedBox(height: 8),
@@ -440,17 +668,224 @@ class _BackgroundLayer extends StatelessWidget {
   }
 }
 
+enum _GameMenuAction {
+  newGame,
+  howToPlay,
+  settings,
+  credits,
+  title,
+}
+
+class _QuickCommand {
+  final String label;
+  final String command;
+
+  const _QuickCommand(this.label, this.command);
+}
+
+class _TopHud extends StatelessWidget {
+  final String sectorLabel;
+  final String nodeTitle;
+  final Color narrativeColor;
+  final double textScale;
+  final ValueChanged<_GameMenuAction> onMenuSelected;
+  final bool canReturnToTitle;
+
+  const _TopHud({
+    required this.sectorLabel,
+    required this.nodeTitle,
+    required this.narrativeColor,
+    required this.textScale,
+    required this.onMenuSelected,
+    required this.canReturnToTitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                sectorLabel.toUpperCase(),
+                style: TextStyle(
+                  color: narrativeColor.withValues(alpha: 0.75),
+                  fontSize: 11 * textScale,
+                  letterSpacing: 1.3,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                nodeTitle,
+                style: TextStyle(
+                  color: narrativeColor,
+                  fontSize: 20 * textScale,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuButton<_GameMenuAction>(
+          tooltip: 'Game menu',
+          color: const Color(0xFF111216),
+          onSelected: onMenuSelected,
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: _GameMenuAction.newGame,
+              child: Text('New game'),
+            ),
+            const PopupMenuItem(
+              value: _GameMenuAction.howToPlay,
+              child: Text('How to play'),
+            ),
+            const PopupMenuItem(
+              value: _GameMenuAction.settings,
+              child: Text('Settings'),
+            ),
+            const PopupMenuItem(
+              value: _GameMenuAction.credits,
+              child: Text('Credits'),
+            ),
+            if (canReturnToTitle)
+              const PopupMenuItem(
+                value: _GameMenuAction.title,
+                child: Text('Return to title'),
+              ),
+          ],
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            ),
+            child: Icon(
+              Icons.more_horiz,
+              color: narrativeColor.withValues(alpha: 0.85),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SessionCard extends StatelessWidget {
+  final String sectorLabel;
+  final String nodeTitle;
+  final int itemCount;
+  final int weight;
+  final Color narrativeColor;
+  final double textScale;
+  final bool showAssist;
+  final bool typewriterRunning;
+
+  const _SessionCard({
+    required this.sectorLabel,
+    required this.nodeTitle,
+    required this.itemCount,
+    required this.weight,
+    required this.narrativeColor,
+    required this.textScale,
+    required this.showAssist,
+    required this.typewriterRunning,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.22),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '$sectorLabel · $nodeTitle',
+            style: TextStyle(
+              color: narrativeColor.withValues(alpha: 0.54),
+              fontSize: 11 * textScale,
+              letterSpacing: 0.7,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '$itemCount carried  ·  weight $weight  ·  autosave active',
+            style: TextStyle(
+              color: narrativeColor.withValues(alpha: 0.76),
+              fontSize: 12 * textScale,
+              letterSpacing: 0.5,
+            ),
+          ),
+          if (showAssist) ...[
+            const SizedBox(height: 8),
+            Text(
+              typewriterRunning
+                  ? 'Tap the narrative to reveal the full line instantly.'
+                  : 'Short commands work best. Mistakes may still advance the atmosphere.',
+              style: TextStyle(
+                color: narrativeColor.withValues(alpha: 0.65),
+                fontSize: 12 * textScale,
+                height: 1.35,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickCommandBar extends StatelessWidget {
+  final List<_QuickCommand> commands;
+  final void Function(String command, {bool submit}) onCommand;
+  final Color narrativeColor;
+
+  const _QuickCommandBar({
+    required this.commands,
+    required this.onCommand,
+    required this.narrativeColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (final command in commands)
+          ActionChip(
+            label: Text(command.label),
+            onPressed: () => onCommand(command.command),
+            backgroundColor: Colors.white.withValues(alpha: 0.06),
+            side: BorderSide(color: narrativeColor.withValues(alpha: 0.14)),
+          ),
+      ],
+    );
+  }
+}
+
 class _MessageTile extends StatelessWidget {
   final String text;
   final MessageRole role;
   final Color narrativeColor;
   final bool showCursor;
+  final double textScale;
 
   const _MessageTile({
     required this.text,
     required this.role,
     required this.narrativeColor,
     this.showCursor = false,
+    required this.textScale,
   });
 
   @override
@@ -464,7 +899,7 @@ class _MessageTile extends StatelessWidget {
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.55),
               fontFamily: 'monospace',
-              fontSize: 14,
+              fontSize: 14 * textScale,
               letterSpacing: 0.5,
             ),
           ),
@@ -479,7 +914,7 @@ class _MessageTile extends StatelessWidget {
               style: TextStyle(
                 color: narrativeColor,
                 fontFamily: 'Georgia',
-                fontSize: 16,
+                fontSize: 16 * textScale,
                 height: 1.65,
                 letterSpacing: 0.2,
               ),
@@ -489,7 +924,7 @@ class _MessageTile extends StatelessWidget {
                         text: '▌',
                         style: TextStyle(
                           color: narrativeColor.withValues(alpha: 0.7),
-                          fontSize: 14,
+                          fontSize: 14 * textScale,
                         ),
                       )
                     ]
@@ -506,7 +941,7 @@ class _MessageTile extends StatelessWidget {
             style: TextStyle(
               color: Colors.red.shade300,
               fontFamily: 'monospace',
-              fontSize: 13,
+              fontSize: 13 * textScale,
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -519,11 +954,15 @@ class _StatusBar extends StatelessWidget {
   final int weight;
   final int itemCount;
   final Color color;
+  final double textScale;
+  final String? lastCommand;
 
   const _StatusBar({
     required this.weight,
     required this.itemCount,
     required this.color,
+    required this.textScale,
+    this.lastCommand,
   });
 
   @override
@@ -532,13 +971,19 @@ class _StatusBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
       child: Row(
         children: [
-          Text(
-            'Carrying: $itemCount  ·  Weight: $weight',
-            style: TextStyle(
-              color: color,
-              fontFamily: 'monospace',
-              fontSize: 11,
-              letterSpacing: 0.8,
+          Expanded(
+            child: Text(
+              lastCommand == null
+                  ? 'Carrying: $itemCount  ·  Weight: $weight'
+                  : 'Carrying: $itemCount  ·  Weight: $weight  ·  Last: $lastCommand',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: color,
+                fontFamily: 'monospace',
+                fontSize: 11 * textScale,
+                letterSpacing: 0.6,
+              ),
             ),
           ),
         ],
@@ -553,6 +998,9 @@ class _InputRow extends StatelessWidget {
   final VoidCallback onSubmit;
   final bool enabled;
   final Color narrativeColor;
+  final double textScale;
+  final String hintText;
+  final VoidCallback? onRecallLast;
 
   const _InputRow({
     required this.controller,
@@ -560,6 +1008,9 @@ class _InputRow extends StatelessWidget {
     required this.onSubmit,
     required this.enabled,
     required this.narrativeColor,
+    required this.textScale,
+    required this.hintText,
+    this.onRecallLast,
   });
 
   @override
@@ -568,12 +1019,21 @@ class _InputRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       child: Row(
         children: [
+          if (onRecallLast != null)
+            IconButton(
+              tooltip: 'Reuse last command',
+              onPressed: onRecallLast,
+              icon: Icon(
+                Icons.history,
+                color: narrativeColor.withValues(alpha: enabled ? 0.65 : 0.25),
+              ),
+            ),
           Text(
             '>',
             style: TextStyle(
               color: narrativeColor.withValues(alpha: enabled ? 0.8 : 0.3),
               fontFamily: 'monospace',
-              fontSize: 16,
+              fontSize: 16 * textScale,
             ),
           ),
           const SizedBox(width: 10),
@@ -588,15 +1048,16 @@ class _InputRow extends StatelessWidget {
               style: TextStyle(
                 color: narrativeColor,
                 fontFamily: 'monospace',
-                fontSize: 15,
+                fontSize: 15 * textScale,
               ),
               cursorColor: narrativeColor,
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: enabled ? '' : '…',
+                hintText: enabled ? hintText : '…',
                 hintStyle: TextStyle(
                   color: narrativeColor.withValues(alpha: 0.25),
                   fontFamily: 'monospace',
+                  fontSize: 14 * textScale,
                 ),
               ),
               textCapitalization: TextCapitalization.none,

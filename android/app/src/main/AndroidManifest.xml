@@ -1,23 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Permission to read the LLM model from /sdcard/Download/ -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <!--
-        MANAGE_EXTERNAL_STORAGE is required on Android 11+ (API 30+) to read
-        arbitrary paths on external storage (e.g. /sdcard/Download/).
-        This is appropriate for a sideloaded APK in development; a production
-        Play Store release would need to use the Storage Access Framework or
-        bundle the model inside the APK instead.
-    -->
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-
     <application
         android:name="${applicationName}"
         android:label="L'Archivio dell'Oblio"
         android:icon="@mipmap/ic_launcher"
-        android:largeHeap="true"
-        android:requestLegacyExternalStorage="true"
         android:allowBackup="false">
         <activity
             android:name=".MainActivity"

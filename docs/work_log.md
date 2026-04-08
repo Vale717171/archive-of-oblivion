@@ -4,6 +4,45 @@
 
 ---
 
+### 2026-04-08 — GitHub Copilot (Title screen + onboarding UX pass)
+**Role:** UX, parser assistance, accessibility, technical cleanup
+
+**Done:**
+
+- **Added a proper title/home experience** with:
+  - continue vs new-game entry points
+  - introduction, how-to-play, settings, and credits entry chips
+  - current-run summary card showing location, carrying state, burden, and puzzle-state count
+  - theatrical fade-in over the current sector background
+- **Introduced persisted app settings** in SQLite (`app_settings`, schema v4) for:
+  - instant text
+  - reduced motion
+  - high contrast
+  - command assist
+  - text scale
+  - typewriter pace
+- **Reworked the in-game HUD** so `GameScreen` now exposes:
+  - a room/sector header
+  - a real game menu instead of only “New game”
+  - a session card with autosave and assist copy
+  - quick-command chips for key contexts
+  - last-command recall in both chip and input-row form
+  - smarter input placeholders tied to the current node
+- **Expanded parser/engine assistance** by adding:
+  - explicit parser verbs for `hint`, `observe`, `enter`, `collect`, `decipher`, `say`
+  - more natural movement synonyms
+  - a **three-level contextual hint system** (`hint`, `hint more`, `hint full`)
+  - public node/sector metadata helpers for UI surfaces
+- **Removed obsolete Android storage/heap flags** left over from the legacy external-LLM path.
+- **Added regression tests** for parser verb routing and game metadata helpers.
+
+**Validation note:** `git diff --check` passed. `flutter analyze` and `flutter test` were attempted before and after the change set in this sandbox, but the `flutter` CLI is still unavailable here (`flutter: command not found`).
+
+**Architecture snapshot:**
+The app now has a lightweight shell experience instead of dropping directly into the transcript. Presentation/accessibility settings are persisted locally in SQLite and read directly by the home/game UI. Parser assistance is now split between typed commands, quick-command affordances, and a layered in-engine hint system rather than a single static help screen.
+
+---
+
 ### 2026-04-07 — GitHub Copilot (Sector-first audio catalog scaffolding)
 **Role:** Audio architecture
 

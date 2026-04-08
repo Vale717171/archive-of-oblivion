@@ -30,6 +30,9 @@ class ParserService {
     if (input == 'help' || input == '?') {
       return ParsedCommand(verb: CommandVerb.help, args: const [], rawInput: raw);
     }
+    if (input == 'hint' || input == 'clue' || input == 'nudge') {
+      return ParsedCommand(verb: CommandVerb.hint, args: const [], rawInput: raw);
+    }
     if (input == 'confirm' || input == 'yes') {
       return ParsedCommand(verb: CommandVerb.confirm, args: const [], rawInput: raw);
     }
@@ -49,6 +52,9 @@ class ParserService {
 
     switch (verb) {
       case 'go':
+      case 'move':
+      case 'head':
+      case 'travel':
         if (rest.isNotEmpty && _directions.contains(rest.first)) {
           return ParsedCommand(
             verb: CommandVerb.go,
@@ -84,6 +90,7 @@ class ParserService {
       case 'put':
       case 'leave':
       case 'place':
+      case 'discard':
         return ParsedCommand(verb: CommandVerb.drop, args: rest, rawInput: raw);
 
       case 'use':
@@ -160,6 +167,33 @@ class ParserService {
       case 'stir':
       case 'mix':
         return ParsedCommand(verb: CommandVerb.stir, args: rest, rawInput: raw);
+
+      case 'observe':
+      case 'watch':
+        return ParsedCommand(verb: CommandVerb.observe, args: rest, rawInput: raw);
+
+      case 'enter':
+        return ParsedCommand(verb: CommandVerb.enterValue, args: rest, rawInput: raw);
+
+      case 'collect':
+      case 'gather':
+        return ParsedCommand(verb: CommandVerb.collect, args: rest, rawInput: raw);
+
+      case 'decipher':
+      case 'decode':
+      case 'translate':
+        return ParsedCommand(verb: CommandVerb.decipher, args: rest, rawInput: raw);
+
+      case 'say':
+      case 'answer':
+      case 'tell':
+      case 'speak':
+        return ParsedCommand(verb: CommandVerb.say, args: rest, rawInput: raw);
+
+      case 'hint':
+      case 'clue':
+      case 'nudge':
+        return ParsedCommand(verb: CommandVerb.hint, args: rest, rawInput: raw);
 
       case 'help':
         return ParsedCommand(verb: CommandVerb.help, args: const [], rawInput: raw);

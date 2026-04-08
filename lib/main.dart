@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/audio/audio_service.dart';
 import 'features/demiurge/demiurge_service.dart';
-import 'features/ui/game_screen.dart';
+import 'features/ui/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,8 +49,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
         useMaterial3: true,
+        brightness: Brightness.dark,
       ),
-      home: const GameScreen(),
+      home: const HomeScreen(),
     );
   }
 }
