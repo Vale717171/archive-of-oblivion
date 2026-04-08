@@ -85,7 +85,8 @@ class EngineResponse {
   final int? anxietyDelta;
   final int? oblivionDelta;
 
-  /// Audio trigger key: 'calm' | 'anxious' | 'oblivion' | 'sfx:<name>'.
+  /// Audio trigger key: explicit ambience key / room override, legacy mood
+  /// modifier (`calm` / `anxious`), or `sfx:<name>`.
   final String? audioTrigger;
 
   /// Item to unconditionally add to inventory (used for simulacra granted by

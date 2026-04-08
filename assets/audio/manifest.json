@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "purpose": "Planning scaffold for the sector-first soundtrack catalog until final audio masters are added to the repository.",
+  "strategy": {
+    "base": "sector-first",
+    "overrides": "room-specific",
+    "events": "trigger-driven"
+  },
+  "tracks": [
+    {"key": "soglia", "asset": "assets/audio/bach_bwv846_soglia.ogg", "status": "planned"},
+    {"key": "giardino", "asset": "assets/audio/bach_goldberg_giardino.ogg", "status": "planned"},
+    {"key": "osservatorio", "asset": "assets/audio/bach_contrapunctus_observatory.ogg", "status": "planned"},
+    {"key": "galleria", "asset": "assets/audio/bach_bwv846_galleria.ogg", "status": "planned"},
+    {"key": "laboratorio", "asset": "assets/audio/bach_bwv1008_laboratorio.ogg", "status": "planned"},
+    {"key": "memoria", "asset": "assets/audio/bach_memoria_theme.ogg", "status": "planned"},
+    {"key": "zona", "asset": "assets/audio/bach_fugue_883_zona.ogg", "status": "planned"},
+    {"key": "oblivion", "asset": "assets/audio/echo_chamber.ogg", "status": "planned"},
+    {"key": "siciliano", "asset": "assets/audio/bach_siciliano_bwv1017.ogg", "status": "planned"},
+    {"key": "aria_goldberg", "asset": "assets/audio/bach_aria_goldberg.ogg", "status": "planned"},
+    {"key": "giardino_fountain", "asset": "assets/audio/garden_fountain_variation.ogg", "status": "planned"},
+    {"key": "giardino_stelae", "asset": "assets/audio/garden_stelae_variation.ogg", "status": "planned"},
+    {"key": "osservatorio_calibration", "asset": "assets/audio/observatory_calibration_variation.ogg", "status": "planned"},
+    {"key": "osservatorio_dome", "asset": "assets/audio/observatory_dome_variation.ogg", "status": "planned"},
+    {"key": "galleria_dark", "asset": "assets/audio/gallery_dark_variation.ogg", "status": "planned"},
+    {"key": "galleria_light", "asset": "assets/audio/gallery_light_variation.ogg", "status": "planned"},
+    {"key": "galleria_mirror", "asset": "assets/audio/gallery_mirror_variation.ogg", "status": "planned"},
+    {"key": "laboratorio_bain_marie", "asset": "assets/audio/lab_bain_marie_variation.ogg", "status": "planned"},
+    {"key": "laboratorio_sealed", "asset": "assets/audio/lab_sealed_variation.ogg", "status": "planned"},
+    {"key": "memoria_ritual", "asset": "assets/audio/memory_ritual_variation.ogg", "status": "planned"},
+    {"key": "zona_eternal", "asset": "assets/audio/zona_eternal_variation.ogg", "status": "planned"},
+    {"key": "proustian_trigger", "asset": "assets/audio/sfx_proustian_trigger.ogg", "status": "planned"}
+  ],
+  "notes": [
+    "The repository now scaffolds the full track catalog even though the actual audio masters are not committed yet.",
+    "AudioService skips missing assets safely and will start playing them automatically as soon as the planned files are added."
+  ]
+}

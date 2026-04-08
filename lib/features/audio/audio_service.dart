@@ -4,47 +4,61 @@
 // ProviderContainer subscription (providers are not Streams).
 // Note: setVolume() crossfade via duration param does not exist in just_audio —
 // replaced with manual volume ramp via Future.delayed steps.
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_session/audio_session.dart';
+import 'audio_track_catalog.dart';
+import '../state/game_state_provider.dart';
 import '../state/psycho_provider.dart';
-import 'dart:async';
 
 class AudioService {
   static final AudioService _instance = AudioService._internal();
+  static const double _anxietyTriggerBoost = 0.08;
+  static const double _anxietyVolumeScale = 0.08;
+  static const double _oblivionVolumeScale = 0.12;
+  static const double _lucidityVolumeScale = 0.04;
+  static const double _baseTrackVolume = 0.74;
+  static const double _ariaGoldbergVolume = 0.85;
+  static const double _sicilianoVolume = 0.78;
+  static const double _oblivionVolume = 0.50;
+  static const double _zoneVolume = 0.68;
+  static const double _minMixVolume = 0.25;
+  static const double _maxMixVolume = 0.90;
   factory AudioService() => _instance;
   AudioService._internal();
 
   final AudioPlayer _backgroundPlayer = AudioPlayer();
+  final Set<String> _availableAssets = {};
+  final Set<String> _missingAssets = {};
+  Future<void> _audioOperationQueue = Future.value();
+  ProviderSubscription<AsyncValue<GameState>>? _gameStateSubscription;
   ProviderSubscription<AsyncValue<PsychoProfile>>? _psychoSubscription;
+  PsychoProfile? _lastProfile;
   String? _currentAmbienceKey;
-
-  // Ambience tracks (loop indefinitely)
-  final Map<String, String> _ambienceAssets = {
-    'calm':     'assets/audio/void_ambient.ogg',
-    'anxious':  'assets/audio/anxiety_pulse.ogg',
-    'oblivion': 'assets/audio/echo_chamber.ogg',
-    // Fifth Sector — Siciliano BWV 1017 (Bach, Sonata for violin and harpsichord)
-    'siciliano':    'assets/audio/bach_siciliano_bwv1017.ogg',
-    // Finale 1 — Aria delle Variazioni Goldberg (ripresa dalla nota sospesa)
-    'aria_goldberg': 'assets/audio/bach_aria_goldberg.ogg',
-  };
+  String? _currentNodeId;
 
   // SFX (one-shot, do not loop)
   final Map<String, String> _sfxAssets = {
     'proustian_trigger': 'assets/audio/sfx_proustian_trigger.ogg',
   };
 
-  // Tracks that are set explicitly by the game engine and should not be
-  // overridden by the psycho-profile ambience updater.
-  static const Set<String> _specialTracks = {'siciliano', 'aria_goldberg', 'silence'};
-
   Future<void> initialize(ProviderContainer container) async {
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.music());
 
     await _backgroundPlayer.setLoopMode(LoopMode.one);
-    await _backgroundPlayer.setVolume(0.7);
+    await _backgroundPlayer.setVolume(0.0);
+
+    _gameStateSubscription = container.listen<AsyncValue<GameState>>(
+      gameStateProvider,
+      (_, next) {
+        final gameState = next.valueOrNull;
+        if (gameState != null) {
+          syncForNode(gameState.currentNode);
+        }
+      },
+    );
 
     // Ascolta psychoProfileProvider tramite ProviderContainer
     // (i provider Riverpod non sono Stream — richiede container.listen)
@@ -52,85 +66,175 @@ class AudioService {
       psychoProfileProvider,
       (_, next) {
         final profile = next.valueOrNull;
-        if (profile != null) _updateAmbienceFromProfile(profile);
+        if (profile != null) {
+          _lastProfile = profile;
+          _updateMixFromProfile(profile);
+        }
       },
     );
+
+    final initialProfile = container.read(psychoProfileProvider).valueOrNull;
+    if (initialProfile != null) {
+      _lastProfile = initialProfile;
+    }
+    final initialGameState = container.read(gameStateProvider).valueOrNull;
+    if (initialGameState != null) {
+      syncForNode(initialGameState.currentNode);
+    }
+  }
+
+  Future<void> syncForNode(String nodeId) async {
+    await _enqueueAudioOperation(() async {
+      final trackKey = AudioTrackCatalog.trackForNode(nodeId);
+      if (trackKey == null) return;
+      if (_currentNodeId == nodeId && _currentAmbienceKey == trackKey) return;
+      if (trackKey == 'silence') {
+        final applied = await _handleSilenceEnding();
+        if (applied) _currentNodeId = nodeId;
+        return;
+      }
+      final applied = await _crossfadeTo(trackKey);
+      if (applied) _currentNodeId = nodeId;
+    });
   }
 
   /// Processes an [audioTrigger] string emitted by [EngineResponse].
   ///
   /// Triggers follow the convention:
-  ///   - Ambience keys ('calm', 'anxious', 'oblivion', 'siciliano',
-  ///     'aria_goldberg') → crossfade the background player.
+  ///   - Explicit ambience keys ('oblivion', 'siciliano', 'aria_goldberg',
+  ///     sector keys, room overrides) → crossfade the background player.
+  ///   - Legacy mood modifiers ('calm', 'anxious') → keep the current room
+  ///     track but re-apply intensity.
   ///   - 'sfx:<name>' → play one-shot SFX via a dedicated [AudioPlayer].
   ///   - 'silence' → 30 s of silence followed by white-noise fade-in
   ///     (Finale 2 — Oblivion ending).
   Future<void> handleTrigger(String? trigger) async {
-    if (trigger == null) return;
-    if (trigger.startsWith('sfx:')) {
-      final sfxKey = trigger.substring(4); // strip 'sfx:' prefix
-      final asset  = _sfxAssets[sfxKey];
-      if (asset != null) await playSFX(asset);
-      return;
-    }
-    if (trigger == 'silence') {
-      await _handleSilenceEnding();
-      return;
-    }
-    if (_ambienceAssets.containsKey(trigger)) {
-      await _crossfadeTo(trigger);
-    }
+    await _enqueueAudioOperation(() async {
+      if (trigger == null) return;
+      if (trigger.startsWith('sfx:')) {
+        final sfxKey = trigger.substring(4); // strip 'sfx:' prefix
+        final asset  = _sfxAssets[sfxKey];
+        if (asset != null) await playSFX(asset);
+        return;
+      }
+      if (trigger == 'silence') {
+        await _handleSilenceEnding();
+        return;
+      }
+      if (trigger == 'calm') {
+        await _applyCurrentMix();
+        return;
+      }
+      if (trigger == 'anxious') {
+        await _applyCurrentMix(intensityOffset: _anxietyTriggerBoost);
+        return;
+      }
+      if (AudioTrackCatalog.isExplicitTrack(trigger)) {
+        await _crossfadeTo(trigger);
+      }
+    });
   }
 
-  Future<void> _updateAmbienceFromProfile(PsychoProfile profile) async {
-    String newKey = 'calm';
-    if (profile.anxiety > 70) {
-      newKey = 'anxious';
-    } else if (profile.oblivionLevel > 60) {
-      newKey = 'oblivion';
-    }
-    // Profile-driven ambience only changes if no special track is active
-    if (_specialTracks.contains(_currentAmbienceKey)) {
-      return;
-    }
-    await _crossfadeTo(newKey);
+  Future<void> _updateMixFromProfile(PsychoProfile profile) async {
+    await _enqueueAudioOperation(() async {
+      // Profile-driven updates modulate the active room track, but never
+      // replace explicit finale/memory cues.
+      if (_currentAmbienceKey == null ||
+          AudioTrackCatalog.specialTracks.contains(_currentAmbienceKey)) {
+        return;
+      }
+      await _applyCurrentMix();
+    });
   }
 
-  Future<void> _crossfadeTo(String key) async {
-    if (_currentAmbienceKey == key) return;
-    final asset = _ambienceAssets[key];
-    if (asset == null) return; // unknown key — skip silently
+  Future<bool> _crossfadeTo(String key) async {
+    if (_currentAmbienceKey == key) return true;
+    final asset = AudioTrackCatalog.assetForKey(key);
+    if (asset == null || !await _assetExists(asset)) return false;
     try {
       await _rampVolume(0.0);
       await _backgroundPlayer.setAsset(asset);
       await _backgroundPlayer.play();
-      await _rampVolume(0.85);
+      await _rampVolume(_targetVolumeFor(key));
       _currentAmbienceKey = key;
+      return true;
     } catch (e) {
       // Fallback silenzioso — non crasha mai su 3 GB RAM
       // ignore: avoid_print
       print('Audio fallback [$key]: $e');
+      return false;
     }
   }
 
   /// Finale 2 (Oblivion): 30 s silence → white-noise fade-in.
   /// Uses a separate one-shot player to avoid disrupting the background loop.
-  Future<void> _handleSilenceEnding() async {
+  Future<bool> _handleSilenceEnding() async {
     try {
       await _rampVolume(0.0);
       await _backgroundPlayer.stop();
       _currentAmbienceKey = 'silence';
       await Future.delayed(const Duration(seconds: 30));
       // White noise / echo chamber is the closest available ambient track
-      final oblivionAsset = _ambienceAssets['oblivion'];
-      if (oblivionAsset == null) return;
+      final oblivionAsset = AudioTrackCatalog.assetForKey('oblivion');
+      if (oblivionAsset == null || !await _assetExists(oblivionAsset)) {
+        return false;
+      }
       await _backgroundPlayer.setAsset(oblivionAsset);
       await _backgroundPlayer.setLoopMode(LoopMode.one);
       await _backgroundPlayer.play();
       await _rampVolume(0.3); // deliberately low — it is aftermath
+      return true;
     } catch (e) {
       // ignore: avoid_print
       print('Audio silence-ending fallback: $e');
+      return false;
+    }
+  }
+
+  Future<void> _enqueueAudioOperation(Future<void> Function() operation) {
+    _audioOperationQueue =
+        _audioOperationQueue.then((_ignored) => operation()).catchError((error, stackTrace) {
+      // ignore: avoid_print
+      print('Queued audio operation failed: $error\n$stackTrace');
+    });
+    return _audioOperationQueue;
+  }
+
+  Future<void> _applyCurrentMix({double intensityOffset = 0.0}) async {
+    final currentKey = _currentAmbienceKey;
+    if (currentKey == null || currentKey == 'silence') return;
+    await _rampVolume(_targetVolumeFor(currentKey, intensityOffset: intensityOffset));
+  }
+
+  double _targetVolumeFor(String key, {double intensityOffset = 0.0}) {
+    if (key == 'aria_goldberg') return _ariaGoldbergVolume;
+    if (key == 'siciliano') return _sicilianoVolume;
+    if (key == 'oblivion') return _oblivionVolume;
+    if (key == 'zona' || key == 'zona_eternal') return _zoneVolume;
+
+    final profile = _lastProfile;
+    var target = _baseTrackVolume;
+    if (profile != null) {
+      target += (profile.anxiety / 100) * _anxietyVolumeScale;
+      target -= (profile.oblivionLevel / 100) * _oblivionVolumeScale;
+      target += (profile.lucidity / 100) * _lucidityVolumeScale;
+    }
+    return (target + intensityOffset).clamp(_minMixVolume, _maxMixVolume);
+  }
+
+  Future<bool> _assetExists(String asset) async {
+    if (_availableAssets.contains(asset)) return true;
+    if (_missingAssets.contains(asset)) return false;
+
+    try {
+      await rootBundle.load(asset);
+      _availableAssets.add(asset);
+      return true;
+    } catch (_) {
+      _missingAssets.add(asset);
+      // ignore: avoid_print
+      print('Audio asset missing: $asset');
+      return false;
     }
   }
 
@@ -146,6 +250,7 @@ class AudioService {
   }
 
   Future<void> playSFX(String sfxAsset) async {
+    if (!await _assetExists(sfxAsset)) return;
     final sfxPlayer = AudioPlayer();
     try {
       await sfxPlayer.setAsset(sfxAsset);
@@ -164,6 +269,7 @@ class AudioService {
   }
 
   void dispose() {
+    _gameStateSubscription?.close();
     _psychoSubscription?.close();
     _backgroundPlayer.dispose();
   }

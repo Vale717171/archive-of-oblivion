@@ -4,6 +4,46 @@
 
 ---
 
+### 2026-04-07 — GitHub Copilot (Sector-first audio catalog scaffolding)
+**Role:** Audio architecture
+
+**Done:**
+
+- **Introduced a room-aware audio catalog** in `lib/features/audio/audio_track_catalog.dart`
+  with:
+  - 8 sector-base soundtrack keys
+  - room overrides for key nodes (fountain, stelae, calibration, dome, mirror,
+    bain-marie, sealed chamber, ritual chamber, eternal zone)
+  - explicit finale/memory trigger mappings kept compatible with existing engine
+    responses
+- **Reworked `AudioService`** so:
+  - it listens to `gameStateProvider` and automatically selects soundtrack by
+    current node
+  - psycho-profile updates now modulate playback intensity instead of choosing
+    the primary track
+  - legacy `calm` / `anxious` triggers now re-shape the active room track
+    instead of replacing it with a global generic loop
+  - missing audio files are detected and skipped safely, avoiding repeated load
+    failures while the real masters are still absent from the repo
+- **Added `assets/audio/manifest.json`** as the canonical scaffold for planned
+  soundtrack/SFX asset names so the repo now contains a real `assets/audio/`
+  directory aligned with the new catalog.
+- **Updated parser-state docs** to reflect the broader meaning of `audioTrigger`.
+
+**Validation note:** `git diff --check` passed and `assets/audio/manifest.json`
+parses correctly. `flutter analyze` and `flutter test` were attempted again in
+this sandbox, but the `flutter` CLI is still unavailable here (`flutter:
+command not found`).
+
+**Architecture snapshot:**
+Audio routing is now `nodeId -> room override or sector base -> asset key`,
+with `AudioService` subscribing directly to saved game-state changes. The
+psycho profile no longer decides which soundtrack plays; it only modulates the
+intensity of the currently active room/sector track, while explicit finale and
+memory cues still retain priority.
+
+---
+
 ### 2026-04-07 — GitHub Copilot (Correct-answer screen reset cue)
 **Role:** UI + engine feedback
 
