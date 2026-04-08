@@ -45,6 +45,12 @@ enum CommandVerb {
   setParam, // set X — Lab alembic temperature
   drink, // drink / sip — Fifth Sector ritual
   stir, // stir / mix — Fifth Sector ritual
+  observe, // observe / watch — Observatory dome, mirrors
+  enterValue, // enter [value] — Observatory archive
+  collect, // collect [substance] — Lab substances
+  decipher, // decipher symbols — Lab substances
+  say, // say / answer / tell — Fifth Sector maturity
+  hint, // hint / hint more / hint full
   help, // help / ?
   unknown, // unrecognised input
 }

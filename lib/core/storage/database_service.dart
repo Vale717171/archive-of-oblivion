@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 
 class DatabaseService {
   static const _databaseName = "oblivion_archive.db";
-  static const _databaseVersion = 3;
+  static const _databaseVersion = 4;
   static const int defaultLucidity = 50;
   static const int defaultOblivionLevel = 0;
   static const int defaultAnxiety = 10;
@@ -14,6 +14,15 @@ class DatabaseService {
     'lucidity': defaultLucidity,
     'oblivion_level': defaultOblivionLevel,
     'anxiety': defaultAnxiety,
+  };
+  static const Map<String, Object?> defaultAppSettingsRow = {
+    'id': 1,
+    'instant_text': 0,
+    'reduce_motion': 0,
+    'high_contrast': 0,
+    'command_assist': 1,
+    'text_scale': 1.0,
+    'typewriter_millis': 22,
   };
 
   // Singleton pattern per evitare accessi concorrenti non sicuri
@@ -97,8 +106,21 @@ class DatabaseService {
       )
     ''');
 
+    await db.execute('''
+      CREATE TABLE app_settings (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        instant_text INTEGER NOT NULL DEFAULT 0,
+        reduce_motion INTEGER NOT NULL DEFAULT 0,
+        high_contrast INTEGER NOT NULL DEFAULT 0,
+        command_assist INTEGER NOT NULL DEFAULT 1,
+        text_scale REAL NOT NULL DEFAULT 1.0,
+        typewriter_millis INTEGER NOT NULL DEFAULT 22
+      )
+    ''');
+
     // Inizializza il profilo psicologico di base
     await db.insert('psycho_profile', defaultPsychoProfileRow);
+    await db.insert('app_settings', defaultAppSettingsRow);
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -147,6 +169,26 @@ class DatabaseService {
         await txn.execute(
             'CREATE INDEX idx_dialogue_time ON dialogue_history(timestamp)');
         await txn.execute('DROP TABLE dialogue_history_old');
+      });
+    }
+    if (oldVersion < 4) {
+      await db.transaction((txn) async {
+        await txn.execute('''
+          CREATE TABLE IF NOT EXISTS app_settings (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            instant_text INTEGER NOT NULL DEFAULT 0,
+            reduce_motion INTEGER NOT NULL DEFAULT 0,
+            high_contrast INTEGER NOT NULL DEFAULT 0,
+            command_assist INTEGER NOT NULL DEFAULT 1,
+            text_scale REAL NOT NULL DEFAULT 1.0,
+            typewriter_millis INTEGER NOT NULL DEFAULT 22
+          )
+        ''');
+        await txn.insert(
+          'app_settings',
+          defaultAppSettingsRow,
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
       });
     }
   }

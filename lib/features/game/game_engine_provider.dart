@@ -41,6 +41,8 @@ const Set<String> _simulacraNames = {
   'ataraxia', 'the constant', 'the proportion', 'the catalyst',
 };
 
+const Set<String> simulacraItemNames = _simulacraNames;
+
 // ── Boss fight — resolution and surrender keywords (GDD §12) ─────────────────
 
 const Set<String> _resolutionKeywords = {
@@ -1463,6 +1465,24 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       case CommandVerb.stir:
         return _handleStir(nodeId, s);
 
+      case CommandVerb.observe:
+        return _handleObserve(nodeId, s);
+
+      case CommandVerb.enterValue:
+        return _handleEnterValue(cmd, nodeId, s);
+
+      case CommandVerb.collect:
+        return _handleCollect(cmd, nodeId, s);
+
+      case CommandVerb.decipher:
+        return _handleDecipher(nodeId, s);
+
+      case CommandVerb.say:
+        return _handleSay(cmd, nodeId, s);
+
+      case CommandVerb.hint:
+        return _handleHint(cmd, nodeId, s);
+
       case CommandVerb.unknown:
         return _handleUnknown(cmd, nodeId, s);
 
@@ -2491,6 +2511,206 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
   }
 
+  EngineResponse _handleObserve(String nodeId, GameEngineState s) {
+    if (nodeId == 'obs_dome') {
+      if (!s.completedPuzzles.contains('obs_confirmed')) {
+        return const EngineResponse(
+          narrativeText: 'The telescope is not ready.\n\n'
+              'Invert the primary mirror and confirm three times first.',
+        );
+      }
+      if (s.completedPuzzles.contains('obs_complete')) {
+        return const EngineResponse(
+          narrativeText: 'The observation is complete. The Constant is already in your hands.',
+        );
+      }
+      return const EngineResponse(
+        narrativeText: 'You look into the inverted telescope.\n\n'
+            'It shows you the room — and within the room, yourself. '
+            'A figure of precise but unmeasurable dimensions.\n\n'
+            'At the centre of the image, superimposed on your chest: '
+            'a light source the instrument cannot locate, '
+            'because it is no longer looking outward.\n\n'
+            'In your hands: a prism of tangible light. It is warm. '
+            'It refracts you. The Constant.',
+        needsLlm: true,
+        lucidityDelta: 15,
+        anxietyDelta: -10,
+        audioTrigger: 'calm',
+        grantItem: 'the constant',
+        completePuzzle: 'obs_complete',
+      );
+    }
+
+    if (nodeId == 'gallery_hall') {
+      if (s.completedPuzzles.contains('hall_backward_walked') &&
+          !s.completedPuzzles.contains('gallery_reflection_triggered')) {
+        return const EngineResponse(
+          narrativeText: 'You look into the mirrors a second time.\n\n'
+              'Your reflection looks back — and it is not quite the one you left.\n\n'
+              '"Plus fragiles mais plus vivaces, plus immatérielles, '
+              'plus persistantes, plus fidèles."\n\n'
+              'The images hold something you had forgotten was yours.',
+          needsLlm:       true,
+          lucidityDelta:  -5,
+          anxietyDelta:   5,
+          audioTrigger:   'sfx:proustian_trigger',
+          completePuzzle: 'gallery_reflection_triggered',
+        );
+      }
+      return const EngineResponse(
+        narrativeText: 'The mirrors reflect you from every angle. '
+            'None of them shows you looking at them.',
+      );
+    }
+
+    return const EngineResponse(
+      narrativeText: 'Observation changes nothing yet. Perhaps another verb belongs here.',
+    );
+  }
+
+  EngineResponse _handleEnterValue(ParsedCommand cmd, String nodeId, GameEngineState s) {
+    if (nodeId != 'obs_archive') {
+      return const EngineResponse(narrativeText: 'There is nothing here that accepts an entry.');
+    }
+    final value = cmd.args.join(' ').trim();
+    if (value.isEmpty) {
+      return const EngineResponse(
+        narrativeText: 'Enter what? The panel is waiting for the constant beneath constants.',
+      );
+    }
+    if (s.completedPuzzles.contains('archive_constant_entered')) {
+      return const EngineResponse(
+        narrativeText: 'The panel already has its answer. The passage south is open.',
+      );
+    }
+    if (value == '1') {
+      return const EngineResponse(
+        narrativeText: 'You enter: 1.\n\n'
+            'The panel accepts it without comment.\n\n'
+            'In natural units, all constants equal one — not because they are '
+            'the same, but because measurement is always a comparison, '
+            'and the only honest comparison is with the thing itself.\n\n'
+            'The passage south opens.',
+        needsLlm:       true,
+        lucidityDelta:  10,
+        completePuzzle: 'archive_constant_entered',
+      );
+    }
+    return EngineResponse(
+      narrativeText: '"$value" is not accepted.\n\n'
+          'What do all constants become when you stop measuring in human units?',
+    );
+  }
+
+  EngineResponse _handleDecipher(String nodeId, GameEngineState s) {
+    if (nodeId != 'lab_substances') {
+      return const EngineResponse(narrativeText: 'There is nothing here to decipher.');
+    }
+    if (s.completedPuzzles.contains('lab_symbols_deciphered')) {
+      return const EngineResponse(
+        narrativeText: 'The symbols are already decoded: mercury, sulphur, salt.\n\n'
+            'Collect each to proceed.',
+      );
+    }
+    return const EngineResponse(
+      narrativeText: 'You study the central triangle.\n\n'
+          'The three vertices decode:\n'
+          'Mercury — the spirit, quicksilver, volatility.\n'
+          'Sulphur — the soul, combustion, will.\n'
+          'Salt — the body, fixity, matter.\n\n'
+          'The Tria Prima. All transformation passes through these three.\n\n'
+          'Now: collect mercury — collect sulphur — collect salt.',
+      lucidityDelta:  5,
+      completePuzzle: 'lab_symbols_deciphered',
+    );
+  }
+
+  EngineResponse _handleCollect(ParsedCommand cmd, String nodeId, GameEngineState s) {
+    if (nodeId != 'lab_substances') {
+      return const EngineResponse(narrativeText: 'There is nothing here to collect.');
+    }
+    final sub = cmd.args.join(' ').trim().toLowerCase();
+    if (sub.isEmpty) {
+      return const EngineResponse(
+        narrativeText: 'Collect what? The room distinguishes mercury, sulphur, and salt.',
+      );
+    }
+    if (!s.completedPuzzles.contains('lab_symbols_deciphered')) {
+      return const EngineResponse(
+        narrativeText: 'You do not yet know what to collect.\n\nDecipher the symbols first.',
+      );
+    }
+    final key = (sub == 'sulfur' || sub == 'sulphur') ? 'sulphur' : sub;
+    final valid = {'mercury', 'sulphur', 'salt'};
+    if (!valid.contains(key)) {
+      return EngineResponse(
+        narrativeText: '"$sub" is not one of the three substances.\n\n'
+            'Collect: mercury, sulphur, or salt.',
+      );
+    }
+    final puzzleId = 'lab_${key}_collected';
+    if (s.completedPuzzles.contains(puzzleId)) {
+      return EngineResponse(narrativeText: 'You have already collected the $key.');
+    }
+    const required = {
+      'lab_mercury_collected',
+      'lab_sulphur_collected',
+      'lab_salt_collected',
+    };
+    final afterThis = s.completedPuzzles.union({puzzleId});
+    final isLast = required.every(afterThis.contains);
+    return EngineResponse(
+      narrativeText: isLast
+          ? 'You collect the $key.\n\n'
+              'All three substances of the Tria Prima are gathered.\n\n'
+              'The three branches open: the furnace, the alembic, the bain-marie.'
+          : 'You collect the $key. It settles with a faint warmth.',
+      needsLlm:       isLast,
+      completePuzzle: puzzleId,
+      lucidityDelta:  isLast ? 8 : null,
+    );
+  }
+
+  EngineResponse _handleSay(ParsedCommand cmd, String nodeId, GameEngineState s) {
+    if (nodeId != 'quinto_maturity') {
+      return const EngineResponse(narrativeText: 'There is no listening line here.');
+    }
+    final content = cmd.args.join(' ').trim();
+    if (s.completedPuzzles.contains('memory_maturity')) {
+      return const EngineResponse(narrativeText: 'The price has been paid. You may leave.');
+    }
+    if (content.isEmpty) {
+      return const EngineResponse(
+        narrativeText: 'Say what? The line is open. Someone is waiting.',
+      );
+    }
+    return EngineResponse(
+      narrativeText: 'You speak into the telephone.\n\n'
+          '"$content"\n\n'
+          'There is a silence on the line — not empty, but full.\n\n'
+          'Then a soft sound that might be acknowledgement.\n\n'
+          'The glasses on the desk clear. You may leave.',
+      needsLlm:        true,
+      lucidityDelta:   8,
+      completePuzzle:  'memory_maturity',
+      audioTrigger:    'calm',
+      playerMemoryKey: 'memory_maturity',
+    );
+  }
+
+  EngineResponse _handleHint(ParsedCommand cmd, String nodeId, GameEngineState s) {
+    final args = cmd.args.join(' ').toLowerCase();
+    final level = args.contains('full') || args.contains('explicit') || args.contains('exact')
+        ? 3
+        : args.contains('more') || args.contains('medium') || args.contains('clearer')
+            ? 2
+            : 1;
+    return EngineResponse(
+      narrativeText: _hintTextForNode(nodeId, level, s),
+    );
+  }
+
   /// Handles commands not recognised by the parser (contextual raw-input parsing).
   EngineResponse _handleUnknown(ParsedCommand cmd, String nodeId, GameEngineState s) {
     final raw = cmd.rawInput.toLowerCase().trim();
@@ -3198,6 +3418,115 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return '$title${node.description}';
   }
 
+  String _hintTextForNode(String nodeId, int level, GameEngineState s) {
+    switch (nodeId) {
+      case 'garden_grove':
+        return _selectHint(level, const [
+          'The statue is asking for relinquishment, not acquisition.',
+          'You must pass through pleasure and pain before the statue accepts what you carry.',
+          'Walk through both alcoves without taking anything. Then deposit everything at the statue.',
+        ]);
+      case 'gallery_copies':
+        return _selectHint(level, const [
+          'This wing rewards noticing absence.',
+          'The copies are incomplete. Name what is missing more than once.',
+          'Use describe / write / paint three times to identify the missing elements in the copies.',
+        ]);
+      case 'gallery_originals':
+        return _selectHint(level, const [
+          'This room refuses brevity.',
+          'The canvas wants a specific invented work, not a sentence.',
+          'Paint or describe an imaginary artwork in at least fifty words.',
+        ]);
+      case 'gallery_central':
+        return _selectHint(level, const [
+          'The mirror is not solved by contemplation alone.',
+          'To gain the simulacrum, you must break the mirror with empty enough hands.',
+          'When your psychological weight is 0, break mirror to receive The Proportion.',
+        ]);
+      case 'lab_substances':
+        return _selectHint(level, const [
+          'The triangle names three principles before it opens three paths.',
+          'The symbols must be understood before the substances can be gathered.',
+          'Use decipher symbols, then collect mercury, collect sulphur, and collect salt.',
+        ]);
+      case 'lab_great_work':
+        final step = s.puzzleCounters['great_work_step'] ?? 0;
+        final nextPlanet = step < _planetOrder.length ? _planetOrder[step] : _planetOrder.last;
+        return _selectHint(level, [
+          'Order matters more than substance here.',
+          'The circles accept a planetary descent, one stage at a time.',
+          'Place each substance in order: ${_planetOrder.join(' → ')}. The next circle is $nextPlanet.',
+        ]);
+      case 'lab_sealed':
+        return _selectHint(level, const [
+          'The last reagent is not material.',
+          'The chamber is waiting for something only a living body can provide.',
+          'Blow into the alembic to complete the sector and receive The Catalyst.',
+        ]);
+      case 'quinto_ritual_chamber':
+        return _selectHint(level, const [
+          'The cup wants what the four sectors taught you.',
+          'Each simulacrum must be placed before the infusion can be completed.',
+          'Place ataraxia, the constant, the proportion, and the catalyst in the cup. Then stir. Then drink.',
+        ]);
+      case 'quinto_childhood':
+      case 'quinto_youth':
+      case 'quinto_old_age':
+        return _selectHint(level, const [
+          'This room opens when you answer it personally.',
+          'A memory-price must be written here before you can leave.',
+          'Write your answer directly. The room accepts personal text, not puzzle jargon.',
+        ]);
+      case 'quinto_maturity':
+        return _selectHint(level, const [
+          'The telephone is not decorative.',
+          'This room accepts a spoken answer as well as written confession.',
+          'Use say [what you never said] or write it to pay the room’s price.',
+        ]);
+      case 'il_nucleo':
+        return _selectHint(level, const [
+          'The argument changes when what you carry changes.',
+          'If your words fail, your burden is probably answering against you.',
+          'Drop or deposit mundane items until your psychological weight is zero, then answer the Antagonist again.',
+        ]);
+      case 'la_zona':
+        return _selectHint(level, const [
+          'The Zone wants an answer, not a keyword.',
+          'Short replies are rejected; it is testing sincerity, not syntax.',
+          'Answer the Zone’s question in at least a few words, then use back only after it accepts your response.',
+        ]);
+    }
+
+    final gatedPuzzle = _exitGates[nodeId]?.values.firstOrNull;
+    if (gatedPuzzle != null && !s.completedPuzzles.contains(gatedPuzzle)) {
+      final explicit = _gateHints[gatedPuzzle] ??
+          'Something holds you back. A condition has not yet been met.';
+      return _selectHint(level, [
+        'The room yields to its governing idea, not brute force.',
+        explicit.split('\n\n').first,
+        explicit,
+      ]);
+    }
+
+    return _selectHint(level, const [
+      'Try looking closely, checking your inventory, and listening to the room’s wording.',
+      'The Archive usually names the verb it expects inside the room description or help text.',
+      'Use look, examine [object], inventory, help, or a more specific room action.',
+    ]);
+  }
+
+  String _selectHint(int level, List<String> hints) {
+    if (hints.isEmpty) return 'No hint available.';
+    final rawIndex = level - 1;
+    final index = rawIndex < 0
+        ? 0
+        : rawIndex >= hints.length
+            ? hints.length - 1
+            : rawIndex;
+    return 'Hint ${index + 1}/${hints.length}\n\n${hints[index]}';
+  }
+
   GameEngineState _appendMessage(GameEngineState s, GameMessage msg) {
     return s.copyWith(messages: [...s.messages, msg]);
   }
@@ -3242,6 +3571,7 @@ const _helpText = '''Commands:
   wait  /  z                           — let time pass
   smell [object]                       — attend to a scent
   taste [object]                       — attend to a flavour
+  hint / hint more / hint full         — layered contextual guidance
   arrange leaves [order]               — Cypress Avenue puzzle
   walk [mode]      — "walk blindfolded", "walk backward", "walk through"
   combine [items]                      — Observatory Antechamber puzzle
@@ -3266,6 +3596,21 @@ const _helpText = '''Commands:
   inventory  /  i                      — list what you carry
   wake up                              — Finale 1 epilogue
   help  /  ?                           — this message''';
+
+String gameNodeTitle(String nodeId) =>
+    _nodes[nodeId]?.title.isNotEmpty == true ? _nodes[nodeId]!.title : 'The Archive';
+
+String gameSectorLabel(String nodeId) {
+  if (nodeId == 'intro_void' || nodeId == 'la_soglia') return 'Threshold';
+  if (nodeId.startsWith('garden')) return 'Garden';
+  if (nodeId.startsWith('obs_')) return 'Observatory';
+  if (nodeId.startsWith('gal_') || nodeId.startsWith('gallery_')) return 'Gallery';
+  if (nodeId.startsWith('lab_')) return 'Laboratory';
+  if (nodeId.startsWith('quinto_') || nodeId.startsWith('memory_')) return 'Memory';
+  if (nodeId.startsWith('finale_') || nodeId == 'il_nucleo') return 'Finale';
+  if (nodeId == 'la_zona') return 'Zone';
+  return 'Archive';
+}
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
