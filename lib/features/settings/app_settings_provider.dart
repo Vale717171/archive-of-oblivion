@@ -76,13 +76,27 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
     int? typewriterMillis,
   }) async {
     final current = state.valueOrNull ?? await _fetchSettings();
+    final clampedTextScale = textScale == null
+        ? null
+        : textScale < 0.9
+            ? 0.9
+            : textScale > 1.4
+                ? 1.4
+                : textScale;
+    final clampedTypewriterMillis = typewriterMillis == null
+        ? null
+        : typewriterMillis < 8
+            ? 8
+            : typewriterMillis > 40
+                ? 40
+                : typewriterMillis;
     final next = current.copyWith(
       instantText: instantText,
       reduceMotion: reduceMotion,
       highContrast: highContrast,
       commandAssist: commandAssist,
-      textScale: textScale == null ? null : textScale.clamp(0.9, 1.4),
-      typewriterMillis: typewriterMillis == null ? null : typewriterMillis.clamp(8, 40),
+      textScale: clampedTextScale,
+      typewriterMillis: clampedTypewriterMillis,
     );
 
     final db = await _dbService.database;

@@ -3518,7 +3518,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   String _selectHint(int level, List<String> hints) {
     if (hints.isEmpty) return 'No hint available.';
-    final index = (level - 1).clamp(0, hints.length - 1);
+    final rawIndex = level - 1;
+    final index = rawIndex < 0
+        ? 0
+        : rawIndex >= hints.length
+            ? hints.length - 1
+            : rawIndex;
     return 'Hint ${index + 1}/${hints.length}\n\n${hints[index]}';
   }
 
