@@ -33,13 +33,13 @@ Ogni turno è un ciclo finito di 6 fasi. L'utente non vede mai la macchina a sta
               │ EVALUATING │── pure logic ──────────────► │
               └─────┬──────┘                              │
                     │                                     │
-              LLM needed?                                 │
+              Demiurge needed?                            │
                     │                                     │
             ┌───────┴────────┐                            │
             │                │                            │
             ▼                ▼                            │
      ┌────────────┐   ┌────────────────┐                  │
-     │LLM_PENDING │   │EVENT_RESOLVED  │                  │
+    │LLM_PENDING │   │EVENT_RESOLVED  │                  │
      └─────┬──────┘   └───────┬────────┘                  │
            │                  │                            │
            └────────┬─────────┘                            │
@@ -58,7 +58,7 @@ Ogni turno è un ciclo finito di 6 fasi. L'utente non vede mai la macchina a sta
 | `idle` | Attesa utente | Input field attivo, cursore lampeggiante |
 | `parsing` | ~1ms | Testo grezzo → `ParsedCommand` (sincrono, puro) |
 | `evaluating` | ~5ms | Engine controlla nodo corrente, inventario, peso psicologico |
-| `llmPending` | 5–20s | Invio System Prompt all'LLM on-device; UI mostra "..." |
+| `llmPending` | ~0–50ms | Nome storico della fase: il motore prepara l'eventuale augmentation del Demiurgo; UI mostra "..." solo per coerenza di loop |
 | `eventResolved` | ~10ms | Aggiornamento DB (weight, node, dialogue_history), trigger audio |
 | `displaying` | 0.5–3s | Typewriter su testo finale; al termine → `idle` |
 
@@ -98,7 +98,7 @@ Il testo visualizzato cambia stile in base allo stato psicologico:
 | Bassa lucidità (lucidity < 30) | Testo grigiastro, risposte oniriche |
 | Alto oblio (oblivionLevel > 60) | Testo azzurro-grigio, risposte smorzate |
 
-Il cambio di stile è puramente visivo (colore testo Flutter). Il cambio di **contenuto** è gestito dall'LLM tramite `LlmContextService` (già implementato da Gemini).
+Il cambio di stile è puramente visivo (colore testo Flutter). Il cambio di **contenuto** dipende dal testo statico del motore, dai bundle JSON e dall'eventuale augmentation del Demiurgo.
 
 ---
 
@@ -110,7 +110,7 @@ Simulacro (Ataraxia, The Constant, Proportion, Catalyst): +0 peso
 Azione "deposit everything": azzera inventario, peso → 0
 ```
 
-La UI **non mostra mai il valore numerico del peso** al giocatore. Il feedback è indiretto: cambio di tono narrativo, effetti audio, comportamento dell'LLM.
+La UI **non mostra mai il valore numerico del peso** al giocatore. Il feedback è indiretto: cambio di tono narrativo, effetti audio, qualità delle risposte del Demiurgo.
 
 ---
 
@@ -130,7 +130,7 @@ La UI **non mostra mai il valore numerico del peso** al giocatore. Il feedback �
 
 [EVENT_RESOLVED]
   dialogue_history ← { role: 'user', content: 'examine leaves' }
-  dialogue_history ← { role: 'llm', content: '...' }
+  dialogue_history ← { role: 'demiurge', content: '...' }
 
 [DISPLAYING]
   typewriter: "You crouch and read the words: pleasure, friendship,
@@ -148,6 +148,5 @@ La UI **non mostra mai il valore numerico del peso** al giocatore. Il feedback �
 - Il parser è **puro e privo di stato** — `ParserService.parse()` è una funzione statica.
 - Il game engine è un **Riverpod `AsyncNotifier`** — `GameEngineProvider`.
 - Il contenuto dei nodi (testi narrativi) è definito staticamente in `game_engine_provider.dart`.
-  Futura evoluzione: spostare i bundle in `assets/texts/*.json` (GDD sezione 18).
-- La chiamata all'LLM è **stub** (restituisce il testo engine direttamente) fino alla Fase 0-omega.
-  Quando il modello è validato, sostituire `_llmStub()` con la chiamata reale.
+  I bundle in `assets/texts/*.json` e `assets/prompts/*.json` forniscono citazioni, trigger e frammenti statici aggiuntivi.
+- Il nome `llmPending` è rimasto per compatibilità storica, ma il runtime attuale è completamente offline e deterministico: nessun modello viene interrogato.

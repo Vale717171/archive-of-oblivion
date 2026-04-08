@@ -1,7 +1,7 @@
 // lib/core/storage/dialogue_history_service.dart
 // Author: GitHub Copilot — 2026-04-02
 // Persists the conversation history to SQLite (dialogue_history table).
-// Used by GameEngineNotifier to maintain a diegetic memory for future LLM context.
+// Used by GameEngineNotifier to maintain diegetic memory and session continuity.
 
 import 'database_service.dart';
 
@@ -13,7 +13,8 @@ class DialogueHistoryService {
   final _db = DatabaseService.instance;
 
   /// Save a single exchange to the history.
-  /// [role] must be one of: 'user' | 'llm' | 'demiurge' | 'system'
+  /// [role] must be one of: 'user' | 'llm' | 'demiurge' | 'system'.
+  /// Legacy 'llm' rows can still exist in migrated databases.
   Future<void> save({required String role, required String content}) async {
     final db = await _db.database;
     await db.insert('dialogue_history', {
@@ -34,7 +35,7 @@ class DialogueHistoryService {
   }
 
   /// Return the last [limit] entries in chronological order (oldest first).
-  /// Useful for building an LLM context window.
+  /// Useful for chronology-sensitive UI or future narrative context needs.
   Future<List<Map<String, dynamic>>> contextWindow({int limit = 10}) async {
     final db = await _db.database;
     final rows = await db.query(

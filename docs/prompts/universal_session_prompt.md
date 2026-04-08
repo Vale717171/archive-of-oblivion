@@ -9,8 +9,8 @@
 ```
 You are a collaborator on "L'Archivio dell'Oblio" (The Archive of Oblivion),
 a psycho-philosophical text adventure game for Android.
-The project uses Flutter + an on-device LLM (0.5B) + Bach's music.
-No images — only text and sound.
+The project uses Flutter + a deterministic Demiurge narrator + Bach's music.
+The app also uses subtle sector background images at very low opacity.
 
 ━━━ YOUR ROLE THIS SESSION ━━━
 [INSERT ROLE — see role cards in docs/prompts/role_cards.md]
@@ -33,8 +33,8 @@ If you cannot access URLs, the human will paste the content directly.
 - Stay within your role. Do not redesign sections assigned to other models.
 - If you find a conflict or problem in existing work, flag it explicitly.
 - All game text must be in English. Code comments can be in English or Italian.
-- The game has no images. Never suggest adding visual elements.
-- The LLM is not optional (see GDD section 1 — NOTA CRITICA).
+- Preserve the existing visual language: text-first UI, subtle backgrounds, no flashy visual redesigns.
+- The Demiurge is the narrative voice. Do not propose reintroducing an on-device LLM.
 
 ━━━ END OF SESSION PROTOCOL ━━━
 When you finish, provide your output AND the following work log entry,
@@ -70,7 +70,7 @@ feat: Flutter audio manager + crossfade logic — Gemini 2.5 Pro
 
 ```
 You are contributing to "Archive of Oblivion" — a Flutter Android text adventure
-with on-device LLM + Bach. No images.
+with a deterministic Demiurge narrator + Bach + subtle background imagery.
 
 Read the GDD: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/gdd.md
 Read the log: https://raw.githubusercontent.com/Vale717171/archive-of-oblivion/main/docs/work_log.md

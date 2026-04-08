@@ -8,6 +8,10 @@ class AppSettings {
   final bool reduceMotion;
   final bool highContrast;
   final bool commandAssist;
+  final bool musicEnabled;
+  final double musicVolume;
+  final bool sfxEnabled;
+  final double sfxVolume;
   final double textScale;
   final int typewriterMillis;
 
@@ -16,6 +20,10 @@ class AppSettings {
     required this.reduceMotion,
     required this.highContrast,
     required this.commandAssist,
+    required this.musicEnabled,
+    required this.musicVolume,
+    required this.sfxEnabled,
+    required this.sfxVolume,
     required this.textScale,
     required this.typewriterMillis,
   });
@@ -26,6 +34,10 @@ class AppSettings {
       reduceMotion: (map['reduce_motion'] as int? ?? 0) == 1,
       highContrast: (map['high_contrast'] as int? ?? 0) == 1,
       commandAssist: (map['command_assist'] as int? ?? 1) == 1,
+      musicEnabled: (map['music_enabled'] as int? ?? 1) == 1,
+      musicVolume: (map['music_volume'] as num? ?? 0.85).toDouble(),
+      sfxEnabled: (map['sfx_enabled'] as int? ?? 1) == 1,
+      sfxVolume: (map['sfx_volume'] as num? ?? 0.90).toDouble(),
       textScale: (map['text_scale'] as num? ?? 1.0).toDouble(),
       typewriterMillis: (map['typewriter_millis'] as num? ?? 22).toInt(),
     );
@@ -36,6 +48,10 @@ class AppSettings {
     bool? reduceMotion,
     bool? highContrast,
     bool? commandAssist,
+    bool? musicEnabled,
+    double? musicVolume,
+    bool? sfxEnabled,
+    double? sfxVolume,
     double? textScale,
     int? typewriterMillis,
   }) {
@@ -44,6 +60,10 @@ class AppSettings {
       reduceMotion: reduceMotion ?? this.reduceMotion,
       highContrast: highContrast ?? this.highContrast,
       commandAssist: commandAssist ?? this.commandAssist,
+      musicEnabled: musicEnabled ?? this.musicEnabled,
+      musicVolume: musicVolume ?? this.musicVolume,
+      sfxEnabled: sfxEnabled ?? this.sfxEnabled,
+      sfxVolume: sfxVolume ?? this.sfxVolume,
       textScale: textScale ?? this.textScale,
       typewriterMillis: typewriterMillis ?? this.typewriterMillis,
     );
@@ -65,6 +85,12 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
     return value;
   }
 
+  double _clampVolume(double value) {
+    if (value < 0.0) return 0.0;
+    if (value > 1.0) return 1.0;
+    return value;
+  }
+
   @override
   Future<AppSettings> build() async {
     return _fetchSettings();
@@ -79,11 +105,15 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
     return AppSettings.fromMap(DatabaseService.defaultAppSettingsRow);
   }
 
-  Future<void> update({
+  Future<void> saveSettings({
     bool? instantText,
     bool? reduceMotion,
     bool? highContrast,
     bool? commandAssist,
+    bool? musicEnabled,
+    double? musicVolume,
+    bool? sfxEnabled,
+    double? sfxVolume,
     double? textScale,
     int? typewriterMillis,
   }) async {
@@ -93,6 +123,10 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
       reduceMotion: reduceMotion,
       highContrast: highContrast,
       commandAssist: commandAssist,
+        musicEnabled: musicEnabled,
+        musicVolume: musicVolume == null ? null : _clampVolume(musicVolume),
+        sfxEnabled: sfxEnabled,
+        sfxVolume: sfxVolume == null ? null : _clampVolume(sfxVolume),
       textScale: textScale == null ? null : _clampTextScale(textScale),
       typewriterMillis: typewriterMillis == null
           ? null
@@ -108,6 +142,10 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
         'reduce_motion': next.reduceMotion ? 1 : 0,
         'high_contrast': next.highContrast ? 1 : 0,
         'command_assist': next.commandAssist ? 1 : 0,
+        'music_enabled': next.musicEnabled ? 1 : 0,
+        'music_volume': next.musicVolume,
+        'sfx_enabled': next.sfxEnabled ? 1 : 0,
+        'sfx_volume': next.sfxVolume,
         'text_scale': next.textScale,
         'typewriter_millis': next.typewriterMillis,
       },

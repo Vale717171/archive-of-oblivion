@@ -1,7 +1,7 @@
 // lib/features/game/text_bundle_service.dart
-// Loads and caches JSON text bundles and prompt templates from assets.
-// Bundles are used by the LLM context service (post Fase 0-omega).
-// The game engine uses hardcoded fallback text; bundles enrich LLM prompts.
+// Loads and caches JSON text bundles and static prompt templates from assets.
+// The active runtime uses deterministic engine text plus Demiurge bundles.
+// Legacy LLM services remain in the repo only for historical reference.
 
 import 'dart:convert';
 

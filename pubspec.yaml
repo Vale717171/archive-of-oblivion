@@ -29,7 +29,6 @@ flutter:
     - assets/texts/
     - assets/texts/demiurge/
     - assets/prompts/
-    - assets/config/
     - assets/images/bg_soglia.jpg
     - assets/images/bg_giardino.jpg
     - assets/images/bg_osservatorio.jpg

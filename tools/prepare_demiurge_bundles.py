@@ -30,14 +30,22 @@ Output: One JSON file per sector in the output directory, matching the schema:
 """
 
 import argparse
+import collections
 import json
 import os
 import random
+import re
 import sys
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import unicodedata
+
+try:
+    import generate_demiurge_offline as offline_demiurge
+except ImportError:
+    offline_demiurge = None
 
 # ── Sector author mapping ────────────────────────────────────────────────────
 
@@ -54,10 +62,13 @@ SECTOR_AUTHORS: dict[str, list[str]] = {
     "galleria": [
         "Leonardo da Vinci", "Michelangelo", "Luca Pacioli",
         "Giorgio Vasari", "Leon Battista Alberti", "Plutarch",
+        "Albrecht Dürer", "John Ruskin", "William Blake",
     ],
     "laboratorio": [
         "Paracelsus", "Hermes Trismegistus", "Roger Bacon",
-        "Jabir ibn Hayyan", "Basilius Valentinus",
+        "Jabir ibn Hayyan", "Basilius Valentinus", "Giordano Bruno",
+        "Heinrich Cornelius Agrippa", "John Dee", "Jakob Boehme",
+        "Francis Bacon",
     ],
     "universale": [
         "Lao Tzu", "Rumi", "Heraclitus", "Henry David Thoreau",
@@ -159,7 +170,22 @@ CLOSINGS: list[str] = [
 WIKIQUOTE_API = "https://en.wikiquote.org/w/api.php"
 
 
-def fetch_wikiquote_quotes(author: str, max_quotes: int = 60) -> list[str]:
+def _offline_sector_quotes(sector: str) -> list[tuple[str, str]]:
+    if offline_demiurge is None:
+        return []
+
+    attribute_name = f"{sector.upper()}_QUOTES"
+    quotes = getattr(offline_demiurge, attribute_name, [])
+    if isinstance(quotes, list):
+        return [
+            (citation, author)
+            for citation, author in quotes
+            if isinstance(citation, str) and isinstance(author, str)
+        ]
+    return []
+
+
+def fetch_wikiquote_quotes(author: str, max_quotes: int = 100) -> list[str]:
     """Fetch quotes from Wikiquote API for a given author.
 
     Returns a list of quote strings (best-effort; may return fewer than
@@ -236,6 +262,268 @@ GUTENBERG_IDS: dict[str, int] = {
 }
 
 
+def _normalize_quote_key(text: str) -> str:
+    """Canonicalize a quote so exact and near-exact duplicates collapse."""
+    normalized = unicodedata.normalize("NFKD", text)
+    normalized = normalized.encode("ascii", "ignore").decode("ascii")
+    normalized = normalized.lower().strip()
+    normalized = normalized.replace("—", " ").replace("–", " ")
+    normalized = re.sub(r"\s+", " ", normalized)
+    normalized = re.sub(r"^[\"'`]+|[\"'`]+$", "", normalized)
+    normalized = re.sub(r"[^a-z0-9 ]+", "", normalized)
+    normalized = re.sub(r"\s+", " ", normalized)
+    return normalized.strip()
+
+
+def _build_variant_sequence(
+    pool: list[str],
+    total: int,
+    rng: random.Random,
+) -> list[str]:
+    """Repeat a phrase pool with shuffled cycles and no immediate repeats."""
+    if not pool or total <= 0:
+        return []
+
+    sequence: list[str] = []
+    previous: str | None = None
+    while len(sequence) < total:
+        cycle = list(pool)
+        rng.shuffle(cycle)
+        if previous is not None and len(cycle) > 1 and cycle[0] == previous:
+            cycle.append(cycle.pop(0))
+        sequence.extend(cycle)
+        previous = sequence[-1]
+
+    return sequence[:total]
+
+
+def _find_repeated_blocks(
+    responses: list[dict[str, str]],
+    min_block_size: int = 5,
+) -> list[str]:
+    issues: list[str] = []
+    normalized_pairs = [
+        (
+            _normalize_quote_key(response["citation"]),
+            response["author"].strip().lower(),
+        )
+        for response in responses
+    ]
+
+    max_block_size = len(normalized_pairs) // 2
+    for block_size in range(max_block_size, min_block_size - 1, -1):
+        for start in range(0, len(normalized_pairs) - (block_size * 2) + 1):
+            left = normalized_pairs[start:start + block_size]
+            right = normalized_pairs[start + block_size:start + (block_size * 2)]
+            if left == right:
+                issues.append(
+                    "responses "
+                    f"{start + 1}-{start + block_size} repeat as a contiguous block in "
+                    f"responses {start + block_size + 1}-{start + (block_size * 2)}"
+                )
+                return issues
+
+    return issues
+
+
+def _dedupe_quotes(quotes: list[str]) -> list[str]:
+    seen: set[str] = set()
+    unique: list[str] = []
+    for quote in quotes:
+        normalized = _normalize_quote_key(quote)
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        unique.append(quote.strip())
+    return unique
+
+
+def _collect_author_quotes(
+    author: str,
+    rng: random.Random,
+) -> list[tuple[str, str]]:
+    quotes = fetch_wikiquote_quotes(author) + fetch_gutenberg_sentences(author)
+    unique_quotes = _dedupe_quotes(quotes)
+    rng.shuffle(unique_quotes)
+    return [(quote, author) for quote in unique_quotes]
+
+
+def _merge_sector_fallback_quotes(
+    sector: str,
+    author_quotes: dict[str, list[tuple[str, str]]],
+    rng: random.Random,
+) -> int:
+    fallback_quotes = _offline_sector_quotes(sector)
+    if not fallback_quotes:
+        return 0
+
+    known_keys: dict[str, set[str]] = {}
+    for author, quotes in author_quotes.items():
+        known_keys[author] = {
+            _normalize_quote_key(quote)
+            for quote, _ in quotes
+        }
+
+    additions = 0
+    fallback_by_author: dict[str, list[str]] = collections.defaultdict(list)
+    for quote, author in fallback_quotes:
+        normalized = _normalize_quote_key(quote)
+        if not normalized:
+            continue
+        if normalized in known_keys.setdefault(author, set()):
+            continue
+        known_keys[author].add(normalized)
+        fallback_by_author[author].append(quote.strip())
+        additions += 1
+
+    for author, quotes in fallback_by_author.items():
+        rng.shuffle(quotes)
+        author_quotes.setdefault(author, [])
+        author_quotes[author].extend((quote, author) for quote in quotes)
+
+    return additions
+
+
+def _select_balanced_quotes(
+    author_quotes: dict[str, list[tuple[str, str]]],
+    target: int,
+    rng: random.Random,
+) -> list[tuple[str, str]]:
+    queues = {
+        author: collections.deque(quotes)
+        for author, quotes in author_quotes.items()
+        if quotes
+    }
+    selected: list[tuple[str, str]] = []
+    recent_authors: collections.deque[str] = collections.deque(maxlen=2)
+
+    while queues and len(selected) < target:
+        candidate_authors = sorted(
+            queues,
+            key=lambda author: (-len(queues[author]), author),
+        )
+        preferred = [
+            author for author in candidate_authors if author not in recent_authors
+        ]
+        pool = preferred or candidate_authors
+        top_span = min(3, len(pool))
+        author = rng.choice(pool[:top_span])
+
+        selected.append(queues[author].popleft())
+        recent_authors.append(author)
+        if not queues[author]:
+            del queues[author]
+
+    return selected
+
+
+def _assign_voice_variants(
+    response_count: int,
+    rng: random.Random,
+) -> list[tuple[str, str]]:
+    opening_window = max(3, min(8, len(OPENINGS) // 5))
+    closing_window = max(3, min(8, len(CLOSINGS) // 5))
+    pair_window = 10
+
+    recent_openings: collections.deque[str] = collections.deque(maxlen=opening_window)
+    recent_closings: collections.deque[str] = collections.deque(maxlen=closing_window)
+    recent_pairs: collections.deque[tuple[str, str]] = collections.deque(maxlen=pair_window)
+    used_pairs: set[tuple[str, str]] = set()
+    variants: list[tuple[str, str]] = []
+
+    for _ in range(response_count):
+        opening_candidates = [
+            opening for opening in OPENINGS if opening not in recent_openings
+        ] or list(OPENINGS)
+        rng.shuffle(opening_candidates)
+
+        closing_candidates = [
+            closing for closing in CLOSINGS if closing not in recent_closings
+        ] or list(CLOSINGS)
+        rng.shuffle(closing_candidates)
+
+        chosen_pair: tuple[str, str] | None = None
+        for opening in opening_candidates:
+            for closing in closing_candidates:
+                pair = (opening, closing)
+                if pair in recent_pairs:
+                    continue
+                if pair in used_pairs and len(used_pairs) < (len(OPENINGS) * len(CLOSINGS)):
+                    continue
+                chosen_pair = pair
+                break
+            if chosen_pair is not None:
+                break
+
+        if chosen_pair is None:
+            chosen_pair = (opening_candidates[0], closing_candidates[0])
+
+        variants.append(chosen_pair)
+        recent_openings.append(chosen_pair[0])
+        recent_closings.append(chosen_pair[1])
+        recent_pairs.append(chosen_pair)
+        used_pairs.add(chosen_pair)
+
+    return variants
+
+
+def _validate_bundle(bundle: dict, target: int) -> list[str]:
+    """Return validation issues for a generated or existing bundle."""
+    issues: list[str] = []
+    responses = bundle.get("responses")
+    if not isinstance(responses, list):
+        return ["responses must be a list"]
+
+    if len(responses) < target:
+        issues.append(
+            f"bundle has {len(responses)} responses, below target {target}"
+        )
+
+    exact_seen: set[tuple[str, str]] = set()
+    normalized_seen: set[tuple[str, str]] = set()
+    voice_seen: set[tuple[str, str]] = set()
+    for index, response in enumerate(responses, start=1):
+        if set(response.keys()) != {"opening", "citation", "author", "closing"}:
+            issues.append(f"response {index} has unexpected keys")
+            continue
+        if not all(
+            isinstance(response[field], str) and response[field].strip()
+            for field in ("opening", "citation", "author", "closing")
+        ):
+            issues.append(f"response {index} has blank or non-string fields")
+            continue
+
+        exact_key = (
+            response["citation"].strip().lower(),
+            response["author"].strip().lower(),
+        )
+        if exact_key in exact_seen:
+            issues.append(f"response {index} duplicates an exact citation+author pair")
+        exact_seen.add(exact_key)
+
+        normalized_key = (
+            _normalize_quote_key(response["citation"]),
+            response["author"].strip().lower(),
+        )
+        if normalized_key in normalized_seen:
+            issues.append(
+                f"response {index} duplicates a normalized citation+author pair"
+            )
+        normalized_seen.add(normalized_key)
+
+        voice_key = (
+            response["opening"].strip(),
+            response["closing"].strip(),
+        )
+        if voice_key in voice_seen:
+            issues.append(f"response {index} duplicates an opening+closing pair")
+        voice_seen.add(voice_key)
+
+    issues.extend(_find_repeated_blocks(responses))
+
+    return issues
+
+
 def fetch_gutenberg_sentences(author: str, max_quotes: int = 40) -> list[str]:
     """Fetch notable sentences from a Project Gutenberg text.
 
@@ -274,7 +562,6 @@ def fetch_gutenberg_sentences(author: str, max_quotes: int = 40) -> list[str]:
         raw = raw[:end_idx]
 
     # Extract aphoristic sentences (40–200 chars, ending with period)
-    import re
     sentences = re.split(r"(?<=[.!?])\s+", raw)
     candidates: list[str] = []
     for s in sentences:
@@ -293,44 +580,34 @@ def build_sector_bundle(
     sector: str,
     authors: list[str],
     target: int = 200,
+    rng: random.Random | None = None,
 ) -> dict:
     """Build a complete Demiurge sector bundle with ≥target entries."""
-    all_quotes: list[tuple[str, str]] = []  # (quote, author)
+    rng = rng or random.Random()
+    author_quotes: dict[str, list[tuple[str, str]]] = {}
 
     for author in authors:
         print(f"  Fetching: {author}...")
-        # Wikiquote
-        wq = fetch_wikiquote_quotes(author)
-        for q in wq:
-            all_quotes.append((q, author))
-        # Gutenberg (supplementary)
-        gb = fetch_gutenberg_sentences(author)
-        for q in gb:
-            all_quotes.append((q, author))
+        author_quotes[author] = _collect_author_quotes(author, rng)
+        print(f"    -> {len(author_quotes[author])} unique quotes kept")
         # Be polite to APIs
         time.sleep(1)
 
-    # Deduplicate
-    seen: set[str] = set()
-    unique: list[tuple[str, str]] = []
-    for quote, author in all_quotes:
-        key = quote.lower().strip()
-        if key not in seen:
-            seen.add(key)
-            unique.append((quote, author))
+    fallback_additions = _merge_sector_fallback_quotes(sector, author_quotes, rng)
+    if fallback_additions:
+        print(f"  Added {fallback_additions} offline fallback quotes for sector '{sector}'")
 
-    random.shuffle(unique)
+    unique = _select_balanced_quotes(author_quotes, target, rng)
     print(f"  → {len(unique)} unique quotes for sector '{sector}' "
           f"(target: {target})")
 
-    # Build responses with random opening/closing pairs
+    # Build responses with balanced author distribution and low-repetition voice.
     responses: list[dict[str, str]] = []
-    openings_pool = list(OPENINGS)
-    closings_pool = list(CLOSINGS)
+    response_count = min(target, len(unique))
+    voice_variants = _assign_voice_variants(response_count, rng)
 
-    for i, (quote, author) in enumerate(unique[:max(target, len(unique))]):
-        opening = openings_pool[i % len(openings_pool)]
-        closing = closings_pool[i % len(closings_pool)]
+    for i, (quote, author) in enumerate(unique[:response_count]):
+        opening, closing = voice_variants[i]
         responses.append({
             "opening": opening,
             "citation": quote,
@@ -361,21 +638,46 @@ def main() -> None:
         default=200,
         help="Minimum citations per sector (default: 200)",
     )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=20260408,
+        help="Deterministic random seed for quote ordering and phrase cycling.",
+    )
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
+    rng = random.Random(args.seed)
+    validation_failed = False
 
     for sector, authors in SECTOR_AUTHORS.items():
         print(f"\n{'='*60}")
         print(f"Building sector: {sector}")
         print(f"{'='*60}")
-        bundle = build_sector_bundle(sector, authors, target=args.target)
+        bundle = build_sector_bundle(
+            sector,
+            authors,
+            target=args.target,
+            rng=rng,
+        )
+        issues = _validate_bundle(bundle, args.target)
+        if issues:
+            validation_failed = True
+            print("  ✗ Validation issues detected:", file=sys.stderr)
+            for issue in issues[:10]:
+                print(f"    - {issue}", file=sys.stderr)
+            if len(issues) > 10:
+                remaining = len(issues) - 10
+                print(f"    - ... and {remaining} more", file=sys.stderr)
         out_path = os.path.join(args.output_dir, f"{sector}.json")
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(bundle, f, indent=2, ensure_ascii=False)
         print(f"  ✓ Wrote {len(bundle['responses'])} entries → {out_path}")
 
     print(f"\n{'='*60}")
+    if validation_failed:
+        print("Generation completed with validation failures.", file=sys.stderr)
+        sys.exit(1)
     print("Done. Review the output files and curate as needed.")
     print(f"{'='*60}")
 

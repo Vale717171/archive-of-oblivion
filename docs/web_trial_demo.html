@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>L'Archivio dell'Oblio — Web Trial</title>
+  <style>
+    :root {
+      --bg: #0a0d12;
+      --panel: rgba(12, 16, 24, 0.88);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text: #efe7d8;
+      --muted: #c2b8a3;
+      --accent: #b99a58;
+      --accent-soft: rgba(185, 154, 88, 0.16);
+      --player: #9cc9ff;
+      --system: #d9c58f;
+      --error: #ffb6b6;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      --threshold-a: radial-gradient(circle at top, rgba(115, 130, 185, 0.20), transparent 45%), linear-gradient(160deg, #090c13 0%, #0d1018 100%);
+      --garden-a: radial-gradient(circle at top, rgba(117, 151, 110, 0.18), transparent 40%), linear-gradient(160deg, #0a0d12 0%, #121910 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--threshold-a);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      transition: background 600ms ease;
+    }
+
+    body.garden {
+      background: var(--garden-a);
+    }
+
+    .shell {
+      width: min(1100px, calc(100vw - 32px));
+      margin: 24px auto;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .sidebar {
+      padding: 24px;
+      position: sticky;
+      top: 24px;
+      height: fit-content;
+    }
+
+    .brand {
+      font-size: 2rem;
+      line-height: 1.05;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .subtitle,
+    .small,
+    .meta {
+      color: var(--muted);
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    .section {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--system);
+    }
+
+    .pill-row,
+    .command-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill,
+    button {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+
+    .pill:hover,
+    button:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .primary {
+      background: var(--accent);
+      color: #121212;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    .transcript {
+      padding: 24px;
+      min-height: calc(100vh - 48px);
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 18px;
+    }
+
+    .heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: start;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+    }
+
+    .heading h1 {
+      margin: 0;
+      font-size: 1.7rem;
+    }
+
+    .meta strong {
+      color: var(--text);
+    }
+
+    .log {
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-right: 6px;
+    }
+
+    .entry {
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.025);
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .entry.player {
+      align-self: flex-end;
+      max-width: 72%;
+      color: var(--player);
+      background: rgba(156, 201, 255, 0.06);
+    }
+
+    .entry.system {
+      color: var(--system);
+      background: rgba(185, 154, 88, 0.07);
+    }
+
+    .entry.error {
+      color: var(--error);
+      background: rgba(255, 182, 182, 0.06);
+    }
+
+    .input-area {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    input {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      padding: 16px 18px;
+      font: inherit;
+    }
+
+    input::placeholder {
+      color: rgba(239, 231, 216, 0.45);
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.95em;
+      color: #f2ddac;
+    }
+
+    @media (max-width: 920px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .transcript {
+        min-height: auto;
+      }
+
+      .entry.player {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="panel sidebar">
+      <p class="small">Web trial vertical slice</p>
+      <h1 class="brand">L'Archivio<br />dell'Oblio</h1>
+      <p class="subtitle">
+        A browser-playable teaser for the Archive: text, parser, ritual atmosphere, a first gate, and a small taste of the Demiurge.
+      </p>
+
+      <div class="section">
+        <h2>Current State</h2>
+        <div class="meta" id="stateSummary"></div>
+      </div>
+
+      <div class="section">
+        <h2>Suggested Commands</h2>
+        <div class="command-row" id="quickCommands"></div>
+      </div>
+
+      <div class="section">
+        <h2>Browser Audio</h2>
+        <div class="pill-row">
+          <button id="audioToggle" class="pill">Enable drone</button>
+          <button id="resetRun" class="pill">Reset run</button>
+        </div>
+        <p class="footer-note">
+          This demo uses a generated ambient drone, not the final soundtrack masters.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>How It Works</h2>
+        <p class="footer-note">
+          Try short commands like <code>go north</code>, <code>look</code>, <code>examine leaves</code>, <code>arrange leaves ...</code>, <code>wait</code>, <code>inventory</code>, and <code>hint</code>.
+        </p>
+      </div>
+    </aside>
+
+    <main class="panel transcript">
+      <div class="heading">
+        <div>
+          <div class="small" id="sectorLabel">Threshold</div>
+          <h1 id="nodeTitle">The Threshold</h1>
+        </div>
+        <div class="meta" id="inventorySummary"></div>
+      </div>
+
+      <div class="footer-note">
+        This is not the full game. It is a browser trial slice built to prove tone, parser feel, persistence, and atmosphere.
+      </div>
+
+      <section class="log" id="log"></section>
+
+      <form class="input-area" id="commandForm">
+        <input id="commandInput" autocomplete="off" spellcheck="false" placeholder="Type a short command..." />
+        <button type="submit" class="primary">Send</button>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'archive-oblivion-web-trial-v1';
+    const DEMIURGE = [
+      {
+        opening: 'The Archive answers uncertainty without deciding whether it is mercy.',
+        citation: 'The beginning and the greatest good is prudence.',
+        author: 'Epicurus',
+        closing: 'All That Is has heard worse commands and called them paths.'
+      },
+      {
+        opening: 'A mistake is only one of the names given to approach.',
+        citation: 'The impediment to action advances action. What stands in the way becomes the way.',
+        author: 'Marcus Aurelius',
+        closing: 'All That Is does not separate error from arrival too quickly.'
+      },
+      {
+        opening: 'The Garden prefers those who try again with more honesty than force.',
+        citation: 'We suffer more often in imagination than in reality.',
+        author: 'Seneca',
+        closing: 'The Archive records even hesitation as a kind of movement.'
+      }
+    ];
+
+    const NODES = {
+      intro_void: {
+        sector: 'Threshold',
+        title: 'Awakening',
+        text: 'Silence.\n\nThen — awareness.\n\nYou exist. You do not know why. A small empty notebook waits in your pocket. Ahead, a path forms where no path had been.',
+        exits: { north: 'la_soglia', forward: 'la_soglia', ahead: 'la_soglia' },
+        quick: ['go north', 'look', 'inventory']
+      },
+      la_soglia: {
+        sector: 'Threshold',
+        title: 'The Threshold',
+        text: 'A circular rotunda of black marble veined with silver. Four doors stand at the cardinal points. The amber door to the north carries the scent of earth. At the centre: a pentagonal pedestal waiting for things you do not yet possess.',
+        exits: { north: 'garden_portico', south: 'gallery_hall', east: 'obs_antechamber', west: 'lab_vestibule' },
+        quick: ['go north', 'examine pedestal', 'inventory', 'hint']
+      },
+      garden_portico: {
+        sector: 'Garden',
+        title: 'The Garden of Epicurus — Portico',
+        text: 'Worn stone columns hold a roof that barely interrupts the light. Words run along the shafts: ataraxia — aponia — philia — phronesis. The path north enters cypress shade.',
+        exits: { north: 'garden_cypress', south: 'la_soglia', back: 'la_soglia' },
+        quick: ['examine columns', 'go north', 'go south', 'hint']
+      },
+      garden_cypress: {
+        sector: 'Garden',
+        title: 'Cypress Avenue',
+        text: 'Leaves cover the stone path, each inscribed with a word. To the north you glimpse a dry fountain, but the avenue has not accepted your ordering of things yet.',
+        exits: { south: 'garden_portico', north: 'garden_fountain' },
+        quick: ['examine leaves', 'arrange leaves prudence friendship pleasure simplicity absence tranquillity memory', 'go south', 'hint']
+      },
+      garden_fountain: {
+        sector: 'Garden',
+        title: 'Dry Fountain',
+        text: 'A stone fountain, long dry. Its basin holds dust fine as ash. The passage north remains closed, as though the room were listening for patience rather than force.',
+        exits: { south: 'garden_cypress', north: 'garden_stelae' },
+        quick: ['wait', 'go south', 'hint', 'inventory']
+      },
+      garden_stelae: {
+        sector: 'Garden',
+        title: 'Circle of Stelae',
+        text: 'Eleven inscribed stelae stand around a twelfth, still blank. This is where the web trial ends for now. The full Archive continues beyond this ring of stone.',
+        exits: { south: 'garden_fountain' },
+        quick: ['go south', 'look', 'inventory']
+      }
+    };
+
+    const DEFAULT_STATE = {
+      currentNode: 'intro_void',
+      inventory: ['notebook'],
+      completedPuzzles: [],
+      counters: { fountainWaits: 0 },
+      log: []
+    };
+
+    let state = loadState();
+    let audioContext = null;
+    let audioNodes = null;
+
+    const logEl = document.getElementById('log');
+    const sectorLabelEl = document.getElementById('sectorLabel');
+    const nodeTitleEl = document.getElementById('nodeTitle');
+    const inventorySummaryEl = document.getElementById('inventorySummary');
+    const stateSummaryEl = document.getElementById('stateSummary');
+    const quickCommandsEl = document.getElementById('quickCommands');
+    const commandInputEl = document.getElementById('commandInput');
+    const commandFormEl = document.getElementById('commandForm');
+    const audioToggleEl = document.getElementById('audioToggle');
+    const resetRunEl = document.getElementById('resetRun');
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return structuredClone(DEFAULT_STATE);
+        return { ...structuredClone(DEFAULT_STATE), ...JSON.parse(raw) };
+      } catch {
+        return structuredClone(DEFAULT_STATE);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function currentNode() {
+      return NODES[state.currentNode];
+    }
+
+    function pushLog(role, text) {
+      state.log.push({ role, text });
+      if (state.log.length > 40) state.log = state.log.slice(-40);
+      saveState();
+      renderLog();
+    }
+
+    function renderLog() {
+      logEl.innerHTML = '';
+      for (const entry of state.log) {
+        const div = document.createElement('div');
+        div.className = `entry ${entry.role}`;
+        div.textContent = entry.text;
+        logEl.appendChild(div);
+      }
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function renderShell() {
+      const node = currentNode();
+      document.body.classList.toggle('garden', node.sector === 'Garden');
+      sectorLabelEl.textContent = node.sector;
+      nodeTitleEl.textContent = node.title;
+      inventorySummaryEl.innerHTML = `<strong>Inventory</strong><br>${state.inventory.join(', ')}`;
+      stateSummaryEl.innerHTML = `<strong>Node</strong><br>${node.title}<br><br><strong>Puzzles</strong><br>${state.completedPuzzles.length} solved`;
+      quickCommandsEl.innerHTML = '';
+      for (const command of node.quick) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'pill';
+        button.textContent = command;
+        button.addEventListener('click', () => runCommand(command));
+        quickCommandsEl.appendChild(button);
+      }
+    }
+
+    function ensureInitialLog() {
+      if (state.log.length > 0) return;
+      pushLog('system', currentNode().text);
+    }
+
+    function normalise(input) {
+      return input.trim().toLowerCase().replace(/[.,;:!?-]+/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+
+    function demiurgeReply() {
+      const pick = DEMIURGE[Math.floor(Math.random() * DEMIURGE.length)];
+      return `${pick.opening}\n\n"${pick.citation}"\n— ${pick.author}\n\n${pick.closing}`;
+    }
+
+    function go(direction) {
+      const nodeId = state.currentNode;
+      const node = currentNode();
+
+      if (nodeId === 'garden_cypress' && direction === 'north' && !state.completedPuzzles.includes('leaves_arranged')) {
+        return 'The leaves drift back across the path. Something in the order is still wrong.';
+      }
+      if (nodeId === 'garden_fountain' && direction === 'north' && !state.completedPuzzles.includes('fountain_waited')) {
+        return 'The way north remains sealed. The fountain has not yet decided that you have waited long enough.';
+      }
+
+      const dest = node.exits[direction];
+      if (!dest) return 'There is nothing in that direction.';
+      state.currentNode = dest;
+      saveState();
+      renderShell();
+      return NODES[dest].text;
+    }
+
+    function handleArrange(text) {
+      if (state.currentNode !== 'garden_cypress') {
+        return 'There is nothing here to arrange.';
+      }
+      const target = 'arrange leaves prudence friendship pleasure simplicity absence tranquillity memory';
+      if (normalise(text) === target) {
+        if (!state.completedPuzzles.includes('leaves_arranged')) {
+          state.completedPuzzles.push('leaves_arranged');
+          saveState();
+        }
+        return 'The leaves settle into a line that suddenly feels inevitable.\n\nprudence — friendship — pleasure — simplicity — absence — tranquillity — memory.\n\nThe path north opens.';
+      }
+      return 'The leaves arrange themselves briefly — then scatter.\n\nWhat comes first in Epicurean thought? What enables everything else?';
+    }
+
+    function handleWait() {
+      if (state.currentNode !== 'garden_fountain') {
+        return 'Time passes, but nothing here acknowledges it.';
+      }
+      state.counters.fountainWaits = (state.counters.fountainWaits || 0) + 1;
+      if (state.counters.fountainWaits >= 3 && !state.completedPuzzles.includes('fountain_waited')) {
+        state.completedPuzzles.push('fountain_waited');
+        saveState();
+        return 'On the third waiting, dust gathers into a shape and then releases it. The northern passage opens without drama.';
+      }
+      saveState();
+      return 'You wait.\n\nThe fountain does not answer, but the silence changes slightly.';
+    }
+
+    function handleExamine(subject) {
+      const nodeId = state.currentNode;
+      if (!subject) return currentNode().text;
+      if (nodeId === 'la_soglia' && subject.includes('pedestal')) {
+        return 'Five recesses. Inscribed: Ataraxia. The Constant. Proportion. The Catalyst. A fifth shape you cannot yet name.';
+      }
+      if (nodeId === 'garden_portico' && (subject.includes('columns') || subject.includes('column'))) {
+        return 'The columns read: ataraxia — aponia — philia — phronesis. Their order matters less than the relation between them.';
+      }
+      if (nodeId === 'garden_cypress' && subject.includes('leaves')) {
+        return 'Seven leaves bear seven words: pleasure, friendship, prudence, tranquillity, memory, simplicity, absence.';
+      }
+      if (nodeId === 'garden_fountain' && (subject.includes('fountain') || subject.includes('dust'))) {
+        return 'The basin holds dust fine as ash. The room seems to prefer patience over force.';
+      }
+      return demiurgeReply();
+    }
+
+    function handleHint() {
+      switch (state.currentNode) {
+        case 'intro_void':
+          return 'A path forms ahead. Short commands are enough.';
+        case 'la_soglia':
+          return 'The amber door to the north is the gentlest beginning.';
+        case 'garden_portico':
+          return 'The words on the columns are not decoration.';
+        case 'garden_cypress':
+          return 'The order begins with what makes the rest possible.';
+        case 'garden_fountain':
+          return 'This room wants waiting, not solving.';
+        default:
+          return 'The web trial is intentionally small. Keep going north.';
+      }
+    }
+
+    function runCommand(raw) {
+      const command = raw.trim();
+      if (!command) return;
+
+      pushLog('player', command);
+
+      const input = normalise(command);
+      let response;
+
+      if (input === 'look' || input === 'l') {
+        response = currentNode().text;
+      } else if (input === 'inventory' || input === 'i') {
+        response = `You are carrying: ${state.inventory.join(', ')}.`;
+      } else if (input === 'hint' || input === 'hint more' || input === 'hint full') {
+        response = handleHint();
+      } else if (input.startsWith('go ')) {
+        response = go(input.slice(3));
+      } else if (['north', 'south', 'east', 'west', 'forward', 'ahead', 'back'].includes(input)) {
+        response = go(input);
+      } else if (input.startsWith('examine ') || input.startsWith('look at ')) {
+        const subject = input.replace(/^examine\s+/, '').replace(/^look at\s+/, '');
+        response = handleExamine(subject);
+      } else if (input.startsWith('arrange')) {
+        response = handleArrange(input);
+      } else if (input === 'wait' || input === 'z') {
+        response = handleWait();
+      } else if (input === 'help') {
+        response = 'Try: go north, look, examine leaves, arrange leaves prudence friendship pleasure simplicity absence tranquillity memory, wait, inventory, hint.';
+      } else {
+        response = demiurgeReply();
+      }
+
+      renderShell();
+      pushLog(response.includes('nothing in that direction') ? 'error' : 'system', response);
+    }
+
+    function resetRun() {
+      state = structuredClone(DEFAULT_STATE);
+      saveState();
+      renderShell();
+      ensureInitialLog();
+      renderLog();
+    }
+
+    function toggleAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (audioNodes) {
+        audioNodes.gain.gain.setTargetAtTime(0.0001, audioContext.currentTime, 0.25);
+        setTimeout(() => {
+          audioNodes.oscA.stop();
+          audioNodes.oscB.stop();
+          audioNodes.filter.disconnect();
+          audioNodes.gain.disconnect();
+          audioNodes = null;
+          audioToggleEl.textContent = 'Enable drone';
+        }, 500);
+        return;
+      }
+
+      const oscA = audioContext.createOscillator();
+      const oscB = audioContext.createOscillator();
+      const filter = audioContext.createBiquadFilter();
+      const gain = audioContext.createGain();
+
+      oscA.type = 'triangle';
+      oscB.type = 'sine';
+      oscA.frequency.value = 73.42;
+      oscB.frequency.value = 110.0;
+      filter.type = 'lowpass';
+      filter.frequency.value = 420;
+      gain.gain.value = 0.0001;
+
+      oscA.connect(filter);
+      oscB.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioContext.destination);
+      oscA.start();
+      oscB.start();
+      gain.gain.setTargetAtTime(0.035, audioContext.currentTime, 0.35);
+
+      audioNodes = { oscA, oscB, filter, gain };
+      audioToggleEl.textContent = 'Disable drone';
+    }
+
+    commandFormEl.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const value = commandInputEl.value;
+      commandInputEl.value = '';
+      runCommand(value);
+      commandInputEl.focus();
+    });
+
+    audioToggleEl.addEventListener('click', toggleAudio);
+    resetRunEl.addEventListener('click', resetRun);
+
+    renderShell();
+    ensureInitialLog();
+    renderLog();
+    commandInputEl.focus();
+  </script>
+</body>
+</html>

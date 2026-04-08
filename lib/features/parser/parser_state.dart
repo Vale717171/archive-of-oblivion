@@ -13,6 +13,8 @@ enum ParserPhase {
   idle,
   parsing,
   evaluating,
+  // Historical name retained for compatibility; this now represents
+  // Demiurge augmentation latency rather than a live LLM round-trip.
   llmPending,
   displaying,
   eventResolved,
@@ -77,7 +79,7 @@ class EngineResponse {
   /// Text to display to the player (typewriter effect in UI).
   final String narrativeText;
 
-  /// When true, [narrativeText] is a fallback; the LLM should augment it.
+  /// When true, [narrativeText] is a fallback; the Demiurge should augment it.
   final bool needsLlm;
 
   /// Navigate to this node (null = stay in place).

@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 
 class DatabaseService {
   static const _databaseName = "oblivion_archive.db";
-  static const _databaseVersion = 4;
+  static const _databaseVersion = 5;
   static const int defaultLucidity = 50;
   static const int defaultOblivionLevel = 0;
   static const int defaultAnxiety = 10;
@@ -21,6 +21,10 @@ class DatabaseService {
     'reduce_motion': 0,
     'high_contrast': 0,
     'command_assist': 1,
+    'music_enabled': 1,
+    'music_volume': 0.85,
+    'sfx_enabled': 1,
+    'sfx_volume': 0.90,
     'text_scale': 1.0,
     'typewriter_millis': 22,
   };
@@ -72,7 +76,7 @@ class DatabaseService {
       )
     ''');
 
-    // 2. Profilo Psicologico (influenzato dalle scelte e dall'LLM)
+    // 2. Profilo Psicologico (influenzato dalle scelte del giocatore)
     await db.execute('''
       CREATE TABLE psycho_profile (
         id INTEGER PRIMARY KEY CHECK (id = 1),
@@ -82,8 +86,8 @@ class DatabaseService {
       )
     ''');
 
-    // 3. Cronologia Dialoghi (Memoria LLM)
-    // Usiamo indici su timestamp per query veloci quando peschiamo il context window
+    // 3. Cronologia Dialoghi (memoria diegetica della sessione)
+    // Usiamo indici su timestamp per query veloci quando peschiamo la cronologia recente.
     await db.execute('''
       CREATE TABLE dialogue_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -113,6 +117,10 @@ class DatabaseService {
         reduce_motion INTEGER NOT NULL DEFAULT 0,
         high_contrast INTEGER NOT NULL DEFAULT 0,
         command_assist INTEGER NOT NULL DEFAULT 1,
+        music_enabled INTEGER NOT NULL DEFAULT 1,
+        music_volume REAL NOT NULL DEFAULT 0.85,
+        sfx_enabled INTEGER NOT NULL DEFAULT 1,
+        sfx_volume REAL NOT NULL DEFAULT 0.90,
         text_scale REAL NOT NULL DEFAULT 1.0,
         typewriter_millis INTEGER NOT NULL DEFAULT 22
       )
@@ -180,6 +188,10 @@ class DatabaseService {
             reduce_motion INTEGER NOT NULL DEFAULT 0,
             high_contrast INTEGER NOT NULL DEFAULT 0,
             command_assist INTEGER NOT NULL DEFAULT 1,
+            music_enabled INTEGER NOT NULL DEFAULT 1,
+            music_volume REAL NOT NULL DEFAULT 0.85,
+            sfx_enabled INTEGER NOT NULL DEFAULT 1,
+            sfx_volume REAL NOT NULL DEFAULT 0.90,
             text_scale REAL NOT NULL DEFAULT 1.0,
             typewriter_millis INTEGER NOT NULL DEFAULT 22
           )
@@ -188,6 +200,22 @@ class DatabaseService {
           'app_settings',
           defaultAppSettingsRow,
           conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      });
+    }
+    if (oldVersion < 5) {
+      await db.transaction((txn) async {
+        await txn.execute(
+          'ALTER TABLE app_settings ADD COLUMN music_enabled INTEGER NOT NULL DEFAULT 1',
+        );
+        await txn.execute(
+          'ALTER TABLE app_settings ADD COLUMN music_volume REAL NOT NULL DEFAULT 0.85',
+        );
+        await txn.execute(
+          'ALTER TABLE app_settings ADD COLUMN sfx_enabled INTEGER NOT NULL DEFAULT 1',
+        );
+        await txn.execute(
+          'ALTER TABLE app_settings ADD COLUMN sfx_volume REAL NOT NULL DEFAULT 0.90',
         );
       });
     }

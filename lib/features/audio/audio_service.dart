@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_session/audio_session.dart';
 import 'audio_track_catalog.dart';
+import '../settings/app_settings_provider.dart';
 import '../state/game_state_provider.dart';
 import '../state/psycho_provider.dart';
 
@@ -34,7 +35,9 @@ class AudioService {
   Future<void> _audioOperationQueue = Future.value();
   ProviderSubscription<AsyncValue<GameState>>? _gameStateSubscription;
   ProviderSubscription<AsyncValue<PsychoProfile>>? _psychoSubscription;
+  ProviderSubscription<AsyncValue<AppSettings>>? _settingsSubscription;
   PsychoProfile? _lastProfile;
+  AppSettings? _lastSettings;
   String? _currentAmbienceKey;
   String? _currentNodeId;
 
@@ -60,6 +63,17 @@ class AudioService {
       },
     );
 
+    _settingsSubscription = container.listen<AsyncValue<AppSettings>>(
+      appSettingsProvider,
+      (_, next) {
+        final settings = next.valueOrNull;
+        if (settings != null) {
+          _lastSettings = settings;
+          _applySettings(settings);
+        }
+      },
+    );
+
     // Ascolta psychoProfileProvider tramite ProviderContainer
     // (i provider Riverpod non sono Stream — richiede container.listen)
     _psychoSubscription = container.listen<AsyncValue<PsychoProfile>>(
@@ -77,25 +91,44 @@ class AudioService {
     if (initialProfile != null) {
       _lastProfile = initialProfile;
     }
+    final initialSettings = container.read(appSettingsProvider).valueOrNull;
+    if (initialSettings != null) {
+      _lastSettings = initialSettings;
+    }
     final initialGameState = container.read(gameStateProvider).valueOrNull;
     if (initialGameState != null) {
       syncForNode(initialGameState.currentNode);
     }
   }
 
-  Future<void> syncForNode(String nodeId) async {
+  Future<void> syncForNode(String nodeId, {bool force = false}) async {
     await _enqueueAudioOperation(() async {
-      final trackKey = AudioTrackCatalog.trackForNode(nodeId);
-      if (trackKey == null) return;
-      if (_currentNodeId == nodeId && _currentAmbienceKey == trackKey) return;
-      if (trackKey == 'silence') {
-        final applied = await _handleSilenceEnding();
-        if (applied) _currentNodeId = nodeId;
-        return;
-      }
-      final applied = await _crossfadeTo(trackKey);
-      if (applied) _currentNodeId = nodeId;
+      await _syncForNodeInternal(nodeId, force: force);
     });
+  }
+
+  Future<void> _syncForNodeInternal(String nodeId, {bool force = false}) async {
+    final previousNodeId = _currentNodeId;
+    final trackKey = AudioTrackCatalog.trackForNode(nodeId);
+    if (trackKey == null) return;
+
+    _currentNodeId = nodeId;
+    if (!force && previousNodeId == nodeId && _currentAmbienceKey == trackKey) {
+      return;
+    }
+    if (!_isMusicEnabled) {
+      _currentAmbienceKey = trackKey;
+      await _backgroundPlayer.stop();
+      await _backgroundPlayer.setVolume(0.0);
+      return;
+    }
+    if (trackKey == 'silence') {
+      final applied = await _handleSilenceEnding();
+      if (applied) _currentAmbienceKey = trackKey;
+      return;
+    }
+    final applied = await _crossfadeTo(trackKey);
+    if (applied) _currentAmbienceKey = trackKey;
   }
 
   /// Processes an [audioTrigger] string emitted by [EngineResponse].
@@ -111,6 +144,9 @@ class AudioService {
   Future<void> handleTrigger(String? trigger) async {
     await _enqueueAudioOperation(() async {
       if (trigger == null) return;
+      if (!_isMusicEnabled && !trigger.startsWith('sfx:')) {
+        return;
+      }
       if (trigger.startsWith('sfx:')) {
         final sfxKey = trigger.substring(4); // strip 'sfx:' prefix
         final asset  = _sfxAssets[sfxKey];
@@ -140,6 +176,7 @@ class AudioService {
       // Profile-driven updates modulate the active room track, but never
       // replace explicit finale/memory cues.
       if (_currentAmbienceKey == null ||
+          !_isMusicEnabled ||
           AudioTrackCatalog.specialTracks.contains(_currentAmbienceKey)) {
         return;
       }
@@ -147,8 +184,28 @@ class AudioService {
     });
   }
 
+  Future<void> _applySettings(AppSettings settings) async {
+    await _enqueueAudioOperation(() async {
+      if (!settings.musicEnabled || settings.musicVolume <= 0) {
+        await _backgroundPlayer.stop();
+        await _backgroundPlayer.setVolume(0.0);
+        return;
+      }
+
+      if (_currentNodeId != null) {
+        final activeTrack = AudioTrackCatalog.trackForNode(_currentNodeId!);
+        if (_currentAmbienceKey != activeTrack || !_backgroundPlayer.playing) {
+          await _syncForNodeInternal(_currentNodeId!, force: true);
+          return;
+        }
+      }
+
+      await _applyCurrentMix();
+    });
+  }
+
   Future<bool> _crossfadeTo(String key) async {
-    if (_currentAmbienceKey == key) return true;
+    if (_currentAmbienceKey == key && _backgroundPlayer.playing) return true;
     final asset = AudioTrackCatalog.assetForKey(key);
     if (asset == null || !await _assetExists(asset)) return false;
     try {
@@ -156,7 +213,6 @@ class AudioService {
       await _backgroundPlayer.setAsset(asset);
       await _backgroundPlayer.play();
       await _rampVolume(_targetVolumeFor(key));
-      _currentAmbienceKey = key;
       return true;
     } catch (e) {
       // Fallback silenzioso — non crasha mai su 3 GB RAM
@@ -193,7 +249,7 @@ class AudioService {
 
   Future<void> _enqueueAudioOperation(Future<void> Function() operation) {
     _audioOperationQueue =
-        _audioOperationQueue.then((_ignored) => operation()).catchError((error, stackTrace) {
+        _audioOperationQueue.then((_) => operation()).catchError((error, stackTrace) {
       // ignore: avoid_print
       print('Queued audio operation failed: $error\n$stackTrace');
     });
@@ -202,15 +258,17 @@ class AudioService {
 
   Future<void> _applyCurrentMix({double intensityOffset = 0.0}) async {
     final currentKey = _currentAmbienceKey;
-    if (currentKey == null || currentKey == 'silence') return;
+    if (currentKey == null || currentKey == 'silence' || !_isMusicEnabled) return;
     await _rampVolume(_targetVolumeFor(currentKey, intensityOffset: intensityOffset));
   }
 
   double _targetVolumeFor(String key, {double intensityOffset = 0.0}) {
-    if (key == 'aria_goldberg') return _ariaGoldbergVolume;
-    if (key == 'siciliano') return _sicilianoVolume;
-    if (key == 'oblivion') return _oblivionVolume;
-    if (key == 'zona' || key == 'zona_eternal') return _zoneVolume;
+    final musicScale = _musicVolumeScale;
+    if (!_isMusicEnabled || musicScale <= 0) return 0.0;
+    if (key == 'aria_goldberg') return _ariaGoldbergVolume * musicScale;
+    if (key == 'siciliano') return _sicilianoVolume * musicScale;
+    if (key == 'oblivion') return _oblivionVolume * musicScale;
+    if (key == 'zona' || key == 'zona_eternal') return _zoneVolume * musicScale;
 
     final profile = _lastProfile;
     var target = _baseTrackVolume;
@@ -219,8 +277,16 @@ class AudioService {
       target -= (profile.oblivionLevel / 100) * _oblivionVolumeScale;
       target += (profile.lucidity / 100) * _lucidityVolumeScale;
     }
-    return (target + intensityOffset).clamp(_minMixVolume, _maxMixVolume);
+    return ((target + intensityOffset) * musicScale).clamp(0.0, _maxMixVolume);
   }
+
+  bool get _isMusicEnabled => (_lastSettings?.musicEnabled ?? true);
+
+  double get _musicVolumeScale => (_lastSettings?.musicVolume ?? 0.85).clamp(0.0, 1.0);
+
+  bool get _isSfxEnabled => (_lastSettings?.sfxEnabled ?? true);
+
+  double get _sfxVolumeScale => (_lastSettings?.sfxVolume ?? 0.90).clamp(0.0, 1.0);
 
   Future<bool> _assetExists(String asset) async {
     if (_availableAssets.contains(asset)) return true;
@@ -250,10 +316,12 @@ class AudioService {
   }
 
   Future<void> playSFX(String sfxAsset) async {
+    if (!_isSfxEnabled || _sfxVolumeScale <= 0) return;
     if (!await _assetExists(sfxAsset)) return;
     final sfxPlayer = AudioPlayer();
     try {
       await sfxPlayer.setAsset(sfxAsset);
+      await sfxPlayer.setVolume(_sfxVolumeScale);
       await sfxPlayer.play();
       // Dispose when done, with a safety timeout to avoid leaks
       sfxPlayer.processingStateStream
@@ -271,6 +339,7 @@ class AudioService {
   void dispose() {
     _gameStateSubscription?.close();
     _psychoSubscription?.close();
+    _settingsSubscription?.close();
     _backgroundPlayer.dispose();
   }
 }

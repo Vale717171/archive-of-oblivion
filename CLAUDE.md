@@ -107,11 +107,11 @@ The on-device LLM (flutter_llama / Qwen 2.5 0.5B) was replaced by a fully determ
 
 | File | Sector | Entries now | Target |
 |---|---|---|---|
-| `giardino.json` | Garden (North) | 12 | ≥ 200 |
-| `osservatorio.json` | Observatory (East) | 12 | ≥ 200 |
-| `galleria.json` | Gallery (South) | 12 | ≥ 200 |
-| `laboratorio.json` | Lab (West) | 12 | ≥ 200 |
-| `universale.json` | Universal fallback | 12 | ≥ 200 |
+| `giardino.json` | Garden (North) | 200 | 200 |
+| `osservatorio.json` | Observatory (East) | 200 | 200 |
+| `galleria.json` | Gallery (South) | 200 | 200 |
+| `laboratorio.json` | Lab (West) | 200 | 200 |
+| `universale.json` | Universal fallback | 200 | 200 |
 
 **All citations must be from public-domain sources.**
 To populate bundles, run: `python tools/prepare_demiurge_bundles.py [--output-dir assets/texts/demiurge] [--target 200]`
@@ -125,8 +125,8 @@ The script fetches from Wikiquote API and Project Gutenberg.
 **Was:** Items with `weightDelta == 0` (simulacra) were never added to inventory because the old guard was `if (weightDelta > 0) { addToInventory }`.
 **Fix:** Inventory addition is now driven exclusively by `response.grantItem != null` (line ~1168 in `game_engine_provider.dart`), completely decoupled from `weightDelta`. Weight increment is still correctly skipped when `weightDelta == 0`.
 
-### ⚠️ OPEN — Demiurge bundles under-populated
-Each sector has only 12 entries. With the anti-repetition window of 20, a player will see all 12 entries before any reset and may notice repetition quickly. **Priority: populate each bundle to ≥200 citations.**
+### ✅ FIXED — Demiurge bundle duplication and oversizing
+The checked-in sector bundles were regenerated and audited on 2026-04-08. All five sector bundles now contain 200 responses each, with the strengthened generation pipeline enforcing stricter quote deduplication, balanced author selection, local voice-pair anti-repetition, and offline fallback supplementation for sparse source sectors.
 
 ---
 
@@ -195,8 +195,8 @@ tools/
 5. ~~Fifth Sector (Memory/Proust) + Final Boss~~ ✅ **DONE** — 6 Quinto nodes + 4 Finale nodes, three endings.
 6. ~~LLM integration~~ **SUPERSEDED** — replaced by DemiurgeService ("All That Is").
 7. ~~DemiurgeService integration~~ ✅ **DONE** — wired into `game_engine_provider.dart`, pre-loaded in `main.dart`.
-8. **⟶ NEXT: Populate Demiurge bundles to ≥200 citations per sector.** Run `tools/prepare_demiurge_bundles.py` or add entries manually. Public domain only. Format: `{opening, citation, author, closing}` objects in the `responses` array.
-9. End-to-end playtest on a physical Android device (API 26+, 3 GB RAM). Verify all sector transitions, puzzle gates, La Zona activation, three endings.
+8. ~~Regenerate or curate Demiurge bundles to remove duplicate citations and repeated blocks per sector~~ ✅ **DONE** — `prepare_demiurge_bundles.py` hardened, sparse sectors supplemented by curated offline fallback, and `audit_demiurge_bundles.py` passes on all five 200-entry bundles.
+9. **⟶ NEXT: End-to-end playtest on a physical Android device** (API 26+, 3 GB RAM). Verify all sector transitions, puzzle gates, La Zona activation, three endings.
 10. Polish: audio balance, typewriter speed tuning, edge-case command handling.
 
 ---

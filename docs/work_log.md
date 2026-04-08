@@ -4,6 +4,383 @@
 
 ---
 
+### 2026-04-08 — GitHub Copilot (Linux Android SDK local path fix)
+**Role:** Build-environment alignment
+
+**Done:**
+
+- **Corrected `android/local.properties`** from a stale macOS SDK path to the active Linux/Codespaces SDK path at `/home/codespace/Android/Sdk`.
+- **Verified the local Android SDK layout exists** under the Linux home directory, including `cmdline-tools/latest`.
+- **Separated shell-vs-file confusion** so the local properties content is now stored in the right place instead of being treated as bash commands.
+
+**Validation note:** The next step is to rerun the Android build from the project root. If Gradle still reports missing components, the SDK path is now correct and the remaining work is only package installation via `sdkmanager`.
+
+**Architecture snapshot:**
+The repository no longer points Android builds at a machine-specific macOS path in this workspace, reducing one class of environment-specific build failure.
+
+### 2026-04-08 — GitHub Copilot (Boss utterance classifier extraction)
+**Role:** Finale regression hardening, pure-rule extraction
+
+**Done:**
+
+- **Extracted a pure boss-utterance classifier** from the Antagonist handler so surrender, remain, resolution, and fallback branches can be tested directly.
+- **Rewired `_handleBossInput()` to use the shared classifier**, removing duplicated keyword logic from the finale branch selection path.
+- **Extended `game_engine_helpers_test.dart`** to cover representative utterances for Oblivion, Eternal Zone, Acceptance, and neutral fallback.
+
+**Validation note:** Static diagnostics are the immediate check here; full execution still depends on the next green `flutter test` run.
+
+**Architecture snapshot:**
+The boss-resolution path is now less implicit. Finale branch selection depends on an explicit, reusable classifier rather than scattered keyword checks embedded only inside the handler.
+
+### 2026-04-08 — GitHub Copilot (Gate/Zone helper extraction)
+**Role:** Engine regression hardening, pure-helper extraction
+
+**Done:**
+
+- **Extracted public pure helpers from `game_engine_provider.dart`** for exit-gate lookup, gate-hint lookup, and Zone transit eligibility.
+- **Rewired the engine to use the extracted helpers internally**, so tests and runtime now read the same source of truth for gate and transit classification.
+- **Expanded `game_engine_helpers_test.dart`** to cover representative gate requirements, gate hint resolution, and conservative Zone eligibility rules around Memory, Finale, Nucleus, and Zone transitions.
+
+**Validation note:** This is a behavior-preserving extraction aimed at testability and drift prevention; a fresh `flutter test` run remains the final execution check.
+
+**Architecture snapshot:**
+Critical progression metadata is now less buried inside the notifier implementation. The suite can directly assert gate and Zone-transition rules without depending on widget orchestration or device runtime.
+
+### 2026-04-08 — GitHub Copilot (Parser/audio regression expansion)
+**Role:** Low-risk QA hardening before device playtest
+
+**Done:**
+
+- **Expanded parser regression coverage** with alias-heavy commands (`pick`, `push`, `give`, `reverse`, `adjust`, `speak`) plus an explicit unknown-verb preservation check.
+- **Expanded audio catalog regression coverage** with sector fallback checks, explicit asset resolution checks, and representative audio/background family alignment checks for garden, memory, and zone nodes.
+- **Kept the work focused on pure deterministic surfaces** so the suite catches more drift without introducing widget/device complexity.
+
+**Validation note:** The next useful verification step is a fresh `flutter test` run to execute the newly added cases.
+
+**Architecture snapshot:**
+The automated suite now guards more of the parser's synonym surface and more of the packaging/runtime assumptions around audio routing, which lowers the chance of subtle command or asset-regression bugs slipping into the first physical-device pass.
+
+### 2026-04-08 — GitHub Copilot (Runtime/documentation alignment pass)
+**Role:** Documentation drift cleanup, collaborator prompt alignment
+
+**Done:**
+
+- **Aligned active comments and helper docs with the current Demiurge architecture** across parser/storage/bundle services so future maintenance is no longer pointed at a removed on-device LLM runtime.
+- **Updated collaborator prompts in `docs/prompts/`** to reflect the actual project state: deterministic narrator, subtle background imagery already present, and current release priorities instead of obsolete Fase 0-omega instructions.
+- **Corrected the README release-gap wording** so audio placeholders are recognized as already present and usable for device-side runtime verification.
+
+**Validation note:** Editor diagnostics report no errors in the touched Dart files. This pass changed wording and guidance only; no gameplay logic changed.
+
+**Architecture snapshot:**
+The repository is now more self-consistent for future sessions: the live runtime is described as deterministic and Demiurge-driven across code comments, collaboration prompts, and release-facing docs, reducing the risk of future contributors following stale LLM-era instructions.
+
+### 2026-04-08 — GitHub Copilot (Manifest/helper consistency tests)
+**Role:** Regression coverage, runtime/catalog alignment
+
+**Done:**
+
+- **Expanded `game_engine_helpers_test.dart`** to cover more sector-label edge cases and untitled-node fallbacks.
+- **Added `test/audio_manifest_consistency_test.dart`** to verify that the declared audio manifest stays aligned with the runtime audio catalog and does not drift into duplicate-key mistakes.
+- **Updated implementation-status notes** to reflect the broader automated consistency coverage now present in the repository.
+
+**Validation note:** A fresh terminal-side `flutter test` run is still needed to execute the newly added tests.
+
+**Architecture snapshot:**
+The repository now guards not only logic helpers but also a key integration seam: the declared audio asset manifest must stay consistent with the runtime track catalog, reducing one class of pre-release packaging errors.
+
+### 2026-04-08 — GitHub Copilot (Placeholder audio verified)
+**Role:** Audio validation, pre-device checkpoint
+
+**Done:**
+
+- **Confirmed the placeholder audio pipeline is operational** after local asset generation.
+- **Confirmed repository-side verification completes successfully** with `tools/audit_audio_assets.py` in the user terminal.
+- **Confirmed `flutter analyze` and `flutter test` still pass** with placeholder audio present in the repository.
+- **Confirmed the automated suite is now green at 18 passing tests** in the current workspace state.
+
+**Validation note:** Dependency update notices remain informational only and did not block audio verification, analysis, or tests.
+
+**Architecture snapshot:**
+The project now has a fully testable audio path for phone playtesting: declared manifest, generated placeholder assets, runtime routing, persisted music/SFX controls, repository audit tooling, analyzer-clean code, and a green test suite.
+
+### 2026-04-08 — GitHub Copilot (Placeholder audio generation path)
+**Role:** Audio integration, legal-risk reduction, device-test enablement
+
+**Done:**
+
+- **Added `tools/generate_placeholder_audio.py`** to synthesize temporary `.ogg` assets locally with `ffmpeg`, matching the planned audio catalog without downloading third-party recordings.
+- **Updated the audio pipeline docs** so the safest immediate path for phone testing is now explicit: generate placeholders, audit them, then run analyze/test.
+- **Updated README and implementation-status docs** so this route is visible as part of the current release-readiness workflow.
+
+**Architecture snapshot:**
+The project now has two valid audio onboarding paths: final licensed masters later, or immediately generated placeholder audio now. That means device-side audio testing no longer has to wait on music sourcing decisions.
+
+### 2026-04-08 — GitHub Copilot (Audio import pipeline prep)
+**Role:** Release-readiness tooling, audio integration support
+
+**Done:**
+
+- **Added `tools/audit_audio_assets.py`** to compare the declared audio catalog in `assets/audio/manifest.json` against the actual repository files.
+- **Added `docs/audio_asset_pipeline.md`** to define a safe workflow for importing real audio masters with license awareness and repository verification.
+- **Updated `README.md` and `docs/implementation_status.md`** so the new audio import tooling is part of the documented pre-release process.
+
+**Architecture snapshot:**
+Audio is still content-incomplete, but the project now has a clearer operational path from planned catalog to shipped assets: declared manifest, runtime routing, persistent settings, and a repository-side audit tool.
+
+### 2026-04-08 — GitHub Copilot (Browser trial vertical slice)
+**Role:** Web-facing prototype, pre-release presentation support
+
+**Done:**
+
+- **Added `docs/web_trial_demo.html`** as a standalone browser-playable teaser for the project.
+- **Kept the slice intentionally self-contained** so it does not depend on Flutter web, `sqflite`, or the mobile runtime stack.
+- **Included parser-style interaction, local save via browser storage, a small Garden gate, and a generated ambient drone** to approximate atmosphere without shipping external audio files.
+- **Updated repository docs** so the HTML trial is now discoverable from the README and implementation-status matrix.
+
+**Architecture snapshot:**
+The project now has two presentational surfaces: the main Flutter application for the full game, and a lightweight HTML vertical slice for quick browser sharing and tone validation while a full web port remains out of scope for now.
+
+### 2026-04-08 — GitHub Copilot (Parser/background regression pass)
+**Role:** Automated coverage, coherence cleanup
+
+**Done:**
+
+- **Expanded parser regression coverage** with additional tests for shortcuts, stop-word stripping, movement normalization, and creative/ritual verb routing.
+- **Added `test/background_service_test.dart`** to cover sector/node background mapping and startup fallback behavior.
+- **Cleaned a remaining legacy parser-state comment** so `needsLlm` now reflects the actual Demiurge-driven runtime behavior.
+
+**Validation note:** VS Code error inspection reports no issues in the newly edited files. A fresh terminal-side test run would pick up the newly added parser/background coverage.
+
+**Architecture snapshot:**
+Low-level confidence is now broader across the core non-UI helpers that shape runtime feel: parser normalization, background routing, Demiurge formatting/mapping, audio routing, and settings persistence all have direct automated coverage.
+
+### 2026-04-08 — GitHub Copilot (Expanded test suite re-verified)
+**Role:** Validation, regression checkpoint
+
+**Done:**
+
+- **Confirmed `flutter test` still passes after the added README/docs/audio-settings/test work.**
+- **Verified the suite now runs 13 passing tests**, including the newly added coverage around app settings, Demiurge helpers, and audio-track routing helpers.
+
+**Validation note:** Dependency-update notices remain informational only and did not block test execution.
+
+**Architecture snapshot:**
+The repository now has broader automated confidence than earlier in the session: parser coverage, engine helper coverage, Demiurge helper coverage, audio catalog coverage, and app-settings model coverage are all green in the current test run.
+
+### 2026-04-08 — GitHub Copilot (Audio settings wiring pass)
+**Role:** Audio UX, persistence, pre-release polish
+
+**Done:**
+
+- **Extended app settings persistence** with separate music and SFX toggles/volumes in `database_service.dart` and `app_settings_provider.dart`.
+- **Wired `AudioService` to live app settings** so background music and SFX now respect user preferences instead of only psycho-profile modulation.
+- **Added new controls to the settings panel** in `archive_panels.dart` for music enable/disable, music volume, SFX enable/disable, and SFX volume.
+- **Added unit coverage for the expanded settings model** in `test/app_settings_test.dart`.
+
+**Validation note:** VS Code error inspection reports no issues in the updated files. A fresh `flutter test` run is recommended to include the new settings test.
+
+**Architecture snapshot:**
+The audio stack is still waiting on real masters, but it is no longer only a planned shell. User-facing control over music and SFX is now part of the persisted app configuration and already integrated with runtime audio behavior.
+
+### 2026-04-08 — GitHub Copilot (Pre-release documentation and test coverage pass)
+**Role:** Release-readiness support, documentation, automated coverage
+
+**Done:**
+
+- **Added a real top-level `README.md`** describing the project, current state, verification commands, Demiurge pipeline, and known release gaps.
+- **Added `docs/implementation_status.md`** to separate implemented, partial, and still-missing improvement areas before device playtesting.
+- **Expanded automated coverage** with new unit tests for `DemiurgeEntry` formatting and `DemiurgeService.sectorForNode(...)` plus `AudioTrackCatalog` mapping behavior.
+- **Kept the additions aligned with the actual current repo state** instead of repeating now-obsolete assumptions from earlier planning notes.
+
+**Validation note:** VS Code error inspection reports no issues in the newly added files. A fresh `flutter test` run is still recommended to include the added test files in the terminal-side verification.
+
+**Architecture snapshot:**
+The project now has a clearer release-readiness surface: public-facing repository framing in `README.md`, an internal implementation matrix in `docs/implementation_status.md`, and broader low-level regression coverage around narration and audio routing helpers.
+
+### 2026-04-08 — GitHub Copilot (Static QA verification passed)
+**Role:** Validation, release-readiness checkpoint
+
+**Done:**
+
+- **Confirmed `flutter analyze` passes cleanly** in the corrected workspace environment with no reported issues.
+- **Confirmed `flutter test` passes** with all 5 tests green.
+- **Verified the recent fixes did not introduce regressions** in the current automated coverage surface.
+
+**Validation note:** The terminal output still reports 10 newer package versions outside the current dependency constraints, but these are informational only and did not block analysis or tests.
+
+**Architecture snapshot:**
+The project is now in a clean static-validation state: Demiurge bundles are regenerated and audited, analyzer findings are resolved, and the current automated test suite passes. The next milestone remains physical Android playtesting.
+
+### 2026-04-08 — GitHub Copilot (Flutter analyze cleanup)
+**Role:** Static analysis fix-up, settings API correction
+
+**Done:**
+
+- **Fixed the invalid Riverpod override in `app_settings_provider.dart`** by renaming the app-specific mutation method from `update(...)` to `saveSettings(...)`, avoiding a signature collision with `AsyncNotifierBase.update(...)`.
+- **Updated all settings-panel call sites** in `archive_panels.dart` to use the renamed notifier API.
+- **Cleaned the remaining analyzer findings** by removing the unnecessary cast in `game_screen.dart`, simplifying the ignored queue variable in `audio_service.dart`, and removing the missing `assets/config/` entry from `pubspec.yaml`.
+
+**Validation note:** VS Code error inspection reports no remaining issues in the edited files after the cleanup. A fresh `flutter analyze` run in the user's terminal is still needed to confirm the workspace is now fully clean.
+
+**Architecture snapshot:**
+App settings persistence now uses an explicit app-domain mutation API rather than shadowing Riverpod's generic `update` helper, which removes a fragile naming collision and keeps the notifier surface clearer.
+
+### 2026-04-08 — GitHub Copilot (Targeted engine playtest-risk review)
+**Role:** Code review, progression-risk triage
+
+**Done:**
+
+- **Reviewed the highest-risk progression slices** in `game_engine_provider.dart`: La Zona activation/return flow, exit-gate enforcement, Quinto descent gating, ritual completion, and finale routing.
+- **Did not find an obvious static blocker** in those paths during read-through: the reviewed logic remains internally coherent with the current playtest checklist.
+- **Identified the remaining risk profile as behavioral rather than structural** — especially probabilistic La Zona timing, ritual chamber sequencing on device, and boss/finale state flow after real inventory manipulation.
+
+**Validation note:** Workspace error inspection still reports no editor-detected problems.
+
+**Architecture snapshot:**
+At this stage the project's main uncertainty is no longer content generation or obvious compile-time breakage. The next meaningful verification step is runtime behavior on device across long-form progression and save/resume boundaries.
+
+### 2026-04-08 — GitHub Copilot (Device playtest checklist)
+**Role:** QA planning, release-readiness support
+
+**Done:**
+
+- **Added `docs/device_playtest_checklist.md`** as a concrete physical-device verification guide for the current game architecture.
+- **Structured the checklist around real engine risks** rather than generic Flutter smoke tests: sector gates, La Zona activation, Quinto memory prices, ritual completion, three endings, persistence, and special audio routing.
+- **Included regression checks for the recently touched areas** such as quick-command prefill behavior, weightless simulacra inventory, and Demiurge repetition quality.
+
+**Architecture snapshot:**
+Project readiness is now documented in two layers: implementation state in `CLAUDE.md`, and operational verification steps in `docs/device_playtest_checklist.md`. This makes the next milestone — physical Android playtest — explicit and repeatable.
+
+### 2026-04-08 — GitHub Copilot (Demiurge bundle regeneration validated)
+**Role:** Content pipeline verification, project-state update
+
+**Done:**
+
+- **Reviewed the terminal-side generation and audit output** after the latest `prepare_demiurge_bundles.py` reinforcement.
+- **Confirmed all five Demiurge bundles now generate at exactly 200 entries each** for `giardino`, `osservatorio`, `galleria`, `laboratorio`, and `universale`.
+- **Confirmed the strengthened pipeline now succeeds for sparse sectors** by supplementing online fetches with curated offline fallback quotes.
+- **Confirmed `tools/audit_demiurge_bundles.py` now passes on every checked-in sector bundle** with no remaining count, schema, duplicate, or repeated-block failures in the reported output.
+- **Updated `CLAUDE.md`** so project guidance now reflects that bundle regeneration is complete and the next priority is device playtesting.
+
+**Validation note:** The successful generation and audit were executed in the user's workspace terminal after Flutter and the container environment were corrected. `flutter pub get` also completed successfully in the same environment.
+
+**Architecture snapshot:**
+The Demiurge content pipeline is now in a healthy steady state: online source collection, sector-local offline fallback supplementation, balanced per-author selection, low-repetition voice assignment, and post-generation auditing all work together to produce 200-entry bundles that pass validation.
+
+### 2026-04-08 — GitHub Copilot (Sparse-source fallback pass)
+**Role:** Content pipeline resilience, source-coverage repair
+
+**Done:**
+
+- **Analyzed the real generation output** supplied from the workspace terminal and confirmed that the new duplicate protections work, but `galleria` and especially `laboratorio` now fail for a different reason: insufficient source coverage.
+- **Extended `tools/prepare_demiurge_bundles.py`** so sparse sectors can be supplemented with curated local fallback quotes already stored in `tools/generate_demiurge_offline.py`.
+- **Raised Wikiquote extraction headroom** from 60 to 100 candidate lines per author to reduce premature truncation on richer pages.
+- **Expanded author coverage** for the weakest sectors, adding more plausible public-domain authors to `galleria` and `laboratorio` before fallback supplementation.
+
+**Validation note:** Static error checking passed for the updated generator. The change still needs a fresh terminal-side generation run to confirm whether fallback supplementation is enough to bring all sectors to the 200-entry target.
+
+**Architecture snapshot:**
+The generator now has a layered sourcing strategy: online fetch first, sector-local curated fallback second, then balanced selection and validation. This should make generation less brittle when specific Wikiquote or Gutenberg pages are missing, sparse, or unstable.
+
+### 2026-04-08 — GitHub Copilot (Demiurge generator balancing pass)
+**Role:** Content pipeline, generation quality, tooling cleanup
+
+**Done:**
+
+- **Analyzed the user-provided audit output** and confirmed the remaining failures are consistent with duplicate `citation + author` reuse inside the checked-in bundles rather than with Flutter setup issues.
+- **Confirmed `flutter pub get` now succeeds in the workspace terminal**, so Flutter is present and dependency resolution is no longer the immediate blocker.
+- **Strengthened `tools/prepare_demiurge_bundles.py`** by:
+  - deduplicating quote candidates per author before bundle assembly
+  - selecting quotes with a more balanced author interleave instead of flat sector-wide shuffling
+  - assigning opening/closing variants with local repetition avoidance and pair reuse reduction
+  - validating generated bundles against repeated contiguous blocks and duplicate voice-pair reuse
+- **Removed a stray duplicate function signature** left in `tools/curate_demiurge_bundles.py` during the earlier curation-tool iteration.
+
+**Validation note:** Static error checking passed for both `tools/prepare_demiurge_bundles.py` and `tools/curate_demiurge_bundles.py`. Direct script execution from this chat session is still blocked by the terminal/filesystem bridge used by the agent tools, even though the user's own terminal is now configured and working.
+
+**Architecture snapshot:**
+The Demiurge pipeline now has stronger guarantees at generation time: quote uniqueness is enforced earlier, author distribution is less clumpy, and the voice wrapper is assigned with local anti-pattern constraints rather than a simple shuffled-cycle scheme.
+
+### 2026-04-08 — GitHub Copilot (Demiurge tooling hardening pass)
+**Role:** Content tooling, audit precision, offline cleanup quality
+
+**Done:**
+
+- **Extended `tools/audit_demiurge_bundles.py`** to detect repeated contiguous blocks, not just duplicate individual `citation + author` pairs.
+- **Improved `tools/curate_demiurge_bundles.py`** with an optional `--refresh-voice` mode that reassigns canonical Demiurge openings and closings after deduplication.
+- **Added deterministic seed support to the voice refresh path** so local cleanup remains reproducible.
+- **Updated `CLAUDE.md` guidance** to point future sessions to the stronger audit signal and the recommended local cleanup invocation.
+
+**Validation note:** Static error checking passed for both updated tooling files. Script execution is still blocked in this chat session by the unstable workspace terminal/filesystem provider.
+
+**Architecture snapshot:**
+The Demiurge maintenance workflow now distinguishes between three failure modes: schema/count issues, duplicate quote identity, and repeated contiguous content blocks. Offline cleanup can now repair both quote uniqueness and voice-pattern quality in one pass.
+
+### 2026-04-08 — GitHub Copilot (Offline Demiurge bundle curation tool)
+**Role:** Content tooling, repository repair path
+
+**Done:**
+
+- **Added `tools/curate_demiurge_bundles.py`** to clean the checked-in Demiurge JSON bundles locally, without relying on network fetches.
+- **Implemented normalized `citation + author` deduplication** for existing bundle files while preserving the expected `{opening, citation, author, closing}` schema.
+- **Added hard target trimming** so curated bundles can be reduced back to the intended per-sector size instead of keeping oversized generated output.
+- **Hooked post-curation validation into the existing bundle validator** so local cleanup reports any remaining structural or count issues immediately.
+- **Updated project guidance in `CLAUDE.md`** to treat local curation as an explicit recovery path alongside full regeneration.
+
+**Validation note:** Static error checking for `tools/curate_demiurge_bundles.py` passed. I could not execute the tool in this session because the workspace terminal/file-system provider remains unstable for direct script runs.
+
+**Architecture snapshot:**
+The Demiurge content workflow now has three layers: generation (`prepare_demiurge_bundles.py`), auditing (`audit_demiurge_bundles.py`), and offline repair of checked-in data (`curate_demiurge_bundles.py`). This makes bundle integrity recoverable even when source fetches are unavailable or the repository already contains bad generated output.
+
+### 2026-04-08 — GitHub Copilot (Demiurge bundle audit follow-up)
+**Role:** Content audit, project-state verification
+
+**Done:**
+
+- **Audited the checked-in Demiurge bundles** in `assets/texts/demiurge/` and confirmed the current repository state is worse than the previous note implied.
+- **Verified that each of the five sector bundles currently contains 370 responses**, not 200, so the repository guidance had become stale again after later content generation.
+- **Confirmed widespread exact duplicate `citation + author` pairs** inside every sector bundle, with repeated contiguous content blocks at regular offsets.
+- **Confirmed no obvious JSON schema breakage** in the audited bundles: the sector wrapper and `{opening, citation, author, closing}` entries remain structurally valid.
+
+**Validation note:** The workspace terminal provider is still failing to attach to `/workspaces/archive-of-oblivion`, so the audit was completed through direct repository inspection rather than by executing the local Python audit script in-shell.
+
+**Architecture snapshot:**
+The open Demiurge issue is now clearly a repository-content integrity problem: the shipped bundles are oversized and internally cyclical, which reduces the practical effectiveness of the 20-entry anti-repetition buffer in `DemiurgeService`.
+
+### 2026-04-08 — GitHub Copilot (Quick-command prefill fix)
+**Role:** UI polish, parser affordance correction
+
+**Done:**
+
+- **Fixed contextual quick-command chips in `game_screen.dart`** so prompt-style actions no longer auto-submit incomplete verbs.
+- **Changed the Fifth Sector maturity chips** for `Say …` and `Write …` to prefill the input field and keep focus on the command row, instead of immediately sending bare `say` / `write` commands.
+- **Kept existing instant-action chips unchanged** by introducing an explicit per-chip submit flag rather than changing global quick-command behavior.
+
+**Validation note:** Static validation for `game_screen.dart` passed with no reported errors.
+
+**Architecture snapshot:**
+Quick commands now support two interaction modes in the UI layer: immediate submission for complete commands, and input prefill for commands that intentionally require player-authored text.
+
+### 2026-04-08 — GitHub Copilot (Demiurge bundle audit hardening)
+**Role:** Content pipeline, validation, project-state correction
+
+**Done:**
+
+- **Audited the current Demiurge corpus state** and confirmed that all five sector bundles now contain 200 responses each, so the old "12 entries per sector" project note was stale.
+- **Identified the real remaining content issue** — repeated `citation + author` pairs inside the generated sector bundles, which weakens the anti-repetition effect even when the response count is high.
+- **Hardened `tools/prepare_demiurge_bundles.py`** by adding:
+  - normalized quote-key deduplication
+  - deterministic seed support for reproducible builds
+  - shuffled opening/closing cycling to avoid rigid phrase reuse order
+  - post-generation validation that fails loudly on underfilled or duplicate-heavy output
+- **Added `tools/audit_demiurge_bundles.py`** so the current JSON bundles can be checked locally for count, schema, and duplicate issues before shipping.
+- **Updated `CLAUDE.md`** to reflect the actual bundle status and to replace the outdated under-population warning with the current duplicate-citation follow-up.
+
+**Validation note:** The sandbox terminal provider is currently failing to attach to the workspace path, so I could not execute the new audit/generation scripts here. Read-only inspection and subagent verification confirm the present bundle counts and duplicate patterns, but the new tooling still needs to be run in a working shell.
+
+**Architecture snapshot:**
+The Demiurge content pipeline now has two explicit layers: generation (`prepare_demiurge_bundles.py`) and verification (`audit_demiurge_bundles.py`). Project guidance now treats bundle quality as a validation problem rather than a raw entry-count problem.
+
 ### 2026-04-08 — GitHub Copilot (Title screen + onboarding UX pass)
 **Role:** UX, parser assistance, accessibility, technical cleanup
 

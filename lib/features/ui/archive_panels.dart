@@ -138,27 +138,61 @@ class _SettingsSheet extends ConsumerWidget {
               const SizedBox(height: 20),
               SwitchListTile(
                 value: settings.instantText,
-                onChanged: (value) => notifier.update(instantText: value),
+                onChanged: (value) => notifier.saveSettings(instantText: value),
                 title: const Text('Instant text'),
                 subtitle: const Text('Disable the typewriter effect.'),
               ),
               SwitchListTile(
                 value: settings.reduceMotion,
-                onChanged: (value) => notifier.update(reduceMotion: value),
+                onChanged: (value) => notifier.saveSettings(reduceMotion: value),
                 title: const Text('Reduce motion'),
                 subtitle: const Text('Tone down flashes and animated transitions.'),
               ),
               SwitchListTile(
                 value: settings.highContrast,
-                onChanged: (value) => notifier.update(highContrast: value),
+                onChanged: (value) => notifier.saveSettings(highContrast: value),
                 title: const Text('High contrast'),
                 subtitle: const Text('Increase readability on dim or low-quality screens.'),
               ),
               SwitchListTile(
                 value: settings.commandAssist,
-                onChanged: (value) => notifier.update(commandAssist: value),
+                onChanged: (value) => notifier.saveSettings(commandAssist: value),
                 title: const Text('Command assist'),
                 subtitle: const Text('Show quick commands and contextual hints.'),
+              ),
+              SwitchListTile(
+                value: settings.musicEnabled,
+                onChanged: (value) => notifier.saveSettings(musicEnabled: value),
+                title: const Text('Music and ambience'),
+                subtitle: const Text('Enable background music, ritual cues, and atmospheric transitions.'),
+              ),
+              Text('Music volume · ${(settings.musicVolume * 100).round()}%'),
+              Slider(
+                value: settings.musicVolume,
+                min: 0.0,
+                max: 1.0,
+                divisions: 10,
+                label: '${(settings.musicVolume * 100).round()}%',
+                onChanged: settings.musicEnabled
+                    ? (value) => notifier.saveSettings(musicVolume: value)
+                    : null,
+              ),
+              SwitchListTile(
+                value: settings.sfxEnabled,
+                onChanged: (value) => notifier.saveSettings(sfxEnabled: value),
+                title: const Text('Sound effects'),
+                subtitle: const Text('Enable one-shot cues such as Proustian or ritual effects when assets are present.'),
+              ),
+              Text('Effects volume · ${(settings.sfxVolume * 100).round()}%'),
+              Slider(
+                value: settings.sfxVolume,
+                min: 0.0,
+                max: 1.0,
+                divisions: 10,
+                label: '${(settings.sfxVolume * 100).round()}%',
+                onChanged: settings.sfxEnabled
+                    ? (value) => notifier.saveSettings(sfxVolume: value)
+                    : null,
               ),
               const SizedBox(height: 8),
               Text('Text size · ${(settings.textScale * 100).round()}%'),
@@ -168,7 +202,7 @@ class _SettingsSheet extends ConsumerWidget {
                 max: 1.4,
                 divisions: 5,
                 label: '${(settings.textScale * 100).round()}%',
-                onChanged: (value) => notifier.update(textScale: value),
+                onChanged: (value) => notifier.saveSettings(textScale: value),
               ),
               Text('Typewriter pace · ${settings.typewriterMillis} ms'),
               Slider(
@@ -179,7 +213,7 @@ class _SettingsSheet extends ConsumerWidget {
                 label: '${settings.typewriterMillis} ms',
                 onChanged: settings.instantText
                     ? null
-                    : (value) => notifier.update(typewriterMillis: value.round()),
+                    : (value) => notifier.saveSettings(typewriterMillis: value.round()),
               ),
               const SizedBox(height: 12),
               Align(

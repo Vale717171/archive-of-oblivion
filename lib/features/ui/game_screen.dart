@@ -143,7 +143,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final settings = ref.read(appSettingsProvider).valueOrNull;
     final baseDelay = settings?.typewriterMillis ?? 22;
     final delay = (ch == ' ' || ch == '\n')
-        ? ((baseDelay ~/ 2).clamp(4, 20) as int)
+      ? (baseDelay ~/ 2).clamp(4, 20)
         : baseDelay;
 
     _typewriterTimer?.cancel();
@@ -421,8 +421,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       ]);
     } else if (nodeId == 'quinto_maturity') {
       commands.insertAll(0, const [
-        _QuickCommand('Say …', 'say '),
-        _QuickCommand('Write …', 'write '),
+        _QuickCommand('Say …', 'say ', submit: false),
+        _QuickCommand('Write …', 'write ', submit: false),
       ]);
     } else if (nodeId == 'quinto_ritual_chamber') {
       commands.insertAll(0, const [
@@ -676,8 +676,9 @@ enum _GameMenuAction {
 class _QuickCommand {
   final String label;
   final String command;
+  final bool submit;
 
-  const _QuickCommand(this.label, this.command);
+  const _QuickCommand(this.label, this.command, {this.submit = true});
 }
 
 class _TopHud extends StatelessWidget {
@@ -861,7 +862,7 @@ class _QuickCommandBar extends StatelessWidget {
         for (final command in commands)
           ActionChip(
             label: Text(command.label),
-            onPressed: () => onCommand(command.command),
+            onPressed: () => onCommand(command.command, submit: command.submit),
             backgroundColor: Colors.white.withValues(alpha: 0.06),
             side: BorderSide(color: narrativeColor.withValues(alpha: 0.14)),
           ),

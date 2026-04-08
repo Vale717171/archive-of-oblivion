@@ -55,6 +55,8 @@ const Set<String> _surrenderKeywords = {
   'the void is peace', 'i want to forget', 'i accept oblivion', 'oblivion',
 };
 
+enum BossUtteranceKind { surrender, remain, resolution, other }
+
 // ── La Zona — Arseny Tarkovsky verse variants (GDD §10) ──────────────────────
 
 const List<String> _tarkovskyVerses = [
@@ -1592,10 +1594,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     // Exit gate check (all other gates)
-    final requiredPuzzle = _exitGates[nodeId]?[direction];
+    final requiredPuzzle = gameRequiredPuzzleForExit(nodeId, direction);
     if (requiredPuzzle != null && !s.completedPuzzles.contains(requiredPuzzle)) {
       return EngineResponse(
-        narrativeText: _gateHints[requiredPuzzle] ??
+        narrativeText: gameGateHintForPuzzle(requiredPuzzle) ??
             'Something holds you back. A condition has not yet been met.',
       );
     }
@@ -3087,9 +3089,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleBossInput(ParsedCommand cmd, GameEngineState s) {
     final raw = cmd.rawInput.toLowerCase().trim();
+    final utteranceKind = classifyBossUtterance(raw);
 
     // Surrender → Finale 2 (GDD §12)
-    if (_surrenderKeywords.any(raw.contains)) {
+    if (utteranceKind == BossUtteranceKind.surrender) {
       return const EngineResponse(
         narrativeText: 'You speak the word.\n\n'
             'The Antagonist does not triumph. It simply waits.\n\n'
@@ -3105,8 +3108,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     // Remain / stay → Finale 3 (Eternal Zone)
-    if (raw == 'stay' || raw == 'remain' || raw == 'i remain' ||
-        raw.contains('eternal zone') || raw == 'i want to stay') {
+    if (utteranceKind == BossUtteranceKind.remain) {
       return const EngineResponse(
         narrativeText: 'You stay.\n\n'
             'The Antagonist says nothing. It may not have noticed.\n\n'
@@ -3120,8 +3122,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     // Resolution keyword check (GDD §12 — Regola del Tre)
-    final hasResolution = _resolutionKeywords.any(raw.contains);
-    if (hasResolution) {
+    if (utteranceKind == BossUtteranceKind.resolution) {
       if (s.psychoWeight == 0) {
         // Weight is zero — resolution accepted → Finale 1
         return const EngineResponse(
@@ -3334,15 +3335,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   ) {
     final dest = resp.newNode!;
     // Do not activate when entering/leaving finales, nucleo, or zone itself
-    if (dest.startsWith('finale_') || dest == 'il_nucleo' || dest == 'la_zona') {
-      return resp;
-    }
-    if (fromNodeId == 'la_zona' || fromNodeId.startsWith('finale_') ||
-        fromNodeId == 'il_nucleo') {
-      return resp;
-    }
-    // Also skip Zone for quinto sector (narrative flow must not be interrupted)
-    if (dest.startsWith('quinto_') || fromNodeId.startsWith('quinto_')) {
+    if (!gameTransitEligibleForZone(fromNodeId, dest)) {
       return resp;
     }
 
@@ -3599,6 +3592,42 @@ const _helpText = '''Commands:
 
 String gameNodeTitle(String nodeId) =>
     _nodes[nodeId]?.title.isNotEmpty == true ? _nodes[nodeId]!.title : 'The Archive';
+
+String? gameRequiredPuzzleForExit(String nodeId, String direction) =>
+    _exitGates[nodeId]?[direction];
+
+String? gameGateHintForPuzzle(String puzzleId) => _gateHints[puzzleId];
+
+BossUtteranceKind classifyBossUtterance(String rawInput) {
+  final raw = rawInput.toLowerCase().trim();
+  if (_surrenderKeywords.any(raw.contains)) return BossUtteranceKind.surrender;
+  if (raw == 'stay' ||
+      raw == 'remain' ||
+      raw == 'i remain' ||
+      raw == 'i want to stay' ||
+      raw.contains('eternal zone')) {
+    return BossUtteranceKind.remain;
+  }
+  if (_resolutionKeywords.any(raw.contains)) return BossUtteranceKind.resolution;
+  return BossUtteranceKind.other;
+}
+
+bool gameTransitEligibleForZone(String fromNodeId, String destNodeId) {
+  if (destNodeId.startsWith('finale_') ||
+      destNodeId == 'il_nucleo' ||
+      destNodeId == 'la_zona') {
+    return false;
+  }
+  if (fromNodeId == 'la_zona' ||
+      fromNodeId.startsWith('finale_') ||
+      fromNodeId == 'il_nucleo') {
+    return false;
+  }
+  if (destNodeId.startsWith('quinto_') || fromNodeId.startsWith('quinto_')) {
+    return false;
+  }
+  return true;
+}
 
 String gameSectorLabel(String nodeId) {
   if (nodeId == 'intro_void' || nodeId == 'la_soglia') return 'Threshold';
