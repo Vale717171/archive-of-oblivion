@@ -53,6 +53,18 @@ class AppSettings {
 class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
   final _dbService = DatabaseService.instance;
 
+  double _clampTextScale(double value) {
+    if (value < 0.9) return 0.9;
+    if (value > 1.4) return 1.4;
+    return value;
+  }
+
+  int _clampTypewriterMillis(int value) {
+    if (value < 8) return 8;
+    if (value > 40) return 40;
+    return value;
+  }
+
   @override
   Future<AppSettings> build() async {
     return _fetchSettings();
@@ -76,27 +88,15 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
     int? typewriterMillis,
   }) async {
     final current = state.valueOrNull ?? await _fetchSettings();
-    final clampedTextScale = textScale == null
-        ? null
-        : textScale < 0.9
-            ? 0.9
-            : textScale > 1.4
-                ? 1.4
-                : textScale;
-    final clampedTypewriterMillis = typewriterMillis == null
-        ? null
-        : typewriterMillis < 8
-            ? 8
-            : typewriterMillis > 40
-                ? 40
-                : typewriterMillis;
     final next = current.copyWith(
       instantText: instantText,
       reduceMotion: reduceMotion,
       highContrast: highContrast,
       commandAssist: commandAssist,
-      textScale: clampedTextScale,
-      typewriterMillis: clampedTypewriterMillis,
+      textScale: textScale == null ? null : _clampTextScale(textScale),
+      typewriterMillis: typewriterMillis == null
+          ? null
+          : _clampTypewriterMillis(typewriterMillis),
     );
 
     final db = await _dbService.database;
