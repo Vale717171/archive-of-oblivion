@@ -2533,11 +2533,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'because it is no longer looking outward.\n\n'
             'In your hands: a prism of tangible light. It is warm. '
             'It refracts you. The Constant.',
-        needsLlm:       true,
-        lucidityDelta:  15,
-        anxietyDelta:   -10,
-        audioTrigger:   'calm',
-        grantItem:      'the constant',
+        needsLlm: true,
+        lucidityDelta: 15,
+        anxietyDelta: -10,
+        audioTrigger: 'calm',
+        grantItem: 'the constant',
         completePuzzle: 'obs_complete',
       );
     }
