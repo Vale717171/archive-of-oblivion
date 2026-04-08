@@ -143,7 +143,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final settings = ref.read(appSettingsProvider).valueOrNull;
     final baseDelay = settings?.typewriterMillis ?? 22;
     final delay = (ch == ' ' || ch == '\n')
-      ? (baseDelay ~/ 2).clamp(4, 20)
+        ? ((baseDelay ~/ 2).clamp(4, 20) as int)
         : baseDelay;
 
     _typewriterTimer?.cancel();
@@ -245,11 +245,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   // ── Input ────────────────────────────────────────────────────────────────
 
   void _submit() {
+    final text = _controller.text.trim();
     if (_typewriterRunning) {
       _skipTypewriter();
-      return;
+      if (text.isEmpty) return;
     }
-    final text = _controller.text.trim();
     if (text.isEmpty) return;
     _controller.clear();
     _lastSubmittedCommand = text;
