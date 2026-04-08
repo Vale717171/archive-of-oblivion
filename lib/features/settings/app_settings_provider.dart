@@ -82,7 +82,7 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
       highContrast: highContrast,
       commandAssist: commandAssist,
       textScale: textScale == null ? null : textScale.clamp(0.9, 1.4).toDouble(),
-      typewriterMillis: typewriterMillis == null ? null : typewriterMillis.clamp(8, 40) as int,
+      typewriterMillis: typewriterMillis == null ? null : typewriterMillis.clamp(8, 40),
     );
 
     final db = await _dbService.database;

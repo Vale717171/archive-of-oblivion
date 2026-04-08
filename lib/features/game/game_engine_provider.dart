@@ -3515,7 +3515,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   String _selectHint(int level, List<String> hints) {
-    final index = (level - 1).clamp(0, hints.length - 1) as int;
+    final index = (level - 1).clamp(0, hints.length - 1);
     return 'Hint ${index + 1}/${hints.length}\n\n${hints[index]}';
   }
 
