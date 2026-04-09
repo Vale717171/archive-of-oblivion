@@ -3661,6 +3661,14 @@ String gameSectorLabel(String nodeId) {
   return 'Archive';
 }
 
+/// All node IDs defined in the game. Exposed for static analysis and traversal tests.
+Set<String> gameAllNodeIds() => Set<String>.unmodifiable(_nodes.keys.toSet());
+
+/// All exits from [nodeId] as a direction → destination map.
+/// Returns an empty map when [nodeId] is unknown or the node has no exits.
+Map<String, String> gameExitsForNode(String nodeId) =>
+    Map<String, String>.unmodifiable(_nodes[nodeId]?.exits ?? const {});
+
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 final gameEngineProvider =
