@@ -87,7 +87,7 @@
     },
     {
       "opening": "A bell rings somewhere — or perhaps it is memory.",
-      "citation": "Zahlreich sind die Lehrkanzeln, aber selten die weisen und edlen Lehrer. Zahlreich und groß sind die Hörsäle, doch wenig zahlreich die jungen Menschen, die ehrlich nach Wahrheit und Gerechtigkeit dürsten. Zahlreich spendet die Natur ihre Dutzendware, aber das Feinere erzeugt sie selten.",
+      "citation": "Many are the lecture halls, but rare are the wise and noble teachers. Many and large are the schools, but rare are those young men and women who genuinely thirst after truth and justice.",
       "author": "Albert Einstein",
       "closing": "Even error refracts toward truth."
     },
@@ -105,7 +105,7 @@
     },
     {
       "opening": "The path bends, but does not end.",
-      "citation": "[http://www.skyscript.co.uk/kepler.html \"Kepler & the Music of the Spheres\" by David Plant]",
+      "citation": "Geometry is one and eternal shining in the mind of God.",
       "author": "Johannes Kepler",
       "closing": "The Archive does not judge — it preserves."
     },
@@ -207,7 +207,7 @@
     },
     {
       "opening": "A candle flickers, though there is no wind.",
-      "citation": "[http://www-personal.umich.edu/~jbourj/money2.htm Nicolaus Copernicus on the 1000 Polish Zloty banknote.]",
+      "citation": "The massive bulk of the earth does indeed shrink to insignificance in comparison with the size of the heavens.",
       "author": "Nicolaus Copernicus",
       "closing": "Even confusion is a form of presence."
     },
@@ -243,7 +243,7 @@
     },
     {
       "opening": "A scent of old paper and older questions.",
-      "citation": "[http://www.newtonproject.ic.ac.uk/ The Newton Project]",
+      "citation": "If I have seen further, it is by standing on the shoulders of giants.",
       "author": "Isaac Newton",
       "closing": "Even this uncertainty blooms."
     },
@@ -255,7 +255,7 @@
     },
     {
       "opening": "The echo you hear is not yours alone.",
-      "citation": "[http://digital.lib.lehigh.edu/planets/cop.php?num=F.1&exp=false&lang=lat&CISOPTR=0&limit=cop&view=full De Revolutionibus, 1543 first edition] – Full digital facsimile, Lehigh University",
+      "citation": "Finally we shall place the Sun himself at the center of the Universe.",
       "author": "Nicolaus Copernicus",
       "closing": "Even error refracts toward truth."
     },
@@ -273,7 +273,7 @@
     },
     {
       "opening": "The quiet here is not empty — it is full.",
-      "citation": "[http://www.mpiwg-berlin.mpg.de/Galileo_Prototype/MAIN.HTM Electronic representation of Galilei's notes on motion (MS. 72)]",
+      "citation": "The universe is written in the language of mathematics, and its characters are triangles, circles and other geometric figures.",
       "author": "Galileo Galilei",
       "closing": "All That Is knows this path too."
     },
@@ -297,19 +297,19 @@
     },
     {
       "opening": "A warmth, inexplicable, rises from below.",
-      "citation": "Der Glaube an eine vom wahrnehmenden Subjekt unabhängige Außenwelt liegt aller Naturwissenschaft zugrunde.",
+      "citation": "The belief in an external world independent of the perceiving subject is the basis of all natural science.",
       "author": "Albert Einstein",
       "closing": "All That Is accompanies even solitude."
     },
     {
       "opening": "This was not a mistake. Nothing here is.",
-      "citation": "[http://www.mhhe.com/physsci/astronomy/fix/student/images/04f08.jpg Copernicus's model for Mars ]",
+      "citation": "It is the duty of an astronomer to compose the history of the celestial motions through careful and expert study.",
       "author": "Nicolaus Copernicus",
       "closing": "The vanishing point is also a beginning."
     },
     {
       "opening": "The Archive holds its breath.",
-      "citation": "[http://www.depauw.edu/sfs/backissues/8/christianson8art.htm \"Kepler's Somnium: Science Fiction and the Renaissance Scientist\" by Gale E. Christianson]",
+      "citation": "Nature uses as little as possible of anything.",
       "author": "Johannes Kepler",
       "closing": "All That Is flows with every current."
     },
@@ -375,7 +375,7 @@
     },
     {
       "opening": "Even this was necessary.",
-      "citation": "[http://www.skyscript.co.uk/kepler2.html \"Kepler's Belief in Astrology\" by Nicholas Kollerstrom]",
+      "citation": "The diversity of the phenomena of nature is so great, and the treasures hidden in the heavens so rich, precisely in order that the human mind shall never be lacking in fresh nourishment.",
       "author": "Johannes Kepler",
       "closing": "Even emptiness has form here."
     },
@@ -399,7 +399,7 @@
     },
     {
       "opening": "A word hangs in the air, half-formed.",
-      "citation": "[http://www.galilean-library.org/hps.html The Galileo Affair] by Paul Newall.",
+      "citation": "I do not feel obliged to believe that the same God who has endowed us with sense, reason, and intellect has intended us to forgo their use.",
       "author": "Galileo Galilei",
       "closing": "All That Is speaks in languages you have not yet learned."
     },
@@ -411,7 +411,7 @@
     },
     {
       "opening": "The path bends, but does not end.",
-      "citation": "[http://webexhibits.org/calendars/year-text-Copernicus.html The text of the De Revolutionibus]",
+      "citation": "There may be babblers who are ignorant of mathematics yet take it upon themselves to judge my hypothesis by twisting some passage of Scripture to their purpose.",
       "author": "Nicolaus Copernicus",
       "closing": "All That Is reads even the unwritten."
     },
@@ -447,13 +447,13 @@
     },
     {
       "opening": "A leaf fell. Perhaps it was waiting for you.",
-      "citation": "[http://news.bbc.co.uk/1/hi/world/europe/4405958.stm 'Body of Copernicus' identified] – BBC article including image of Copernicus using facial reconstruction based on located skull",
+      "citation": "The earth together with its surrounding waters must in fact have such a shape as its shadow reveals, for it eclipses the moon with the arc of a perfect circle.",
       "author": "Nicolaus Copernicus",
       "closing": "All That Is flows with every current."
     },
     {
       "opening": "A thought dissolves before it becomes a word.",
-      "citation": "[http://www.pierre-marteau.com/currency/ed/newton-intro.html Newton's Reports as Master of the Royal Mint]",
+      "citation": "I was like a boy playing on the sea-shore, and diverting myself now and then finding a smoother pebble or a prettier shell than ordinary, whilst the great ocean of truth lay all undiscovered before me.",
       "author": "Isaac Newton",
       "closing": "All That Is recognizes every reflection."
     },
@@ -465,7 +465,7 @@
     },
     {
       "opening": "The quiet here is not empty — it is full.",
-      "citation": "[http://www.mhhe.com/physsci/astronomy/fix/student/images/04f07.jpg Geometry of Maximum Elongation]",
+      "citation": "Near the sun is the center of the universe.",
       "author": "Nicolaus Copernicus",
       "closing": "All That Is calibrates even the unmeasurable."
     },
@@ -477,13 +477,13 @@
     },
     {
       "opening": "The Archive holds its breath.",
-      "citation": "[http://www.pbs.org/wgbh/nova/galileo/ PBS Nova Online: Galileo's Battle for the Heavens]",
+      "citation": "Where the senses fail us, reason must step in.",
       "author": "Galileo Galilei",
       "closing": "All That Is curates even the shadows."
     },
     {
       "opening": "The Archive trembles with recognition.",
-      "citation": "Un genio es alguien que descubre que la piedra que cae y la luna que no cae representan un solo y mismo fenómeno.",
+      "citation": "I was like a boy playing on the sea-shore, finding now and then a smoother pebble or a prettier shell than ordinary, whilst the great ocean of truth lay all undiscovered before me.",
       "author": "Isaac Newton",
       "closing": "All That Is traces every orbit, even yours."
     },
@@ -495,7 +495,7 @@
     },
     {
       "opening": "A thread of meaning appears — and vanishes.",
-      "citation": "[http://www.visittorun.pl/index.php?strona=6 Copernicus in Torun]",
+      "citation": "The massive bulk of the earth does indeed shrink to insignificance in comparison with the size of the heavens.",
       "author": "Nicolaus Copernicus",
       "closing": "All That Is hangs no work in the wrong place."
     },
@@ -525,7 +525,7 @@
     },
     {
       "opening": "A word hangs in the air, half-formed.",
-      "citation": "[http://www.isaacnewton.ca/daniel_apocalypse/ Observations upon the Prophecies of Daniel, and the Apocalypse of St. John (1733)]",
+      "citation": "Truth is ever to be found in simplicity, and not in the multiplicity and confusion of things.",
       "author": "Isaac Newton",
       "closing": "All That Is does not judge the instrument."
     },
@@ -543,13 +543,13 @@
     },
     {
       "opening": "The stones here remember every footstep.",
-      "citation": "[https://www.firstinspire.com/36-isaac-newton-quotes-for-inspiration/ Famous Aphorisms Isaac Newton]",
+      "citation": "Nature is pleased with simplicity, and nature is no dummy.",
       "author": "Isaac Newton",
       "closing": "All That Is reads even the unwritten."
     },
     {
       "opening": "Silence falls like a curtain between acts.",
-      "citation": "[http://www.mhhe.com/physsci/astronomy/fix/student/images/04f04.jpg Copernicus's explanation for retrograde motion]",
+      "citation": "Finally we shall place the Sun himself at the center of the Universe.",
       "author": "Nicolaus Copernicus",
       "closing": "Every question alters the trajectory."
     },
@@ -597,7 +597,7 @@
     },
     {
       "opening": "The echo you hear is not yours alone.",
-      "citation": "[http://plato.stanford.edu/entries/newton-stm/ Stanford Encyclopedia of Philosophy entry on Newton's views on space, time, and motion]",
+      "citation": "To every action there is always opposed an equal reaction.",
       "author": "Isaac Newton",
       "closing": "Every step here is already an answer."
     },
@@ -621,7 +621,7 @@
     },
     {
       "opening": "The walls remember your name, even if you have forgotten it.",
-      "citation": "[http://www.frombork.art.pl/Ang01.htm Nicolaus Copernicus Museum in Frombork]",
+      "citation": "It is the duty of an astronomer to compose the history of the celestial motions through careful and expert study.",
       "author": "Nicolaus Copernicus",
       "closing": "All That Is sees the form within the formless."
     },
@@ -717,7 +717,7 @@
     },
     {
       "opening": "An ancient resonance hums beneath your feet.",
-      "citation": "[http://www.staff.science.phys.uu.nl/~gent0113/astrology/newton.htm Newton and Astrology]",
+      "citation": "Plato is my friend, Aristotle is my friend, but my greatest friend is truth.",
       "author": "Isaac Newton",
       "closing": "All That Is observes every reaction."
     },
@@ -771,7 +771,7 @@
     },
     {
       "opening": "The Archive holds its breath.",
-      "citation": "[http://www.cslewis.org/journal/?p=10 Conflict or Cooperation] by Robert C. Fay",
+      "citation": "All truths are easy to understand once they are discovered; the point is to discover them.",
       "author": "Galileo Galilei",
       "closing": "All That Is turns with you."
     },
@@ -789,7 +789,7 @@
     },
     {
       "opening": "A mirror reflects something that is not in the room.",
-      "citation": "Portraits of Copernicus: [http://www.msnbc.msn.com/id/9913250/ Copernicus's face reconstructed]; [http://www-groups.dcs.st-andrews.ac.uk/~history/PictDisplay/Copernicus.html Portrait]; [http://www.frombork.art.pl/Ang10.htm Nicolaus Copernicus]",
+      "citation": "There may be babblers who are ignorant of mathematics yet take it upon themselves to judge my hypothesis by twisting some passage of Scripture to their purpose.",
       "author": "Nicolaus Copernicus",
       "closing": "All That Is transmutes even the leaden."
     },
@@ -825,7 +825,7 @@
     },
     {
       "opening": "Something invisible just changed position.",
-      "citation": "[http://www-groups.dcs.st-and.ac.uk/~history/Mathematicians/Newton.html Brief biography at the University of St Andrews]",
+      "citation": "If I have seen further, it is by standing on the shoulders of giants.",
       "author": "Isaac Newton",
       "closing": "All That Is curates even the shadows."
     },
@@ -849,13 +849,13 @@
     },
     {
       "opening": "You are being witnessed.",
-      "citation": "[http://www.huntington.org/LibraryDiv/Newton/Newtonexhibit.htm \"All Was Light : Isaac Newton's Revolutions\"] exhibit at Huntington Library",
+      "citation": "I was like a boy playing on the sea-shore, and diverting myself now and then finding a smoother pebble or a prettier shell than ordinary, whilst the great ocean of truth lay all undiscovered before me.",
       "author": "Isaac Newton",
       "closing": "All That Is preserves even the abandoned."
     },
     {
       "opening": "You are closer than you think.",
-      "citation": "Wie lieb ich diesen edlen Mann  Mehr als ich mit Worten sagen kann.  Doch fürcht' ich, dass er bleibt allein  Mit seinem strahlenden Heiligenschein.",
+      "citation": "The most beautiful experience we can have is the mysterious. It is the fundamental emotion that stands at the cradle of true art and true science.",
       "author": "Albert Einstein",
       "closing": "Even confusion is a form of presence."
     },
@@ -885,13 +885,13 @@
     },
     {
       "opening": "The ceiling is higher than it was a moment ago.",
-      "citation": "[http://csep10.phys.utk.edu/astr161/lect/retrograde/copernican.html Copernican Model]",
+      "citation": "The earth together with its surrounding waters must in fact have such a shape as its shadow reveals, for it eclipses the moon with the arc of a perfect circle.",
       "author": "Nicolaus Copernicus",
       "closing": "All That Is traces every orbit, even yours."
     },
     {
       "opening": "The echo you hear is not yours alone.",
-      "citation": "[http://fermatslasttheorem.blogspot.com/2005/09/sir-isaac-newton.html \"Sir Isaac Newton\", a brief biography]",
+      "citation": "Truth is ever to be found in simplicity, and not in the multiplicity and confusion of things.",
       "author": "Isaac Newton",
       "closing": "All That Is hangs no work in the wrong place."
     },
@@ -909,7 +909,7 @@
     },
     {
       "opening": "The dust here is conscious.",
-      "citation": "[http://www.infidels.org/library/historical/andrew_white/Chapter3.html The Warfare of Science With Theology by Andrew Dickson White, Ch. 3, dealing with the conflicts of Galileo with theological dogma]",
+      "citation": "It vexes me when they would constrain science by the authority of the Scriptures, and yet do not consider themselves bound to answer reason and experiment.",
       "author": "Galileo Galilei",
       "closing": "All That Is already knows the answer you are approaching."
     },
@@ -951,7 +951,7 @@
     },
     {
       "opening": "A candle flickers, though there is no wind.",
-      "citation": "[http://copernicus.torun.pl/en/ Nicolaus Copernicus Thorunensis] by the [http://copernicus.torun.pl/en/project/ Copernican Academic Portal]",
+      "citation": "Near the sun is the center of the universe.",
       "author": "Nicolaus Copernicus",
       "closing": "All That Is hangs no work in the wrong place."
     },
@@ -1035,7 +1035,7 @@
     },
     {
       "opening": "Something in the dark recognised you.",
-      "citation": "[http://agutie.homestead.com/files/NewtonTheorem.htm \"Newton's line in a circumscribed quadrilateral\"]",
+      "citation": "Nature is pleased with simplicity, and nature is no dummy.",
       "author": "Isaac Newton",
       "closing": "Even confusion is a form of presence."
     },
@@ -1131,7 +1131,7 @@
     },
     {
       "opening": "The quiet here is not empty — it is full.",
-      "citation": "[http://www.firstthings.com/ftissues/ft0401/reviews/barr From Myth to History and Back] - Reviews of two books on Galileo",
+      "citation": "The universe is written in the language of mathematics, and its characters are triangles, circles and other geometric figures.",
       "author": "Galileo Galilei",
       "closing": "What is absent is also exhibited."
     },
@@ -1149,13 +1149,13 @@
     },
     {
       "opening": "Something shifted — you felt it, didn't you?",
-      "citation": "[http://galileo.rice.edu/sci/theories/copernican_system.html The Copernican Universe from the De Revolutionibus]",
+      "citation": "The massive bulk of the earth does indeed shrink to insignificance in comparison with the size of the heavens.",
       "author": "Nicolaus Copernicus",
       "closing": "All That Is reads even the unwritten."
     },
     {
       "opening": "A scent of old paper and older questions.",
-      "citation": "[http://www.nobel-winners.com/Physics/niels_henrik_david_bohr.html About Niels Bohr]",
+      "citation": "An expert is a person who has made all the mistakes that can be made in a very narrow field.",
       "author": "Niels Bohr",
       "closing": "All That Is walks every path simultaneously."
     },
@@ -1179,7 +1179,7 @@
     },
     {
       "opening": "An inscription fades as you approach.",
-      "citation": "Autoritätsdusel ist der größte Feind der Wahrheit.",
+      "citation": "Unthinking respect for authority is the greatest enemy of truth.",
       "author": "Albert Einstein",
       "closing": "All That Is sees the form within the formless."
     },

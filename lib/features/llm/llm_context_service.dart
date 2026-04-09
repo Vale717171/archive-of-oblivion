@@ -10,68 +10,68 @@ class LlmContextService {
   LlmContextService(this.psychoProfile, this.gameState);
 
   String buildDynamicSystemPrompt() {
-    // Regole di base fisse
+    // Fixed base rules
     String basePrompt =
-        "Sei l'Archivio dell'Oblio, un'entità criptica e insondabile. "
-        "Rispondi in modo conciso, filosofico e leggermente inquietante (massimo 3 frasi). "
-        "Non rivelare mai di essere un'IA.";
+        "You are the Archive of Oblivion, a cryptic and unfathomable entity. "
+        "Reply concisely, philosophically, and with a slightly unsettling tone (three sentences at most). "
+        "Never reveal that you are an AI.";
 
-    // Contesto narrativo
+    // Narrative context
     String locationContext =
-        "Il giocatore si trova attualmente nel nodo narrativo: ${gameState.currentNode}.";
+        "The player is currently at narrative node: ${gameState.currentNode}.";
 
-    // Modificatori psicologici
+    // Psychological modifiers
     String psychoContext =
-        "L'ansia del giocatore è a ${psychoProfile.anxiety}%. ";
+        "The player's anxiety is at ${psychoProfile.anxiety}%. ";
     if (psychoProfile.anxiety > 70) {
       psychoContext +=
-          "Il giocatore è nel panico. Usa un tono pressante e frammentato. ";
+          "The player is in a panic. Use an urgent, fragmented tone. ";
     }
     if (psychoProfile.lucidity < 30) {
       psychoContext +=
-          "Il giocatore sta perdendo la lucidità. Le tue risposte devono essere oniriche e confondere la realtà. ";
+          "The player is losing lucidity. Your replies should be dreamlike and blur the boundary of reality. ";
     }
 
-    // Bundle enrichment — usa la cache precaricata (TextBundleService.preloadAll()
-    // viene chiamato all'avvio dell'app prima di qualsiasi interazione).
+    // Bundle enrichment — uses the preloaded cache (TextBundleService.preloadAll()
+    // is called at app startup before any interaction).
     final String bundleContext = _buildBundleContext();
 
     return "$basePrompt $locationContext $psychoContext$bundleContext".trim();
   }
 
-  /// Aggiunge citazioni tematiche al prompt in base al nodo corrente.
-  /// Usa solo dati già in cache — nessuna I/O sincrona.
+  /// Appends thematic citations to the prompt based on the current node.
+  /// Uses only cached data — no synchronous I/O.
   String _buildBundleContext() {
     final bundles = TextBundleService.instance;
     final node = gameState.currentNode;
     final sb = StringBuffer();
 
-    // Fifth Sector: usa citazioni proustiane
+    // Fifth Sector: use Proustian citations
     if (node.startsWith('quinto_')) {
       final encounters =
           gameState.puzzleCounters['zone_encounters'] ?? 0;
       final verse = bundles.tarkovskyVerse(encounters);
       if (verse != null) {
-        sb.write('Tonalità proustiana: "$verse" ');
+        sb.write('Proustian tone: "$verse" ');
       }
     }
 
-    // La Zona: usa versi Tarkovsky dalla cache
+    // La Zona: use Tarkovsky verses from cache
     if (node == 'la_zona') {
       final encounters =
           gameState.puzzleCounters['zone_encounters'] ?? 0;
       final verse = bundles.tarkovskyVerse(encounters);
       if (verse != null) {
-        sb.write('Tonalità zona: "$verse" ');
+        sb.write('Zone tone: "$verse" ');
       }
     }
 
-    // Boss / Nucleare: usa keywords di resa/risoluzione
+    // Boss / Nucleus: use resolution keywords
     if (node == 'il_nucleo') {
       final keywords = bundles.resolutionKeywords;
       if (keywords.isNotEmpty) {
         sb.write(
-            'Temi di confronto: ${keywords.take(3).join(", ")}. ');
+            'Confrontation themes: ${keywords.take(3).join(", ")}. ');
       }
     }
 
@@ -79,7 +79,7 @@ class LlmContextService {
   }
 }
 
-// Provider per ottenere il servizio sempre aggiornato con gli ultimi stati
+// Provider that always returns the service updated with the latest states
 final llmContextServiceProvider = Provider<LlmContextService?>((ref) {
   final psychoState = ref.watch(psychoProfileProvider).valueOrNull;
   final gameState = ref.watch(gameStateProvider).valueOrNull;
