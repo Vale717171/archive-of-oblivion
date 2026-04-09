@@ -27,6 +27,24 @@
 
 ---
 
+### 2026-04-09 — GitHub Copilot (database versioning hardening)
+**Role:** Infrastructure / database
+
+**Done:**
+
+- **Added `_addColumnIfNotExists` helper** in `DatabaseService` — queries `PRAGMA table_info` before executing `ALTER TABLE … ADD COLUMN`, making every migration step idempotent (safe even if a migration was partially applied; prevents "duplicate column name" crashes).
+- **Refactored v1→v2 upgrade block** to use `_addColumnIfNotExists` for all four `game_state` columns instead of raw `ALTER TABLE`.
+- **Added versioning protocol comment block** above `_onUpgrade` with the five-step rule and a copy-paste example for adding a future v6 column — so future developers (and agents) know exactly what to do.
+- No `_databaseVersion` bump needed: this is a pure infra/refactor change with no schema change.
+- No data loss risk: existing rows are unaffected; the helper is a no-op when a column already exists.
+
+**Architecture snapshot:**
+- `lib/core/storage/database_service.dart` — schema v5; `_addColumnIfNotExists(DatabaseExecutor, table, column, definition)` helper now available for all future migrations.
+
+---
+
+---
+
 ### 2026-04-09 — GitHub Copilot (LLM dead code removal)
 **Role:** Cleanup / refactoring
 

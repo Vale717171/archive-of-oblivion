@@ -131,19 +131,75 @@ class DatabaseService {
     await db.insert('app_settings', defaultAppSettingsRow);
   }
 
+  // ── Versioning protocol ──────────────────────────────────────────────────────
+  //
+  // Every schema change MUST:
+  //   1. Bump `_databaseVersion` by 1.
+  //   2. Add a new `if (oldVersion < N)` block at the bottom of `_onUpgrade`.
+  //   3. Use `_addColumnIfNotExists` when adding columns — NEVER raw ALTER TABLE.
+  //      This keeps every step idempotent (safe even if a migration was partially
+  //      applied) and prevents "duplicate column name" crashes.
+  //   4. Wrap the block in `db.transaction` for atomicity.
+  //   5. Never DROP or RENAME columns already used by running installs — add new
+  //      columns with a DEFAULT value so existing rows are automatically filled.
+  //
+  // Example for a future v6 (new column on game_state):
+  //
+  //   if (oldVersion < 6) {
+  //     await db.transaction((txn) async {
+  //       await _addColumnIfNotExists(
+  //         txn, 'game_state', 'new_ending_flag',
+  //         'INTEGER NOT NULL DEFAULT 0',
+  //       );
+  //     });
+  //   }
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /// Safely adds [column] to [table] only when it is not already present.
+  ///
+  /// SQLite does not support `ALTER TABLE … ADD COLUMN IF NOT EXISTS`, so we
+  /// query `PRAGMA table_info` first.  This makes every upgrade step idempotent:
+  /// re-running the same migration on a database that already has the column is
+  /// a no-op instead of a crash.
+  ///
+  /// [table] and [column] must be valid SQLite identifiers (letters, digits,
+  /// underscores only). [definition] must be a type + optional constraint
+  /// expression using only the characters allowed in SQL DDL.  These
+  /// preconditions are enforced at runtime to prevent SQL injection even though
+  /// this is a private method called only with hard-coded literals.
+  Future<void> _addColumnIfNotExists(
+    DatabaseExecutor db,
+    String table,
+    String column,
+    String definition,
+  ) async {
+    // Validate that table and column look like plain SQL identifiers.
+    final identifierRe = RegExp(r'^[A-Za-z_][A-Za-z0-9_]*$');
+    assert(identifierRe.hasMatch(table),
+        '_addColumnIfNotExists: invalid table name: $table');
+    assert(identifierRe.hasMatch(column),
+        '_addColumnIfNotExists: invalid column name: $column');
+
+    final tableInfo = await db.rawQuery('PRAGMA table_info($table)');
+    final exists = tableInfo.any((row) => row['name'] == column);
+    if (!exists) {
+      await db.execute('ALTER TABLE $table ADD COLUMN $column $definition');
+    }
+  }
+
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
-      // v1 → v2: espandi game_state con colonne engine + crea player_memories
-      // Eseguito in una transazione per garantire atomicità della migrazione.
+      // v1 → v2: espandi game_state con colonne engine + crea player_memories.
+      // Usa _addColumnIfNotExists per rendere il passo idempotente.
       await db.transaction((txn) async {
-        await txn.execute(
-            'ALTER TABLE game_state ADD COLUMN completed_puzzles TEXT NOT NULL DEFAULT \'[]\'');
-        await txn.execute(
-            'ALTER TABLE game_state ADD COLUMN puzzle_counters TEXT NOT NULL DEFAULT \'{}\'');
-        await txn.execute(
-            'ALTER TABLE game_state ADD COLUMN inventory TEXT NOT NULL DEFAULT \'["notebook"]\'');
-        await txn.execute(
-            'ALTER TABLE game_state ADD COLUMN psycho_weight INTEGER NOT NULL DEFAULT 0');
+        await _addColumnIfNotExists(txn, 'game_state', 'completed_puzzles',
+            'TEXT NOT NULL DEFAULT \'[]\'');
+        await _addColumnIfNotExists(txn, 'game_state', 'puzzle_counters',
+            'TEXT NOT NULL DEFAULT \'{}\'');
+        await _addColumnIfNotExists(txn, 'game_state', 'inventory',
+            'TEXT NOT NULL DEFAULT \'["notebook"]\'');
+        await _addColumnIfNotExists(txn, 'game_state', 'psycho_weight',
+            'INTEGER NOT NULL DEFAULT 0');
 
         await txn.execute('''
           CREATE TABLE IF NOT EXISTS player_memories (
@@ -156,8 +212,10 @@ class DatabaseService {
       });
     }
     if (oldVersion < 3) {
+      // v2 → v3: ricrea dialogue_history con CHECK su role e migra i dati.
       await db.transaction((txn) async {
-        await txn.execute('ALTER TABLE dialogue_history RENAME TO dialogue_history_old');
+        await txn.execute(
+            'ALTER TABLE dialogue_history RENAME TO dialogue_history_old');
         await txn.execute('''
           CREATE TABLE dialogue_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -180,6 +238,7 @@ class DatabaseService {
       });
     }
     if (oldVersion < 4) {
+      // v3 → v4: crea app_settings (include già le colonne audio).
       await db.transaction((txn) async {
         await txn.execute('''
           CREATE TABLE IF NOT EXISTS app_settings (
@@ -203,7 +262,7 @@ class DatabaseService {
         );
       });
     }
-    // v5: no schema changes — audio columns (music_enabled, music_volume,
+    // v4 → v5: no schema changes — audio columns (music_enabled, music_volume,
     // sfx_enabled, sfx_volume) were already included in the v4 CREATE TABLE.
     // The ALTER TABLE statements that used to live here were redundant and
     // caused a "duplicate column name" crash on any upgrade path through v4.
