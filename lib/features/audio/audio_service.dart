@@ -41,6 +41,20 @@ class AudioService {
   String? _currentAmbienceKey;
   String? _currentNodeId;
 
+  // Fix #2: flag that tracks whether the 30-second silence-ending countdown
+  // is still pending. Cleared by _crossfadeTo() when a new track starts.
+  bool _silenceEndingActive = false;
+
+  // Fix #3a: monotonically increasing counter — incremented at the start of
+  // every _rampVolume call. Each ramp captures the generation at start and
+  // aborts early if the counter has advanced (i.e. a newer ramp was begun).
+  int _rampGeneration = 0;
+
+  // Fix #3b: the most recently requested track key (set in syncForNode before
+  // enqueuing). Allows _syncForNodeInternal to skip stale intermediate targets
+  // when several node-change requests pile up in the queue.
+  String? _latestRequestedTrackKey;
+
   // SFX (one-shot, do not loop)
   final Map<String, String> _sfxAssets = {
     'proustian_trigger': 'assets/audio/sfx_proustian_trigger.ogg',
@@ -102,16 +116,31 @@ class AudioService {
   }
 
   Future<void> syncForNode(String nodeId, {bool force = false}) async {
+    // Record the latest requested track key immediately, before enqueuing.
+    // This lets _syncForNodeInternal detect and skip stale intermediate targets.
+    final trackKey = AudioTrackCatalog.trackForNode(nodeId);
+    if (trackKey != null) _latestRequestedTrackKey = trackKey;
     await _enqueueAudioOperation(() async {
       await _syncForNodeInternal(nodeId, force: force);
     });
   }
 
   Future<void> _syncForNodeInternal(String nodeId, {bool force = false}) async {
-    final previousNodeId = _currentNodeId;
     final trackKey = AudioTrackCatalog.trackForNode(nodeId);
     if (trackKey == null) return;
 
+    // Skip stale non-forced requests: if a newer node was requested after this
+    // operation was enqueued (and it maps to a different track), there is no
+    // point crossfading to an intermediate target — just let the later queued
+    // operation handle the final destination.
+    if (!force &&
+        _latestRequestedTrackKey != null &&
+        _latestRequestedTrackKey != trackKey &&
+        trackKey != 'silence') {
+      return;
+    }
+
+    final previousNodeId = _currentNodeId;
     _currentNodeId = nodeId;
     if (!force && previousNodeId == nodeId && _currentAmbienceKey == trackKey) {
       return;
@@ -208,6 +237,8 @@ class AudioService {
     if (_currentAmbienceKey == key && _backgroundPlayer.playing) return true;
     final asset = AudioTrackCatalog.assetForKey(key);
     if (asset == null || !await _assetExists(asset)) return false;
+    // Cancel any pending silence-ending phase 2 (fix #2).
+    _silenceEndingActive = false;
     try {
       await _rampVolume(0.0);
       await _backgroundPlayer.setAsset(asset);
@@ -223,28 +254,52 @@ class AudioService {
   }
 
   /// Finale 2 (Oblivion): 30 s silence → white-noise fade-in.
-  /// Uses a separate one-shot player to avoid disrupting the background loop.
+  ///
+  /// **Phase 1** (runs inside the queue): ramp the background player to zero,
+  /// stop it, mark [_silenceEndingActive] and return immediately — the queue
+  /// is free for other operations during the wait.
+  ///
+  /// **Phase 2** (fire-and-forget, outside the queue): after 30 s the oblivion
+  /// track is re-enqueued for fade-in. If [_silenceEndingActive] has been
+  /// cleared in the meantime (e.g. by [_crossfadeTo] loading a new track), the
+  /// phase-2 callback is a no-op.
   Future<bool> _handleSilenceEnding() async {
+    // Phase 1 — runs inside the queue.
     try {
       await _rampVolume(0.0);
       await _backgroundPlayer.stop();
       _currentAmbienceKey = 'silence';
-      await Future.delayed(const Duration(seconds: 30));
-      // White noise / echo chamber is the closest available ambient track
-      final oblivionAsset = AudioTrackCatalog.assetForKey('oblivion');
-      if (oblivionAsset == null || !await _assetExists(oblivionAsset)) {
-        return false;
-      }
-      await _backgroundPlayer.setAsset(oblivionAsset);
-      await _backgroundPlayer.setLoopMode(LoopMode.one);
-      await _backgroundPlayer.play();
-      await _rampVolume(0.3); // deliberately low — it is aftermath
-      return true;
+      _silenceEndingActive = true;
     } catch (e) {
       // ignore: avoid_print
-      print('Audio silence-ending fallback: $e');
+      print('Audio silence-ending phase-1 fallback: $e');
       return false;
     }
+
+    // Phase 2 — fire-and-forget: the 30 s countdown runs outside the queue.
+    Future.delayed(const Duration(seconds: 30), () {
+      // Early-out avoids adding a no-op to the queue when a new track has
+      // already started (inner check inside the operation also guards this).
+      if (!_silenceEndingActive) return;
+      _enqueueAudioOperation(() async {
+        if (!_silenceEndingActive) return;
+        _silenceEndingActive = false;
+        final oblivionAsset = AudioTrackCatalog.assetForKey('oblivion');
+        if (oblivionAsset == null || !await _assetExists(oblivionAsset)) return;
+        try {
+          await _backgroundPlayer.setAsset(oblivionAsset);
+          await _backgroundPlayer.setLoopMode(LoopMode.one);
+          await _backgroundPlayer.play();
+          await _rampVolume(0.3); // deliberately low — it is aftermath
+          _currentAmbienceKey = 'oblivion';
+        } catch (e) {
+          // ignore: avoid_print
+          print('Audio silence-ending phase-2 fallback: $e');
+        }
+      });
+    });
+
+    return true;
   }
 
   Future<void> _enqueueAudioOperation(Future<void> Function() operation) {
@@ -306,10 +361,17 @@ class AudioService {
 
   Future<void> _rampVolume(double target,
       {int steps = 10, int msPerStep = 200}) async {
+    // Capture the generation token before starting. If _rampGeneration
+    // advances during the loop (because a concurrent path — e.g. the
+    // silence-ending phase-2 — started a new ramp) the remaining steps are
+    // abandoned, preventing the stale ramp from fighting the new one.
+    _rampGeneration++;
+    final generation = _rampGeneration;
     final current = _backgroundPlayer.volume;
     final delta = (target - current) / steps;
     for (int i = 0; i < steps; i++) {
       await Future.delayed(Duration(milliseconds: msPerStep));
+      if (_rampGeneration != generation) return; // interrupted
       final next = (current + delta * (i + 1)).clamp(0.0, 1.0);
       await _backgroundPlayer.setVolume(next);
     }
