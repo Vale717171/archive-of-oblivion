@@ -540,7 +540,7 @@ def fetch_gutenberg_sentences(author: str, max_quotes: int = 40) -> list[str]:
         req = urllib.request.Request(url, headers=_ua)
         with urllib.request.urlopen(req, timeout=30) as resp:
             raw = resp.read().decode("utf-8", errors="replace")
-    except (urllib.error.URLError, OSError) as exc:
+    except (urllib.error.URLError, OSError):
         # Try mirror URL format
         url_alt = f"https://www.gutenberg.org/cache/epub/{gid}/pg{gid}.txt"
         try:
