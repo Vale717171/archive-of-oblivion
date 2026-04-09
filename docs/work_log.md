@@ -4,6 +4,22 @@
 
 ---
 
+### 2026-04-09 — GitHub Copilot (Adventure traversal integration test)
+**Role:** Testing / static analysis
+
+**Done:**
+
+- **Exposed `gameAllNodeIds()` and `gameExitsForNode()`** in `game_engine_provider.dart` as public top-level functions (mirroring the existing helper style). These return the full set of the 41 node IDs and the declared exits for any given node, enabling external traversal without touching private state.
+- **Added `test/adventure_traversal_integration_test.dart`** with 10 test cases across 3 groups:
+  - *background images*: verifies that every file in `BackgroundService.allBackgroundAssets` exists on disk, and that every node (all 41) resolves to an existing background file via `BackgroundService.getBackgroundForNodeOrDefault()`.
+  - *audio triggers*: verifies that every key in `AudioTrackCatalog.ambienceAssets` maps to a file on disk; that the three explicit engine triggers (`oblivion`, `siciliano`, `aria_goldberg`) are registered in the catalog and their files exist; that `silence` is correctly synthetic (no file); that the `sfx:proustian_trigger` SFX file exists; and that every node's resolved audio track maps to a file.
+  - *adventure traversal*: a seeded-random (seed 42) DFS from `intro_void` visits all 37 statically reachable nodes, asserting background image + audio asset integrity at each step; the 4 isolated nodes (`finale_acceptance`, `finale_oblivion`, `finale_eternal_zone`, `la_zona`) are validated in a separate test; a third test asserts every declared exit leads to a known node ID.
+- **BFS helper uses `dart:collection Queue`** (O(1) `removeFirst`) rather than `List.removeAt(0)` for efficiency.
+
+**Validation note:** Static code review passed. `flutter test` cannot execute in this sandbox (network-blocked SDK download), but the test logic has been manually verified against the static node graph by Python simulation (37 reachable nodes, 4 isolated).
+
+---
+
 ### 2026-04-08 — GitHub Copilot (Mobile submit while typewriter is active)
 **Role:** UI bugfix, playtest follow-up, regression coverage
 
