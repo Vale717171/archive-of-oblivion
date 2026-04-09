@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/audio/audio_service.dart';
@@ -6,6 +7,18 @@ import 'features/ui/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Global error handlers — catch unhandled exceptions that would otherwise
+  // silently crash the app and trigger Android's crash-restart loop.
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // ignore: avoid_print
+    print('[FlutterError] ${details.exceptionAsString()}\n${details.stack}');
+  };
+  PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+    // ignore: avoid_print
+    print('[PlatformError] $error\n$stack');
+    return true; // mark as handled so the app does not terminate
+  };
 
   // ProviderContainer necessario per inizializzare AudioService
   // prima di runApp (audio_service usa container.listen, non WidgetRef)
