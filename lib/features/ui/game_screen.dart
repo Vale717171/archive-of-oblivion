@@ -229,10 +229,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   void _showSimulacrumBanner(String itemName) {
     final words = <String>[];
     for (final part in itemName.split(' ')) {
-      if (part.isEmpty) {
-        words.add('');
-        continue;
-      }
+      if (part.isEmpty) continue;
       words.add('${part[0].toUpperCase()}${part.substring(1)}');
     }
     final label = words.join(' ');

@@ -360,10 +360,7 @@ class _PlayerMemoriesDialog extends StatelessWidget {
   String _prettyKey(String key) {
     final words = <String>[];
     for (final part in key.replaceAll('_', ' ').split(' ')) {
-      if (part.isEmpty) {
-        words.add('');
-        continue;
-      }
+      if (part.isEmpty) continue;
       words.add('${part[0].toUpperCase()}${part.substring(1)}');
     }
     return words.join(' ');
