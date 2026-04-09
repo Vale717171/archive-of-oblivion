@@ -1044,7 +1044,7 @@ const Map<String, _NodeDef> _nodes = {
 // ── Engine state ──────────────────────────────────────────────────────────────
 
 class GameEngineState {
-  static const Object _noLatestSimulacrumUpdate = Object();
+  static const Object _noSimulacrumUpdate = Object();
 
   final List<GameMessage> messages;
   final ParserPhase phase;
@@ -1079,7 +1079,7 @@ class GameEngineState {
     List<String>? inventory,
     int? screenResetCount,
     bool? isPuzzleSolved,
-    Object? latestSimulacrum = _noLatestSimulacrumUpdate,
+    Object? latestSimulacrum = _noSimulacrumUpdate,
     Set<String>? completedPuzzles,
     Map<String, int>? puzzleCounters,
   }) {
@@ -1090,7 +1090,7 @@ class GameEngineState {
       inventory:        inventory        ?? this.inventory,
       screenResetCount: screenResetCount ?? this.screenResetCount,
       isPuzzleSolved:   isPuzzleSolved   ?? this.isPuzzleSolved,
-      latestSimulacrum: identical(latestSimulacrum, _noLatestSimulacrumUpdate)
+      latestSimulacrum: identical(latestSimulacrum, _noSimulacrumUpdate)
           ? this.latestSimulacrum
           : latestSimulacrum as String?,
       completedPuzzles: completedPuzzles ?? this.completedPuzzles,

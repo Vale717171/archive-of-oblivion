@@ -1056,7 +1056,7 @@ class _StatusBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
       child: Tooltip(
-        message: 'Lucidity · Anxiety · Oblivion — these shape the Archive\'s response.',
+        message: 'Lucidity · Anxiety · Oblivion — these shape the Archive’s response.',
         preferBelow: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
