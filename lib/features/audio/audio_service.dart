@@ -63,6 +63,9 @@ class AudioService {
   Future<void> initialize(ProviderContainer container) async {
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.music());
+    // Activate the session so Android grants audio focus before the first play().
+    // Without this, just_audio plays silently on many Android devices.
+    await session.setActive(true);
 
     await _backgroundPlayer.setLoopMode(LoopMode.one);
     await _backgroundPlayer.setVolume(0.0);
@@ -244,7 +247,12 @@ class AudioService {
     // Cancel any pending silence-ending phase 2 (fix #2).
     _silenceEndingActive = false;
     try {
-      await _rampVolume(0.0);
+      // Only ramp down if the player is already audible, to avoid a
+      // needless 600 ms pause on startup when volume is already 0.
+      if (_backgroundPlayer.volume > 0.05) {
+        await _rampVolume(0.0);
+      }
+      await _backgroundPlayer.stop();
       await _backgroundPlayer.setAsset(asset);
       await _backgroundPlayer.play();
       await _rampVolume(_targetVolumeFor(key));
@@ -364,7 +372,7 @@ class AudioService {
   }
 
   Future<void> _rampVolume(double target,
-      {int steps = 10, int msPerStep = 200}) async {
+      {int steps = 15, int msPerStep = 40}) async {
     // Capture the generation token before starting. If _rampGeneration
     // advances during the loop (because a concurrent path — e.g. the
     // silence-ending phase-2 — started a new ramp) the remaining steps are
