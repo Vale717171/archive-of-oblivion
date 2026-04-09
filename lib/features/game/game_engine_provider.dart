@@ -986,13 +986,13 @@ const Map<String, _NodeDef> _nodes = {
 
   // ── I Tre Finali ──────────────────────────────────────────────────────────
   'finale_acceptance': _NodeDef(
-    title: 'Acceptance — La Rivelazione',
+    title: 'Acceptance — The Revelation',
     description: 'The Archive grows transparent.\n\n'
         'Through the walls — walls that were always walls — '
         'a vastness opens that resembles coming home.\n\n'
         'Every tear. Every silence. Every imperfection. '
         'They were not failures: they were the raw materials of a soul.\n\n'
-        '"Fuori non c\'è il Vuoto. Fuori c\'è tutto."\n\n'
+        '"Outside there is no Void. Outside there is everything."\n\n'
         'The Aria delle Goldberg resumes from its suspended note.\n\n'
         'Type WAKE UP when you are ready.',
     exits: {},
@@ -1893,7 +1893,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         narrativeText: 'The scent of linden blossom.\n\n'
             'And then — without transition — a room you knew once. '
             'Not this Archive. A door, half-open, and afternoon light through it.\n\n'
-            '"l\'odore e il sapore restano ancora a lungo, come anime."\n\n'
+            '"The smell and taste remain for a long time, like souls."\n\n'
             'The smell fades. The room does not.',
         needsLlm:     true,
         lucidityDelta: -5,
@@ -1911,7 +1911,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         narrativeText: 'A taste of something burnt and impossibly sweet.\n\n'
             'You are elsewhere — briefly. A kitchen. A morning. '
             'Something ordinary that was, in fact, everything.\n\n'
-            '"La madeleine de Combray."\n\n'
+            '"The madeleine of Combray."\n\n'
             'You return. The ash on your lips is cold.',
         needsLlm:     true,
         lucidityDelta: -8,
@@ -2566,8 +2566,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         return const EngineResponse(
           narrativeText: 'You look into the mirrors a second time.\n\n'
               'Your reflection looks back — and it is not quite the one you left.\n\n'
-              '"Plus fragiles mais plus vivaces, plus immatérielles, '
-              'plus persistantes, plus fidèles."\n\n'
+              '"More fragile but more vivid, more unsubstantial, '
+              'more persistent, more faithful."\n\n'
               'The images hold something you had forgotten was yours.',
           needsLlm:       true,
           lucidityDelta:  -5,
@@ -2876,8 +2876,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         return const EngineResponse(
           narrativeText: 'You look into the mirrors a second time.\n\n'
               'Your reflection looks back — and it is not quite the one you left.\n\n'
-              '"Plus fragiles mais plus vivaces, plus immatérielles, '
-              'plus persistantes, plus fidèles."\n\n'
+              '"More fragile but more vivid, more unsubstantial, '
+              'more persistent, more faithful."\n\n'
               'The images hold something you had forgotten was yours.',
           needsLlm:       true,
           lucidityDelta:  -5,

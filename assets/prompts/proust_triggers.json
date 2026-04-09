@@ -1,7 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "Proustian involuntary memory triggers. Each is activated by a specific command in a specific sector. Responses saved to player_memories table for LLM personalisation.",
-
+  "description": "Proustian involuntary memory triggers. Each is activated by a specific command in a specific sector. Responses saved to player_memories table for LLM personalization.",
   "triggers": [
     {
       "id": "linden",
@@ -10,7 +9,7 @@
       "command": "smell",
       "citation_original": "l'odeur et la saveur restent encore longtemps, comme des âmes",
       "citation_english": "the smell and taste of things remain poised a long time, like souls",
-      "narrative": "The scent of linden blossom.\n\nAnd then — without transition — a room you knew once. Not this Archive. A door, half-open, and afternoon light through it.\n\n\"l'odeur et la saveur restant encore longtemps, comme des âmes.\"\n\nThe smell fades. The room does not.",
+      "narrative": "The scent of linden blossom.\n\nAnd then — without transition — a room you knew once. Not this Archive. A door, half-open, and afternoon light through it.\n\n\"The smell and taste of things remain for a long time, like souls.\"\n\nThe smell fades. The room does not.",
       "llm_instruction": "Generate a Proustian reminiscence triggered by linden scent. Max 50 words. Precise sensory detail, the sensation preceding the memory. End with ONE question about a specific afternoon the player remembers.",
       "save_to_db": true,
       "emotional_tone_probe": "What afternoon does this smell bring back?"
@@ -33,7 +32,7 @@
       "command": "observe reflection (second visit)",
       "citation_original": "Plus fragiles mais plus vivaces, plus immatérielles, plus persistantes, plus fidèles",
       "citation_english": "More fragile, but more living, more unsubstantial, more persistent, more faithful",
-      "narrative": "You look into the mirrors a second time.\n\nYour reflection looks back — and it is not quite the one you left.\n\n\"Plus fragiles mais plus vivaces, plus immatérielles, plus persistantes, plus fidèles.\"\n\nThe images hold something you had forgotten was yours.",
+      "narrative": "You look into the mirrors a second time.\n\nYour reflection looks back — and it is not quite the one you left.\n\n\"More fragile but more vivid, more unsubstantial, more persistent, more faithful.\"\n\nThe images hold something you had forgotten was yours.",
       "llm_instruction": "Generate a Proustian reflection experience. Max 50 words. The protagonist sees themselves in a mirror for the second time and notices what has changed. End with ONE question about what the player has left behind.",
       "save_to_db": true,
       "emotional_tone_probe": "What part of yourself have you not seen in a long time?"
@@ -45,12 +44,11 @@
       "command": "taste crystal",
       "citation_original": "il m'avait semblé que la vie méritait d'être vécue",
       "citation_english": "at once the vicissitudes of life had become indifferent to me — its brevity illusory",
-      "narrative": "A taste of something burnt and impossibly sweet.\n\nYou are elsewhere — briefly. A kitchen. A morning. Something ordinary that was, in fact, everything.\n\n\"La madeleine de Combray.\"\n\nYou return. The ash on your lips is cold.",
+      "narrative": "A taste of something burnt and impossibly sweet.\n\nYou are elsewhere — briefly. A kitchen. A morning. Something ordinary that was, in fact, everything.\n\n\"The madeleine of Combray.\"\n\nYou return. The ash on your lips is cold.",
       "llm_instruction": "Generate a Proustian taste memory. Max 50 words. Something burnt and sweet triggers a total displacement. A specific morning, a specific kitchen, the sensation that ordinary things were containing everything. End with ONE question.",
       "save_to_db": true,
       "emotional_tone_probe": "What ordinary morning do you most want to return to?"
     }
   ],
-
   "db_schema_note": "Each triggered response is saved to player_memories(session_id, sector, trigger_type, player_response, emotional_tone). The LLM uses these four responses to generate the personalised aroma in the ritual chamber."
 }
