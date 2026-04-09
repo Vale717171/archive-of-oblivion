@@ -7,7 +7,7 @@ import 'parser_state.dart';
 
 class ParserService {
   static const _directions = {'n', 'north', 's', 'south', 'e', 'east', 'w', 'west'};
-  static const _stopWords = {'the', 'a', 'an', 'at', 'to', 'into', 'up', 'on'};
+  static const _stopWords = {'the', 'a', 'an', 'at', 'to', 'into', 'on'};
 
   /// Parse [raw] input and return the best matching [ParsedCommand].
   static ParsedCommand parse(String raw) {

@@ -203,22 +203,10 @@ class DatabaseService {
         );
       });
     }
-    if (oldVersion < 5) {
-      await db.transaction((txn) async {
-        await txn.execute(
-          'ALTER TABLE app_settings ADD COLUMN music_enabled INTEGER NOT NULL DEFAULT 1',
-        );
-        await txn.execute(
-          'ALTER TABLE app_settings ADD COLUMN music_volume REAL NOT NULL DEFAULT 0.85',
-        );
-        await txn.execute(
-          'ALTER TABLE app_settings ADD COLUMN sfx_enabled INTEGER NOT NULL DEFAULT 1',
-        );
-        await txn.execute(
-          'ALTER TABLE app_settings ADD COLUMN sfx_volume REAL NOT NULL DEFAULT 0.90',
-        );
-      });
-    }
+    // v5: no schema changes — audio columns (music_enabled, music_volume,
+    // sfx_enabled, sfx_volume) were already included in the v4 CREATE TABLE.
+    // The ALTER TABLE statements that used to live here were redundant and
+    // caused a "duplicate column name" crash on any upgrade path through v4.
   }
 
   // ── Player memories ──────────────────────────────────────────────────────────
