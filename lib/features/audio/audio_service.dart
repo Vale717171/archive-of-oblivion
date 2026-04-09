@@ -278,6 +278,8 @@ class AudioService {
 
     // Phase 2 — fire-and-forget: the 30 s countdown runs outside the queue.
     Future.delayed(const Duration(seconds: 30), () {
+      // Early-out avoids adding a no-op to the queue when a new track has
+      // already started (inner check inside the operation also guards this).
       if (!_silenceEndingActive) return;
       _enqueueAudioOperation(() async {
         if (!_silenceEndingActive) return;
@@ -359,7 +361,7 @@ class AudioService {
 
   Future<void> _rampVolume(double target,
       {int steps = 10, int msPerStep = 200}) async {
-    // Capture the generation token before starting.  If _rampGeneration
+    // Capture the generation token before starting. If _rampGeneration
     // advances during the loop (because a concurrent path — e.g. the
     // silence-ending phase-2 — started a new ramp) the remaining steps are
     // abandoned, preventing the stale ramp from fighting the new one.
