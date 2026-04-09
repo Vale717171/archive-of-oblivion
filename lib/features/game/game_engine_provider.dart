@@ -1285,8 +1285,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
-    // ── Audio trigger ────────────────────────────────────────────────────────
-    await AudioService().handleTrigger(response.audioTrigger);
+    // ── Audio trigger (fire-and-forget — must not block game logic) ──────────
+    AudioService().handleTrigger(response.audioTrigger);
 
     final psychoProfileFieldsPresent = response.anxietyDelta != null ||
         response.lucidityDelta != null ||
