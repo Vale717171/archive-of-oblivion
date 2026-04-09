@@ -7,6 +7,7 @@
 // The seeded-random DFS walk is deterministic (seed 42) so failures are
 // reproducible, while still exercising branches in an unpredictable order.
 
+import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
 
@@ -151,11 +152,14 @@ void main() {
   // ── 3. Adventure traversal ────────────────────────────────────────────────
 
   group('adventure traversal', () {
+    // Computed once and reused by all traversal tests — the node graph is
+    // static so the reachable set is always the same.
+    final reachable = _bfsReachable('intro_void');
+
     test(
       'seeded-random DFS from intro_void visits every statically reachable node '
       'and validates its assets',
       () {
-        final reachable = _bfsReachable('intro_void');
         expect(
           reachable,
           isNotEmpty,
@@ -198,7 +202,6 @@ void main() {
       'nodes not reachable via static exits (finale_*, la_zona) still have '
       'valid assets',
       () {
-        final reachable = _bfsReachable('intro_void');
         final isolated = gameAllNodeIds().difference(reachable);
         for (final nodeId in isolated) {
           _assertNodeAssets(nodeId);
@@ -229,9 +232,9 @@ void main() {
 /// we traverse the logical topology, not the gated gameplay path).
 Set<String> _bfsReachable(String start) {
   final visited = <String>{};
-  final queue = [start];
+  final queue = Queue<String>()..add(start);
   while (queue.isNotEmpty) {
-    final node = queue.removeAt(0);
+    final node = queue.removeFirst();
     if (!visited.add(node)) continue;
     for (final dest in gameExitsForNode(node).values) {
       if (!visited.contains(dest)) queue.add(dest);
