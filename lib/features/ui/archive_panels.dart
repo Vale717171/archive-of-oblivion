@@ -358,14 +358,15 @@ class _PlayerMemoriesDialog extends StatelessWidget {
   const _PlayerMemoriesDialog();
 
   String _prettyKey(String key) {
-    return key
-        .replaceAll('_', ' ')
-        .split(' ')
-        .map((part) {
-          if (part.isEmpty) return '';
-          return '${part[0].toUpperCase()}${part.substring(1)}';
-        })
-        .join(' ');
+    final words = <String>[];
+    for (final part in key.replaceAll('_', ' ').split(' ')) {
+      if (part.isEmpty) {
+        words.add('');
+        continue;
+      }
+      words.add('${part[0].toUpperCase()}${part.substring(1)}');
+    }
+    return words.join(' ');
   }
 
   @override

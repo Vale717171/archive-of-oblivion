@@ -1044,7 +1044,7 @@ const Map<String, _NodeDef> _nodes = {
 // ── Engine state ──────────────────────────────────────────────────────────────
 
 class GameEngineState {
-  static const Object _noSimulacrumUpdate = Object();
+  static const Object _noSimulacrumChange = Object();
 
   final List<GameMessage> messages;
   final ParserPhase phase;
@@ -1079,7 +1079,7 @@ class GameEngineState {
     List<String>? inventory,
     int? screenResetCount,
     bool? isPuzzleSolved,
-    Object? latestSimulacrum = _noSimulacrumUpdate,
+    Object? latestSimulacrum = _noSimulacrumChange,
     Set<String>? completedPuzzles,
     Map<String, int>? puzzleCounters,
   }) {
@@ -1090,7 +1090,7 @@ class GameEngineState {
       inventory:        inventory        ?? this.inventory,
       screenResetCount: screenResetCount ?? this.screenResetCount,
       isPuzzleSolved:   isPuzzleSolved   ?? this.isPuzzleSolved,
-      latestSimulacrum: identical(latestSimulacrum, _noSimulacrumUpdate)
+      latestSimulacrum: identical(latestSimulacrum, _noSimulacrumChange)
           ? this.latestSimulacrum
           : latestSimulacrum as String?,
       completedPuzzles: completedPuzzles ?? this.completedPuzzles,
@@ -1417,6 +1417,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             GameMessage(text: narrativeText, role: MessageRole.narrative),
           );
     if (response.audioTrigger == 'simulacrum') {
+      // Let the dedicated reward banner land before the typewriter resumes so
+      // the simulacrum acquisition reads as a distinct moment of progress.
       await Future.delayed(const Duration(milliseconds: 500));
     }
     state = AsyncValue.data(withNarrative);

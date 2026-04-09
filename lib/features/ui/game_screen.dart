@@ -227,13 +227,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   }
 
   void _showSimulacrumBanner(String itemName) {
-    final label = itemName
-        .split(' ')
-        .map((part) {
-          if (part.isEmpty) return '';
-          return '${part[0].toUpperCase()}${part.substring(1)}';
-        })
-        .join(' ');
+    final words = <String>[];
+    for (final part in itemName.split(' ')) {
+      if (part.isEmpty) {
+        words.add('');
+        continue;
+      }
+      words.add('${part[0].toUpperCase()}${part.substring(1)}');
+    }
+    final label = words.join(' ');
     _simulacrumBannerTimer?.cancel();
     setState(() => _simulacrumBannerText = '✦ $label recovered');
     _simulacrumBannerTimer = Timer(_simulacrumBannerDuration, () {
