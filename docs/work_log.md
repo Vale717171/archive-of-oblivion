@@ -4,6 +4,29 @@
 
 ---
 
+### 2026-04-09 — GitHub Copilot (Progression feedback and archive memory polish)
+**Role:** UI/UX polish, progression feedback, parser variety
+
+**Done:**
+
+- **Added explicit progression feedback in `game_engine_provider.dart` and `game_screen.dart`** with transient puzzle-resolution overlay state (`isPuzzleSolved`) and first-time simulacrum banner state (`latestSimulacrum`) carried by `GameEngineState`.
+- **Varied the unknown-command Demiurge fallback** by replacing the single repeated parser-error line with a rotating pool of Archive-appropriate fallback phrases before Demiurge augmentation.
+- **Upgraded all four simulacrum reward moments** (`Ataraxia`, `The Constant`, `The Proportion`, `The Catalyst`) to use a dedicated reward helper that always adds emphatic confirmation text, forces Demiurge treatment, and emits the new `simulacrum` audio trigger plus the matching 500 ms display pause.
+- **Expanded the in-game menu** with `Archive status` and `Your memories`, then implemented both panels in `archive_panels.dart`.
+- **Added archive progression cards** that summarise Garden, Observatory, Gallery, Laboratory, and Memory-sector completion in a single glance instead of relying on a raw puzzle count.
+- **Surfaced saved player memories** by reusing `DatabaseService.loadAllMemories()` inside a new dialog, making Fifth Sector and Zone responses visible to the player after they are stored.
+- **Enhanced the bottom status bar** with Lucidity, Anxiety, and Oblivion micro-bars plus a tooltip, so the psycho-profile now has continuous visual feedback during play.
+- **Extended `AudioService.handleTrigger()`** to understand the new `simulacrum` trigger and subtly brighten the current mix without changing track selection.
+
+**Validation note:** `flutter analyze` and `flutter test` could not run in this sandbox because the `flutter` executable is not installed (`bash: flutter: command not found`). `dart format` was available and was run on the modified files.
+
+**Architecture snapshot:**
+- `GameEngineState` now carries transient, non-persisted feedback fields for UI reward cues (`isPuzzleSolved`, `latestSimulacrum`).
+- `ArchivePanels` now includes runtime progression and memory-review dialogs in addition to the existing intro/help/settings/credits surfaces.
+- Audio triggers now include a dedicated `simulacrum` cue handled in the existing ambience-mix path.
+
+---
+
 ### 2026-04-09 — GitHub Copilot (LLM dead code removal)
 **Role:** Cleanup / refactoring
 
