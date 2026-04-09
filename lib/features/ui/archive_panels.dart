@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/storage/database_service.dart';
+import '../game/game_engine_provider.dart';
 import '../settings/app_settings_provider.dart';
 
 class ArchivePanels {
@@ -59,6 +61,23 @@ class ArchivePanels {
       isScrollControlled: true,
       backgroundColor: const Color(0xFF101114),
       builder: (context) => const _SettingsSheet(),
+    );
+  }
+
+  static Future<void> showArchiveStatus(
+    BuildContext context,
+    GameEngineState engine,
+  ) {
+    return showDialog<void>(
+      context: context,
+      builder: (context) => _ArchiveStatusDialog(engine: engine),
+    );
+  }
+
+  static Future<void> showPlayerMemories(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (context) => const _PlayerMemoriesDialog(),
     );
   }
 }
@@ -226,6 +245,284 @@ class _SettingsSheet extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ArchiveStatusDialog extends StatelessWidget {
+  final GameEngineState engine;
+
+  const _ArchiveStatusDialog({required this.engine});
+
+  @override
+  Widget build(BuildContext context) {
+    final statuses = <_SectorStatus>[
+      _SectorStatus(
+        label: 'Garden',
+        stateLabel: engine.completedPuzzles.contains('garden_complete')
+            ? 'Ataraxia recovered'
+            : 'Unexplored',
+        detail: engine.completedPuzzles.contains('garden_complete')
+            ? 'The statue accepted your burden.'
+            : 'Relief still waits in the grove.',
+        complete: engine.completedPuzzles.contains('garden_complete') ||
+            engine.inventory.contains('ataraxia'),
+      ),
+      _SectorStatus(
+        label: 'Observatory',
+        stateLabel: engine.completedPuzzles.contains('obs_complete')
+            ? 'The Constant recovered'
+            : 'Unexplored',
+        detail: engine.completedPuzzles.contains('obs_complete')
+            ? 'The inward observation is complete.'
+            : 'The telescope still seeks its witness.',
+        complete: engine.completedPuzzles.contains('obs_complete') ||
+            engine.inventory.contains('the constant'),
+      ),
+      _SectorStatus(
+        label: 'Gallery',
+        stateLabel: engine.completedPuzzles.contains('gallery_complete')
+            ? 'The Proportion recovered'
+            : 'Unexplored',
+        detail: engine.completedPuzzles.contains('gallery_complete')
+            ? 'The mirror yielded its geometry.'
+            : 'The boundary is not ready to break.',
+        complete: engine.completedPuzzles.contains('gallery_complete') ||
+            engine.inventory.contains('the proportion'),
+      ),
+      _SectorStatus(
+        label: 'Laboratory',
+        stateLabel: engine.completedPuzzles.contains('lab_complete')
+            ? 'The Catalyst recovered'
+            : 'Unexplored',
+        detail: engine.completedPuzzles.contains('lab_complete')
+            ? 'Transformation recognised your breath.'
+            : 'The Great Work remains unfinished.',
+        complete: engine.completedPuzzles.contains('lab_complete') ||
+            engine.inventory.contains('the catalyst'),
+      ),
+      _SectorStatus(
+        label: 'Memory',
+        stateLabel: engine.completedPuzzles.contains('ritual_complete')
+            ? 'Ritual completed'
+            : engine.completedPuzzles.containsAll(const {
+                'memory_childhood',
+                'memory_youth',
+                'memory_maturity',
+                'memory_old_age',
+              })
+                ? 'Four memories offered'
+                : 'Unexplored',
+        detail: engine.completedPuzzles.contains('ritual_complete')
+            ? 'The fifth descent is open.'
+            : 'The sector waits for what only you can say.',
+        complete: engine.completedPuzzles.contains('ritual_complete') ||
+            engine.completedPuzzles.containsAll(const {
+              'memory_childhood',
+              'memory_youth',
+              'memory_maturity',
+              'memory_old_age',
+            }),
+      ),
+    ];
+
+    return AlertDialog(
+      backgroundColor: const Color(0xFF111111),
+      title: const Text('Archive Status'),
+      content: SizedBox(
+        width: 520,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final status in statuses) ...[
+                _SectorStatusCard(status: status),
+                const SizedBox(height: 12),
+              ],
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+}
+
+class _PlayerMemoriesDialog extends StatelessWidget {
+  const _PlayerMemoriesDialog();
+
+  String _prettyKey(String key) {
+    final words = <String>[];
+    for (final part in key.replaceAll('_', ' ').split(' ')) {
+      if (part.isEmpty) continue;
+      words.add('${part[0].toUpperCase()}${part.substring(1)}');
+    }
+    return words.join(' ');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: const Color(0xFF111111),
+      title: const Text('Your Memories'),
+      content: SizedBox(
+        width: 520,
+        child: FutureBuilder<Map<String, String>>(
+          future: DatabaseService.instance.loadAllMemories(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              if (snapshot.hasError) {
+                return const Text(
+                  'The Archive cannot retrieve your memories right now.',
+                  style: TextStyle(height: 1.5),
+                );
+              }
+              return const SizedBox(
+                height: 140,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            final memories = snapshot.data!;
+            if (memories.isEmpty) {
+              return const Text(
+                'No memories have been offered yet.\n\nThe Archive is still waiting for your words.',
+                style: TextStyle(height: 1.5),
+              );
+            }
+
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (final entry in memories.entries) ...[
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.04),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.08),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Memory · ${_prettyKey(entry.key)}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              letterSpacing: 0.8,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '“${entry.value}”',
+                            style: const TextStyle(
+                              height: 1.5,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+}
+
+class _SectorStatus {
+  final String label;
+  final String stateLabel;
+  final String detail;
+  final bool complete;
+
+  const _SectorStatus({
+    required this.label,
+    required this.stateLabel,
+    required this.detail,
+    required this.complete,
+  });
+}
+
+class _SectorStatusCard extends StatelessWidget {
+  final _SectorStatus status;
+
+  const _SectorStatusCard({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = status.complete
+        ? const Color(0xFF7ABF8A)
+        : Colors.white.withValues(alpha: 0.28);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: accent),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            status.complete ? Icons.task_alt : Icons.radio_button_unchecked,
+            color: accent,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  status.label,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  status.stateLabel,
+                  style: TextStyle(
+                    color: accent,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  status.detail,
+                  style: const TextStyle(color: Colors.white70, height: 1.4),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

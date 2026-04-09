@@ -190,6 +190,10 @@ class AudioService {
         await _applyCurrentMix();
         return;
       }
+      if (trigger == 'simulacrum') {
+        await _applyCurrentMix(intensityOffset: 0.04);
+        return;
+      }
       if (trigger == 'anxious') {
         await _applyCurrentMix(intensityOffset: _anxietyTriggerBoost);
         return;

@@ -31,6 +31,8 @@ const int _highOblivionThreshold = 60; // oblivionLevel > this → blue-grey tex
 const double _backgroundImageOpacity = 0.15;
 const Duration _backgroundFlashHoldDuration = Duration(milliseconds: 180);
 const Duration _backgroundFadeDuration = Duration(milliseconds: 900);
+const Duration _puzzleCueHoldDuration = Duration(milliseconds: 1300);
+const Duration _simulacrumBannerDuration = Duration(milliseconds: 2200);
 // 5×4 color matrix: +18% RGB gain plus a small +18 luminance lift keeps the
 // mandated 0.15-opacity artwork readable on dimmer screens without making it loud.
 const List<double> _backgroundImageBrightnessMatrix = [
@@ -59,7 +61,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   String? _typewriterTarget;
   Timer? _typewriterTimer;
   Timer? _backgroundFlashTimer;
+  Timer? _puzzleCueTimer;
+  Timer? _simulacrumBannerTimer;
   bool _backgroundFlashActive = false;
+  bool _puzzleCueActive = false;
+  String? _simulacrumBannerText;
+  bool _lastObservedPuzzleSolved = false;
+  String? _lastObservedSimulacrum;
   String? _lastSubmittedCommand;
   int _processedScreenResetCount = 0;
   int _queuedScreenResetCount = 0;
@@ -85,6 +93,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   void dispose() {
     _typewriterTimer?.cancel();
     _backgroundFlashTimer?.cancel();
+    _puzzleCueTimer?.cancel();
+    _simulacrumBannerTimer?.cancel();
     _controller.dispose();
     _scrollController.dispose();
     _focusNode.dispose();
@@ -207,6 +217,47 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     });
   }
 
+  void _triggerPuzzleSolvedCue() {
+    _puzzleCueTimer?.cancel();
+    setState(() => _puzzleCueActive = true);
+    _puzzleCueTimer = Timer(_puzzleCueHoldDuration, () {
+      if (!mounted) return;
+      setState(() => _puzzleCueActive = false);
+    });
+  }
+
+  void _showSimulacrumBanner(String itemName) {
+    final words = <String>[];
+    for (final part in itemName.split(' ')) {
+      if (part.isEmpty) continue;
+      words.add('${part[0].toUpperCase()}${part.substring(1)}');
+    }
+    final label = words.join(' ');
+    _simulacrumBannerTimer?.cancel();
+    setState(() => _simulacrumBannerText = '✦ $label recovered');
+    _simulacrumBannerTimer = Timer(_simulacrumBannerDuration, () {
+      if (!mounted) return;
+      setState(() => _simulacrumBannerText = null);
+    });
+  }
+
+  void _consumeFeedbackSignals(GameEngineState engine) {
+    if (engine.isPuzzleSolved && !_lastObservedPuzzleSolved) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _triggerPuzzleSolvedCue();
+      });
+    }
+    _lastObservedPuzzleSolved = engine.isPuzzleSolved;
+
+    final latestSimulacrum = engine.latestSimulacrum;
+    if (latestSimulacrum != null && _lastObservedSimulacrum != latestSimulacrum) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _showSimulacrumBanner(latestSimulacrum);
+      });
+    }
+    _lastObservedSimulacrum = latestSimulacrum;
+  }
+
   void _scheduleScreenResetCue(int screenResetCount) {
     // Preserve the reset counts so rapid successive successes can still be
     // flashed in order instead of collapsing into a single generic flag.
@@ -303,10 +354,20 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     _focusNode.requestFocus();
   }
 
-  Future<void> _handleMenuAction(_GameMenuAction action) async {
+  Future<void> _handleMenuAction(
+    _GameMenuAction action,
+    GameEngineState? engine,
+  ) async {
     switch (action) {
       case _GameMenuAction.newGame:
         return _startNewGame();
+      case _GameMenuAction.archiveStatus:
+        if (engine != null) {
+          return ArchivePanels.showArchiveStatus(context, engine);
+        }
+        return;
+      case _GameMenuAction.memories:
+        return ArchivePanels.showPlayerMemories(context);
       case _GameMenuAction.howToPlay:
         return ArchivePanels.showHowToPlay(context);
       case _GameMenuAction.settings:
@@ -496,6 +557,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 ),
               ),
               data: (engine) {
+                _consumeFeedbackSignals(engine);
                 if (engine.screenResetCount != _processedScreenResetCount) {
                   _scheduleScreenResetCue(engine.screenResetCount);
                 }
@@ -523,7 +585,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         nodeTitle: gameNodeTitle(currentNode),
                         narrativeColor: narrativeColor,
                         textScale: textScale,
-                        onMenuSelected: _handleMenuAction,
+                        onMenuSelected: (action) => _handleMenuAction(action, engine),
                         canReturnToTitle: Navigator.of(context).canPop(),
                       ),
                     ),
@@ -596,6 +658,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     _StatusBar(
                       weight: engine.psychoWeight,
                       itemCount: engine.inventory.length,
+                      profile: profile,
                       color: narrativeColor.withValues(alpha: 0.72),
                       textScale: textScale,
                       lastCommand: _lastSubmittedCommand,
@@ -619,6 +682,18 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   ],
                 );
               },
+            ),
+            IgnorePointer(
+              child: _PuzzleSolvedOverlay(
+                active: _puzzleCueActive,
+                reduceMotion: settings?.reduceMotion ?? false,
+              ),
+            ),
+            IgnorePointer(
+              child: _SimulacrumBanner(
+                text: _simulacrumBannerText,
+                reduceMotion: settings?.reduceMotion ?? false,
+              ),
             ),
           ],
         ),
@@ -667,6 +742,8 @@ class _BackgroundLayer extends StatelessWidget {
 
 enum _GameMenuAction {
   newGame,
+  archiveStatus,
+  memories,
   howToPlay,
   settings,
   credits,
@@ -735,6 +812,14 @@ class _TopHud extends StatelessWidget {
             const PopupMenuItem(
               value: _GameMenuAction.newGame,
               child: Text('New game'),
+            ),
+            const PopupMenuItem(
+              value: _GameMenuAction.archiveStatus,
+              child: Text('Archive status'),
+            ),
+            const PopupMenuItem(
+              value: _GameMenuAction.memories,
+              child: Text('Your memories'),
             ),
             const PopupMenuItem(
               value: _GameMenuAction.howToPlay,
@@ -951,6 +1036,7 @@ class _MessageTile extends StatelessWidget {
 class _StatusBar extends StatelessWidget {
   final int weight;
   final int itemCount;
+  final PsychoProfile? profile;
   final Color color;
   final double textScale;
   final String? lastCommand;
@@ -958,6 +1044,7 @@ class _StatusBar extends StatelessWidget {
   const _StatusBar({
     required this.weight,
     required this.itemCount,
+    required this.profile,
     required this.color,
     required this.textScale,
     this.lastCommand,
@@ -967,24 +1054,205 @@ class _StatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              lastCommand == null
-                  ? 'Carrying: $itemCount  ·  Weight: $weight'
-                  : 'Carrying: $itemCount  ·  Weight: $weight  ·  Last: $lastCommand',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: color,
-                fontFamily: 'monospace',
-                fontSize: 11 * textScale,
-                letterSpacing: 0.6,
+      child: Tooltip(
+        message: 'Lucidity · Anxiety · Oblivion — these shape the Archive’s response.',
+        preferBelow: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    lastCommand == null
+                        ? 'Carrying: $itemCount  ·  Weight: $weight'
+                        : 'Carrying: $itemCount  ·  Weight: $weight  ·  Last: $lastCommand',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: color,
+                      fontFamily: 'monospace',
+                      fontSize: 11 * textScale,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            _PsycheMiniBar(
+              label: 'Lucidity',
+              value: profile?.lucidity ?? 50,
+              color: const Color(0xFFDCC58A),
+            ),
+            const SizedBox(height: 4),
+            _PsycheMiniBar(
+              label: 'Anxiety',
+              value: profile?.anxiety ?? 10,
+              color: const Color(0xFFC97C7C),
+            ),
+            const SizedBox(height: 4),
+            _PsycheMiniBar(
+              label: 'Oblivion',
+              value: profile?.oblivionLevel ?? 0,
+              color: const Color(0xFF879EC4),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PsycheMiniBar extends StatelessWidget {
+  final String label;
+  final int value;
+  final Color color;
+
+  const _PsycheMiniBar({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final clampedValue = value.clamp(0, 100).toDouble();
+    return Row(
+      children: [
+        SizedBox(
+          width: 62,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: color.withValues(alpha: 0.82),
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: clampedValue / 100,
+              minHeight: 5,
+              backgroundColor: Colors.white.withValues(alpha: 0.08),
+              valueColor: AlwaysStoppedAnimation<Color>(color),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PuzzleSolvedOverlay extends StatelessWidget {
+  final bool active;
+  final bool reduceMotion;
+
+  const _PuzzleSolvedOverlay({
+    required this.active,
+    required this.reduceMotion,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: AnimatedOpacity(
+        opacity: active ? 1 : 0,
+        duration: reduceMotion ? Duration.zero : const Duration(milliseconds: 220),
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 32),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 22),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.22),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0xFFB99A58), width: 1.2),
+            ),
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '✦',
+                  style: TextStyle(
+                    color: Color(0xFFDEC58A),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Puzzle resolved',
+                  style: TextStyle(
+                    color: Color(0xFFF3E8CF),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SimulacrumBanner extends StatelessWidget {
+  final String? text;
+  final bool reduceMotion;
+
+  const _SimulacrumBanner({
+    required this.text,
+    required this.reduceMotion,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 18,
+      left: 20,
+      right: 20,
+      child: AnimatedSlide(
+        duration: reduceMotion ? Duration.zero : const Duration(milliseconds: 260),
+        offset: text == null ? const Offset(0, -1.1) : Offset.zero,
+        curve: Curves.easeOutCubic,
+        child: AnimatedOpacity(
+          opacity: text == null ? 0 : 1,
+          duration: reduceMotion ? Duration.zero : const Duration(milliseconds: 220),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 420),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF17120A).withValues(alpha: 0.94),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFB99A58)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.28),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Text(
+                text ?? '',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Color(0xFFF1E5C9),
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.4,
+                ),
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

@@ -1044,11 +1044,15 @@ const Map<String, _NodeDef> _nodes = {
 // ── Engine state ──────────────────────────────────────────────────────────────
 
 class GameEngineState {
+  static const Object _noSimulacrumChange = Object();
+
   final List<GameMessage> messages;
   final ParserPhase phase;
   final int psychoWeight;
   final List<String> inventory;
   final int screenResetCount;
+  final bool isPuzzleSolved;
+  final String? latestSimulacrum;
 
   /// Puzzle IDs that have been solved, e.g. 'leaves_arranged'.
   final Set<String> completedPuzzles;
@@ -1062,6 +1066,8 @@ class GameEngineState {
     this.psychoWeight = 0,
     this.inventory = const [],
     this.screenResetCount = 0,
+    this.isPuzzleSolved = false,
+    this.latestSimulacrum,
     this.completedPuzzles = const {},
     this.puzzleCounters = const {},
   });
@@ -1072,6 +1078,8 @@ class GameEngineState {
     int? psychoWeight,
     List<String>? inventory,
     int? screenResetCount,
+    bool? isPuzzleSolved,
+    Object? latestSimulacrum = _noSimulacrumChange,
     Set<String>? completedPuzzles,
     Map<String, int>? puzzleCounters,
   }) {
@@ -1081,6 +1089,10 @@ class GameEngineState {
       psychoWeight:     psychoWeight     ?? this.psychoWeight,
       inventory:        inventory        ?? this.inventory,
       screenResetCount: screenResetCount ?? this.screenResetCount,
+      isPuzzleSolved:   isPuzzleSolved   ?? this.isPuzzleSolved,
+      latestSimulacrum: identical(latestSimulacrum, _noSimulacrumChange)
+          ? this.latestSimulacrum
+          : latestSimulacrum as String?,
       completedPuzzles: completedPuzzles ?? this.completedPuzzles,
       puzzleCounters:   puzzleCounters   ?? this.puzzleCounters,
     );
@@ -1091,6 +1103,7 @@ class GameEngineState {
 
 class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   final _history = DialogueHistoryService.instance;
+  final Random _random = Random();
 
   // Maximum value for psychological weight and psycho-profile sliders.
   static const int _maxPsychoValue = 100;
@@ -1101,6 +1114,21 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   // Full seven-word progression:
   static const _correctLeafOrder =
       'prudence friendship pleasure simplicity absence tranquillity memory';
+
+  static const List<String> _unknownCommandFallbacks = [
+    'The Archive listens, but does not parse this.',
+    'Something was spoken. The Archive holds it, untranslated.',
+    'The words arrive out of order.',
+    'The sentence touches the room but does not settle into it.',
+    'The Archive receives the sound and not the intention.',
+    'Meaning approaches, then passes beside the door.',
+    'The command almost becomes a key.',
+    'The phrase enters the chamber unchanged and leaves altered.',
+    'The Archive understands your presence more clearly than your syntax.',
+    'Something in what you said belongs to another room.',
+    'The Archive keeps the utterance without resolving it.',
+    'These words do not fit the lock before you.',
+  ];
 
   // Planetary order for the Great Work circles (alchemical Opus Magnum descent).
   static const List<String> _planetOrder = [
@@ -1119,6 +1147,32 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   /// Counts words in [raw] after skipping the first token (the command verb).
   static int _wordCountExcludingVerb(String raw) =>
       raw.trim().split(RegExp(r'\s+')).skip(1).length;
+
+  String _randomUnknownFallback() =>
+      _unknownCommandFallbacks[_random.nextInt(_unknownCommandFallbacks.length)];
+
+  EngineResponse _simulacrumReward({
+    required String narrativeText,
+    required String itemName,
+    required String completePuzzle,
+    int? lucidityDelta,
+    int? anxietyDelta,
+    int? oblivionDelta,
+    bool clearInventoryOnDeposit = false,
+  }) {
+    return EngineResponse(
+      narrativeText:
+          '$narrativeText\n\n✦ You have recovered $itemName. The Archive marks the moment.',
+      needsDemiurge: true,
+      lucidityDelta: lucidityDelta,
+      anxietyDelta: anxietyDelta,
+      oblivionDelta: oblivionDelta,
+      audioTrigger: 'simulacrum',
+      grantItem: itemName,
+      completePuzzle: completePuzzle,
+      clearInventoryOnDeposit: clearInventoryOnDeposit,
+    );
+  }
 
   @override
   Future<GameEngineState> build() async {
@@ -1161,6 +1215,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         completedPuzzles: const {},
         puzzleCounters: const {},
         psychoWeight: 0,
+        isPuzzleSolved: false,
+        latestSimulacrum: null,
       ),
     );
   }
@@ -1174,11 +1230,16 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (trimmed.isEmpty) return;
 
     try {
-    state = AsyncValue.data(current.copyWith(phase: ParserPhase.parsing));
+    final pendingState = current.copyWith(
+      phase: ParserPhase.parsing,
+      isPuzzleSolved: false,
+      latestSimulacrum: null,
+    );
+    state = AsyncValue.data(pendingState);
     final cmd = ParserService.parse(trimmed);
 
     final withPlayer = _appendMessage(
-      current.copyWith(phase: ParserPhase.evaluating),
+      pendingState.copyWith(phase: ParserPhase.evaluating),
       GameMessage(text: '> $trimmed', role: MessageRole.player),
     );
     state = AsyncValue.data(withPlayer);
@@ -1319,6 +1380,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       phase:            ParserPhase.displaying,
       psychoWeight:     newWeight,
       inventory:        newInventory,
+      isPuzzleSolved:   response.completePuzzle != null,
+      latestSimulacrum: _isSimulacrum(response.grantItem ?? '')
+          ? response.grantItem
+          : null,
       completedPuzzles: newPuzzles,
       puzzleCounters:   newCounters,
     );
@@ -1351,6 +1416,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             finalState,
             GameMessage(text: narrativeText, role: MessageRole.narrative),
           );
+    if (response.audioTrigger == 'simulacrum') {
+      // Let the dedicated reward banner land before the typewriter resumes so
+      // the simulacrum acquisition reads as a distinct moment of progress.
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
     state = AsyncValue.data(withNarrative);
     await Future.delayed(const Duration(milliseconds: 100));
     state = AsyncValue.data(withNarrative.copyWith(phase: ParserPhase.idle));
@@ -1870,19 +1940,17 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         needsDemiurge: true,
       );
     }
-    return const EngineResponse(
+    return _simulacrumReward(
       narrativeText: 'You place everything at the statue\'s feet.\n\n'
           'The objects arrange themselves in a loose circle. '
           'They look smaller than you remember.\n\n'
           'The expression on the statue\'s face does not change. '
           'You feel, for the first time in this place, something that resembles relief.\n\n'
           'In one of the open hands: a glass sphere, perfectly empty. Ataraxia.',
-      needsDemiurge:               true,
-      lucidityDelta:          10,
-      anxietyDelta:           -20,
-      audioTrigger:           'calm',
-      grantItem:              'ataraxia',
-      completePuzzle:         'garden_complete',
+      itemName: 'ataraxia',
+      completePuzzle: 'garden_complete',
+      lucidityDelta: 10,
+      anxietyDelta: -20,
       clearInventoryOnDeposit: true,
     );
   }
@@ -2454,19 +2522,17 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
     // Clean break — grant The Proportion
-    return const EngineResponse(
+    return _simulacrumReward(
       narrativeText: 'You break the mirror.\n\n'
           'It shatters with a sound that is not glass — '
           'the sound of something that was pretending to be a boundary.\n\n'
           'The fragments arrange themselves on the floor in the shape of a pentagon, '
           'each piece a precise fraction of the whole.\n\n'
           'In the centre: a golden compass with no hinge. The Proportion.',
-      needsDemiurge:       true,
-      lucidityDelta:  15,
-      anxietyDelta:   -10,
-      audioTrigger:   'calm',
-      grantItem:      'the proportion',
+      itemName: 'the proportion',
       completePuzzle: 'gallery_complete',
+      lucidityDelta: 15,
+      anxietyDelta: -10,
     );
   }
 
@@ -2477,7 +2543,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (s.completedPuzzles.contains('lab_complete')) {
       return const EngineResponse(narrativeText: 'The Catalyst has already been released.');
     }
-    return const EngineResponse(
+    return _simulacrumReward(
       narrativeText: 'You breathe into the alembic.\n\n'
           'Your breath — warm, carbon, water, the trace chemistry of a life '
           'lived — enters the glass and touches the substance.\n\n'
@@ -2485,12 +2551,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The pulsing steadies. The glow intensifies.\n\n'
           'In your hands: a small flask of luminescent liquid, '
           'beating in time with your heart. The Catalyst.',
-      needsDemiurge:       true,
-      lucidityDelta:  12,
-      anxietyDelta:   -15,
-      audioTrigger:   'calm',
-      grantItem:      'the catalyst',
+      itemName: 'the catalyst',
       completePuzzle: 'lab_complete',
+      lucidityDelta: 12,
+      anxietyDelta: -15,
     );
   }
 
@@ -2542,7 +2606,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           narrativeText: 'The observation is complete. The Constant is already in your hands.',
         );
       }
-      return const EngineResponse(
+      return _simulacrumReward(
         narrativeText: 'You look into the inverted telescope.\n\n'
             'It shows you the room — and within the room, yourself. '
             'A figure of precise but unmeasurable dimensions.\n\n'
@@ -2551,12 +2615,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'because it is no longer looking outward.\n\n'
             'In your hands: a prism of tangible light. It is warm. '
             'It refracts you. The Constant.',
-        needsDemiurge: true,
+        itemName: 'the constant',
+        completePuzzle: 'obs_complete',
         lucidityDelta: 15,
         anxietyDelta: -10,
-        audioTrigger: 'calm',
-        grantItem: 'the constant',
-        completePuzzle: 'obs_complete',
       );
     }
 
@@ -2746,7 +2808,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           narrativeText: 'The observation is complete. The Constant is already in your hands.',
         );
       }
-      return const EngineResponse(
+      return _simulacrumReward(
         narrativeText: 'You look into the inverted telescope.\n\n'
             'It shows you the room — and within the room, yourself. '
             'A figure of precise but unmeasurable dimensions.\n\n'
@@ -2755,12 +2817,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'because it is no longer looking outward.\n\n'
             'In your hands: a prism of tangible light. It is warm. '
             'It refracts you. The Constant.',
-        needsDemiurge:       true,
-        lucidityDelta:  15,
-        anxietyDelta:   -10,
-        audioTrigger:   'calm',
-        grantItem:      'the constant',
+        itemName: 'the constant',
         completePuzzle: 'obs_complete',
+        lucidityDelta: 15,
+        anxietyDelta: -10,
       );
     }
 
@@ -2935,8 +2995,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
-    return const EngineResponse(
-      narrativeText: 'The Archive does not understand.',
+    return EngineResponse(
+      narrativeText: _randomUnknownFallback(),
       needsDemiurge: true,
     );
   }
