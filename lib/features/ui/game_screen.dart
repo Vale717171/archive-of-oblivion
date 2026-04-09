@@ -683,16 +683,23 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 );
               },
             ),
-            IgnorePointer(
-              child: _PuzzleSolvedOverlay(
-                active: _puzzleCueActive,
-                reduceMotion: settings?.reduceMotion ?? false,
+            Positioned.fill(
+              child: IgnorePointer(
+                child: _PuzzleSolvedOverlay(
+                  active: _puzzleCueActive,
+                  reduceMotion: settings?.reduceMotion ?? false,
+                ),
               ),
             ),
-            IgnorePointer(
-              child: _SimulacrumBanner(
-                text: _simulacrumBannerText,
-                reduceMotion: settings?.reduceMotion ?? false,
+            Positioned(
+              top: 18,
+              left: 20,
+              right: 20,
+              child: IgnorePointer(
+                child: _SimulacrumBanner(
+                  text: _simulacrumBannerText,
+                  reduceMotion: settings?.reduceMotion ?? false,
+                ),
               ),
             ),
           ],
@@ -1159,11 +1166,10 @@ class _PuzzleSolvedOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: AnimatedOpacity(
-        opacity: active ? 1 : 0,
-        duration: reduceMotion ? Duration.zero : const Duration(milliseconds: 220),
-        child: Center(
+    return AnimatedOpacity(
+      opacity: active ? 1 : 0,
+      duration: reduceMotion ? Duration.zero : const Duration(milliseconds: 220),
+      child: Center(
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 32),
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 22),
@@ -1197,7 +1203,6 @@ class _PuzzleSolvedOverlay extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 }
@@ -1213,11 +1218,7 @@ class _SimulacrumBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: 18,
-      left: 20,
-      right: 20,
-      child: AnimatedSlide(
+    return AnimatedSlide(
         duration: reduceMotion ? Duration.zero : const Duration(milliseconds: 260),
         offset: text == null ? const Offset(0, -1.1) : Offset.zero,
         curve: Curves.easeOutCubic,
@@ -1253,7 +1254,6 @@ class _SimulacrumBanner extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 }
