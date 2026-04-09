@@ -1173,6 +1173,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     final trimmed = raw.trim();
     if (trimmed.isEmpty) return;
 
+    try {
     state = AsyncValue.data(current.copyWith(phase: ParserPhase.parsing));
     final cmd = ParserService.parse(trimmed);
 
@@ -1353,6 +1354,21 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     state = AsyncValue.data(withNarrative);
     await Future.delayed(const Duration(milliseconds: 100));
     state = AsyncValue.data(withNarrative.copyWith(phase: ParserPhase.idle));
+    } catch (e, st) {
+      // Safety net: any uncaught exception must not leave the phase stuck in
+      // evaluating/parsing forever. Reset to idle and show a recoverable error.
+      debugPrint('processInput error: $e\n$st');
+      final recovery = state.valueOrNull ?? current;
+      state = AsyncValue.data(
+        _appendMessage(
+          recovery.copyWith(phase: ParserPhase.idle),
+          const GameMessage(
+            text: 'The Archive shudders. Something went wrong — try again.',
+            role: MessageRole.narrative,
+          ),
+        ),
+      );
+    }
   }
 
   // ── _evaluate ───────────────────────────────────────────────────────────────
@@ -3624,6 +3640,10 @@ bool gameTransitEligibleForZone(String fromNodeId, String destNodeId) {
     return false;
   }
   if (destNodeId.startsWith('quinto_') || fromNodeId.startsWith('quinto_')) {
+    return false;
+  }
+  // Never intercept the very first move (intro_void → la_soglia)
+  if (fromNodeId == 'intro_void' || destNodeId == 'intro_void') {
     return false;
   }
   return true;
