@@ -4,6 +4,8 @@
 // ProviderContainer subscription (providers are not Streams).
 // Note: setVolume() crossfade via duration param does not exist in just_audio —
 // replaced with manual volume ramp via Future.delayed steps.
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -55,6 +57,22 @@ class AudioService {
   // when several node-change requests pile up in the queue.
   String? _latestRequestedTrackKey;
 
+  // Audio Focus / interruption state.
+  // _isDucking: we lowered the volume for transient interruptions (ads, etc.).
+  // _pausedByInterruption: we paused playback due to an audio-focus interruption.
+  // _pausedByBecomingNoisy: we paused because headphones/BT were disconnected.
+  //   These are kept separate so that an interruption-end event does NOT
+  //   auto-resume audio that was paused by a headphone disconnect (standard
+  //   Android UX: reconnecting headphones requires manual user resume).
+  // _volumeBeforeDuck: volume saved before ducking so we can restore it.
+  bool _disposed = false;
+  bool _isDucking = false;
+  bool _pausedByInterruption = false;
+  bool _pausedByBecomingNoisy = false;
+  double _volumeBeforeDuck = 0.0;
+  StreamSubscription<AudioInterruptionEvent>? _interruptionSubscription;
+  StreamSubscription<void>? _becomingNoisySubscription;
+
   // SFX (one-shot, do not loop)
   final Map<String, String> _sfxAssets = {
     'proustian_trigger': 'assets/audio/sfx_proustian_trigger.ogg',
@@ -63,6 +81,22 @@ class AudioService {
   Future<void> initialize(ProviderContainer container) async {
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.music());
+
+    // --- Audio Focus: respond to interruptions (calls, competing apps) ---
+    _interruptionSubscription = session.interruptionEventStream.listen(
+      _handleInterruption,
+      onError: (Object e) =>
+          // ignore: avoid_print
+          print('AudioSession interruption stream error: $e'),
+    );
+
+    // --- Audio Focus: pause when headphones / BT are unplugged -----------
+    _becomingNoisySubscription = session.becomingNoisyEventStream.listen(
+      (_) => _handleBecomingNoisy(),
+      onError: (Object e) =>
+          // ignore: avoid_print
+          print('AudioSession becoming-noisy stream error: $e'),
+    );
 
     await _backgroundPlayer.setLoopMode(LoopMode.one);
     await _backgroundPlayer.setVolume(0.0);
@@ -279,10 +313,10 @@ class AudioService {
     // Phase 2 — fire-and-forget: the 30 s countdown runs outside the queue.
     Future.delayed(const Duration(seconds: 30), () {
       // Early-out avoids adding a no-op to the queue when a new track has
-      // already started (inner check inside the operation also guards this).
-      if (!_silenceEndingActive) return;
+      // already started or the service was disposed.
+      if (!_silenceEndingActive || _disposed) return;
       _enqueueAudioOperation(() async {
-        if (!_silenceEndingActive) return;
+        if (!_silenceEndingActive || _disposed) return;
         _silenceEndingActive = false;
         final oblivionAsset = AudioTrackCatalog.assetForKey('oblivion');
         if (oblivionAsset == null || !await _assetExists(oblivionAsset)) return;
@@ -309,6 +343,76 @@ class AudioService {
       print('Queued audio operation failed: $error\n$stackTrace');
     });
     return _audioOperationQueue;
+  }
+
+  /// Handles Android Audio Focus interruptions (phone calls, competing apps).
+  ///
+  /// - On begin with [AudioInterruptionType.duck]: ramp volume to 20 % of the
+  ///   current level so other audio is clearly audible (short-term interruption).
+  /// - On begin with pause / unknown: pause playback entirely (long interruption,
+  ///   phone call, navigation voice-over, etc.).
+  /// - On end: restore the previous state (volume or play) only if *this service*
+  ///   was the one that changed it — never resume if the user paused manually.
+  void _handleInterruption(AudioInterruptionEvent event) {
+    if (_disposed) return;
+    if (event.begin) {
+      switch (event.type) {
+        case AudioInterruptionType.duck:
+          _enqueueAudioOperation(() async {
+            if (_disposed || _isDucking || !_backgroundPlayer.playing) return;
+            _volumeBeforeDuck = _backgroundPlayer.volume;
+            _isDucking = true;
+            await _rampVolume(_volumeBeforeDuck * 0.2,
+                steps: 5, msPerStep: 80);
+          });
+          break;
+        case AudioInterruptionType.pause:
+        case AudioInterruptionType.unknown:
+          _enqueueAudioOperation(() async {
+            if (_disposed || _pausedByInterruption || _pausedByBecomingNoisy) return;
+            if (_backgroundPlayer.playing) {
+              _pausedByInterruption = true;
+              await _backgroundPlayer.pause();
+            }
+          });
+          break;
+      }
+    } else {
+      // Interruption ended — restore previous state.
+      switch (event.type) {
+        case AudioInterruptionType.duck:
+          _enqueueAudioOperation(() async {
+            if (_disposed || !_isDucking) return;
+            _isDucking = false;
+            await _rampVolume(_volumeBeforeDuck, steps: 5, msPerStep: 80);
+          });
+          break;
+        case AudioInterruptionType.pause:
+        case AudioInterruptionType.unknown:
+          _enqueueAudioOperation(() async {
+            if (_disposed || !_pausedByInterruption) return;
+            _pausedByInterruption = false;
+            if (_isMusicEnabled) await _backgroundPlayer.play();
+          });
+          break;
+      }
+    }
+  }
+
+  /// Handles the "becoming noisy" event — headphones or Bluetooth disconnected.
+  /// Standard Android UX: pause playback to avoid blasting audio through the
+  /// speaker unexpectedly. A separate flag (_pausedByBecomingNoisy) is used so
+  /// that a later audio-focus interruption-end event does NOT auto-resume audio
+  /// that was paused by a headphone disconnect (the user must manually resume).
+  void _handleBecomingNoisy() {
+    if (_disposed) return;
+    _enqueueAudioOperation(() async {
+      if (_disposed || _pausedByBecomingNoisy) return;
+      if (_backgroundPlayer.playing) {
+        _pausedByBecomingNoisy = true;
+        await _backgroundPlayer.pause();
+      }
+    });
   }
 
   Future<void> _applyCurrentMix({double intensityOffset = 0.0}) async {
@@ -371,7 +475,7 @@ class AudioService {
     final delta = (target - current) / steps;
     for (int i = 0; i < steps; i++) {
       await Future.delayed(Duration(milliseconds: msPerStep));
-      if (_rampGeneration != generation) return; // interrupted
+      if (_rampGeneration != generation || _disposed) return; // interrupted or disposed
       final next = (current + delta * (i + 1)).clamp(0.0, 1.0);
       await _backgroundPlayer.setVolume(next);
     }
@@ -399,9 +503,14 @@ class AudioService {
   }
 
   void dispose() {
+    _disposed = true;
+    _silenceEndingActive = false;
     _gameStateSubscription?.close();
     _psychoSubscription?.close();
     _settingsSubscription?.close();
+    // Cancel Audio Focus stream subscriptions so no callbacks fire after disposal.
+    _interruptionSubscription?.cancel();
+    _becomingNoisySubscription?.cancel();
     _backgroundPlayer.dispose();
   }
 }

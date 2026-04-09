@@ -4,7 +4,25 @@
 
 ---
 
-### 2026-04-09 — GitHub Copilot (LLM dead code removal)
+### 2026-04-09 — GitHub Copilot (Audio Focus & Resource Cleanup)
+**Role:** Audio / Android System Integration
+
+**Done:**
+
+- **Audio Focus management** — `AudioService` now subscribes to `AudioSession.interruptionEventStream` (already-imported `audio_session` package) in `initialize()`:
+  - `AudioInterruptionType.duck` (begin): ramps volume to 20 % of current level over 5 × 80 ms steps; restores on end.
+  - `AudioInterruptionType.pause` / `unknown` (begin): pauses `_backgroundPlayer`; resumes on end.
+  - Both begin-handlers are no-ops if `_disposed` or already in the target state.
+- **Becoming-noisy handling** — subscribes to `AudioSession.becomingNoisyEventStream`; pauses when headphones/BT disconnect. Uses a **separate** `_pausedByBecomingNoisy` flag so an audio-focus interruption-end event does *not* auto-resume audio that was paused by a hardware disconnect (standard Android UX: user must resume manually).
+- **`_disposed` flag** — added to guard every async callback against post-`dispose()` execution: `_rampVolume` loop, silence-ending phase-2 `Future.delayed`, and all interruption/noisy-audio callbacks.
+- **`dispose()` hardened** — sets `_disposed = true`, clears `_silenceEndingActive`, cancels both stream subscriptions (`_interruptionSubscription`, `_becomingNoisySubscription`) before `_backgroundPlayer.dispose()`.
+- **`onError` callbacks** on both stream subscriptions to prevent uncaught-exception crashes if the `audio_session` platform channel emits an error.
+- **`dart:async` import** added for `StreamSubscription<T>`.
+
+**Architecture snapshot:**
+- `lib/features/audio/audio_service.dart` — Audio Focus, becoming-noisy, `_disposed` guard, hardened `dispose()`.
+
+
 **Role:** Cleanup / refactoring
 
 **Done:**
