@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "Proustian involuntary memory triggers. Each is activated by a specific command in a specific sector. Responses saved to player_memories table for LLM personalisation.",
+  "description": "Proustian involuntary memory triggers. Each is activated by a specific command in a specific sector. Responses saved to player_memories table for LLM personalization.",
   "triggers": [
     {
       "id": "linden",
