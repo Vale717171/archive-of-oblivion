@@ -519,6 +519,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final highContrast = settings?.highContrast ?? false;
     final currentNode = gameStateAsync.valueOrNull?.currentNode ?? 'intro_void';
 
+    final keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
     final bgColor = _backgroundColor(profile);
     final narrativeColor =
         highContrast ? const Color(0xFFF6F2E8) : _narrativeColor(profile);
@@ -589,19 +591,20 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         canReturnToTitle: Navigator.of(context).canPop(),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                      child: _SessionCard(
-                        sectorLabel: gameSectorLabel(currentNode),
-                        nodeTitle: gameNodeTitle(currentNode),
-                        itemCount: engine.inventory.length,
-                        weight: engine.psychoWeight,
-                        narrativeColor: narrativeColor,
-                        textScale: textScale,
-                        showAssist: settings?.commandAssist ?? true,
-                        typewriterRunning: _typewriterRunning,
+                    if (!keyboardOpen)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                        child: _SessionCard(
+                          sectorLabel: gameSectorLabel(currentNode),
+                          nodeTitle: gameNodeTitle(currentNode),
+                          itemCount: engine.inventory.length,
+                          weight: engine.psychoWeight,
+                          narrativeColor: narrativeColor,
+                          textScale: textScale,
+                          showAssist: settings?.commandAssist ?? true,
+                          typewriterRunning: _typewriterRunning,
+                        ),
                       ),
-                    ),
                     if (quickCommands.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
