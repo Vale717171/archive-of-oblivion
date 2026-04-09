@@ -112,7 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "L'Archivio dell'Oblio",
+                            'The Archive of Oblivion',
                             style: TextStyle(
                               color: bodyColor,
                               fontSize: 34 * textScale,

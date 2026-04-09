@@ -2,7 +2,7 @@
 
     <application
         android:name="${applicationName}"
-        android:label="L'Archivio dell'Oblio"
+        android:label="The Archive of Oblivion"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="false">
         <activity

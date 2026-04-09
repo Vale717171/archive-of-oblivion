@@ -47,7 +47,7 @@ class ArchivePanels {
       builder: (context) => const _ArchiveTextDialog(
         title: 'Credits',
         body:
-            "L'Archivio dell'Oblio\n\n"
+            "The Archive of Oblivion\n\n"
             'A psycho-philosophical interactive fiction for Android.\n\n'
             'Built with Flutter, Riverpod, sqflite, just_audio, and the deterministic narrator “All That Is”.\n\n'
             'Citations are curated from public-domain sources.',
