@@ -131,19 +131,75 @@ class DatabaseService {
     await db.insert('app_settings', defaultAppSettingsRow);
   }
 
+  // ── Migration helpers ────────────────────────────────────────────────────────
+
+  /// Adds [column] to [table] only when it does not already exist.
+  ///
+  /// SQLite has no `ALTER TABLE … ADD COLUMN IF NOT EXISTS` syntax, so we
+  /// inspect `PRAGMA table_info` first.  This prevents the "duplicate column
+  /// name" crash that hit v5 when an ALTER TABLE was applied twice.
+  ///
+  /// Usage in a future migration:
+  /// ```dart
+  /// if (oldVersion < 7) {
+  ///   await db.transaction((txn) async {
+  ///     await _addColumnIfNotExists(
+  ///       txn, 'game_state', 'new_ending_flag',
+  ///       'INTEGER NOT NULL DEFAULT 0',
+  ///     );
+  ///   });
+  /// }
+  /// ```
+  Future<void> _addColumnIfNotExists(
+    DatabaseExecutor db,
+    String table,
+    String column,
+    String definition,
+  ) async {
+    final info =
+        await db.rawQuery('PRAGMA table_info("$table")');
+    final exists = info.any((row) => row['name'] == column);
+    if (!exists) {
+      await db.execute(
+          'ALTER TABLE "$table" ADD COLUMN "$column" $definition');
+    }
+  }
+
+  // ── onUpgrade ────────────────────────────────────────────────────────────────
+  //
+  // HOW TO ADD A FUTURE MIGRATION
+  // ─────────────────────────────
+  // 1. Bump _databaseVersion by 1 (e.g. 5 → 6).
+  // 2. Add an `if (oldVersion < N)` block at the bottom of _onUpgrade.
+  // 3. Wrap every ALTER TABLE … ADD COLUMN call in _addColumnIfNotExists so
+  //    it is idempotent regardless of which upgrade path the user comes from.
+  // 4. Wrap the block in a transaction for atomicity.
+  // 5. Mirror any new columns in _onCreate so a fresh install gets them too.
+  //
+  // Example — adding a column to track a new ending:
+  //
+  //   if (oldVersion < 6) {
+  //     await db.transaction((txn) async {
+  //       await _addColumnIfNotExists(
+  //         txn, 'game_state', 'reached_secret_ending',
+  //         'INTEGER NOT NULL DEFAULT 0',
+  //       );
+  //     });
+  //   }
+
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       // v1 → v2: espandi game_state con colonne engine + crea player_memories
       // Eseguito in una transazione per garantire atomicità della migrazione.
       await db.transaction((txn) async {
-        await txn.execute(
-            'ALTER TABLE game_state ADD COLUMN completed_puzzles TEXT NOT NULL DEFAULT \'[]\'');
-        await txn.execute(
-            'ALTER TABLE game_state ADD COLUMN puzzle_counters TEXT NOT NULL DEFAULT \'{}\'');
-        await txn.execute(
-            'ALTER TABLE game_state ADD COLUMN inventory TEXT NOT NULL DEFAULT \'["notebook"]\'');
-        await txn.execute(
-            'ALTER TABLE game_state ADD COLUMN psycho_weight INTEGER NOT NULL DEFAULT 0');
+        await _addColumnIfNotExists(txn, 'game_state', 'completed_puzzles',
+            'TEXT NOT NULL DEFAULT \'[]\'');
+        await _addColumnIfNotExists(txn, 'game_state', 'puzzle_counters',
+            'TEXT NOT NULL DEFAULT \'{}\'');
+        await _addColumnIfNotExists(txn, 'game_state', 'inventory',
+            'TEXT NOT NULL DEFAULT \'["notebook"]\'');
+        await _addColumnIfNotExists(txn, 'game_state', 'psycho_weight',
+            'INTEGER NOT NULL DEFAULT 0');
 
         await txn.execute('''
           CREATE TABLE IF NOT EXISTS player_memories (
@@ -156,6 +212,7 @@ class DatabaseService {
       });
     }
     if (oldVersion < 3) {
+      // v2 → v3: rebuild dialogue_history con CHECK sul campo role + index.
       await db.transaction((txn) async {
         await txn.execute('ALTER TABLE dialogue_history RENAME TO dialogue_history_old');
         await txn.execute('''
@@ -180,6 +237,7 @@ class DatabaseService {
       });
     }
     if (oldVersion < 4) {
+      // v3 → v4: crea app_settings (incluse colonne audio).
       await db.transaction((txn) async {
         await txn.execute('''
           CREATE TABLE IF NOT EXISTS app_settings (
@@ -203,10 +261,12 @@ class DatabaseService {
         );
       });
     }
-    // v5: no schema changes — audio columns (music_enabled, music_volume,
+    // v4 → v5: no schema changes — audio columns (music_enabled, music_volume,
     // sfx_enabled, sfx_volume) were already included in the v4 CREATE TABLE.
     // The ALTER TABLE statements that used to live here were redundant and
     // caused a "duplicate column name" crash on any upgrade path through v4.
+    // They have been removed; _addColumnIfNotExists prevents this class of bug
+    // in all future migrations.
   }
 
   // ── Player memories ──────────────────────────────────────────────────────────

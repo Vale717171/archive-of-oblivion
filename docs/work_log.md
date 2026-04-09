@@ -4,6 +4,21 @@
 
 ---
 
+### 2026-04-09 — GitHub Copilot (database versioning hardening)
+**Role:** Bug prevention / architecture
+
+**Done:**
+
+- **Added `_addColumnIfNotExists(db, table, column, definition)`** helper in `DatabaseService`. Uses `PRAGMA table_info` to check whether the column already exists before issuing `ALTER TABLE … ADD COLUMN`. This makes every future migration idempotent and prevents the class of "duplicate column name" crash that affected the v4→v5 upgrade path.
+- **Refactored all `ALTER TABLE … ADD COLUMN` calls in the v1→v2 migration block** to use the new helper instead of raw `txn.execute`. Data is fully preserved; only the guard mechanism changes.
+- **Added a documentation block** above `_onUpgrade` explaining step-by-step how to add future migrations (bump `_databaseVersion`, add `if (oldVersion < N)` block, call `_addColumnIfNotExists`, mirror in `_onCreate`, wrap in a transaction).
+- `_databaseVersion` remains 5 — no schema changes, only migration safety improvements.
+
+**Architecture snapshot:**
+- `lib/core/storage/database_service.dart` — `_addColumnIfNotExists` helper added; v1→v2 block updated; migration guide comment added above `_onUpgrade`.
+
+---
+
 ### 2026-04-09 — GitHub Copilot (LLM dead code removal)
 **Role:** Cleanup / refactoring
 
