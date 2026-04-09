@@ -1310,7 +1310,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     // ── Display ─────────────────────────────────────────────────────────────
     final demiurgeNodeId = response.newNode ?? currentNodeId;
-    final narrativeText = response.needsLlm
+    final narrativeText = response.needsDemiurge
         ? _callDemiurge(response.narrativeText, demiurgeNodeId)
         : response.narrativeText;
     await _history.save(role: 'demiurge', content: narrativeText);
@@ -1515,14 +1515,14 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleExamine(ParsedCommand cmd, _NodeDef node) {
     if (cmd.args.isEmpty) {
-      return EngineResponse(narrativeText: _enterNode(node), needsLlm: true);
+      return EngineResponse(narrativeText: _enterNode(node), needsDemiurge: true);
     }
     final target = cmd.args.join(' ');
     final match = node.examines.entries
         .where((e) => e.key.contains(target) || target.contains(e.key))
         .map((e) => e.value)
         .firstOrNull;
-    if (match != null) return EngineResponse(narrativeText: match, needsLlm: true);
+    if (match != null) return EngineResponse(narrativeText: match, needsDemiurge: true);
     return const EngineResponse(narrativeText: 'You observe it closely. It offers nothing new.');
   }
 
@@ -1639,14 +1639,14 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'what it needed to become.\n\n'
             'The path south to the Great Work opens.',
         newNode: dest,
-        needsLlm: true,
+        needsDemiurge: true,
       );
     }
 
     return EngineResponse(
       narrativeText: _enterNode(destNode),
       newNode: dest,
-      needsLlm: true,
+      needsDemiurge: true,
       // Siciliano BWV 1017 when entering the Fifth Sector; silence for Oblivion finale
       audioTrigger: dest == 'quinto_landing'     ? 'siciliano'
                   : dest == 'finale_acceptance'  ? 'aria_goldberg'
@@ -1678,7 +1678,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'slides down the stone and disappears into the dust.\n\n'
             'You have learned something. You are not sure what.\n\n'
             'The path north opens.',
-        needsLlm: true,
+        needsDemiurge: true,
         incrementCounter: 'fountain_waits',
         completePuzzle:   'fountain_waited',
         lucidityDelta:    3,
@@ -1708,7 +1708,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'a light that moved and became something else.\n\n'
             'The dial now has a pointer. It is trembling.\n\n'
             'Now: measure fluctuation.',
-        needsLlm:         true,
+        needsDemiurge:         true,
         incrementCounter: 'void_silence',
         completePuzzle:   'void_silence_complete',
         lucidityDelta:    -5,
@@ -1743,7 +1743,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'The material has reduced to fine white ash — no longer what it was. '
             'Something essential remains.\n\n'
             'The furnace path south is clear.',
-        needsLlm:         true,
+        needsDemiurge:         true,
         incrementCounter: 'furnace_waits',
         completePuzzle:   'furnace_calcinated',
         lucidityDelta:    5,
@@ -1768,7 +1768,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       return EngineResponse(
         narrativeText: 'You pick up the $takeMatch.\n\n'
             'It settles into your hands with the weight of a decision.',
-        needsLlm:   true,
+        needsDemiurge:   true,
         weightDelta: 1,
         anxietyDelta: 2,
         grantItem:   takeMatch,
@@ -1805,7 +1805,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         anxietyDelta:   isSimulacrum ? 0 : -1,
         completePuzzle: 'gallery_item_abandoned',
         lucidityDelta:  5,
-        needsLlm:       true,
+        needsDemiurge:       true,
       );
     }
 
@@ -1842,7 +1842,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'The sealed chamber door opens to the south.'
           : 'You place the substance in the $expectedPlanet circle.\n\n'
             '${6 - step} more placement${6 - step == 1 ? "" : "s"} remain.',
-      needsLlm:         isLast,
+      needsDemiurge:         isLast,
       incrementCounter: 'great_work_step',
       completePuzzle:   isLast ? 'lab_great_work_complete' : null,
       lucidityDelta:    isLast ? 10 : null,
@@ -1867,7 +1867,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       return const EngineResponse(
         narrativeText: 'You carry only what you cannot deposit.\n\n'
             'The statue\'s open hands seem to already know this.',
-        needsLlm: true,
+        needsDemiurge: true,
       );
     }
     return const EngineResponse(
@@ -1877,7 +1877,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The expression on the statue\'s face does not change. '
           'You feel, for the first time in this place, something that resembles relief.\n\n'
           'In one of the open hands: a glass sphere, perfectly empty. Ataraxia.',
-      needsLlm:               true,
+      needsDemiurge:               true,
       lucidityDelta:          10,
       anxietyDelta:           -20,
       audioTrigger:           'calm',
@@ -1895,7 +1895,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Not this Archive. A door, half-open, and afternoon light through it.\n\n'
             '"The smell and taste remain for a long time, like souls."\n\n'
             'The smell fades. The room does not.',
-        needsLlm:     true,
+        needsDemiurge:     true,
         lucidityDelta: -5,
         anxietyDelta:  5,
         audioTrigger:  'sfx:proustian_trigger',
@@ -1913,7 +1913,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Something ordinary that was, in fact, everything.\n\n'
             '"The madeleine of Combray."\n\n'
             'You return. The ash on your lips is cold.',
-        needsLlm:     true,
+        needsDemiurge:     true,
         lucidityDelta: -8,
         anxietyDelta:  8,
         audioTrigger:  'sfx:proustian_trigger',
@@ -1934,7 +1934,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         narrativeText: 'You walk through without touching anything.\n\n'
             'It is harder than it sounds. '
             'The objects pull at a version of you that you choose not to be.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  7,
         completePuzzle: 'alcove_pleasures_walked',
       );
@@ -1947,7 +1947,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         narrativeText: 'You walk through without taking anything.\n\n'
             'The objects here pull differently — not with beauty but with familiarity. '
             'Walking past them feels like a small betrayal and a small liberation.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  7,
         completePuzzle: 'alcove_pains_walked',
       );
@@ -1966,7 +1966,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Something shifts. Behind you — south — a door appears in the mirror. '
             'It was there all along. You were facing the wrong way.\n\n'
             'The corridor south is open.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  5,
         completePuzzle: 'hall_backward_walked',
       );
@@ -1987,7 +1987,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'You do not know exactly where. You do not know exactly how.\n\n'
             'That is the point.\n\n'
             'The branches open: west to the void, east to the archive.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  8,
         anxietyDelta:   -5,
         completePuzzle: 'heisenberg_walked',
@@ -2023,7 +2023,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'prudence — friendship — pleasure — simplicity — '
             'absence — tranquillity — memory.\n\n'
             'The path north opens.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  10,
         completePuzzle: 'leaves_arranged',
         audioTrigger:   'calm',
@@ -2065,7 +2065,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               '"Of all wisdom\'s gifts to a happy life, '
               'the greatest is the possession of friendship."\n\n'
               'The twelfth stele is complete. The grove opens.',
-          needsLlm:       true,
+          needsDemiurge:       true,
           lucidityDelta:  12,
           completePuzzle: 'stele_inscribed',
           audioTrigger:   'calm',
@@ -2091,7 +2091,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           narrativeText: 'You construct the pentagon — compass, straightedge, '
               'the ancient method. It forms with a precision that feels inevitable.\n\n'
               'The two wings open: east for copies, west for originals.',
-          needsLlm:       true,
+          needsDemiurge:       true,
           lucidityDelta:  8,
           completePuzzle: 'proportion_pentagon_drawn',
           audioTrigger:   'calm',
@@ -2124,7 +2124,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         narrativeText: 'The third description.\n\n'
             'All three gaps have been seen and named. '
             'The wing opens the passage south.',
-        needsLlm:         true,
+        needsDemiurge:         true,
         incrementCounter: 'gallery_copies_described',
         completePuzzle:   'gallery_copies_complete',
         lucidityDelta:    8,
@@ -2151,7 +2151,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Not the painting itself — the act of it. '
             'When you stop, something exists that did not exist before.\n\n'
             'The passage south opens.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         completePuzzle: 'gallery_originals_complete',
         lucidityDelta:  10,
         audioTrigger:   'calm',
@@ -2206,7 +2206,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The word settles into the room. '
           'Something in the architecture acknowledges it without comment.\n\n'
           'You may now leave.',
-      needsLlm:        true,
+      needsDemiurge:        true,
       lucidityDelta:   6,
       completePuzzle:  puzzleId,
       audioTrigger:    'calm',
@@ -2237,7 +2237,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'The mount clicks. A faint hum — as if the instrument '
             'recognised that the obvious order was the wrong one.\n\n'
             'The corridor north is open.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  8,
         completePuzzle: 'lenses_combined',
       );
@@ -2269,7 +2269,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'It gives — slightly, decisively. '
             'The south end of the corridor opens.\n\n'
             'The figure ahead is no longer visible.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  5,
         completePuzzle: 'corridor_tile_pressed',
       );
@@ -2309,7 +2309,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       narrativeText: 'You offer $concept.\n\n'
           'The third statue closes its hands. All three have received.\n\n'
           'The Hall of Substances opens to the south.',
-      needsLlm:         true,
+      needsDemiurge:         true,
       incrementCounter: 'lab_offers_count',
       completePuzzle:   'lab_offers_complete',
       lucidityDelta:    5,
@@ -2337,7 +2337,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'It fluctuates between two states that should exclude each other.\n\n'
           'You absorb it. The difference between noting and understanding is not large here.\n\n'
           'The passage south opens.',
-      needsLlm:       true,
+      needsDemiurge:       true,
       lucidityDelta:  8,
       completePuzzle: 'void_fluctuation_measured',
     );
@@ -2357,7 +2357,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         narrativeText: 'You set all three dials to zero.\n\n'
             'A hum from the mount above. The dome door opens.\n\n'
             'The reference point is chosen. Everything flows from here.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  10,
         completePuzzle: 'obs_calibrated',
       );
@@ -2445,7 +2445,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'a different version of you carrying something you should have left behind.\n\n'
             'No simulacrum appears. The proportion requires empty hands.\n\n'
             'The Gallery cannot be completed in this state.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  -15,
         anxietyDelta:   20,
         oblivionDelta:  10,
@@ -2461,7 +2461,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The fragments arrange themselves on the floor in the shape of a pentagon, '
           'each piece a precise fraction of the whole.\n\n'
           'In the centre: a golden compass with no hinge. The Proportion.',
-      needsLlm:       true,
+      needsDemiurge:       true,
       lucidityDelta:  15,
       anxietyDelta:   -10,
       audioTrigger:   'calm',
@@ -2485,7 +2485,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The pulsing steadies. The glow intensifies.\n\n'
           'In your hands: a small flask of luminescent liquid, '
           'beating in time with your heart. The Catalyst.',
-      needsLlm:       true,
+      needsDemiurge:       true,
       lucidityDelta:  12,
       anxietyDelta:   -15,
       audioTrigger:   'calm',
@@ -2512,7 +2512,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               'The liquid responds — not by boiling, by opening. '
               'It becomes willing.\n\n'
               'The alembic path south opens.',
-          needsLlm:       true,
+          needsDemiurge:       true,
           lucidityDelta:  8,
           completePuzzle: 'alembic_temperature_set',
         );
@@ -2551,7 +2551,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'because it is no longer looking outward.\n\n'
             'In your hands: a prism of tangible light. It is warm. '
             'It refracts you. The Constant.',
-        needsLlm: true,
+        needsDemiurge: true,
         lucidityDelta: 15,
         anxietyDelta: -10,
         audioTrigger: 'calm',
@@ -2569,7 +2569,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               '"More fragile but more vivid, more unsubstantial, '
               'more persistent, more faithful."\n\n'
               'The images hold something you had forgotten was yours.',
-          needsLlm:       true,
+          needsDemiurge:       true,
           lucidityDelta:  -5,
           anxietyDelta:   5,
           audioTrigger:   'sfx:proustian_trigger',
@@ -2610,7 +2610,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'the same, but because measurement is always a comparison, '
             'and the only honest comparison is with the thing itself.\n\n'
             'The passage south opens.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  10,
         completePuzzle: 'archive_constant_entered',
       );
@@ -2684,7 +2684,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               'All three substances of the Tria Prima are gathered.\n\n'
               'The three branches open: the furnace, the alembic, the bain-marie.'
           : 'You collect the $key. It settles with a faint warmth.',
-      needsLlm:       isLast,
+      needsDemiurge:       isLast,
       completePuzzle: puzzleId,
       lucidityDelta:  isLast ? 8 : null,
     );
@@ -2709,7 +2709,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'There is a silence on the line — not empty, but full.\n\n'
           'Then a soft sound that might be acknowledgement.\n\n'
           'The glasses on the desk clear. You may leave.',
-      needsLlm:        true,
+      needsDemiurge:        true,
       lucidityDelta:   8,
       completePuzzle:  'memory_maturity',
       audioTrigger:    'calm',
@@ -2755,7 +2755,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'because it is no longer looking outward.\n\n'
             'In your hands: a prism of tangible light. It is warm. '
             'It refracts you. The Constant.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  15,
         anxietyDelta:   -10,
         audioTrigger:   'calm',
@@ -2780,7 +2780,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               'the same, but because measurement is always a comparison, '
               'and the only honest comparison is with the thing itself.\n\n'
               'The passage south opens.',
-          needsLlm:       true,
+          needsDemiurge:       true,
           lucidityDelta:  10,
           completePuzzle: 'archive_constant_entered',
         );
@@ -2845,7 +2845,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               'All three substances of the Tria Prima are gathered.\n\n'
               'The three branches open: the furnace, the alembic, the bain-marie.'
             : 'You collect the $key. It settles with a faint warmth.',
-        needsLlm:       isLast,
+        needsDemiurge:       isLast,
         completePuzzle: puzzleId,
         lucidityDelta:  isLast ? 8 : null,
       );
@@ -2879,7 +2879,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               '"More fragile but more vivid, more unsubstantial, '
               'more persistent, more faithful."\n\n'
               'The images hold something you had forgotten was yours.',
-          needsLlm:       true,
+          needsDemiurge:       true,
           lucidityDelta:  -5,
           anxietyDelta:   5,
           audioTrigger:   'sfx:proustian_trigger',
@@ -2910,7 +2910,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'There is a silence on the line — not empty, but full.\n\n'
             'Then a soft sound that might be acknowledgement.\n\n'
             'The glasses on the desk clear. You may leave.',
-        needsLlm:       true,
+        needsDemiurge:       true,
         lucidityDelta:  8,
         completePuzzle: 'memory_maturity',
         audioTrigger:   'calm',
@@ -2937,7 +2937,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     return const EngineResponse(
       narrativeText: 'The Archive does not understand.',
-      needsLlm: true,
+      needsDemiurge: true,
     );
   }
 
@@ -2979,7 +2979,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'and you are neither the one who holds it nor the one held.\n\n'
           'Then: the silence before a question that has waited a very long time.\n\n'
           'The passage below opens.',
-      needsLlm:       true,
+      needsDemiurge:       true,
       lucidityDelta:  15,
       anxietyDelta:   -20,
       audioTrigger:   'calm',
@@ -3016,7 +3016,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The four elements spiral together — each distinct, all one. '
           'A scent rises: specific, personal, the sum of everything encountered.\n\n'
           'The infusion is ready. Drink.',
-      needsLlm:       true,
+      needsDemiurge:       true,
       lucidityDelta:  8,
       completePuzzle: 'ritual_stirred',
       audioTrigger:   'calm',
@@ -3095,7 +3095,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           : 'You place the $simFound in the cup.\n\n'
             'The liquid brightens briefly. '
             '$remaining more to place.',
-      needsLlm:       isLast,
+      needsDemiurge:       isLast,
       completePuzzle: puzzleId,
       lucidityDelta:  isLast ? 5 : null,
     );
@@ -3116,7 +3116,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             '...\n\n'
             '"Lived. Died. No one will remember."\n\n'
             '— Arseny Tarkovsky',
-        needsLlm:     false,
+        needsDemiurge:     false,
         newNode:      'finale_oblivion',
         audioTrigger: 'silence',
         oblivionDelta: 30,
@@ -3131,7 +3131,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'The Archive continues. The variations are infinite. '
             'You will encounter them all, eventually.\n\n'
             'The Zone does not end. Neither do you.',
-        needsLlm:     true,
+        needsDemiurge:     true,
         newNode:      'finale_eternal_zone',
         audioTrigger: 'oblivion',
       );
@@ -3151,7 +3151,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               'holding itself very carefully, relaxes.\n\n'
               'A light — not dramatic, not final — '
               'the light of an ordinary room at dusk.',
-          needsLlm:       true,
+          needsDemiurge:       true,
           newNode:        'finale_acceptance',
           lucidityDelta:  20,
           audioTrigger:   'aria_goldberg',
@@ -3188,7 +3188,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
       return EngineResponse(
         narrativeText: responseText,
-        needsLlm:         attempts < 2,
+        needsDemiurge:         attempts < 2,
         incrementCounter: 'boss_attempts',
         anxietyDelta:     attempts * 3,
       );
@@ -3215,7 +3215,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             '"That," it says, "changes the argument."',
         lucidityDelta:           10,
         anxietyDelta:            -15,
-        needsLlm:                true,
+        needsDemiurge:                true,
         audioTrigger:            'calm',
         clearInventoryOnDeposit: true,
       );
@@ -3253,7 +3253,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         weightDelta:  -1,
         lucidityDelta: 10,
         anxietyDelta:  -10,
-        needsLlm:      true,
+        needsDemiurge:      true,
         audioTrigger:  'calm',
       );
     }
@@ -3278,7 +3278,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'choose to fire. Every memory: a reconstruction, inaccurate, '
             'serving the survival of an organism that will not survive.\n\n'
             'I am not your enemy. I am the mercy you have been afraid to accept."',
-        needsLlm:    true,
+        needsDemiurge:    true,
         anxietyDelta: 5,
       );
     }
@@ -3286,7 +3286,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       narrativeText: 'The Antagonist listens.\n\n'
           '"You speak as if the words could change what is true.\n\n'
           'What do you carry that proves you wrong?"',
-      needsLlm:    true,
+      needsDemiurge:    true,
       anxietyDelta: 2,
     );
   }
@@ -3334,7 +3334,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return EngineResponse(
       narrativeText: 'The Zone receives your answer without comment.\n\n'
           '${q.crypticResponse}',
-      needsLlm:        true,
+      needsDemiurge:        true,
       newNode:         'la_soglia',
       completePuzzle:  respondedKey,
       lucidityDelta:   -3,
@@ -3368,7 +3368,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return EngineResponse(
       narrativeText: '$verse\n\n$env\n\n${q.question}',
       newNode:   'la_zona',
-      needsLlm:  true,
+      needsDemiurge:  true,
       anxietyDelta: 5,
     );
   }

@@ -80,7 +80,7 @@ class EngineResponse {
   final String narrativeText;
 
   /// When true, [narrativeText] is a fallback; the Demiurge should augment it.
-  final bool needsLlm;
+  final bool needsDemiurge;
 
   /// Navigate to this node (null = stay in place).
   final String? newNode;
@@ -118,7 +118,7 @@ class EngineResponse {
 
   const EngineResponse({
     required this.narrativeText,
-    this.needsLlm = false,
+    this.needsDemiurge = false,
     this.newNode,
     this.weightDelta = 0,
     this.lucidityDelta,

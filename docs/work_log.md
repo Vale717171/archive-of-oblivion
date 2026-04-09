@@ -4,6 +4,25 @@
 
 ---
 
+### 2026-04-09 — GitHub Copilot (LLM dead code removal)
+**Role:** Cleanup / refactoring
+
+**Done:**
+
+- **Deleted `lib/features/llm/llm_service.dart`** — legacy stub that wrapped flutter_llama; no longer imported anywhere.
+- **Deleted `lib/features/llm/llm_context_service.dart`** — legacy stub that built LLM system prompts; no longer imported anywhere.
+- **Deleted `tools/fase_0_omega/`** — entire directory of LLM validation test harnesses (flutter_llama and mediapipe_genai probes), now fully obsolete.
+- **Renamed `EngineResponse.needsLlm` → `needsDemiurge`** in `parser_state.dart` and all 58 call-sites in `game_engine_provider.dart`. The field semantics are unchanged (true = delegate text augmentation to DemiurgeService); only the name is corrected to reflect the actual system in use.
+- No pubspec.yaml changes required — LLM package references had already been removed in a prior session.
+- No asset changes required — no `assets/config/llm_config.json` existed.
+
+**Architecture snapshot:**
+- `lib/features/llm/` — **deleted**
+- `tools/fase_0_omega/` — **deleted**
+- `EngineResponse.needsDemiurge` replaces `needsLlm` everywhere
+
+---
+
 ### 2026-04-09 — GitHub Copilot (Adventure traversal integration test)
 **Role:** Testing / static analysis
 
