@@ -229,7 +229,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   void _showSimulacrumBanner(String itemName) {
     final label = itemName
         .split(' ')
-        .map((part) => part.isEmpty ? part : '${part[0].toUpperCase()}${part.substring(1)}')
+        .map((part) {
+          if (part.isEmpty) return '';
+          return '${part[0].toUpperCase()}${part.substring(1)}';
+        })
         .join(' ');
     _simulacrumBannerTimer?.cancel();
     setState(() => _simulacrumBannerText = '✦ $label recovered');
