@@ -1,37 +1,193 @@
 {
-  "version": 1,
-  "purpose": "Planning scaffold for the sector-first soundtrack catalog until final audio masters are added to the repository.",
+  "version": 2,
+  "purpose": "Sector-first soundtrack catalog. All tracks synthesised from public-domain Bach scores (music21 corpus) via FluidSynth + FluidR3_GM soundfont. Regenerate with: python tools/generate_audio_assets.py",
   "strategy": {
     "base": "sector-first",
     "overrides": "room-specific",
     "events": "trigger-driven"
   },
   "tracks": [
-    {"key": "soglia", "asset": "assets/audio/bach_bwv846_soglia.ogg", "status": "planned"},
-    {"key": "giardino", "asset": "assets/audio/bach_goldberg_giardino.ogg", "status": "planned"},
-    {"key": "osservatorio", "asset": "assets/audio/bach_contrapunctus_observatory.ogg", "status": "planned"},
-    {"key": "galleria", "asset": "assets/audio/bach_bwv846_galleria.ogg", "status": "planned"},
-    {"key": "laboratorio", "asset": "assets/audio/bach_bwv1008_laboratorio.ogg", "status": "planned"},
-    {"key": "memoria", "asset": "assets/audio/bach_memoria_theme.ogg", "status": "planned"},
-    {"key": "zona", "asset": "assets/audio/bach_fugue_883_zona.ogg", "status": "planned"},
-    {"key": "oblivion", "asset": "assets/audio/echo_chamber.ogg", "status": "planned"},
-    {"key": "siciliano", "asset": "assets/audio/bach_siciliano_bwv1017.ogg", "status": "planned"},
-    {"key": "aria_goldberg", "asset": "assets/audio/bach_aria_goldberg.ogg", "status": "planned"},
-    {"key": "giardino_fountain", "asset": "assets/audio/garden_fountain_variation.ogg", "status": "planned"},
-    {"key": "giardino_stelae", "asset": "assets/audio/garden_stelae_variation.ogg", "status": "planned"},
-    {"key": "osservatorio_calibration", "asset": "assets/audio/observatory_calibration_variation.ogg", "status": "planned"},
-    {"key": "osservatorio_dome", "asset": "assets/audio/observatory_dome_variation.ogg", "status": "planned"},
-    {"key": "galleria_dark", "asset": "assets/audio/gallery_dark_variation.ogg", "status": "planned"},
-    {"key": "galleria_light", "asset": "assets/audio/gallery_light_variation.ogg", "status": "planned"},
-    {"key": "galleria_mirror", "asset": "assets/audio/gallery_mirror_variation.ogg", "status": "planned"},
-    {"key": "laboratorio_bain_marie", "asset": "assets/audio/lab_bain_marie_variation.ogg", "status": "planned"},
-    {"key": "laboratorio_sealed", "asset": "assets/audio/lab_sealed_variation.ogg", "status": "planned"},
-    {"key": "memoria_ritual", "asset": "assets/audio/memory_ritual_variation.ogg", "status": "planned"},
-    {"key": "zona_eternal", "asset": "assets/audio/zona_eternal_variation.ogg", "status": "planned"},
-    {"key": "proustian_trigger", "asset": "assets/audio/sfx_proustian_trigger.ogg", "status": "planned"}
+    {
+      "key": "soglia",
+      "asset": "assets/audio/bach_bwv846_soglia.ogg",
+      "status": "ready",
+      "source": "BWV 846 — Well-Tempered Clavier Book I, Prelude in C major",
+      "license": "Public Domain",
+      "duration_s": 123.1
+    },
+    {
+      "key": "giardino",
+      "asset": "assets/audio/bach_goldberg_giardino.ogg",
+      "status": "ready",
+      "source": "BWV 155.5 — Cantata 'Mein Gott! wie lang', chorale",
+      "license": "Public Domain",
+      "duration_s": 41.9
+    },
+    {
+      "key": "osservatorio",
+      "asset": "assets/audio/bach_contrapunctus_observatory.ogg",
+      "status": "ready",
+      "source": "BWV 227.1 — Motet 'Jesu, meine Freude' (opening)",
+      "license": "Public Domain",
+      "duration_s": 50.3
+    },
+    {
+      "key": "galleria",
+      "asset": "assets/audio/bach_bwv846_galleria.ogg",
+      "status": "ready",
+      "source": "BWV 244.46 — St Matthew Passion chorale 'O Haupt voll Blut und Wunden'",
+      "license": "Public Domain",
+      "duration_s": 24.8
+    },
+    {
+      "key": "laboratorio",
+      "asset": "assets/audio/bach_bwv1008_laboratorio.ogg",
+      "status": "ready",
+      "source": "BWV 244.3 — St Matthew Passion chorale 'Herzliebster Jesu'",
+      "license": "Public Domain",
+      "duration_s": 35.0
+    },
+    {
+      "key": "memoria",
+      "asset": "assets/audio/bach_memoria_theme.ogg",
+      "status": "ready",
+      "source": "BWV 244.62 — St Matthew Passion, final chorale",
+      "license": "Public Domain",
+      "duration_s": 49.6
+    },
+    {
+      "key": "zona",
+      "asset": "assets/audio/bach_fugue_883_zona.ogg",
+      "status": "ready",
+      "source": "BWV 244.17 — St Matthew Passion chorale 'Ich bins, ich sollte büßen'",
+      "license": "Public Domain",
+      "duration_s": 42.8
+    },
+    {
+      "key": "oblivion",
+      "asset": "assets/audio/echo_chamber.ogg",
+      "status": "ready",
+      "source": "BWV 245.37 — St John Passion, chorale",
+      "license": "Public Domain",
+      "duration_s": 68.8
+    },
+    {
+      "key": "siciliano",
+      "asset": "assets/audio/bach_siciliano_bwv1017.ogg",
+      "status": "ready",
+      "source": "BWV 244.15 — St Matthew Passion, aria 'Erbarme dich' (slow chorale)",
+      "license": "Public Domain",
+      "duration_s": 60.2
+    },
+    {
+      "key": "aria_goldberg",
+      "asset": "assets/audio/bach_aria_goldberg.ogg",
+      "status": "ready",
+      "source": "BWV 244.10 — St Matthew Passion chorale",
+      "license": "Public Domain",
+      "duration_s": 31.6
+    },
+    {
+      "key": "giardino_fountain",
+      "asset": "assets/audio/garden_fountain_variation.ogg",
+      "status": "ready",
+      "source": "BWV 248.12-2 — Christmas Oratorio, chorale",
+      "license": "Public Domain",
+      "duration_s": 39.0
+    },
+    {
+      "key": "giardino_stelae",
+      "asset": "assets/audio/garden_stelae_variation.ogg",
+      "status": "ready",
+      "source": "BWV 244.29-a — St Matthew Passion chorale",
+      "license": "Public Domain",
+      "duration_s": 35.3
+    },
+    {
+      "key": "osservatorio_calibration",
+      "asset": "assets/audio/observatory_calibration_variation.ogg",
+      "status": "ready",
+      "source": "BWV 245.5 — St John Passion, chorale",
+      "license": "Public Domain",
+      "duration_s": 32.8
+    },
+    {
+      "key": "osservatorio_dome",
+      "asset": "assets/audio/observatory_dome_variation.ogg",
+      "status": "ready",
+      "source": "BWV 245.11 — St John Passion, chorale",
+      "license": "Public Domain",
+      "duration_s": 26.8
+    },
+    {
+      "key": "galleria_dark",
+      "asset": "assets/audio/gallery_dark_variation.ogg",
+      "status": "ready",
+      "source": "BWV 245.17 — St John Passion, chorale",
+      "license": "Public Domain",
+      "duration_s": 37.1
+    },
+    {
+      "key": "galleria_light",
+      "asset": "assets/audio/gallery_light_variation.ogg",
+      "status": "ready",
+      "source": "BWV 245.14 — St John Passion, chorale",
+      "license": "Public Domain",
+      "duration_s": 39.0
+    },
+    {
+      "key": "galleria_mirror",
+      "asset": "assets/audio/gallery_mirror_variation.ogg",
+      "status": "ready",
+      "source": "BWV 245.22 — St John Passion, chorale",
+      "license": "Public Domain",
+      "duration_s": 26.8
+    },
+    {
+      "key": "laboratorio_bain_marie",
+      "asset": "assets/audio/lab_bain_marie_variation.ogg",
+      "status": "ready",
+      "source": "BWV 245.26 — St John Passion, chorale",
+      "license": "Public Domain",
+      "duration_s": 56.2
+    },
+    {
+      "key": "laboratorio_sealed",
+      "asset": "assets/audio/lab_sealed_variation.ogg",
+      "status": "ready",
+      "source": "BWV 245.28 — St John Passion, chorale",
+      "license": "Public Domain",
+      "duration_s": 60.2
+    },
+    {
+      "key": "memoria_ritual",
+      "asset": "assets/audio/memory_ritual_variation.ogg",
+      "status": "ready",
+      "source": "BWV 245.40 — St John Passion, chorale",
+      "license": "Public Domain",
+      "duration_s": 72.8
+    },
+    {
+      "key": "zona_eternal",
+      "asset": "assets/audio/zona_eternal_variation.ogg",
+      "status": "ready",
+      "source": "BWV 244.54 — St Matthew Passion chorale",
+      "license": "Public Domain",
+      "duration_s": 47.4
+    },
+    {
+      "key": "proustian_trigger",
+      "asset": "assets/audio/sfx_proustian_trigger.ogg",
+      "status": "ready",
+      "source": "BWV 846 — Well-Tempered Clavier, Prelude in C major (excerpt, 3s)",
+      "license": "Public Domain",
+      "duration_s": 3.0
+    }
   ],
   "notes": [
-    "The repository now scaffolds the full track catalog even though the actual audio masters are not committed yet.",
-    "AudioService skips missing assets safely and will start playing them automatically as soon as the planned files are added."
+    "All audio is synthesised from public-domain MIDI (Johann Sebastian Bach, 1685-1750).",
+    "Synthesis tool: FluidSynth 2.x + FluidR3_GM soundfont (LGPL).",
+    "Score data: music21 bundled corpus (MIT licence).",
+    "To regenerate: python tools/generate_audio_assets.py"
   ]
 }

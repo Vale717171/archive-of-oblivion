@@ -4,6 +4,38 @@
 
 ---
 
+### 2026-04-10 — GitHub Copilot (Audio assets — real Bach music via music21 + FluidSynth)
+**Role:** Audio pipeline / copyright-free asset generation
+
+**Problem:** All 22 `.ogg` files in `assets/audio/` were synthetic FFmpeg placeholders (no title/composer tags, same 80 kbps mono encoder fingerprint). No real Bach music was present → audio silent in-game.
+
+**Solution — fully open-source, zero network requests, public domain:**
+1. **Diagnosis:** `mutagen` inspection confirmed all files had `{'encoder': ['Lavc60.31.102 libvorbis']}` and no music tags.
+2. **Pipeline chosen:** `music21` bundled corpus (433 Bach works, MIT licence) → MIDI export → `FluidSynth` + `FluidR3_GM.sf2` soundfont (LGPL) → `ffmpeg` OGG Vorbis.
+3. **Wrote `tools/generate_audio_assets.py`:** Maps all 22 assets to specific BWV pieces (chorales from St Matthew Passion BWV 244, St John Passion BWV 245, Christmas Oratorio BWV 248, Well-Tempered Clavier BWV 846, motet BWV 227.1). Supports `--only` flag for selective regeneration.
+4. **Ran the script** in this environment (FluidSynth 2.3.4 + FluidR3_GM.sf2 already installed). All 22 files generated, total ~16.5 MB, durations 3–123 s.
+5. **Updated `assets/audio/manifest.json`** to v2 with `"status": "ready"` and full `source`/`license`/`duration_s` fields per track.
+
+**Thematic mapping (sector → BWV):**
+- soglia → BWV 846 Prelude in C (WTC Book I) — bright, contemplative opening
+- giardino → BWV 155.5 — gentle pastoral E minor chorale
+- osservatorio → BWV 227.1 motet "Jesu, meine Freude" — polyphonic, mathematical
+- galleria → BWV 244.46 "O Haupt voll Blut und Wunden" — poignant B minor
+- laboratorio → BWV 244.3 "Herzliebster Jesu" — structured, systematic
+- memoria → BWV 244.62 (St Matthew final chorale) — most profound
+- zona → BWV 244.17 — haunting minor-key
+- siciliano → BWV 244.15 "Erbarme dich" (tempo 0.70) — very slow and lyrical
+- aria_goldberg → BWV 244.10 (tempo 0.80) — flowing, aria-like
+- oblivion/echo → BWV 245.37 (tempo 0.65) — sparse, atmospheric
+- Room variations → BWV 248.12-2, 244.29-a, 245.5, 245.11, 245.17, 245.14, 245.22, 245.26, 245.28, 245.40, 244.54
+- sfx_proustian_trigger → first 3 s of BWV 846
+
+**Audio service code unchanged:** The existing `audio_service.dart` + `audio_track_catalog.dart` architecture was correct. The only issue was the placeholder content of the asset files.
+
+**Validation note:** `flutter analyze` not available in this sandbox. Dart source files are unchanged; only binary `.ogg` assets and `manifest.json` were modified.
+
+---
+
 ### 2026-04-09 — GitHub Copilot (Progression feedback and archive memory polish)
 **Role:** UI/UX polish, progression feedback, parser variety
 
