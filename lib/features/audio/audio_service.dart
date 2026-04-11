@@ -265,7 +265,11 @@ class AudioService {
       }
       await _backgroundPlayer.stop();
       await _backgroundPlayer.setAsset(asset);
-      await _backgroundPlayer.play();
+      // Do NOT await play() — just_audio's play() Future completes only when
+      // the track ends, which never happens with LoopMode.one. Awaiting it
+      // would block _crossfadeTo (and the volume ramp) indefinitely.
+      // ignore: discarded_futures
+      _backgroundPlayer.play();
       final targetVol = _targetVolumeFor(key);
       // ignore: avoid_print
       print('[Audio] Playing "$key" → $asset (target vol ${targetVol.toStringAsFixed(2)})');
@@ -315,7 +319,8 @@ class AudioService {
         try {
           await _backgroundPlayer.setAsset(oblivionAsset);
           await _backgroundPlayer.setLoopMode(LoopMode.one);
-          await _backgroundPlayer.play();
+          // ignore: discarded_futures
+          _backgroundPlayer.play(); // fire-and-forget — see _crossfadeTo comment
           await _rampVolume(0.3); // deliberately low — it is aftermath
           _currentAmbienceKey = 'oblivion';
         } catch (e) {

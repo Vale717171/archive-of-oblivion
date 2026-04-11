@@ -4,6 +4,25 @@
 
 ---
 
+### 2026-04-11 — Claude Sonnet 4.6 (Audio silent-startup root cause — `await play()` deadlock)
+**Role:** Audio debugging
+
+**Problem:** No audio from app startup on Android emulator (API 36). Files were properly normalized at -1 dB (fixed in the previous session), ExoPlayer and the Vorbis codec initialized correctly, but the player stayed at volume 0 indefinitely.
+
+**Root cause:** `AudioService._crossfadeTo()` called `await _backgroundPlayer.play()`. In `just_audio`, `play()` returns a Future that completes only when playback **ends**. Because the player is configured with `LoopMode.one` (set in `initialize()`), the track loops forever and the Future never resolves. The entire `_crossfadeTo` method was deadlocked past that line — `_rampVolume` never ran, volume stayed at 0, and the `[Audio] Playing` diagnostic print was never reached.
+
+**Diagnosis method:** `adb logcat` showed the Vorbis codec being created (from `setAsset`) but zero Dart `print()` output following it. The `BufferPoolAccessor2.0` counter incremented every 5 s, confirming audio was being decoded at the native layer — just at volume 0.
+
+**Fix:** Removed `await` from `_backgroundPlayer.play()` in two places:
+1. `_crossfadeTo()` — main BGM crossfade path
+2. `_handleSilenceEnding()` phase-2 — oblivion finale track
+
+Added `// ignore: discarded_futures` comment with explanation at both sites.
+
+**Verification:** After rebuild, `[Audio] Playing "soglia" → assets/audio/bach_bwv846_soglia.ogg (target vol 0.69)` appeared in logcat. The print and volume ramp now execute correctly.
+
+---
+
 ### 2026-04-11 — GitHub Copilot (Audio normalization — root cause of silent playback)
 **Role:** Audio debugging / signal analysis
 
