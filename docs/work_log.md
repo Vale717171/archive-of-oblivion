@@ -4,6 +4,29 @@
 
 ---
 
+### 2026-04-11 — GitHub Copilot (Audio normalization — root cause of silent playback)
+**Role:** Audio debugging / signal analysis
+
+**Problem:** Audio still inaudible on device despite the 2026-04-10 real-Bach music pipeline. The `music21 + FluidSynth` synthesis produced files at dramatically low levels: peaks around **-19 to -21 dB** (0.08–0.13 linear) instead of the expected **-1 dB** (0.89 linear). Combined with AudioService's volume scaling (×0.63 default), the effective playback level was ~-24 dB below normal — completely inaudible on phone speakers.
+
+**Root cause:** FluidSynth renders at low gain by default; the generation pipeline (`tools/generate_audio_assets.py`) had no normalization pass.
+
+**Fix:**
+1. **Diagnosed via Python analysis:** Used `soundfile` + `numpy` to decode all 22 OGG files and measure peak/RMS levels. Every file had peak ~0.10, RMS ~0.015.
+2. **Peak-normalized all 22 files** to -1 dB (0.891 linear) — a gain of 7–16× depending on the track. Processed the large soglia file (123 s, 2.1 MB) in chunks to avoid memory issues.
+3. **Verified post-normalization:** All files now have peak 0.83–0.93 and RMS 0.10–0.19 — proper levels for mobile playback.
+4. **Added diagnostic logging** to `AudioService._crossfadeTo()` and `_syncForNodeInternal()`: track/asset/volume are printed to logcat on every transition, making future audio issues immediately visible.
+
+**Post-normalization levels (representative):**
+| Track | Peak before | Peak after | Gain |
+|---|---|---|---|
+| bach_bwv846_soglia | 0.086 | 0.914 | 10.4× |
+| bach_aria_goldberg | 0.104 | 0.897 | 8.6× |
+| echo_chamber (oblivion) | 0.106 | 0.913 | 8.4× |
+| sfx_proustian_trigger | 0.055 | 0.887 | 16.3× |
+
+---
+
 ### 2026-04-10 — GitHub Copilot (Audio assets — real Bach music via music21 + FluidSynth)
 **Role:** Audio pipeline / copyright-free asset generation
 

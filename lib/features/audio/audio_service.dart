@@ -130,7 +130,11 @@ class AudioService {
 
   Future<void> _syncForNodeInternal(String nodeId, {bool force = false}) async {
     final trackKey = AudioTrackCatalog.trackForNode(nodeId);
-    if (trackKey == null) return;
+    if (trackKey == null) {
+      // ignore: avoid_print
+      print('[Audio] syncForNode: no track for node "$nodeId"');
+      return;
+    }
 
     // Skip stale non-forced requests: if a newer node was requested after this
     // operation was enqueued (and it maps to a different track), there is no
@@ -149,6 +153,8 @@ class AudioService {
       return;
     }
     if (!_isMusicEnabled) {
+      // ignore: avoid_print
+      print('[Audio] Music disabled — stopping player for node "$nodeId"');
       _currentAmbienceKey = trackKey;
       await _backgroundPlayer.stop();
       await _backgroundPlayer.setVolume(0.0);
@@ -243,7 +249,12 @@ class AudioService {
   Future<bool> _crossfadeTo(String key) async {
     if (_currentAmbienceKey == key && _backgroundPlayer.playing) return true;
     final asset = AudioTrackCatalog.assetForKey(key);
-    if (asset == null || !await _assetExists(asset)) return false;
+    if (asset == null) {
+      // ignore: avoid_print
+      print('[Audio] No asset mapped for key "$key"');
+      return false;
+    }
+    if (!await _assetExists(asset)) return false;
     // Cancel any pending silence-ending phase 2 (fix #2).
     _silenceEndingActive = false;
     try {
@@ -255,12 +266,15 @@ class AudioService {
       await _backgroundPlayer.stop();
       await _backgroundPlayer.setAsset(asset);
       await _backgroundPlayer.play();
-      await _rampVolume(_targetVolumeFor(key));
+      final targetVol = _targetVolumeFor(key);
+      // ignore: avoid_print
+      print('[Audio] Playing "$key" → $asset (target vol ${targetVol.toStringAsFixed(2)})');
+      await _rampVolume(targetVol);
       return true;
     } catch (e) {
       // Fallback silenzioso — non crasha mai su 3 GB RAM
       // ignore: avoid_print
-      print('Audio fallback [$key]: $e');
+      print('[Audio] Playback failed [$key]: $e');
       return false;
     }
   }
