@@ -124,10 +124,14 @@ class DemiurgeService {
     final available = List<int>.generate(pool.length, (i) => i)
       ..removeWhere(recentSet.contains);
 
-    // If all indices were recently shown, reset the buffer.
+    // If all indices were recently shown, reset the buffer and re-compute
+    // available without recursion to avoid any risk of infinite call chains
+    // (e.g. a corrupt pool with length 0 that somehow passed the guard above).
     if (available.isEmpty) {
       _recentIndices[sector] = [];
-      return _pickEntry(sector);
+      final refreshed = List<int>.generate(pool.length, (i) => i);
+      if (refreshed.isEmpty) return null;
+      available.addAll(refreshed);
     }
 
     final chosen = available[_rng.nextInt(available.length)];
