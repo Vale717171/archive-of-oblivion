@@ -66,6 +66,17 @@ class AudioTrackCatalog {
     'oblivion',
   };
 
+  /// Returns the sector family for a track key.
+  ///
+  /// Room-override keys share their base sector prefix (e.g. 'giardino_fountain'
+  /// → 'giardino'), so same-sector room transitions are not treated as sector
+  /// changes. Special tracks (siciliano, aria_goldberg, oblivion, silence) each
+  /// act as their own family so they never trigger the long crossfade.
+  static String sectorFamilyForTrackKey(String key) {
+    if (specialTracks.contains(key)) return key;
+    return key.split('_').first;
+  }
+
   static String? assetForKey(String key) => ambienceAssets[key];
 
   static bool isExplicitTrack(String key) =>

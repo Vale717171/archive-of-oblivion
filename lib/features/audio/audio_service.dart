@@ -257,6 +257,16 @@ class AudioService {
     if (!await _assetExists(asset)) return false;
     // Cancel any pending silence-ending phase 2 (fix #2).
     _silenceEndingActive = false;
+
+    // Detect cross-sector transition to use a longer cinematic fade-in.
+    // Same-sector room overrides (e.g. giardino → giardino_fountain) stay fast.
+    final oldFamily = _currentAmbienceKey != null
+        ? AudioTrackCatalog.sectorFamilyForTrackKey(_currentAmbienceKey!)
+        : null;
+    final newFamily = AudioTrackCatalog.sectorFamilyForTrackKey(key);
+    // 1 800 ms (45 steps × 40 ms) for sector changes; 600 ms (15 × 40) otherwise.
+    final fadeInSteps = (oldFamily != null && oldFamily != newFamily) ? 45 : 15;
+
     try {
       // Only ramp down if the player is already audible, to avoid a
       // needless 600 ms pause on startup when volume is already 0.
@@ -272,8 +282,9 @@ class AudioService {
       _backgroundPlayer.play();
       final targetVol = _targetVolumeFor(key);
       // ignore: avoid_print
-      print('[Audio] Playing "$key" → $asset (target vol ${targetVol.toStringAsFixed(2)})');
-      await _rampVolume(targetVol);
+      print('[Audio] Playing "$key" → $asset (target vol ${targetVol.toStringAsFixed(2)}, '
+          'fade-in ${fadeInSteps * 40} ms${fadeInSteps > 15 ? " — sector change" : ""})');
+      await _rampVolume(targetVol, steps: fadeInSteps);
       return true;
     } catch (e) {
       // Fallback silenzioso — non crasha mai su 3 GB RAM
