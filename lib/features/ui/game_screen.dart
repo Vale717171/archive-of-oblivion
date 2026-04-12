@@ -70,6 +70,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   String? _simulacrumBannerText;
   bool _lastObservedPuzzleSolved = false;
   String? _lastObservedSimulacrum;
+  int _lastObservedMessageCount = 0;
   String? _lastSubmittedCommand;
 
   // Command history — up/down arrow navigation (classic text-adventure UX).
@@ -285,6 +286,17 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       });
     }
     _lastObservedSimulacrum = latestSimulacrum;
+
+    // Detect new error messages and play pitched-down rejection SFX.
+    final msgCount = engine.messages.length;
+    if (msgCount > _lastObservedMessageCount) {
+      final lastMsg = engine.messages.lastOrNull;
+      if (lastMsg?.role == MessageRole.error) {
+        // ignore: discarded_futures
+        AudioService().playCommandRejected();
+      }
+    }
+    _lastObservedMessageCount = msgCount;
   }
 
   void _scheduleScreenResetCue(int screenResetCount) {

@@ -48,6 +48,11 @@ class AudioService with WidgetsBindingObserver {
   // is still pending. Cleared by _crossfadeTo() when a new track starts.
   bool _silenceEndingActive = false;
 
+  // True until the very first track successfully starts playing.
+  // _crossfadeTo() uses a 2.5 s fade-in for this initial load so the
+  // Archive "opens" softly rather than cutting in at full volume.
+  bool _isFirstTrack = true;
+
   // Fix #3a: monotonically increasing counter — incremented at the start of
   // every _rampVolume call. Each ramp captures the generation at start and
   // aborts early if the counter has advanced (i.e. a newer ramp was begun).
@@ -327,17 +332,25 @@ class AudioService with WidgetsBindingObserver {
     // Cancel any pending silence-ending phase 2 (fix #2).
     _silenceEndingActive = false;
 
+    // Capture and clear the startup flag before any early-return paths so the
+    // 2.5 s intro fade is consumed only once even if _crossfadeTo() is retried.
+    final isStartup = _isFirstTrack;
+    _isFirstTrack = false;
+
     // Detect cross-sector transition to use a longer cinematic fade-in.
     // Same-sector room overrides (e.g. giardino → giardino_fountain) stay fast.
     final oldFamily = _currentAmbienceKey != null
         ? AudioTrackCatalog.sectorFamilyForTrackKey(_currentAmbienceKey!)
         : null;
     final newFamily = AudioTrackCatalog.sectorFamilyForTrackKey(key);
-    // 1 800 ms (45 steps × 40 ms) for sector changes; 600 ms (15 × 40) otherwise.
-    final fadeInSteps = (oldFamily != null && oldFamily != newFamily) ? 45 : 15;
+    // Priority: startup (2.5 s) > sector change (1.8 s) > normal (600 ms).
+    final fadeInSteps = isStartup ? 62
+        : (oldFamily != null && oldFamily != newFamily) ? 45
+        : 15;
 
     // Sector entry SFX — plays as the old music begins to fade out.
-    if (fadeInSteps > 15) {
+    // Skip on startup (no "entry" when the Archive first opens).
+    if (!isStartup && fadeInSteps > 15) {
       final entryAsset = _sfxAssets['sector_entry'];
       if (entryAsset != null) {
         // ignore: discarded_futures
@@ -365,8 +378,12 @@ class AudioService with WidgetsBindingObserver {
       }
       final targetVol = _targetVolumeFor(key);
       // ignore: avoid_print
-      print('[Audio] Playing "$key" → $asset (target vol ${targetVol.toStringAsFixed(2)}, '
-          'fade-in ${fadeInSteps * 40} ms${fadeInSteps > 15 ? " — sector change" : ""})');
+      final fadeLabel = isStartup ? ' — startup'
+          : fadeInSteps > 15 ? ' — sector change'
+          : '';
+      print('[Audio] Playing "$key" → $asset '
+          '(target vol ${targetVol.toStringAsFixed(2)}, '
+          'fade-in ${fadeInSteps * 40} ms$fadeLabel)');
       await _rampVolume(targetVol, steps: fadeInSteps);
       // Apply oblivion mood effects once the track is at target volume.
       // _applyMoodEffects is a no-op for special tracks.
@@ -603,6 +620,15 @@ class AudioService with WidgetsBindingObserver {
     }
 
     try {
+      // Guard: skip this tick if the player is in an intermediate state
+      // (loading or buffering).  Seeking during those states can produce an
+      // audible click or a seek-into-void error.  ProcessingState.ready and
+      // .completed are both safe — seek() returns the clip to the start,
+      // play() fires it off.
+      final ps = _typewriterPlayer.processingState;
+      if (ps == ProcessingState.loading || ps == ProcessingState.buffering) {
+        return;
+      }
       await _typewriterPlayer.seek(Duration.zero);
       // fire-and-forget — completes when the short clip ends (no LoopMode).
       // ignore: discarded_futures
@@ -610,13 +636,17 @@ class AudioService with WidgetsBindingObserver {
     } catch (_) { /* silently degrade */ }
   }
 
-  Future<void> playSFX(String sfxAsset) async {
+  /// Plays a one-shot SFX at [speed] (default 1.0).
+  /// Setting [speed] below 1.0 pitches the sound down (just_audio couples speed
+  /// and pitch by default).  Use 0.75 for a recognisable "rejection" tone.
+  Future<void> playSFX(String sfxAsset, {double speed = 1.0}) async {
     if (!_isSfxEnabled || _sfxVolumeScale <= 0) return;
     if (!await _assetExists(sfxAsset)) return;
     final sfxPlayer = AudioPlayer();
     try {
       await sfxPlayer.setAsset(sfxAsset);
       await sfxPlayer.setVolume(_sfxVolumeScale);
+      if (speed != 1.0) await sfxPlayer.setSpeed(speed.clamp(0.5, 2.0));
       await sfxPlayer.play();
       // Dispose when done, with a safety timeout to avoid leaks
       sfxPlayer.processingStateStream
@@ -629,6 +659,14 @@ class AudioService with WidgetsBindingObserver {
       // ignore: avoid_print
       print('SFX fallback [$sfxAsset]: $e');
     }
+  }
+
+  /// Plays the command-rejected SFX pitched down to signal an invalid input.
+  /// Speed 0.75× lowers the pitch by roughly a minor third — audibly "wrong"
+  /// without being harsh.  Silent if the asset file is not yet present.
+  Future<void> playCommandRejected() async {
+    final asset = _sfxAssets['command_rejected'];
+    if (asset != null) await playSFX(asset, speed: 0.75);
   }
 
   /// Pauses both players when the app goes to background and resumes them
