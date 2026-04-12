@@ -72,6 +72,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   String? _lastObservedSimulacrum;
   int _lastObservedMessageCount = 0;
   String _lastObservedSectorLabel = '';
+  // -1 = "not yet observed" so the very first build never fires a threshold haptic.
+  int _lastObservedOblivionLevel = -1;
   String? _lastSubmittedCommand;
 
   // Command history — up/down arrow navigation (classic text-adventure UX).
@@ -272,6 +274,41 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       if (!mounted) return;
       HapticFeedback.mediumImpact();
     });
+  }
+
+  /// Fires haptic cues when oblivionLevel crosses key thresholds upward.
+  ///
+  /// Fires only on threshold crossings — not on every profile update —
+  /// so the sensation marks narrative milestones rather than routine updates.
+  ///
+  ///   ≥ 70 → single heavyImpact   ("something is wrong")
+  ///   ≥ 90 → double heavyImpact 120 ms apart   ("the Archive is consuming you")
+  void _consumeOblivionHaptic(int oblivionLevel) {
+    if (_lastObservedOblivionLevel == -1) {
+      // First build: just record the baseline, never fire.
+      _lastObservedOblivionLevel = oblivionLevel;
+      return;
+    }
+    final prev = _lastObservedOblivionLevel;
+    _lastObservedOblivionLevel = oblivionLevel;
+
+    final crossed90 = oblivionLevel >= 90 && prev < 90;
+    final crossed70 = oblivionLevel >= 70 && prev < 70;
+
+    if (crossed90) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        HapticFeedback.heavyImpact();
+        Timer(const Duration(milliseconds: 120), () {
+          if (!mounted) return;
+          HapticFeedback.heavyImpact();
+        });
+      });
+    } else if (crossed70) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) HapticFeedback.heavyImpact();
+      });
+    }
   }
 
   /// Detects sector changes between builds and schedules the haptic cue.
@@ -653,6 +690,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final backgroundPath = BackgroundService.getBackgroundForNodeOrDefault(
       currentNode,
     );
+
+    // Oblivion threshold haptic — fires once when crossing 70 and again at 90.
+    _consumeOblivionHaptic(profile?.oblivionLevel ?? 0);
 
     return Scaffold(
       backgroundColor: bgColor,
