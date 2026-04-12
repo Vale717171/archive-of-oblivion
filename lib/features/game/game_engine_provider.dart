@@ -1350,7 +1350,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     // ── Phase system: awareness + affinity increment (Option A overlay) ────────
     // Runs unconditionally — deltas are small and additive, never alter existing logic.
-    await _updateAwarenessFromCommand(cmd.verb, response);
+    await _updateAwarenessFromCommand(cmd.verb, response, trimmed);
 
     // ── Audio trigger (fire-and-forget — must not block game logic) ──────────
     AudioService().handleTrigger(response.audioTrigger);
@@ -1377,7 +1377,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     // ── Display ─────────────────────────────────────────────────────────────
     final demiurgeNodeId = response.newNode ?? currentNodeId;
     final narrativeText = response.needsDemiurge
-        ? _callNarrator(cmd.verb, response.narrativeText, demiurgeNodeId)
+        ? _callNarrator(cmd.verb, response.narrativeText, demiurgeNodeId, trimmed)
         : response.narrativeText;
     await _history.save(role: 'demiurge', content: narrativeText);
 
@@ -3633,20 +3633,30 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
   }
 
-  /// Chooses between an Echo persona and the Demiurge based on the current
-  /// phase and the command verb. Echoes only fire when the player has built
-  /// enough affinity for that persona (≥ 5 points) — before that threshold
-  /// the Demiurge always answers.
+  /// Chooses between an Echo persona and the Demiurge.
+  ///
+  /// Priority:
+  ///   1. Keyword / summon trigger (phase-independent) — e.g. "summon proust"
+  ///   2. Verb-based trigger (phase-dependent) — e.g. smell → Proust in phase 2+
+  ///   3. Demiurge fallback
   String _callNarrator(
     CommandVerb verb,
     String fallbackText,
     String nodeId,
+    String rawInput,
   ) {
+    // ── 1. Keyword / summon (always active once the Echo class exists) ─────────
+    final keywordEcho = EchoService.echoForKeywords(rawInput);
+    if (keywordEcho != null) {
+      final echoText = EchoService.instance.respond(keywordEcho);
+      if (echoText != null) return echoText;
+    }
+
+    // ── 2. Verb-based (phase + affinity gated) ──────────────────────────────
     final profile = ref.read(psychoProfileProvider).valueOrNull;
     if (profile != null) {
-      final verbName = verb.name; // e.g. 'smell', 'look', 'write'
       final echo = EchoService.echoForCommand(
-        verbName,
+        verb.name,
         profile.phase,
         proustAffinity:     profile.proustAffinity,
         tarkovskijAffinity: profile.tarkovskijAffinity,
@@ -3657,14 +3667,17 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         if (echoText != null) return echoText;
       }
     }
+
     return _callDemiurge(fallbackText, nodeId);
   }
 
-  /// Increments awareness and per-Echo affinity based on the command verb.
+  /// Increments awareness and per-Echo affinity based on the command verb
+  /// and, for unknown verbs, on keyword recognition in [rawInput].
   /// Pure side-effect — does not alter [response] or any existing game state.
   Future<void> _updateAwarenessFromCommand(
     CommandVerb verb,
     EngineResponse response,
+    String rawInput,
   ) async {
     int awareness = 0;
     int proust = 0;
@@ -3692,9 +3705,25 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       awareness = 3;
       seth = 4;
     }
-    // Any Demiurge response (unrecognised command) adds a small awareness bump
+    // Unknown verb: check raw input for explicit keyword/summon triggers.
+    // A player who finds and uses the right words gets an affinity bonus
+    // regardless of phase — deliberate discovery is rewarded more than
+    // organic emergence.
+    else if (verb == CommandVerb.unknown) {
+      final keywordEcho = EchoService.echoForKeywords(rawInput);
+      if (keywordEcho != null) {
+        awareness = 4;
+        if (keywordEcho == 'proust')     { proust = 8; }
+        else if (keywordEcho == 'tarkovskij') { tarkovskij = 8; }
+        else if (keywordEcho == 'seth')  { seth = 8; }
+      } else if (response.needsDemiurge) {
+        // Generic Demiurge call — small awareness bump for wandering
+        awareness = 2;
+      }
+    }
+    // Any other Demiurge response (unrecognised but not unknown — edge case)
     else if (response.needsDemiurge) {
-      awareness = 2;
+      awareness = 1;
     }
 
     // Puzzle solutions are insight moments

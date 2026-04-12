@@ -228,6 +228,57 @@ class EchoService {
 
     return null;
   }
+
+  /// Matches [input] against Echo keywords, regardless of phase.
+  ///
+  /// Used for two cases:
+  ///   1. Explicit summon commands: "summon proust", "call tarkovsky", "invoke seth"
+  ///   2. Free-text keyword recognition: typing the philosopher's name, a key concept
+  ///
+  /// Returns the Echo name, or null if no keyword matches.
+  static String? echoForKeywords(String input) {
+    final lower = input.toLowerCase();
+
+    // Proust keywords — sensory memory, involuntary recall
+    if (lower.contains('proust') ||
+        lower.contains('madeleine') ||
+        lower.contains('involuntary') ||
+        lower.contains('memory smell') ||
+        lower.contains('summon proust') ||
+        lower.contains('call proust') ||
+        lower.contains('invoke proust')) {
+      return 'proust';
+    }
+
+    // Tarkovskij keywords — sculpted time, image, slowness
+    // Accept both spellings (with/without j)
+    if (lower.contains('tarkovsky') ||
+        lower.contains('tarkovskij') ||
+        lower.contains('sculpt time') ||
+        lower.contains('sculpting time') ||
+        lower.contains('summon tarkovsky') ||
+        lower.contains('call tarkovsky') ||
+        lower.contains('invoke tarkovsky') ||
+        lower.contains('summon tarkovskij') ||
+        lower.contains('call tarkovskij') ||
+        lower.contains('invoke tarkovskij')) {
+      return 'tarkovskij';
+    }
+
+    // Seth keywords — belief, creating reality, present moment
+    if (lower.contains('seth') ||
+        lower.contains('i create') ||
+        lower.contains('my reality') ||
+        lower.contains('i believe') ||
+        lower.contains('create reality') ||
+        lower.contains('summon seth') ||
+        lower.contains('call seth') ||
+        lower.contains('invoke seth')) {
+      return 'seth';
+    }
+
+    return null;
+  }
 }
 
 class _EchoEntry {
