@@ -31,6 +31,15 @@ class DemiurgeEntry {
         closing: json['closing'] as String,
       );
 
+  /// Minimal in-code fallback used when a sector bundle cannot be loaded.
+  factory DemiurgeEntry.fallback(String sector) => DemiurgeEntry(
+        opening: 'The Archive breathes in the dark.',
+        citation: 'You do not have to move the universe. '
+            'It is enough to move yourself.',
+        author: 'All That Is',
+        closing: 'Sector $sector holds its silence a little longer.',
+      );
+
   /// Formats the entry as display text for the player.
   String format() => '$opening\n\n"$citation"\n— $author\n\n$closing';
 }
@@ -96,10 +105,12 @@ class DemiurgeService {
       _pools[sector] = responses;
       _recentIndices[sector] = [];
     } catch (e) {
-      // Bundle missing or malformed — pool stays empty; log for debugging.
+      // Bundle missing or malformed — seed the pool with one in-code fallback
+      // entry so the player always receives a response rather than raw
+      // fallbackText, which could expose implementation strings.
       // ignore: avoid_print
       assert(() { print('DemiurgeService: failed to load $sector — $e'); return true; }());
-      _pools[sector] = [];
+      _pools[sector] = [DemiurgeEntry.fallback(sector)];
       _recentIndices[sector] = [];
     }
   }
