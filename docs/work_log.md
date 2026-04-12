@@ -4,6 +4,25 @@
 
 ---
 
+### 2026-04-12 — Claude Sonnet 4.6 (Phase/Echo system, save slots, haptics, puzzle-gate tests)
+**Role:** Feature implementation + test authoring
+
+**Done:**
+- Added `enableHaptics` to `AppSettings` + DB migration (v7); wrapped all `HapticFeedback.*` calls behind `_hapticsOn()` guard in `game_screen.dart`; added `selectionClick()` on home screen chips/buttons and `mediumImpact()` on Archive opening
+- Implemented Option-A narrative layer: `phase` (1–5) + `awarenessLevel` + three Echo affinities (`proustAffinity`, `tarkovskijAffinity`, `sethAffinity`) added to `PsychoProfile` + DB migration (v8); `DemiurgeService.switchPhase()` advances phase only
+- Created `lib/features/demiurge/echo_service.dart` — deterministic EchoService singleton with Proust/Tarkovskij/Seth pools, thematic keyword detection, archive-meta responses, phase+affinity gating
+- Wired 5-step `_callNarrator()` chain in `game_engine_provider.dart`: keyword echo → verb+phase echo → sector-thematic echo → archive-meta → Demiurge fallback
+- Added `_updateAwarenessFromCommand()` for awareness/affinity delta logic (keyword +8, thematic +4, verb+phase +5/+5)
+- Implemented multi-slot save system: `lib/core/services/save_service.dart` (`SaveSlot` model + `SaveService` singleton); DB migration v9 adds `save_slots` table; auto-save every 6 commands or sector change (fire-and-forget, slot 0); `saveToSlot()`/`loadSlot()` on engine; "Save / Load" menu entry in game screen; `_SaveLoadSheet` + `_SlotCard` UI in archive_panels
+- Created `test/puzzle_gates_test.dart` — 119 pure-static tests covering all 24 `_exitGates` entries (puzzle IDs correct, hints non-empty, gated nodes exist, gated directions present in node exits, destinations exist); 3 engine-integration cases documented as skipped TODOs
+
+**Architecture notes:**
+- `loadSlot()` restores psycho_profile via direct SQL UPDATE + `ref.invalidate(psychoProfileProvider)` (avoids delta-addition semantics of `updateAwareness()`)
+- `_commandsSinceAutoSave` is ephemeral (resets on app restart) — DB overhead vs. accuracy trade-off acceptable for auto-save
+- EchoService is pure Dart, no WidgetRef, no I/O — accepts explicit parameters at all call sites
+
+---
+
 ### 2026-04-11 — Claude Sonnet 4.6 (Audio silent-startup root cause — `await play()` deadlock)
 **Role:** Audio debugging
 
