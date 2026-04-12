@@ -5,6 +5,7 @@
 // Note: setVolume() crossfade via duration param does not exist in just_audio —
 // replaced with manual volume ramp via Future.delayed steps.
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_session/audio_session.dart';
@@ -13,7 +14,7 @@ import '../settings/app_settings_provider.dart';
 import '../state/game_state_provider.dart';
 import '../state/psycho_provider.dart';
 
-class AudioService {
+class AudioService with WidgetsBindingObserver {
   static final AudioService _instance = AudioService._internal();
   static const double _anxietyTriggerBoost = 0.08;
   static const double _anxietyVolumeScale = 0.08;
@@ -86,6 +87,8 @@ class AudioService {
     await _backgroundPlayer.setVolume(0.0);
     await _ambientPlayer.setLoopMode(LoopMode.one);
     await _ambientPlayer.setVolume(0.0);
+    // Register for app lifecycle events to auto-pause/resume audio.
+    WidgetsBinding.instance.addObserver(this);
 
     _gameStateSubscription = container.listen<AsyncValue<GameState>>(
       gameStateProvider,
@@ -628,7 +631,36 @@ class AudioService {
     }
   }
 
+  /// Pauses both players when the app goes to background and resumes them
+  /// when it returns to foreground, if [AppSettings.muteInBackground] is on.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!(_lastSettings?.muteInBackground ?? true)) return;
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      _enqueueAudioOperation(() async {
+        await _backgroundPlayer.pause();
+        // Interrupt any running ambient ramp and pause immediately.
+        _ambientRampGeneration++;
+        await _ambientPlayer.pause();
+      });
+    } else if (state == AppLifecycleState.resumed) {
+      _enqueueAudioOperation(() async {
+        if (_isMusicEnabled && _currentAmbienceKey != null &&
+            _currentAmbienceKey != 'silence') {
+          // ignore: discarded_futures
+          _backgroundPlayer.play();
+        }
+        if (_isMusicEnabled && _currentAmbientKey != null) {
+          // ignore: discarded_futures
+          _ambientPlayer.play();
+        }
+      });
+    }
+  }
+
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _gameStateSubscription?.close();
     _psychoSubscription?.close();
     _settingsSubscription?.close();

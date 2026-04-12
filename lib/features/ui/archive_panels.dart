@@ -213,6 +213,14 @@ class _SettingsSheet extends ConsumerWidget {
                     ? (value) => notifier.saveSettings(sfxVolume: value)
                     : null,
               ),
+              SwitchListTile(
+                value: settings.muteInBackground,
+                onChanged: (value) =>
+                    notifier.saveSettings(muteInBackground: value),
+                title: const Text('Mute when in background'),
+                subtitle: const Text(
+                    'Pause audio automatically when you switch to another app.'),
+              ),
               const SizedBox(height: 8),
               Text('Text size · ${(settings.textScale * 100).round()}%'),
               Slider(

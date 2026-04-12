@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 
 class DatabaseService {
   static const _databaseName = "oblivion_archive.db";
-  static const _databaseVersion = 5;
+  static const _databaseVersion = 6;
   static const int defaultLucidity = 50;
   static const int defaultOblivionLevel = 0;
   static const int defaultAnxiety = 10;
@@ -27,6 +27,7 @@ class DatabaseService {
     'sfx_volume': 0.90,
     'text_scale': 1.0,
     'typewriter_millis': 22,
+    'mute_in_background': 1,
   };
 
   // Singleton pattern per evitare accessi concorrenti non sicuri
@@ -266,6 +267,17 @@ class DatabaseService {
     // sfx_enabled, sfx_volume) were already included in the v4 CREATE TABLE.
     // The ALTER TABLE statements that used to live here were redundant and
     // caused a "duplicate column name" crash on any upgrade path through v4.
+    if (oldVersion < 6) {
+      // v5 → v6: add mute_in_background column to app_settings.
+      await db.transaction((txn) async {
+        await _addColumnIfNotExists(
+          txn,
+          'app_settings',
+          'mute_in_background',
+          'INTEGER NOT NULL DEFAULT 1',
+        );
+      });
+    }
   }
 
   // ── Player memories ──────────────────────────────────────────────────────────

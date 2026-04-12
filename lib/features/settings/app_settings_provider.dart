@@ -14,6 +14,7 @@ class AppSettings {
   final double sfxVolume;
   final double textScale;
   final int typewriterMillis;
+  final bool muteInBackground;
 
   const AppSettings({
     required this.instantText,
@@ -26,6 +27,7 @@ class AppSettings {
     required this.sfxVolume,
     required this.textScale,
     required this.typewriterMillis,
+    required this.muteInBackground,
   });
 
   factory AppSettings.fromMap(Map<String, dynamic> map) {
@@ -40,6 +42,7 @@ class AppSettings {
       sfxVolume: (map['sfx_volume'] as num? ?? 0.90).toDouble(),
       textScale: (map['text_scale'] as num? ?? 1.0).toDouble(),
       typewriterMillis: (map['typewriter_millis'] as num? ?? 22).toInt(),
+      muteInBackground: (map['mute_in_background'] as int? ?? 1) == 1,
     );
   }
 
@@ -54,6 +57,7 @@ class AppSettings {
     double? sfxVolume,
     double? textScale,
     int? typewriterMillis,
+    bool? muteInBackground,
   }) {
     return AppSettings(
       instantText: instantText ?? this.instantText,
@@ -66,6 +70,7 @@ class AppSettings {
       sfxVolume: sfxVolume ?? this.sfxVolume,
       textScale: textScale ?? this.textScale,
       typewriterMillis: typewriterMillis ?? this.typewriterMillis,
+      muteInBackground: muteInBackground ?? this.muteInBackground,
     );
   }
 }
@@ -116,6 +121,7 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
     double? sfxVolume,
     double? textScale,
     int? typewriterMillis,
+    bool? muteInBackground,
   }) async {
     final current = state.valueOrNull ?? await _fetchSettings();
     final next = current.copyWith(
@@ -123,14 +129,15 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
       reduceMotion: reduceMotion,
       highContrast: highContrast,
       commandAssist: commandAssist,
-        musicEnabled: musicEnabled,
-        musicVolume: musicVolume == null ? null : _clampVolume(musicVolume),
-        sfxEnabled: sfxEnabled,
-        sfxVolume: sfxVolume == null ? null : _clampVolume(sfxVolume),
+      musicEnabled: musicEnabled,
+      musicVolume: musicVolume == null ? null : _clampVolume(musicVolume),
+      sfxEnabled: sfxEnabled,
+      sfxVolume: sfxVolume == null ? null : _clampVolume(sfxVolume),
       textScale: textScale == null ? null : _clampTextScale(textScale),
       typewriterMillis: typewriterMillis == null
           ? null
           : _clampTypewriterMillis(typewriterMillis),
+      muteInBackground: muteInBackground,
     );
 
     final db = await _dbService.database;
@@ -148,6 +155,7 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
         'sfx_volume': next.sfxVolume,
         'text_scale': next.textScale,
         'typewriter_millis': next.typewriterMillis,
+        'mute_in_background': next.muteInBackground ? 1 : 0,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
