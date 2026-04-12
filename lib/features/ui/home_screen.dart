@@ -89,18 +89,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(backgroundPath, fit: BoxFit.cover),
+          // Background fades smoothly when the sector image changes
+          // (e.g. returning from game, or starting a new run).
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 800),
+            child: Image.asset(
+              backgroundPath,
+              key: ValueKey(backgroundPath),
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
           Container(color: Colors.black.withValues(alpha: 0.62)),
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-                child: AnimatedOpacity(
-                  opacity: _showTitle ? 1 : 0,
+                child: AnimatedScale(
+                  scale: _showTitle ? 1.0 : 0.88,
                   duration: Duration(
-                    milliseconds: (settings?.reduceMotion ?? false) ? 0 : 900,
+                    milliseconds: (settings?.reduceMotion ?? false) ? 0 : 1200,
                   ),
-                  child: ConstrainedBox(
+                  curve: Curves.easeOutCubic,
+                  child: AnimatedOpacity(
+                    opacity: _showTitle ? 1 : 0,
+                    duration: Duration(
+                      milliseconds: (settings?.reduceMotion ?? false) ? 0 : 900,
+                    ),
+                    child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 560),
                     child: DefaultTextStyle(
                       style: TextStyle(
@@ -189,6 +206,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ),
+        ),
         ],
       ),
     );
