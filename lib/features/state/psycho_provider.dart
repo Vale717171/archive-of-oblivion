@@ -77,8 +77,7 @@ class PsychoProfileNotifier extends AsyncNotifier<PsychoProfile> {
 
     if (updates.isNotEmpty) {
       await db.update('psycho_profile', updates, where: 'id = 1');
-      // Ricarica lo stato per notificare i listener (UI, audio, Demiurge-adjacent systems)
-      state = const AsyncValue.loading();
+      // Reload state without an intermediate loading() to avoid UI flicker.
       state = AsyncValue.data(await _fetchProfile());
     }
   }
