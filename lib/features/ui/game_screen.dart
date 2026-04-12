@@ -228,6 +228,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   void _triggerSuccessVisualCue() {
     _backgroundFlashTimer?.cancel();
+    // "Confirmed" — heavier than the submit tap so the player feels the command land.
+    HapticFeedback.heavyImpact();
     final settings = ref.read(appSettingsProvider).valueOrNull;
     if (settings?.reduceMotion ?? false) {
       _scrollToTop();
@@ -240,6 +242,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     _backgroundFlashTimer = Timer(_backgroundFlashHoldDuration, () {
       if (!mounted) return;
       setState(() => _backgroundFlashActive = false);
+    });
+  }
+
+  /// Double light-tap haptic for parser errors — two short pulses 80 ms apart
+  /// feel like a dry "no" without being jarring.
+  void _triggerErrorHaptic() {
+    HapticFeedback.lightImpact();
+    Timer(const Duration(milliseconds: 80), () {
+      if (!mounted) return;
+      HapticFeedback.lightImpact();
     });
   }
 
@@ -294,6 +306,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       if (lastMsg?.role == MessageRole.error) {
         // ignore: discarded_futures
         AudioService().playCommandRejected();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _triggerErrorHaptic();
+        });
       }
     }
     _lastObservedMessageCount = msgCount;
@@ -371,6 +386,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       if (text.isEmpty) return;
     }
     if (text.isEmpty) return;
+    // Immediate "key press" feedback — fires before the engine processes the command.
+    HapticFeedback.mediumImpact();
     _controller.clear();
     _lastSubmittedCommand = text;
     // Add to history (skip duplicates of the most recent entry; cap at 30).
