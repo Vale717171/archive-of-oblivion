@@ -10,6 +10,7 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -629,11 +630,23 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       ),
                     // ── Message history ──────────────────────────────────────
                     Expanded(
-                      child: GestureDetector(
-                        onTap: _skipTypewriter,
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.38),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.09),
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: GestureDetector(
+                              onTap: _skipTypewriter,
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
                           itemCount: engine.messages.length,
                           itemBuilder: (context, index) {
                             final msg = engine.messages[index];
@@ -656,6 +669,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         ),
                       ),
                     ),
+                          ),
+                        ),
+                      ),
 
                     // ── Status bar ───────────────────────────────────────────
                     _StatusBar(
@@ -1285,56 +1301,72 @@ class _InputRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      child: Row(
-        children: [
-          if (onRecallLast != null)
-            IconButton(
-              tooltip: 'Reuse last command',
-              onPressed: onRecallLast,
-              icon: Icon(
-                Icons.history,
-                color: narrativeColor.withValues(alpha: enabled ? 0.65 : 0.25),
+      padding: const EdgeInsets.fromLTRB(12, 6, 12, 12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.45),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.15),
               ),
+              borderRadius: BorderRadius.circular(16),
             ),
-          Text(
-            '>',
-            style: TextStyle(
-              color: narrativeColor.withValues(alpha: enabled ? 0.8 : 0.3),
-              fontFamily: 'monospace',
-              fontSize: 16 * textScale,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              focusNode: focusNode,
-              enabled: enabled,
-              autofocus: true,
-              textInputAction: TextInputAction.send,
-              onSubmitted: (_) => onSubmit(),
-              style: TextStyle(
-                color: narrativeColor,
-                fontFamily: 'monospace',
-                fontSize: 15 * textScale,
-              ),
-              cursorColor: narrativeColor,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: enabled ? hintText : '…',
-                hintStyle: TextStyle(
-                  color: narrativeColor.withValues(alpha: 0.25),
-                  fontFamily: 'monospace',
-                  fontSize: 14 * textScale,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            child: Row(
+              children: [
+                if (onRecallLast != null)
+                  IconButton(
+                    tooltip: 'Reuse last command',
+                    onPressed: onRecallLast,
+                    icon: Icon(
+                      Icons.history,
+                      color: narrativeColor.withValues(alpha: enabled ? 0.65 : 0.25),
+                    ),
+                  ),
+                Text(
+                  '>',
+                  style: TextStyle(
+                    color: narrativeColor.withValues(alpha: enabled ? 0.8 : 0.3),
+                    fontFamily: 'monospace',
+                    fontSize: 16 * textScale,
+                  ),
                 ),
-              ),
-              textCapitalization: TextCapitalization.none,
-              autocorrect: false,
-              enableSuggestions: false,
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    enabled: enabled,
+                    autofocus: true,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (_) => onSubmit(),
+                    style: TextStyle(
+                      color: narrativeColor,
+                      fontFamily: 'monospace',
+                      fontSize: 15 * textScale,
+                    ),
+                    cursorColor: narrativeColor,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: enabled ? hintText : '…',
+                      hintStyle: TextStyle(
+                        color: narrativeColor.withValues(alpha: 0.25),
+                        fontFamily: 'monospace',
+                        fontSize: 14 * textScale,
+                      ),
+                    ),
+                    textCapitalization: TextCapitalization.none,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
