@@ -274,8 +274,21 @@ tools/
 
 ---
 
+## Known limitations (by design — do not fix without discussion)
+
+### Save system: dialogue_history and player_memories are session-wide
+Loading a different save slot does NOT swap `dialogue_history` or `player_memories`. These tables are session-wide by design for v1. This means a player who loads Slot 2 after playing Slot 1 will see the previous session's history. This is a known narrative inconsistency, accepted for v1. A future fix would require per-slot history tables and an atomic swap inside `restoreToLive()`.
+
+### Demiurge anti-repetition buffer resets on restart
+`_antiRepeatWindow = 150` protects against in-session repetitions (150 of 200 entries excluded at any time). The buffer lives in RAM only — restarting the app resets it. Persisting the buffer to SQLite is a future improvement.
+
+---
+
 ## Rules — mandatory for every session
 
 - **Never wipe or replace** existing `docs/work_log.md` entries — only prepend new ones at the top.
-- **The Demiurge ("All That Is") is the game's narrative voice** — fully deterministic, no LLM required.
+- **The Demiurge ("All That Is") is the game's narrative voice** — fully deterministic, no LLM required. NEVER suggest replacing it with an LLM.
+- **NEVER refactor `game_engine_provider.dart` into multiple Riverpod providers.** Keep all state in a single `AsyncNotifier`. Pure Dart logic can be extracted into helper classes, but the Riverpod boundary stays as one notifier.
+- **If modifying the save system, ALWAYS wrap `dialogue_history`/`player_memories` swaps inside the atomic SQL transaction** in `restoreToLive()`.
+- **Stop words in `parser_service.dart` are English-only.** Do not add Italian or other language stop words — the game is English-only (GDD §1).
 - **End every session with a work log entry** in `docs/work_log.md` (see format of existing entries: date, agent role, done list, architecture snapshot if relevant).

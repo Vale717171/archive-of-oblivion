@@ -73,7 +73,11 @@ class DemiurgeService {
   /// Recently shown indices per sector (anti-repetition ring buffer).
   final Map<String, List<int>> _recentIndices = {};
 
-  static const int _antiRepeatWindow = 20;
+  // 150 out of 200 entries are excluded from selection at any given time.
+  // This means the player will see all 200 entries before any repetition
+  // within a single session.  The buffer resets on app restart — acceptable
+  // for a contemplative game with short sessions.
+  static const int _antiRepeatWindow = 150;
 
   // Sector keys matching JSON file names in assets/texts/demiurge/.
   static const List<String> sectorKeys = [
