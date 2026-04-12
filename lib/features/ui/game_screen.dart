@@ -71,6 +71,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   bool _lastObservedPuzzleSolved = false;
   String? _lastObservedSimulacrum;
   int _lastObservedMessageCount = 0;
+  String _lastObservedSectorLabel = '';
   String? _lastSubmittedCommand;
 
   // Command history — up/down arrow navigation (classic text-adventure UX).
@@ -260,6 +261,29 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       if (!mounted) return;
       HapticFeedback.lightImpact();
     });
+  }
+
+  /// Double medium-impact haptic 50 ms apart — a distinct "threshold crossed"
+  /// signature, heavier than the error double-tap (light/80ms) and different
+  /// from the single heavy used for scene changes.
+  void _triggerSectorChangeHaptic() {
+    HapticFeedback.mediumImpact();
+    Timer(const Duration(milliseconds: 50), () {
+      if (!mounted) return;
+      HapticFeedback.mediumImpact();
+    });
+  }
+
+  /// Detects sector changes between builds and schedules the haptic cue.
+  /// [currentNode] is the node ID already resolved in the build() frame.
+  void _consumeSectorChange(String currentNode) {
+    final sector = gameSectorLabel(currentNode);
+    if (_lastObservedSectorLabel.isNotEmpty && sector != _lastObservedSectorLabel) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _triggerSectorChangeHaptic();
+      });
+    }
+    _lastObservedSectorLabel = sector;
   }
 
   void _triggerPuzzleSolvedCue() {
@@ -664,6 +688,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               ),
               data: (engine) {
                 _consumeFeedbackSignals(engine);
+                _consumeSectorChange(currentNode);
                 if (engine.screenResetCount != _processedScreenResetCount) {
                   _scheduleScreenResetCue(engine.screenResetCount);
                 }
