@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 
 class DatabaseService {
   static const _databaseName = "oblivion_archive.db";
-  static const _databaseVersion = 8;
+  static const _databaseVersion = 9;
   static const int defaultLucidity = 50;
   static const int defaultOblivionLevel = 0;
   static const int defaultAnxiety = 10;
@@ -132,6 +132,28 @@ class DatabaseService {
         sfx_volume REAL NOT NULL DEFAULT 0.90,
         text_scale REAL NOT NULL DEFAULT 1.0,
         typewriter_millis INTEGER NOT NULL DEFAULT 22
+      )
+    ''');
+
+    // 5. Save slots (slot 0 = auto-save, 1-3 = manual)
+    await db.execute('''
+      CREATE TABLE save_slots (
+        slot INTEGER PRIMARY KEY,
+        current_node TEXT NOT NULL DEFAULT '',
+        completed_puzzles TEXT NOT NULL DEFAULT '[]',
+        puzzle_counters TEXT NOT NULL DEFAULT '{}',
+        inventory TEXT NOT NULL DEFAULT '["notebook"]',
+        psycho_weight INTEGER NOT NULL DEFAULT 0,
+        lucidity INTEGER NOT NULL DEFAULT 50,
+        oblivion_level INTEGER NOT NULL DEFAULT 0,
+        anxiety INTEGER NOT NULL DEFAULT 10,
+        phase INTEGER NOT NULL DEFAULT 1,
+        awareness_level INTEGER NOT NULL DEFAULT 0,
+        proust_affinity INTEGER NOT NULL DEFAULT 0,
+        tarkovskij_affinity INTEGER NOT NULL DEFAULT 0,
+        seth_affinity INTEGER NOT NULL DEFAULT 0,
+        sector_label TEXT NOT NULL DEFAULT '',
+        saved_at TEXT NOT NULL DEFAULT ''
       )
     ''');
 
@@ -311,6 +333,29 @@ class DatabaseService {
         await _addColumnIfNotExists(txn, 'psycho_profile', 'seth_affinity',
             'INTEGER NOT NULL DEFAULT 0');
       });
+    }
+    if (oldVersion < 9) {
+      // v8 → v9: create save_slots table (slot 0 = auto-save, 1-3 = manual).
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS save_slots (
+          slot INTEGER PRIMARY KEY,
+          current_node TEXT NOT NULL DEFAULT '',
+          completed_puzzles TEXT NOT NULL DEFAULT '[]',
+          puzzle_counters TEXT NOT NULL DEFAULT '{}',
+          inventory TEXT NOT NULL DEFAULT '["notebook"]',
+          psycho_weight INTEGER NOT NULL DEFAULT 0,
+          lucidity INTEGER NOT NULL DEFAULT 50,
+          oblivion_level INTEGER NOT NULL DEFAULT 0,
+          anxiety INTEGER NOT NULL DEFAULT 10,
+          phase INTEGER NOT NULL DEFAULT 1,
+          awareness_level INTEGER NOT NULL DEFAULT 0,
+          proust_affinity INTEGER NOT NULL DEFAULT 0,
+          tarkovskij_affinity INTEGER NOT NULL DEFAULT 0,
+          seth_affinity INTEGER NOT NULL DEFAULT 0,
+          sector_label TEXT NOT NULL DEFAULT '',
+          saved_at TEXT NOT NULL DEFAULT ''
+        )
+      ''');
     }
   }
 

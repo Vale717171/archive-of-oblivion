@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/services/save_service.dart';
 import '../../core/storage/database_service.dart';
 import '../game/game_engine_provider.dart';
 import '../settings/app_settings_provider.dart';
@@ -71,6 +72,15 @@ class ArchivePanels {
     return showDialog<void>(
       context: context,
       builder: (context) => _ArchiveStatusDialog(engine: engine),
+    );
+  }
+
+  static Future<void> showSaveLoad(BuildContext context) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF101114),
+      builder: (context) => const _SaveLoadSheet(),
     );
   }
 
@@ -480,6 +490,209 @@ class _SectorStatus {
     required this.detail,
     required this.complete,
   });
+}
+
+// ── Save / Load sheet ─────────────────────────────────────────────────────────
+
+class _SaveLoadSheet extends ConsumerStatefulWidget {
+  const _SaveLoadSheet();
+
+  @override
+  ConsumerState<_SaveLoadSheet> createState() => _SaveLoadSheetState();
+}
+
+class _SaveLoadSheetState extends ConsumerState<_SaveLoadSheet> {
+  late Future<List<SaveSlot>> _slotsFuture;
+  bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _slotsFuture = SaveService.instance.listSlots();
+  }
+
+  void _reload() => setState(() {
+        _slotsFuture = SaveService.instance.listSlots();
+      });
+
+  Future<void> _save(int slot) async {
+    setState(() => _busy = true);
+    try {
+      await ref.read(gameEngineProvider.notifier).saveToSlot(slot);
+      _reload();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Saved to slot $slot.')),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Save failed. Try again.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _load(SaveSlot slot) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF111111),
+        title: const Text('Load save'),
+        content: Text(
+          'This will replace your current session with the '
+          '${slot.slot == 0 ? "auto-save" : "slot ${slot.slot}"} '
+          '(${slot.sectorLabel}). Continue?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Load'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _busy = true);
+    try {
+      await ref.read(gameEngineProvider.notifier).loadSlot(slot);
+      if (mounted) Navigator.of(context).pop(); // close sheet
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Load failed. Try again.')),
+        );
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          20, 20, 20,
+          20 + MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Save / Load',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Auto-save runs every 6 commands or on sector change.',
+              style: TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+            const SizedBox(height: 16),
+            FutureBuilder<List<SaveSlot>>(
+              future: _slotsFuture,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final slots = snapshot.data!;
+                return Column(
+                  children: [
+                    for (final slot in slots)
+                      _SlotCard(
+                        slot: slot,
+                        busy: _busy,
+                        onSave: slot.slot == 0 ? null : () => _save(slot.slot),
+                        onLoad: slot.isEmpty ? null : () => _load(slot),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SlotCard extends StatelessWidget {
+  final SaveSlot slot;
+  final bool busy;
+  final VoidCallback? onSave;
+  final VoidCallback? onLoad;
+
+  const _SlotCard({
+    required this.slot,
+    required this.busy,
+    required this.onSave,
+    required this.onLoad,
+  });
+
+  String get _label =>
+      slot.slot == 0 ? 'Auto save' : 'Slot ${slot.slot}';
+
+  String get _preview {
+    if (slot.isEmpty) return 'Empty';
+    final date = slot.savedAt;
+    final dateStr = date != null
+        ? '${date.day.toString().padLeft(2, '0')}/'
+          '${date.month.toString().padLeft(2, '0')} '
+          '${date.hour.toString().padLeft(2, '0')}:'
+          '${date.minute.toString().padLeft(2, '0')}'
+        : '';
+    return '${slot.sectorLabel}  ·  Awareness ${slot.awarenessLevel}%'
+        '${dateStr.isNotEmpty ? '  ·  $dateStr' : ''}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_label,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 3),
+                Text(_preview,
+                    style: const TextStyle(
+                        color: Colors.white54, fontSize: 12)),
+              ],
+            ),
+          ),
+          if (onSave != null)
+            TextButton(
+              onPressed: busy ? null : onSave,
+              child: const Text('Save'),
+            ),
+          if (onLoad != null)
+            TextButton(
+              onPressed: busy ? null : onLoad,
+              child: const Text('Load'),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
 class _SectorStatusCard extends StatelessWidget {

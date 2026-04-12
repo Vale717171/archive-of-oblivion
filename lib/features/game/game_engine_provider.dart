@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/storage/database_service.dart';
 import '../../core/storage/dialogue_history_service.dart';
 import '../audio/audio_service.dart';
+import '../../core/services/save_service.dart';
 import '../demiurge/demiurge_service.dart';
 import '../demiurge/echo_service.dart';
 import '../parser/parser_service.dart';
@@ -1106,6 +1107,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   final _history = DialogueHistoryService.instance;
   final Random _random = Random();
 
+  // ── Auto-save state (ephemeral — not persisted) ──────────────────────────
+  int _commandsSinceAutoSave = 0;
+  String _lastAutoSaveSector = '';
+
   // Maximum value for psychological weight and psycho-profile sliders.
   static const int _maxPsychoValue = 100;
 
@@ -1429,6 +1434,25 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     state = AsyncValue.data(withNarrative);
     await Future.delayed(const Duration(milliseconds: 100));
     state = AsyncValue.data(withNarrative.copyWith(phase: ParserPhase.idle));
+
+    // ── Auto-save (fire-and-forget — must not block the engine) ─────────────
+    _commandsSinceAutoSave++;
+    final currentSectorForSave = gameSectorLabel(savedNodeId);
+    final sectorChanged = currentSectorForSave != _lastAutoSaveSector &&
+        _lastAutoSaveSector.isNotEmpty;
+    if (_commandsSinceAutoSave >= 6 || sectorChanged) {
+      _commandsSinceAutoSave = 0;
+      _lastAutoSaveSector = currentSectorForSave;
+      // ignore: discarded_futures
+      _triggerAutoSave(
+        nodeId:      savedNodeId,
+        engineState: withNarrative,
+        sectorLabel: currentSectorForSave,
+      );
+    } else if (_lastAutoSaveSector.isEmpty) {
+      _lastAutoSaveSector = currentSectorForSave;
+    }
+
     } catch (e, st) {
       // Safety net: any uncaught exception must not leave the phase stuck in
       // evaluating/parsing forever. Reset to idle and show a recoverable error.
@@ -3620,6 +3644,129 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         !listEquals(previousState.inventory, currentState.inventory) ||
         !setEquals(previousState.completedPuzzles, currentState.completedPuzzles) ||
         !mapEquals(previousState.puzzleCounters, currentState.puzzleCounters);
+  }
+
+  // ── Save / load ──────────────────────────────────────────────────────────────
+
+  /// Writes the current game state to auto-save slot 0.
+  /// Fire-and-forget — exceptions are swallowed to avoid disrupting gameplay.
+  Future<void> _triggerAutoSave({
+    required String nodeId,
+    required GameEngineState engineState,
+    required String sectorLabel,
+  }) async {
+    try {
+      final profile = ref.read(psychoProfileProvider).valueOrNull;
+      await SaveService.instance.saveToSlot(
+        0,
+        currentNode:        nodeId,
+        completedPuzzles:   engineState.completedPuzzles,
+        puzzleCounters:     engineState.puzzleCounters,
+        inventory:          engineState.inventory,
+        psychoWeight:       engineState.psychoWeight,
+        lucidity:           profile?.lucidity           ?? DatabaseService.defaultLucidity,
+        oblivionLevel:      profile?.oblivionLevel      ?? DatabaseService.defaultOblivionLevel,
+        anxiety:            profile?.anxiety             ?? DatabaseService.defaultAnxiety,
+        phase:              profile?.phase               ?? 1,
+        awarenessLevel:     profile?.awarenessLevel      ?? 0,
+        proustAffinity:     profile?.proustAffinity      ?? 0,
+        tarkovskijAffinity: profile?.tarkovskijAffinity  ?? 0,
+        sethAffinity:       profile?.sethAffinity        ?? 0,
+        sectorLabel:        sectorLabel,
+      );
+    } catch (_) {
+      // Auto-save failures are silent — gameplay must never be interrupted.
+    }
+  }
+
+  /// Saves the current game to [slot] (1–3).
+  Future<void> saveToSlot(int slot) async {
+    assert(slot >= 1 && slot <= 3);
+    final engineState = state.valueOrNull;
+    if (engineState == null) return;
+    final savedState = await ref.read(gameStateProvider.future);
+    final sectorLabel = gameSectorLabel(savedState.currentNode);
+    await _triggerAutoSave(
+      nodeId:      savedState.currentNode,
+      engineState: engineState,
+      sectorLabel: sectorLabel,
+    );
+    // Re-use _triggerAutoSave logic but target the requested slot directly.
+    try {
+      final profile = ref.read(psychoProfileProvider).valueOrNull;
+      await SaveService.instance.saveToSlot(
+        slot,
+        currentNode:        savedState.currentNode,
+        completedPuzzles:   engineState.completedPuzzles,
+        puzzleCounters:     engineState.puzzleCounters,
+        inventory:          engineState.inventory,
+        psychoWeight:       engineState.psychoWeight,
+        lucidity:           profile?.lucidity           ?? DatabaseService.defaultLucidity,
+        oblivionLevel:      profile?.oblivionLevel      ?? DatabaseService.defaultOblivionLevel,
+        anxiety:            profile?.anxiety             ?? DatabaseService.defaultAnxiety,
+        phase:              profile?.phase               ?? 1,
+        awarenessLevel:     profile?.awarenessLevel      ?? 0,
+        proustAffinity:     profile?.proustAffinity      ?? 0,
+        tarkovskijAffinity: profile?.tarkovskijAffinity  ?? 0,
+        sethAffinity:       profile?.sethAffinity        ?? 0,
+        sectorLabel:        sectorLabel,
+      );
+    } catch (_) {
+      rethrow; // Manual save failures are surfaced to the caller.
+    }
+  }
+
+  /// Loads [slot] and reinitialises the engine.
+  /// Restores both game state and psycho profile, then enters the loaded node.
+  Future<void> loadSlot(SaveSlot slot) async {
+    state = const AsyncValue.loading();
+
+    // Write slot data back to the live DB rows.
+    await SaveService.instance.restoreToLive(slot);
+
+    // Refresh providers so they re-read from the updated DB rows.
+    await ref.read(gameStateProvider.notifier).saveEngineState(
+      currentNode:      slot.currentNode,
+      completedPuzzles: slot.completedPuzzles,
+      puzzleCounters:   slot.puzzleCounters,
+      inventory:        slot.inventory,
+      psychoWeight:     slot.psychoWeight,
+    );
+    // Write the full psycho profile directly (not as deltas).
+    final db = await DatabaseService.instance.database;
+    await db.update('psycho_profile', {
+      'lucidity':           slot.lucidity,
+      'oblivion_level':     slot.oblivionLevel,
+      'anxiety':            slot.anxiety,
+      'phase':              slot.phase,
+      'awareness_level':    slot.awarenessLevel,
+      'proust_affinity':    slot.proustAffinity,
+      'tarkovskij_affinity': slot.tarkovskijAffinity,
+      'seth_affinity':      slot.sethAffinity,
+    }, where: 'id = 1');
+    // Force the provider to reload from the updated DB row.
+    ref.invalidate(psychoProfileProvider);
+    await ref.read(psychoProfileProvider.future);
+    DemiurgeService.instance.switchPhase(slot.phase);
+
+    // Build a fresh engine state from the restored data.
+    final node = _nodes[slot.currentNode];
+    final welcomeBack = node != null
+        ? 'Resuming from ${slot.sectorLabel}.\n\n${_enterNode(node)}'
+        : 'The Archive restores your position.';
+
+    state = AsyncValue.data(GameEngineState(
+      messages:         [GameMessage(text: welcomeBack, role: MessageRole.narrative)],
+      phase:            ParserPhase.idle,
+      inventory:        slot.inventory,
+      completedPuzzles: slot.completedPuzzles,
+      puzzleCounters:   slot.puzzleCounters,
+      psychoWeight:     slot.psychoWeight,
+    ));
+
+    // Reset auto-save counters.
+    _commandsSinceAutoSave = 0;
+    _lastAutoSaveSector = slot.sectorLabel;
   }
 
   /// Returns a Demiurge ("All That Is") narrative response for the given node.

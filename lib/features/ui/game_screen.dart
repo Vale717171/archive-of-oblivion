@@ -536,6 +536,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           return ArchivePanels.showArchiveStatus(context, engine);
         }
         return;
+      case _GameMenuAction.saveLoad:
+        return ArchivePanels.showSaveLoad(context);
       case _GameMenuAction.memories:
         return ArchivePanels.showPlayerMemories(context);
       case _GameMenuAction.howToPlay:
@@ -974,6 +976,7 @@ class _VignetteLayer extends StatelessWidget {
 
 enum _GameMenuAction {
   newGame,
+  saveLoad,
   archiveStatus,
   memories,
   howToPlay,
@@ -1044,6 +1047,10 @@ class _TopHud extends StatelessWidget {
             const PopupMenuItem(
               value: _GameMenuAction.newGame,
               child: Text('New game'),
+            ),
+            const PopupMenuItem(
+              value: _GameMenuAction.saveLoad,
+              child: Text('Save / Load'),
             ),
             const PopupMenuItem(
               value: _GameMenuAction.archiveStatus,
