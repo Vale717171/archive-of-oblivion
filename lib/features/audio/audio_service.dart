@@ -236,7 +236,45 @@ class AudioService {
         return;
       }
       await _applyCurrentMix();
+      await _applyMoodEffects();
     });
+  }
+
+  /// Applies dynamic oblivion-driven mood effects to music speed and ambient volume.
+  ///
+  /// - Music playback rate slows by up to 15% at full oblivion (0.85× speed).
+  /// - Ambient volume swells by up to +25% at full oblivion (more echo present).
+  ///
+  /// No-op for special tracks (siciliano, aria_goldberg, oblivion, silence) —
+  /// those have their own fixed atmosphere. Call [_resetMoodEffects] to restore
+  /// defaults when switching into a special track.
+  Future<void> _applyMoodEffects() async {
+    final profile = _lastProfile;
+    if (profile == null || !_isMusicEnabled) return;
+    if (AudioTrackCatalog.specialTracks.contains(_currentAmbienceKey)) return;
+
+    final intensity = (profile.oblivionLevel / 100).clamp(0.0, 1.0);
+
+    // Music slows as the player sinks deeper — 0.85× at maximum oblivion.
+    final speed = (1.0 - intensity * 0.15).clamp(0.70, 1.0);
+    await _backgroundPlayer.setSpeed(speed);
+
+    // Ambient layer swells — the echo of oblivion grows louder.
+    if (_currentAmbientKey != null) {
+      final ambientTarget =
+          ((_ambientVolume + intensity * 0.25) * _musicVolumeScale)
+              .clamp(0.0, 0.60);
+      // fire-and-forget — ambient ramp runs on its own generation counter
+      // and does not block the music queue.
+      // ignore: discarded_futures
+      _rampAmbientVolume(ambientTarget);
+    }
+  }
+
+  /// Resets speed to 1.0 when entering a special track that must not be
+  /// affected by oblivion-driven distortion.
+  Future<void> _resetMoodEffects() async {
+    await _backgroundPlayer.setSpeed(1.0);
   }
 
   Future<void> _applySettings(AppSettings settings) async {
@@ -244,6 +282,7 @@ class AudioService {
       if (!settings.musicEnabled || settings.musicVolume <= 0) {
         await _backgroundPlayer.stop();
         await _backgroundPlayer.setVolume(0.0);
+        await _backgroundPlayer.setSpeed(1.0); // clear any oblivion speed distortion
         // Also silence ambient when music is globally disabled.
         _ambientRampGeneration++;
         await _ambientPlayer.stop();
@@ -298,11 +337,19 @@ class AudioService {
       // would block _crossfadeTo (and the volume ramp) indefinitely.
       // ignore: discarded_futures
       _backgroundPlayer.play();
+      // Reset speed to 1.0 before starting a special track so it is never
+      // played at the oblivion-distorted rate.
+      if (AudioTrackCatalog.specialTracks.contains(key)) {
+        await _resetMoodEffects();
+      }
       final targetVol = _targetVolumeFor(key);
       // ignore: avoid_print
       print('[Audio] Playing "$key" → $asset (target vol ${targetVol.toStringAsFixed(2)}, '
           'fade-in ${fadeInSteps * 40} ms${fadeInSteps > 15 ? " — sector change" : ""})');
       await _rampVolume(targetVol, steps: fadeInSteps);
+      // Apply oblivion mood effects once the track is at target volume.
+      // _applyMoodEffects is a no-op for special tracks.
+      await _applyMoodEffects();
       return true;
     } catch (e) {
       // Fallback silenzioso — non crasha mai su 3 GB RAM
