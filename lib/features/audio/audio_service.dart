@@ -26,10 +26,12 @@ class AudioService {
   static const double _zoneVolume = 0.68;
   static const double _minMixVolume = 0.25;
   static const double _maxMixVolume = 0.90;
+  static const double _ambientVolume = 0.32; // ambient layer target (scales with musicVolume)
   factory AudioService() => _instance;
   AudioService._internal();
 
   final AudioPlayer _backgroundPlayer = AudioPlayer();
+  final AudioPlayer _ambientPlayer = AudioPlayer();
   final Set<String> _availableAssets = {};
   final Set<String> _missingAssets = {};
   Future<void> _audioOperationQueue = Future.value();
@@ -49,6 +51,10 @@ class AudioService {
   // every _rampVolume call. Each ramp captures the generation at start and
   // aborts early if the counter has advanced (i.e. a newer ramp was begun).
   int _rampGeneration = 0;
+  // Separate ramp-generation counter for the ambient player — allows ambient
+  // and music ramps to run independently without interfering.
+  int _ambientRampGeneration = 0;
+  String? _currentAmbientKey;
 
   // Fix #3b: the most recently requested track key (set in syncForNode before
   // enqueuing). Allows _syncForNodeInternal to skip stale intermediate targets
@@ -69,6 +75,8 @@ class AudioService {
 
     await _backgroundPlayer.setLoopMode(LoopMode.one);
     await _backgroundPlayer.setVolume(0.0);
+    await _ambientPlayer.setLoopMode(LoopMode.one);
+    await _ambientPlayer.setVolume(0.0);
 
     _gameStateSubscription = container.listen<AsyncValue<GameState>>(
       gameStateProvider,
@@ -126,6 +134,11 @@ class AudioService {
     await _enqueueAudioOperation(() async {
       await _syncForNodeInternal(nodeId, force: force);
     });
+    // Ambient runs on a separate player — fire independently so it is not
+    // delayed by the (potentially 1 800 ms) music crossfade.
+    // _ambientRampGeneration cancels any stale ambient ramp that is still running.
+    // ignore: discarded_futures
+    _syncAmbientForNode(nodeId);
   }
 
   Future<void> _syncForNodeInternal(String nodeId, {bool force = false}) async {
@@ -231,6 +244,11 @@ class AudioService {
       if (!settings.musicEnabled || settings.musicVolume <= 0) {
         await _backgroundPlayer.stop();
         await _backgroundPlayer.setVolume(0.0);
+        // Also silence ambient when music is globally disabled.
+        _ambientRampGeneration++;
+        await _ambientPlayer.stop();
+        await _ambientPlayer.setVolume(0.0);
+        _currentAmbientKey = null;
         return;
       }
 
@@ -419,6 +437,72 @@ class AudioService {
     }
   }
 
+  /// Volume ramp for the ambient player — mirrors [_rampVolume] but uses
+  /// [_ambientRampGeneration] so ambient and music ramps never interrupt each other.
+  Future<void> _rampAmbientVolume(double target,
+      {int steps = 15, int msPerStep = 40}) async {
+    _ambientRampGeneration++;
+    final generation = _ambientRampGeneration;
+    final current = _ambientPlayer.volume;
+    final delta = (target - current) / steps;
+    for (int i = 0; i < steps; i++) {
+      await Future.delayed(Duration(milliseconds: msPerStep));
+      if (_ambientRampGeneration != generation) return;
+      final next = (current + delta * (i + 1)).clamp(0.0, 1.0);
+      await _ambientPlayer.setVolume(next);
+    }
+  }
+
+  /// Syncs the ambient layer for [nodeId]. Runs independently of the music
+  /// queue — the two players never block each other.
+  Future<void> _syncAmbientForNode(String nodeId) async {
+    final sector = AudioTrackCatalog.sectorForNode(nodeId);
+    final musicTrack = AudioTrackCatalog.trackForNode(nodeId);
+    // Suppress ambient when the music track is already a special atmospheric cue
+    // (silence, oblivion, aria_goldberg, siciliano) or when the sector itself
+    // provides its own atmosphere (memoria, la_zona).
+    final suppressAmbient = musicTrack != null &&
+        AudioTrackCatalog.specialTracks.contains(musicTrack);
+    final ambientKey = suppressAmbient
+        ? null
+        : AudioTrackCatalog.ambientKeyForSector(sector);
+
+    if (ambientKey == null) {
+      // Fade ambient out gracefully if it is playing.
+      if (_ambientPlayer.volume > 0.02) {
+        await _rampAmbientVolume(0.0);
+      }
+      await _ambientPlayer.stop();
+      await _ambientPlayer.setVolume(0.0);
+      _currentAmbientKey = null;
+      return;
+    }
+
+    if (_currentAmbientKey == ambientKey && _ambientPlayer.playing) return;
+
+    final asset = AudioTrackCatalog.assetForKey(ambientKey);
+    if (asset == null || !await _assetExists(asset)) return;
+
+    if (!_isMusicEnabled) return;
+
+    try {
+      if (_ambientPlayer.volume > 0.02) await _rampAmbientVolume(0.0);
+      await _ambientPlayer.stop();
+      await _ambientPlayer.setAsset(asset);
+      // fire-and-forget — same reason as _backgroundPlayer.play()
+      // ignore: discarded_futures
+      _ambientPlayer.play();
+      final targetVol = (_ambientVolume * _musicVolumeScale).clamp(0.0, 0.45);
+      // ignore: avoid_print
+      print('[Audio] Ambient "$ambientKey" → $asset (vol ${targetVol.toStringAsFixed(2)})');
+      await _rampAmbientVolume(targetVol);
+      _currentAmbientKey = ambientKey;
+    } catch (e) {
+      // ignore: avoid_print
+      print('[Audio] Ambient playback failed [$ambientKey]: $e');
+    }
+  }
+
   Future<void> playSFX(String sfxAsset) async {
     if (!_isSfxEnabled || _sfxVolumeScale <= 0) return;
     if (!await _assetExists(sfxAsset)) return;
@@ -445,6 +529,7 @@ class AudioService {
     _psychoSubscription?.close();
     _settingsSubscription?.close();
     _backgroundPlayer.dispose();
+    _ambientPlayer.dispose();
   }
 }
 

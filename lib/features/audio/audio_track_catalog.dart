@@ -1,5 +1,8 @@
 class AudioTrackCatalog {
   static const Map<String, String> ambienceAssets = {
+    // Ambient layer — low-volume atmospheric echo, played underneath Bach BGM.
+    'universal_ambient': 'assets/audio/echo_chamber.ogg',
+
     // Sector bases
     'soglia': 'assets/audio/bach_bwv846_soglia.ogg',
     'giardino': 'assets/audio/bach_goldberg_giardino.ogg',
@@ -65,6 +68,14 @@ class AudioTrackCatalog {
     'silence',
     'oblivion',
   };
+
+  /// Returns the ambient track key for a sector, or null if no ambient should
+  /// play (memoria and la_zona already have their own atmospheric quality;
+  /// special tracks such as oblivion/silence are also excluded by the caller).
+  static String? ambientKeyForSector(String sector) {
+    if (sector == 'memoria' || sector == 'la_zona') return null;
+    return 'universal_ambient';
+  }
 
   /// Returns the sector family for a track key.
   ///
