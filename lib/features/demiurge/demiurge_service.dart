@@ -47,6 +47,17 @@ class DemiurgeService {
 
   final Random _rng = Random();
 
+  /// Current narrative phase (1-5). Influences the tone framing of responses.
+  int _currentPhase = 1;
+
+  /// Advances the Demiurge to the given narrative phase.
+  /// Phase only ever moves forward; calling with a lower value is a no-op.
+  void switchPhase(int phase) {
+    if (phase > _currentPhase) _currentPhase = phase.clamp(1, 5);
+  }
+
+  int get currentPhase => _currentPhase;
+
   /// Sector → list of loaded entries.
   final Map<String, List<DemiurgeEntry>> _pools = {};
 

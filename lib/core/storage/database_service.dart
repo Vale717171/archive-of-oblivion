@@ -5,15 +5,22 @@ import 'package:path/path.dart';
 
 class DatabaseService {
   static const _databaseName = "oblivion_archive.db";
-  static const _databaseVersion = 7;
+  static const _databaseVersion = 8;
   static const int defaultLucidity = 50;
   static const int defaultOblivionLevel = 0;
   static const int defaultAnxiety = 10;
+  static const int defaultPhase = 1;
+  static const int defaultAwarenessLevel = 0;
   static const Map<String, Object?> defaultPsychoProfileRow = {
     'id': 1,
     'lucidity': defaultLucidity,
     'oblivion_level': defaultOblivionLevel,
     'anxiety': defaultAnxiety,
+    'phase': defaultPhase,
+    'awareness_level': defaultAwarenessLevel,
+    'proust_affinity': 0,
+    'tarkovskij_affinity': 0,
+    'seth_affinity': 0,
   };
   static const Map<String, Object?> defaultAppSettingsRow = {
     'id': 1,
@@ -288,6 +295,21 @@ class DatabaseService {
           'enable_haptics',
           'INTEGER NOT NULL DEFAULT 1',
         );
+      });
+    }
+    if (oldVersion < 8) {
+      // v7 → v8: add phase system columns to psycho_profile.
+      await db.transaction((txn) async {
+        await _addColumnIfNotExists(txn, 'psycho_profile', 'phase',
+            'INTEGER NOT NULL DEFAULT 1');
+        await _addColumnIfNotExists(txn, 'psycho_profile', 'awareness_level',
+            'INTEGER NOT NULL DEFAULT 0');
+        await _addColumnIfNotExists(txn, 'psycho_profile', 'proust_affinity',
+            'INTEGER NOT NULL DEFAULT 0');
+        await _addColumnIfNotExists(txn, 'psycho_profile', 'tarkovskij_affinity',
+            'INTEGER NOT NULL DEFAULT 0');
+        await _addColumnIfNotExists(txn, 'psycho_profile', 'seth_affinity',
+            'INTEGER NOT NULL DEFAULT 0');
       });
     }
   }

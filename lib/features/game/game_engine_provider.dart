@@ -12,6 +12,7 @@ import '../../core/storage/database_service.dart';
 import '../../core/storage/dialogue_history_service.dart';
 import '../audio/audio_service.dart';
 import '../demiurge/demiurge_service.dart';
+import '../demiurge/echo_service.dart';
 import '../parser/parser_service.dart';
 import '../parser/parser_state.dart';
 import '../state/game_state_provider.dart';
@@ -1347,6 +1348,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
+    // ── Phase system: awareness + affinity increment (Option A overlay) ────────
+    // Runs unconditionally — deltas are small and additive, never alter existing logic.
+    await _updateAwarenessFromCommand(cmd.verb, response);
+
     // ── Audio trigger (fire-and-forget — must not block game logic) ──────────
     AudioService().handleTrigger(response.audioTrigger);
 
@@ -1372,7 +1377,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     // ── Display ─────────────────────────────────────────────────────────────
     final demiurgeNodeId = response.newNode ?? currentNodeId;
     final narrativeText = response.needsDemiurge
-        ? _callDemiurge(response.narrativeText, demiurgeNodeId)
+        ? _callNarrator(cmd.verb, response.narrativeText, demiurgeNodeId)
         : response.narrativeText;
     await _history.save(role: 'demiurge', content: narrativeText);
 
@@ -3625,6 +3630,83 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return DemiurgeService.instance.respond(
       sector: sector,
       fallbackText: fallbackText,
+    );
+  }
+
+  /// Chooses between an Echo persona and the Demiurge based on the current
+  /// phase and the command verb. Echoes only fire when the player has built
+  /// enough affinity for that persona (≥ 5 points) — before that threshold
+  /// the Demiurge always answers.
+  String _callNarrator(
+    CommandVerb verb,
+    String fallbackText,
+    String nodeId,
+  ) {
+    final profile = ref.read(psychoProfileProvider).valueOrNull;
+    if (profile != null) {
+      final verbName = verb.name; // e.g. 'smell', 'look', 'write'
+      final echo = EchoService.echoForCommand(
+        verbName,
+        profile.phase,
+        proustAffinity:     profile.proustAffinity,
+        tarkovskijAffinity: profile.tarkovskijAffinity,
+        sethAffinity:       profile.sethAffinity,
+      );
+      if (echo != null) {
+        final echoText = EchoService.instance.respond(echo);
+        if (echoText != null) return echoText;
+      }
+    }
+    return _callDemiurge(fallbackText, nodeId);
+  }
+
+  /// Increments awareness and per-Echo affinity based on the command verb.
+  /// Pure side-effect — does not alter [response] or any existing game state.
+  Future<void> _updateAwarenessFromCommand(
+    CommandVerb verb,
+    EngineResponse response,
+  ) async {
+    int awareness = 0;
+    int proust = 0;
+    int tarkovskij = 0;
+    int seth = 0;
+
+    // Sensory commands awaken Proust
+    if (verb == CommandVerb.smell || verb == CommandVerb.taste) {
+      awareness = 5;
+      proust = 5;
+    }
+    // Observation / slowness commands awaken Tarkovskij
+    // (examine covers 'look', 'look at', 'examine'; observe covers 'watch')
+    else if (verb == CommandVerb.examine || verb == CommandVerb.observe) {
+      awareness = 1;
+      tarkovskij = 2;
+    }
+    else if (verb == CommandVerb.wait) {
+      awareness = 2;
+      tarkovskij = 3;
+    }
+    // Creative / writing commands awaken Seth
+    // (write covers 'write', 'construct', 'describe', 'paint', 'draw')
+    else if (verb == CommandVerb.write) {
+      awareness = 3;
+      seth = 4;
+    }
+    // Any Demiurge response (unrecognised command) adds a small awareness bump
+    else if (response.needsDemiurge) {
+      awareness = 2;
+    }
+
+    // Puzzle solutions are insight moments
+    if (response.completePuzzle != null) awareness += 8;
+
+    if (awareness == 0 && proust == 0 && tarkovskij == 0 && seth == 0) return;
+
+    await ref.read(psychoProfileProvider.notifier).updateAwareness(
+      awarenessDelta:     awareness > 0 ? awareness : null,
+      proustDelta:        proust > 0 ? proust : null,
+      tarkovskijDelta:    tarkovskij > 0 ? tarkovskij : null,
+      sethDelta:          seth > 0 ? seth : null,
     );
   }
 }
