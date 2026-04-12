@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -42,24 +40,14 @@ class DatabaseService {
   DatabaseService._privateConstructor();
   static final DatabaseService instance = DatabaseService._privateConstructor();
 
-  static Database? _database;
-  static Completer<Database>? _initCompleter;
+  // Single shared future: all concurrent callers await the same _initDatabase()
+  // call. On success every subsequent access gets the already-resolved future
+  // instantly. On failure the same error is propagated to all waiters and no
+  // second init is ever started (DB init failure is unrecoverable; the app must
+  // restart).
+  static Future<Database>? _initFuture;
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    // Use a Completer to ensure only one _initDatabase() runs at a time
-    if (_initCompleter != null) return _initCompleter!.future;
-    _initCompleter = Completer<Database>();
-    try {
-      _database = await _initDatabase();
-      _initCompleter!.complete(_database!);
-    } catch (e) {
-      _initCompleter!.completeError(e);
-      _initCompleter = null;
-      rethrow;
-    }
-    return _database!;
-  }
+  Future<Database> get database => _initFuture ??= _initDatabase();
 
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), _databaseName);
