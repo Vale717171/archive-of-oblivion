@@ -540,6 +540,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               backgroundPath: backgroundPath,
               flashActive: _backgroundFlashActive,
             ),
+            // Vignette: radial gradient that darkens toward the edges.
+            // Intensity scales with oblivionLevel (0→100) so the world
+            // grows cinematically darker as the player sinks into oblivion.
+            _VignetteLayer(oblivionLevel: profile?.oblivionLevel ?? 0),
             // Game content on top — unchanged
             engineAsync.when(
               loading: () => Center(
@@ -761,6 +765,35 @@ class _BackgroundLayer extends StatelessWidget {
         duration: flashActive ? Duration.zero : _backgroundFadeDuration,
         curve: Curves.easeOut,
         child: child,
+      ),
+    );
+  }
+}
+
+class _VignetteLayer extends StatelessWidget {
+  final int oblivionLevel; // 0–100
+
+  const _VignetteLayer({required this.oblivionLevel});
+
+  @override
+  Widget build(BuildContext context) {
+    // Base alpha 0.55, rises to 0.82 at full oblivion.
+    final alpha = 0.55 + (oblivionLevel / 100) * 0.27;
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment.center,
+              radius: 1.6,
+              colors: [
+                Colors.transparent,
+                Colors.black.withValues(alpha: alpha),
+              ],
+              stops: const [0.35, 1.0],
+            ),
+          ),
+        ),
       ),
     );
   }
