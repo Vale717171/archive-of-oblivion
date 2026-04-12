@@ -185,6 +185,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         _typewriterBuffer += ch;
         _typewriterIndex++;
       });
+      // Rhythmic haptic: every 3rd character only (post-increment index divisible
+      // by 3) so it feels like a physical keystroke rhythm, not a buzz.
+      // Speed scaling: slow pace (≥28 ms/char) → mediumImpact; faster → lightImpact.
+      // Skipped entirely when reduceMotion is on.
+      if (_typewriterIndex % 3 == 0 && !(settings?.reduceMotion ?? false)) {
+        (baseDelay >= 28 ? HapticFeedback.mediumImpact : HapticFeedback.lightImpact)();
+      }
       // Typewriter click — fire-and-forget, very low volume (0.08×sfxScale).
       // Uses a single cached AudioPlayer (seek+play), not a new instance per char.
       // ignore: discarded_futures
