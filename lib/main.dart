@@ -26,12 +26,14 @@ void main() async {
 
   // Inizializza audio + sessione Android
   final audioService = AudioService();
+  bool audioFailed = false;
   try {
     await audioService.initialize(container);
   } catch (e) {
     // Audio failure must not prevent the game from starting (GDD: text-only is valid)
+    audioFailed = true;
     // ignore: avoid_print
-    print('AudioService init failed: $e');
+    print('[Archive] AudioService init failed: $e');
   }
 
   // Pre-load Demiurge citation bundles (deterministic narrator — GDD §5).
@@ -40,19 +42,23 @@ void main() async {
   } catch (e) {
     // Bundle failure must not prevent the game from starting; fallback text is used.
     // ignore: avoid_print
-    print('DemiurgeService loadAll failed: $e');
+    print('[Archive] DemiurgeService loadAll failed: $e');
   }
 
   runApp(
     UncontrolledProviderScope(
       container: container,
-      child: const MyApp(),
+      child: MyApp(audioFailed: audioFailed),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, this.audioFailed = false});
+
+  /// True when AudioService.initialize() threw at startup.
+  /// Passed down so HomeScreen can show a one-time diagnostic banner.
+  final bool audioFailed;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +74,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         fontFamily: 'Georgia',
       ),
-      home: const HomeScreen(),
+      home: HomeScreen(audioFailed: audioFailed),
     );
   }
 }

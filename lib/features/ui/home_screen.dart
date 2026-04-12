@@ -10,7 +10,11 @@ import 'background_service.dart';
 import 'game_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.audioFailed = false});
+
+  /// True when AudioService.initialize() threw at startup.
+  /// Shown as a one-time muted banner so the player understands the silence.
+  final bool audioFailed;
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -18,6 +22,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _showTitle = false;
+  bool _audioBannerDismissed = false;
 
   @override
   void initState() {
@@ -203,6 +208,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               fontStyle: FontStyle.italic,
                             ),
                           ),
+                          if (widget.audioFailed && !_audioBannerDismissed) ...[
+                            const SizedBox(height: 16),
+                            _AudioFailedBanner(
+                              onDismiss: () => setState(() => _audioBannerDismissed = true),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -290,6 +301,40 @@ class _HomeChip extends ConsumerWidget {
       },
       backgroundColor: Colors.white.withValues(alpha: 0.06),
       side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+    );
+  }
+}
+
+class _AudioFailedBanner extends StatelessWidget {
+  final VoidCallback onDismiss;
+  const _AudioFailedBanner({required this.onDismiss});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.amber.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.22)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.volume_off, color: Colors.amber, size: 16),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Text(
+              'Audio unavailable — the Archive continues in silence.',
+              style: TextStyle(color: Colors.amber, fontSize: 12),
+            ),
+          ),
+          GestureDetector(
+            onTap: onDismiss,
+            child: const Icon(Icons.close, color: Colors.amber, size: 16),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -109,7 +109,8 @@ class DemiurgeService {
       // entry so the player always receives a response rather than raw
       // fallbackText, which could expose implementation strings.
       // ignore: avoid_print
-      assert(() { print('DemiurgeService: failed to load $sector — $e'); return true; }());
+      // ignore: avoid_print
+      print('[Archive] DemiurgeService: failed to load $sector — $e');
       _pools[sector] = [DemiurgeEntry.fallback(sector)];
       _recentIndices[sector] = [];
     }

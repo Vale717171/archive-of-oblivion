@@ -3674,8 +3674,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         sethAffinity:       profile?.sethAffinity        ?? 0,
         sectorLabel:        sectorLabel,
       );
-    } catch (_) {
-      // Auto-save failures are silent — gameplay must never be interrupted.
+    } catch (e) {
+      // Auto-save failures must not interrupt gameplay, but log for diagnostics.
+      // ignore: avoid_print
+      print('[Archive] auto-save failed: $e');
     }
   }
 
