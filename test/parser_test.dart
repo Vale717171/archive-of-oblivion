@@ -333,6 +333,24 @@ void main() {
       expect(cmd.verb, CommandVerb.combine);
       expect(cmd.args, ['lens', 'mercury']);
     });
+
+    test('"take the book from the table" strips "from" → [book, table]', () {
+      final cmd = ParserService.parse('take the book from the table');
+      expect(cmd.verb, CommandVerb.take);
+      expect(cmd.args, ['book', 'table']);
+    });
+
+    test('"go through the corridor" strips "through" → [corridor]', () {
+      final cmd = ParserService.parse('go through the corridor');
+      expect(cmd.verb, CommandVerb.go);
+      expect(cmd.args, ['corridor']);
+    });
+
+    test('"offer time with grace" strips "with" → [time, grace]', () {
+      final cmd = ParserService.parse('offer time with grace');
+      expect(cmd.verb, CommandVerb.offer);
+      expect(cmd.args, ['time', 'grace']);
+    });
   });
 
   // ── Unknown / unrecognised ────────────────────────────────────────────────
