@@ -146,8 +146,10 @@ class DatabaseService {
     ''');
 
     // Inizializza il profilo psicologico di base
-    await db.insert('psycho_profile', defaultPsychoProfileRow);
-    await db.insert('app_settings', defaultAppSettingsRow);
+    await db.insert('psycho_profile', defaultPsychoProfileRow,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert('app_settings', defaultAppSettingsRow,
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   // ── Versioning protocol ──────────────────────────────────────────────────────
