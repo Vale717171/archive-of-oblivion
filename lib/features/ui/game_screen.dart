@@ -23,6 +23,7 @@ import '../settings/app_settings_provider.dart';
 import '../state/game_state_provider.dart';
 import '../state/psycho_provider.dart';
 import 'archive_panels.dart';
+import '../audio/audio_service.dart';
 import 'background_service.dart';
 
 // PsychoProfile thresholds that drive the UI colour palette (mirror GDD section 6)
@@ -183,6 +184,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         _typewriterBuffer += ch;
         _typewriterIndex++;
       });
+      // Typewriter click — fire-and-forget, very low volume (0.08×sfxScale).
+      // Uses a single cached AudioPlayer (seek+play), not a new instance per char.
+      // ignore: discarded_futures
+      AudioService().playTypewriterTick();
       _scrollToBottom();
       _tickTypewriter();
     });
@@ -240,6 +245,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   void _triggerPuzzleSolvedCue() {
     _puzzleCueTimer?.cancel();
     HapticFeedback.mediumImpact();
+    // ignore: discarded_futures
+    AudioService().handleTrigger('sfx:command_accepted');
     setState(() => _puzzleCueActive = true);
     _puzzleCueTimer = Timer(_puzzleCueHoldDuration, () {
       if (!mounted) return;

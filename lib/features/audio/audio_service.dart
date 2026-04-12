@@ -63,8 +63,17 @@ class AudioService {
 
   // SFX (one-shot, do not loop)
   final Map<String, String> _sfxAssets = {
-    'proustian_trigger': 'assets/audio/sfx_proustian_trigger.ogg',
+    'proustian_trigger':  'assets/audio/sfx_proustian_trigger.ogg',
+    'command_accepted':   'assets/audio/sfx_command_accepted.ogg',
+    'command_rejected':   'assets/audio/sfx_command_rejected.ogg',
+    'sector_entry':       'assets/audio/sfx_sector_entry.ogg',
   };
+
+  // Dedicated reusable player for typewriter ticks.
+  // One player seeked + replayed per character — never a new instance per tick.
+  final AudioPlayer _typewriterPlayer = AudioPlayer();
+  bool _typewriterPlayerLoaded = false;
+  bool _typewriterPlayerLoading = false; // guard against concurrent first-load
 
   Future<void> initialize(ProviderContainer container) async {
     final session = await AudioSession.instance;
@@ -324,6 +333,15 @@ class AudioService {
     // 1 800 ms (45 steps × 40 ms) for sector changes; 600 ms (15 × 40) otherwise.
     final fadeInSteps = (oldFamily != null && oldFamily != newFamily) ? 45 : 15;
 
+    // Sector entry SFX — plays as the old music begins to fade out.
+    if (fadeInSteps > 15) {
+      final entryAsset = _sfxAssets['sector_entry'];
+      if (entryAsset != null) {
+        // ignore: discarded_futures
+        playSFX(entryAsset); // independent AudioPlayer, no queue conflict
+      }
+    }
+
     try {
       // Only ramp down if the player is already audible, to avoid a
       // needless 600 ms pause on startup when volume is already 0.
@@ -550,6 +568,45 @@ class AudioService {
     }
   }
 
+  /// Plays a very short typewriter-click SFX on each typewriter character tick.
+  ///
+  /// Uses a single cached [_typewriterPlayer] — seeked to position 0 and
+  /// replayed per character — so no AudioPlayer leak during long narratives.
+  ///
+  /// Asset preference: `sfx_typewriter_tick.ogg` (add for best results) → falls
+  /// back to `sfx_proustian_trigger.ogg` (existing) → silent if both missing.
+  Future<void> playTypewriterTick() async {
+    if (!_isSfxEnabled || _sfxVolumeScale <= 0) return;
+    if (_typewriterPlayerLoading) return; // skip ticks during one-time setup
+
+    if (!_typewriterPlayerLoaded) {
+      _typewriterPlayerLoading = true;
+      const primary  = 'assets/audio/sfx_typewriter_tick.ogg';
+      const fallback = 'assets/audio/sfx_proustian_trigger.ogg';
+      final asset = await _assetExists(primary)  ? primary
+                  : await _assetExists(fallback) ? fallback
+                  : null;
+      if (asset != null) {
+        try {
+          await _typewriterPlayer.setAsset(asset);
+          // Volume set once at load time; not repeated on every tick.
+          await _typewriterPlayer.setVolume(
+              (0.08 * _sfxVolumeScale).clamp(0.0, 0.12));
+          _typewriterPlayerLoaded = true;
+        } catch (_) { /* silently degrade */ }
+      }
+      _typewriterPlayerLoading = false;
+      if (!_typewriterPlayerLoaded) return;
+    }
+
+    try {
+      await _typewriterPlayer.seek(Duration.zero);
+      // fire-and-forget — completes when the short clip ends (no LoopMode).
+      // ignore: discarded_futures
+      _typewriterPlayer.play();
+    } catch (_) { /* silently degrade */ }
+  }
+
   Future<void> playSFX(String sfxAsset) async {
     if (!_isSfxEnabled || _sfxVolumeScale <= 0) return;
     if (!await _assetExists(sfxAsset)) return;
@@ -577,6 +634,7 @@ class AudioService {
     _settingsSubscription?.close();
     _backgroundPlayer.dispose();
     _ambientPlayer.dispose();
+    _typewriterPlayer.dispose();
   }
 }
 
