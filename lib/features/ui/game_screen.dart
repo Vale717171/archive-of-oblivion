@@ -1387,74 +1387,96 @@ class _InputRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 6, 12, 12),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.45),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.15),
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            child: Row(
-              children: [
-                if (onRecallLast != null)
-                  IconButton(
-                    tooltip: 'Reuse last command',
-                    onPressed: onRecallLast,
-                    icon: Icon(
-                      Icons.history,
-                      color: narrativeColor.withValues(alpha: enabled ? 0.65 : 0.25),
-                    ),
-                  ),
-                Text(
-                  '>',
-                  style: TextStyle(
-                    color: narrativeColor.withValues(alpha: enabled ? 0.8 : 0.3),
-                    fontFamily: 'monospace',
-                    fontSize: 16 * textScale,
-                  ),
+    // ListenableBuilder lets the border glow react to focus without a
+    // StatefulWidget — FocusNode already extends ChangeNotifier.
+    return ListenableBuilder(
+      listenable: focusNode,
+      builder: (context, _) {
+        final hasFocus = focusNode.hasFocus && enabled;
+        final borderColor = hasFocus
+            ? narrativeColor.withValues(alpha: 0.55)
+            : Colors.white.withValues(alpha: 0.15);
+
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(12, 6, 12, 12),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.45),
+                  border: Border.all(color: borderColor),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    focusNode: focusNode,
-                    enabled: enabled,
-                    autofocus: true,
-                    textInputAction: TextInputAction.send,
-                    onSubmitted: (_) => onSubmit(),
-                    style: TextStyle(
-                      color: narrativeColor,
-                      fontFamily: 'monospace',
-                      fontSize: 15 * textScale,
-                    ),
-                    cursorColor: narrativeColor,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: enabled ? hintText : '…',
-                      hintStyle: TextStyle(
-                        color: narrativeColor.withValues(alpha: 0.25),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                child: Row(
+                  children: [
+                    if (onRecallLast != null)
+                      IconButton(
+                        tooltip: 'Reuse last command',
+                        onPressed: onRecallLast,
+                        icon: Icon(
+                          Icons.history,
+                          color: narrativeColor.withValues(alpha: enabled ? 0.65 : 0.25),
+                        ),
+                      ),
+                    Text(
+                      '>',
+                      style: TextStyle(
+                        color: narrativeColor.withValues(alpha: enabled ? 0.8 : 0.3),
                         fontFamily: 'monospace',
-                        fontSize: 14 * textScale,
+                        fontSize: 16 * textScale,
                       ),
                     ),
-                    textCapitalization: TextCapitalization.none,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                  ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        enabled: enabled,
+                        autofocus: true,
+                        textInputAction: TextInputAction.send,
+                        onSubmitted: (_) => onSubmit(),
+                        style: TextStyle(
+                          color: narrativeColor,
+                          fontFamily: 'monospace',
+                          fontSize: 15 * textScale,
+                        ),
+                        cursorColor: narrativeColor,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: enabled ? hintText : '…',
+                          hintStyle: TextStyle(
+                            color: narrativeColor.withValues(alpha: 0.25),
+                            fontFamily: 'monospace',
+                            fontSize: 14 * textScale,
+                          ),
+                          suffixIcon: IconButton(
+                            tooltip: 'Send',
+                            onPressed: enabled ? onSubmit : null,
+                            icon: Icon(
+                              Icons.send_rounded,
+                              size: 20,
+                              color: enabled
+                                  ? const Color(0xFFB99A58)
+                                  : Colors.white.withValues(alpha: 0.15),
+                            ),
+                          ),
+                        ),
+                        textCapitalization: TextCapitalization.none,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
