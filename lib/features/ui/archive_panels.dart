@@ -221,6 +221,13 @@ class _SettingsSheet extends ConsumerWidget {
                 subtitle: const Text(
                     'Pause audio automatically when you switch to another app.'),
               ),
+              SwitchListTile(
+                value: settings.enableHaptics,
+                onChanged: (value) =>
+                    notifier.saveSettings(enableHaptics: value),
+                title: const Text('Haptic feedback'),
+                subtitle: const Text('Vibration cues for commands, puzzle events, and narrative thresholds.'),
+              ),
               const SizedBox(height: 8),
               Text('Text size · ${(settings.textScale * 100).round()}%'),
               Slider(

@@ -15,6 +15,7 @@ class AppSettings {
   final double textScale;
   final int typewriterMillis;
   final bool muteInBackground;
+  final bool enableHaptics;
 
   const AppSettings({
     required this.instantText,
@@ -28,6 +29,7 @@ class AppSettings {
     required this.textScale,
     required this.typewriterMillis,
     required this.muteInBackground,
+    required this.enableHaptics,
   });
 
   factory AppSettings.fromMap(Map<String, dynamic> map) {
@@ -43,6 +45,7 @@ class AppSettings {
       textScale: (map['text_scale'] as num? ?? 1.0).toDouble(),
       typewriterMillis: (map['typewriter_millis'] as num? ?? 22).toInt(),
       muteInBackground: (map['mute_in_background'] as int? ?? 1) == 1,
+      enableHaptics: (map['enable_haptics'] as int? ?? 1) == 1,
     );
   }
 
@@ -58,6 +61,7 @@ class AppSettings {
     double? textScale,
     int? typewriterMillis,
     bool? muteInBackground,
+    bool? enableHaptics,
   }) {
     return AppSettings(
       instantText: instantText ?? this.instantText,
@@ -71,6 +75,7 @@ class AppSettings {
       textScale: textScale ?? this.textScale,
       typewriterMillis: typewriterMillis ?? this.typewriterMillis,
       muteInBackground: muteInBackground ?? this.muteInBackground,
+      enableHaptics: enableHaptics ?? this.enableHaptics,
     );
   }
 }
@@ -122,6 +127,7 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
     double? textScale,
     int? typewriterMillis,
     bool? muteInBackground,
+    bool? enableHaptics,
   }) async {
     final current = state.valueOrNull ?? await _fetchSettings();
     final next = current.copyWith(
@@ -138,6 +144,7 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
           ? null
           : _clampTypewriterMillis(typewriterMillis),
       muteInBackground: muteInBackground,
+      enableHaptics: enableHaptics,
     );
 
     final db = await _dbService.database;
@@ -156,6 +163,7 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
         'text_scale': next.textScale,
         'typewriter_millis': next.typewriterMillis,
         'mute_in_background': next.muteInBackground ? 1 : 0,
+        'enable_haptics': next.enableHaptics ? 1 : 0,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );

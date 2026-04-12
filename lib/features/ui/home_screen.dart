@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../game/game_engine_provider.dart';
@@ -24,6 +25,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       setState(() => _showTitle = true);
+      final settings = ref.read(appSettingsProvider).valueOrNull;
+      if ((settings?.enableHaptics ?? true) && !(settings?.reduceMotion ?? false)) {
+        HapticFeedback.mediumImpact();
+      }
     });
   }
 
@@ -213,7 +218,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-class _HomeActionButton extends StatelessWidget {
+class _HomeActionButton extends ConsumerWidget {
   final String label;
   final VoidCallback onPressed;
   final bool outlined;
@@ -225,7 +230,15 @@ class _HomeActionButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(appSettingsProvider).valueOrNull;
+    final hapticsOn = (settings?.enableHaptics ?? true) && !(settings?.reduceMotion ?? false);
+
+    void handlePress() {
+      if (hapticsOn) HapticFeedback.selectionClick();
+      onPressed();
+    }
+
     final child = SizedBox(
       width: double.infinity,
       child: Text(label, textAlign: TextAlign.center),
@@ -233,7 +246,7 @@ class _HomeActionButton extends StatelessWidget {
 
     if (outlined) {
       return OutlinedButton(
-        onPressed: onPressed,
+        onPressed: handlePress,
         style: OutlinedButton.styleFrom(
           foregroundColor: const Color(0xFFE9E3D6),
           side: const BorderSide(color: Color(0xFFB99A58)),
@@ -244,7 +257,7 @@ class _HomeActionButton extends StatelessWidget {
     }
 
     return FilledButton(
-      onPressed: onPressed,
+      onPressed: handlePress,
       style: FilledButton.styleFrom(
         backgroundColor: const Color(0xFFB99A58),
         foregroundColor: Colors.black,
@@ -255,7 +268,7 @@ class _HomeActionButton extends StatelessWidget {
   }
 }
 
-class _HomeChip extends StatelessWidget {
+class _HomeChip extends ConsumerWidget {
   final String label;
   final VoidCallback onPressed;
 
@@ -265,10 +278,16 @@ class _HomeChip extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(appSettingsProvider).valueOrNull;
+    final hapticsOn = (settings?.enableHaptics ?? true) && !(settings?.reduceMotion ?? false);
+
     return ActionChip(
       label: Text(label),
-      onPressed: onPressed,
+      onPressed: () {
+        if (hapticsOn) HapticFeedback.selectionClick();
+        onPressed();
+      },
       backgroundColor: Colors.white.withValues(alpha: 0.06),
       side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
     );

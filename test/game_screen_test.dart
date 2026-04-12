@@ -81,6 +81,8 @@ class _StaticAppSettingsNotifier extends AppSettingsNotifier {
         sfxVolume: 0,
         textScale: 1,
         typewriterMillis: 40,
+        muteInBackground: false,
+        enableHaptics: false,
       );
 
   @override
@@ -95,6 +97,8 @@ class _StaticAppSettingsNotifier extends AppSettingsNotifier {
     double? sfxVolume,
     double? textScale,
     int? typewriterMillis,
+    bool? muteInBackground,
+    bool? enableHaptics,
   }) async {}
 
   @override

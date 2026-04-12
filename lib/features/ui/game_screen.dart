@@ -192,7 +192,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       // by 3) so it feels like a physical keystroke rhythm, not a buzz.
       // Speed scaling: slow pace (≥28 ms/char) → mediumImpact; faster → lightImpact.
       // Skipped entirely when reduceMotion is on.
-      if (_typewriterIndex % 3 == 0 && !(settings?.reduceMotion ?? false)) {
+      if (_typewriterIndex % 3 == 0 &&
+          (settings?.enableHaptics ?? true) &&
+          !(settings?.reduceMotion ?? false)) {
         (baseDelay >= 28 ? HapticFeedback.mediumImpact : HapticFeedback.lightImpact)();
       }
       // Typewriter click — fire-and-forget, very low volume (0.08×sfxScale).
@@ -236,10 +238,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     });
   }
 
+  bool _hapticsOn() {
+    final s = ref.read(appSettingsProvider).valueOrNull;
+    return (s?.enableHaptics ?? true) && !(s?.reduceMotion ?? false);
+  }
+
   void _triggerSuccessVisualCue() {
     _backgroundFlashTimer?.cancel();
     // "Confirmed" — heavier than the submit tap so the player feels the command land.
-    HapticFeedback.heavyImpact();
+    if (_hapticsOn()) HapticFeedback.heavyImpact();
     final settings = ref.read(appSettingsProvider).valueOrNull;
     if (settings?.reduceMotion ?? false) {
       _scrollToTop();
@@ -258,6 +265,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   /// Double light-tap haptic for parser errors — two short pulses 80 ms apart
   /// feel like a dry "no" without being jarring.
   void _triggerErrorHaptic() {
+    if (!_hapticsOn()) return;
     HapticFeedback.lightImpact();
     Timer(const Duration(milliseconds: 80), () {
       if (!mounted) return;
@@ -269,6 +277,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   /// signature, heavier than the error double-tap (light/80ms) and different
   /// from the single heavy used for scene changes.
   void _triggerSectorChangeHaptic() {
+    if (!_hapticsOn()) return;
     HapticFeedback.mediumImpact();
     Timer(const Duration(milliseconds: 50), () {
       if (!mounted) return;
@@ -297,7 +306,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
     if (crossed90) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
+        if (!mounted || !_hapticsOn()) return;
         HapticFeedback.heavyImpact();
         Timer(const Duration(milliseconds: 120), () {
           if (!mounted) return;
@@ -306,7 +315,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       });
     } else if (crossed70) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) HapticFeedback.heavyImpact();
+        if (mounted && _hapticsOn()) HapticFeedback.heavyImpact();
       });
     }
   }
@@ -325,7 +334,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   void _triggerPuzzleSolvedCue() {
     _puzzleCueTimer?.cancel();
-    HapticFeedback.mediumImpact();
+    if (_hapticsOn()) HapticFeedback.mediumImpact();
     // ignore: discarded_futures
     AudioService().handleTrigger('sfx:command_accepted');
     setState(() => _puzzleCueActive = true);
@@ -343,7 +352,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
     final label = words.join(' ');
     _simulacrumBannerTimer?.cancel();
-    HapticFeedback.mediumImpact();
+    if (_hapticsOn()) HapticFeedback.mediumImpact();
     setState(() => _simulacrumBannerText = '✦ $label recovered');
     _simulacrumBannerTimer = Timer(_simulacrumBannerDuration, () {
       if (!mounted) return;
@@ -455,7 +464,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
     if (text.isEmpty) return;
     // Immediate "key press" feedback — fires before the engine processes the command.
-    HapticFeedback.mediumImpact();
+    if (_hapticsOn()) HapticFeedback.mediumImpact();
     _controller.clear();
     _lastSubmittedCommand = text;
     // Add to history (skip duplicates of the most recent entry; cap at 30).

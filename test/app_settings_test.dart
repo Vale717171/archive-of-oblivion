@@ -40,6 +40,8 @@ void main() {
         sfxVolume: 0.90,
         textScale: 1.0,
         typewriterMillis: 22,
+        muteInBackground: true,
+        enableHaptics: true,
       );
 
       final updated = initial.copyWith(

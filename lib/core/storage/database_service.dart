@@ -5,7 +5,7 @@ import 'package:path/path.dart';
 
 class DatabaseService {
   static const _databaseName = "oblivion_archive.db";
-  static const _databaseVersion = 6;
+  static const _databaseVersion = 7;
   static const int defaultLucidity = 50;
   static const int defaultOblivionLevel = 0;
   static const int defaultAnxiety = 10;
@@ -28,6 +28,7 @@ class DatabaseService {
     'text_scale': 1.0,
     'typewriter_millis': 22,
     'mute_in_background': 1,
+    'enable_haptics': 1,
   };
 
   // Singleton pattern per evitare accessi concorrenti non sicuri
@@ -274,6 +275,17 @@ class DatabaseService {
           txn,
           'app_settings',
           'mute_in_background',
+          'INTEGER NOT NULL DEFAULT 1',
+        );
+      });
+    }
+    if (oldVersion < 7) {
+      // v6 → v7: add enable_haptics column to app_settings.
+      await db.transaction((txn) async {
+        await _addColumnIfNotExists(
+          txn,
+          'app_settings',
+          'enable_haptics',
           'INTEGER NOT NULL DEFAULT 1',
         );
       });
