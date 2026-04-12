@@ -3638,21 +3638,25 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   /// Priority:
   ///   1. Keyword / summon trigger (phase-independent) — e.g. "summon proust"
   ///   2. Verb-based trigger (phase-dependent) — e.g. smell → Proust in phase 2+
-  ///   3. Demiurge fallback
+  ///   3. Sector-thematic trigger — input contains thematic keywords for this sector
+  ///   4. Archive-meta response (Seth-voice) for fully off-topic commands
+  ///   5. Demiurge fallback
   String _callNarrator(
     CommandVerb verb,
     String fallbackText,
     String nodeId,
     String rawInput,
   ) {
-    // ── 1. Keyword / summon (always active once the Echo class exists) ─────────
+    final sector = DemiurgeService.sectorForNode(nodeId);
+
+    // ── 1. Keyword / summon (always active) ────────────────────────────────
     final keywordEcho = EchoService.echoForKeywords(rawInput);
     if (keywordEcho != null) {
       final echoText = EchoService.instance.respond(keywordEcho);
       if (echoText != null) return echoText;
     }
 
-    // ── 2. Verb-based (phase + affinity gated) ──────────────────────────────
+    // ── 2. Verb-based (phase + affinity gated) ─────────────────────────────
     final profile = ref.read(psychoProfileProvider).valueOrNull;
     if (profile != null) {
       final echo = EchoService.echoForCommand(
@@ -3668,6 +3672,25 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
     }
 
+    // ── 3. Sector-thematic (input is semantically "in sector" even if not a
+    //        recognised verb). Prefers the sector's primary Echo persona.
+    if (EchoService.isThematicForSector(rawInput, sector)) {
+      final sectorEchoName = EchoService.sectorEcho[sector];
+      if (sectorEchoName != null) {
+        final echoText = EchoService.instance.respond(sectorEchoName);
+        if (echoText != null) return echoText;
+      }
+    }
+
+    // ── 4. Archive-meta (completely off-topic unknown command).
+    //        Seth's voice turns every failure into a narrative moment.
+    //        Only fires for unknown verbs — recognised-but-failed commands
+    //        still deserve the Demiurge's full philosophical response.
+    if (verb == CommandVerb.unknown) {
+      return EchoService.instance.respondMeta();
+    }
+
+    // ── 5. Demiurge fallback ────────────────────────────────────────────────
     return _callDemiurge(fallbackText, nodeId);
   }
 
@@ -3705,20 +3728,34 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       awareness = 3;
       seth = 4;
     }
-    // Unknown verb: check raw input for explicit keyword/summon triggers.
-    // A player who finds and uses the right words gets an affinity bonus
-    // regardless of phase — deliberate discovery is rewarded more than
-    // organic emergence.
+    // Unknown verb: distinguish keyword/summon, sector-thematic, and meta cases.
     else if (verb == CommandVerb.unknown) {
       final keywordEcho = EchoService.echoForKeywords(rawInput);
       if (keywordEcho != null) {
+        // Deliberate Echo invocation — large affinity bonus.
         awareness = 4;
-        if (keywordEcho == 'proust')     { proust = 8; }
+        if (keywordEcho == 'proust')          { proust = 8; }
         else if (keywordEcho == 'tarkovskij') { tarkovskij = 8; }
-        else if (keywordEcho == 'seth')  { seth = 8; }
-      } else if (response.needsDemiurge) {
-        // Generic Demiurge call — small awareness bump for wandering
-        awareness = 2;
+        else if (keywordEcho == 'seth')       { seth = 8; }
+      } else {
+        // Check sector-thematic — wandering in the right direction.
+        // We need the current node to determine the sector; read from saved state.
+        final savedNode = ref.read(gameStateProvider).valueOrNull?.currentNode ?? '';
+        final sector = DemiurgeService.sectorForNode(savedNode);
+        if (EchoService.isThematicForSector(rawInput, sector)) {
+          // Thematic but unrecognised — a gentle awareness + sector affinity boost.
+          awareness = 3;
+          final sectorEchoName = EchoService.sectorEcho[sector];
+          if (sectorEchoName == 'proust')          { proust = 4; }
+          else if (sectorEchoName == 'tarkovskij') { tarkovskij = 4; }
+          else if (sectorEchoName == 'seth')       { seth = 4; }
+        } else {
+          // Completely off-topic — archive-meta response fires.
+          // Small awareness gain (even mistakes teach) + modest oblivion increase.
+          awareness = 2;
+          // Oblivion bump for meta commands is applied via anxietyDelta path
+          // in the engine response, so here we just note awareness.
+        }
       }
     }
     // Any other Demiurge response (unrecognised but not unknown — edge case)

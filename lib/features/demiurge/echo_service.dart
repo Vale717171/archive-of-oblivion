@@ -173,7 +173,67 @@ class EchoService {
     ),
   ];
 
+  // ── Archive-meta responses (Seth's voice for completely off-topic commands) ──
+  // Short, punchy, fourth-wall-adjacent — distinct from Seth's regular Echo pool.
+  // Fired when neither keyword, verb+phase, nor thematic sector matching triggers
+  // an Echo. They turn every "wrong" command into a narrative moment.
+  static const _archiveMetaResponses = [
+    'Seth\'s voice echoes through the void:\n\n'
+        '"The Archive cannot be destroyed — because you are the one creating it."\n\n'
+        'Even this command was a belief. And every belief shapes this place.',
+    'The Archive does not reject your words. It absorbs them.\n\n'
+        '"Every wrong command is still a thought. Every thought is an act of creation."\n\n'
+        'What you intended matters more than what the parser understood.',
+    'A silence follows your command — then a presence speaks:\n\n'
+        '"Even the mistakes are part of the sculpture of time."\n\n'
+        'Nothing you have typed here has been wasted.',
+    'The Archive hums with your confusion.\n\n'
+        '"Nothing is wasted. Not even forgetting. Not even this."\n\n'
+        'The oblivion deepens, yet something inside you becomes clearer.',
+    'Your command dissolves into the Archive.\n\n'
+        '"You are not lost. You are exactly where your beliefs have placed you."\n\n'
+        'Try a different belief.',
+  ];
+
+  // ── Sector → primary Echo persona ───────────────────────────────────────────
+  // Maps Demiurge sector keys to the Echo that feels most at home there.
+  static const Map<String, String> sectorEcho = {
+    'laboratorio':  'proust',      // Lab — sensory memory, the madeleine
+    'galleria':     'tarkovskij',  // Gallery — sculpted time, image, reflection
+    'osservatorio': 'tarkovskij',  // Observatory — cosmic slowness, distant light
+    'giardino':     'seth',        // Garden — belief, nature as creation
+    'universale':   'seth',        // Universal fallback — reality creation
+  };
+
+  // ── Thematic keywords per sector ─────────────────────────────────────────────
+  // Used to detect when a player's free text is semantically "in sector"
+  // even if it doesn't match a known command verb.
+  static const Map<String, List<String>> _thematicKeywords = {
+    'laboratorio':  ['smell', 'taste', 'remember', 'madeleine', 'odor', 'scent',
+                     'memory', 'fragrance', 'flavour', 'flavor', 'aroma'],
+    'galleria':     ['time', 'slow', 'watch', 'sculpt', 'image', 'reflection',
+                     'mirror', 'light', 'shadow', 'frame', 'canvas'],
+    'osservatorio': ['time', 'star', 'light', 'slow', 'watch', 'cosmos',
+                     'infinity', 'telescope', 'sky', 'orbit'],
+    'giardino':     ['create', 'believe', 'reality', 'change', 'think', 'grow',
+                     'nature', 'seed', 'roots', 'bloom'],
+  };
+
+  /// Returns true if [input] contains at least one thematic keyword for [sector].
+  static bool isThematicForSector(String input, String sector) {
+    final keywords = _thematicKeywords[sector] ?? const [];
+    final lower = input.toLowerCase();
+    return keywords.any(lower.contains);
+  }
+
   // ── Public API ───────────────────────────────────────────────────────────────
+
+  /// Returns one of the archive-meta responses (Seth-voice, Archive-aware).
+  /// Used as the last narrative layer before the Demiurge fallback for
+  /// commands that are completely off-topic for any sector or Echo.
+  String respondMeta() {
+    return _archiveMetaResponses[_rng.nextInt(_archiveMetaResponses.length)];
+  }
 
   /// Returns a formatted Echo response for the given [echo] persona ('proust',
   /// 'tarkovskij', or 'seth'). Returns null when [echo] is unrecognised or
