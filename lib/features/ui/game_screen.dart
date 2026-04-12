@@ -70,6 +70,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   bool _lastObservedPuzzleSolved = false;
   String? _lastObservedSimulacrum;
   String? _lastSubmittedCommand;
+
+  // Command history — up/down arrow navigation (classic text-adventure UX).
+  final List<String> _commandHistory = [];
+  int _historyIndex = -1;   // -1 = not browsing history
+  String _historyDraft = ''; // text typed before entering history mode
   int _processedScreenResetCount = 0;
   int _queuedScreenResetCount = 0;
   // The engine emits monotonically increasing reset counts, so queue order
@@ -80,6 +85,20 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   @override
   void initState() {
     super.initState();
+    _focusNode.onKeyEvent = (_, event) {
+      if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+        return KeyEventResult.ignored;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+        _navigateHistory(-1);
+        return KeyEventResult.handled;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+        _navigateHistory(1);
+        return KeyEventResult.handled;
+      }
+      return KeyEventResult.ignored;
+    };
     // Request input focus after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -296,6 +315,34 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   // ── Input ────────────────────────────────────────────────────────────────
 
+  /// Navigate command history. [direction] = -1 (older) or +1 (newer).
+  void _navigateHistory(int direction) {
+    if (_commandHistory.isEmpty) return;
+    if (_historyIndex == -1 && direction == 1) return; // nothing newer
+
+    if (_historyIndex == -1) {
+      // Entering history: save whatever the user was typing
+      _historyDraft = _controller.text;
+      _historyIndex = _commandHistory.length - 1;
+    } else if (direction == -1 && _historyIndex > 0) {
+      _historyIndex--;
+    } else if (direction == 1 && _historyIndex < _commandHistory.length - 1) {
+      _historyIndex++;
+    } else if (direction == 1 && _historyIndex == _commandHistory.length - 1) {
+      // Past the end → restore draft
+      _historyIndex = -1;
+      _controller
+        ..text = _historyDraft
+        ..selection = TextSelection.collapsed(offset: _historyDraft.length);
+      return;
+    }
+
+    final entry = _commandHistory[_historyIndex];
+    _controller
+      ..text = entry
+      ..selection = TextSelection.collapsed(offset: entry.length);
+  }
+
   void _submit() {
     final text = _controller.text.trim();
     if (_typewriterRunning) {
@@ -305,6 +352,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     if (text.isEmpty) return;
     _controller.clear();
     _lastSubmittedCommand = text;
+    // Add to history (skip duplicates of the most recent entry; cap at 30).
+    if (_commandHistory.isEmpty || _commandHistory.last != text) {
+      _commandHistory.add(text);
+      if (_commandHistory.length > 30) _commandHistory.removeAt(0);
+    }
+    _historyIndex = -1;
+    _historyDraft = '';
     ref.read(gameEngineProvider.notifier).processInput(text);
     _focusNode.requestFocus();
     SystemChannels.textInput.invokeMethod('TextInput.show');
