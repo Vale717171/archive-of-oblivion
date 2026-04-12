@@ -239,6 +239,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   void _triggerPuzzleSolvedCue() {
     _puzzleCueTimer?.cancel();
+    HapticFeedback.mediumImpact();
     setState(() => _puzzleCueActive = true);
     _puzzleCueTimer = Timer(_puzzleCueHoldDuration, () {
       if (!mounted) return;
@@ -254,6 +255,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
     final label = words.join(' ');
     _simulacrumBannerTimer?.cancel();
+    HapticFeedback.mediumImpact();
     setState(() => _simulacrumBannerText = '✦ $label recovered');
     _simulacrumBannerTimer = Timer(_simulacrumBannerDuration, () {
       if (!mounted) return;
@@ -1088,15 +1090,35 @@ class _MessageTile extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (role) {
       case MessageRole.player:
+        // Split `> command` so the prompt glyph stays muted and the
+        // command itself is rendered in the archive gold.
+        final promptMatch = RegExp(r'^(>\s*)(.*)$').firstMatch(text);
+        final promptGlyph = promptMatch?.group(1) ?? '';
+        final commandText = promptMatch?.group(2) ?? text;
         return Padding(
           padding: const EdgeInsets.only(top: 16, bottom: 4),
-          child: Text(
-            text,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.55),
-              fontFamily: 'monospace',
-              fontSize: 14 * textScale,
-              letterSpacing: 0.5,
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: promptGlyph,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.40),
+                    fontFamily: 'monospace',
+                    fontSize: 14 * textScale,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                TextSpan(
+                  text: commandText,
+                  style: TextStyle(
+                    color: const Color(0xFFB99A58),
+                    fontFamily: 'monospace',
+                    fontSize: 14 * textScale,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
             ),
           ),
         );
