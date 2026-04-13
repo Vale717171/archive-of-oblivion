@@ -3477,6 +3477,14 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
     }
 
+    // La Zona must not interrupt a player who has not truly explored yet.
+    // Require at least one simulacrum found OR one non-zone puzzle completed.
+    // This prevents the Zone from activating on the very first navigations
+    // (e.g. consecutive_transits hits 2 after just two moves on a fresh game).
+    final bool hasExplored = simulacraCount > 0 ||
+        s.completedPuzzles.any((p) => !p.startsWith('zone_'));
+    if (!hasExplored) return 0;
+
     double prob;
 
     if (hasAllSimulacra && encounters == 0) {

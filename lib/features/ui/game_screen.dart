@@ -79,6 +79,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   int _lastObservedOblivionLevel = -1;
   String? _lastSubmittedCommand;
 
+  // Assist tray (quick commands + reuse) — hidden by default so the text
+  // area gets maximum space; toggled by the lightbulb icon in the input row.
+  bool _assistVisible = false;
+
   // Walkthrough mode — activated by the secret unlock command.
   // Never persisted; resets to false on every app restart.
   bool _walkthroughUnlocked = false;
@@ -832,28 +836,6 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           typewriterRunning: _typewriterRunning,
                         ),
                       ),
-                    if (quickCommands.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                        child: _QuickCommandBar(
-                          commands: quickCommands,
-                          onCommand: _queueQuickCommand,
-                          narrativeColor: narrativeColor,
-                        ),
-                      ),
-                    if (lastCommand != null)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: ActionChip(
-                            label: Text('Reuse: $lastCommand'),
-                            onPressed: () => _queueQuickCommand(lastCommand, submit: false),
-                            backgroundColor: Colors.white.withValues(alpha: 0.05),
-                            side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-                          ),
-                        ),
-                      ),
                     // ── Message history ──────────────────────────────────────
                     Expanded(
                       child: Padding(
@@ -899,6 +881,44 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         ),
                       ),
 
+                    // ── Assist tray (quick commands) — visible on demand ─────
+                    if (_assistVisible)
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (quickCommands.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
+                                child: _QuickCommandBar(
+                                  commands: quickCommands,
+                                  onCommand: _queueQuickCommand,
+                                  narrativeColor: narrativeColor,
+                                ),
+                              ),
+                            if (lastCommand != null)
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: ActionChip(
+                                    label: Text('↑ $lastCommand'),
+                                    onPressed: () =>
+                                        _queueQuickCommand(lastCommand, submit: false),
+                                    backgroundColor:
+                                        Colors.white.withValues(alpha: 0.05),
+                                    side: BorderSide(
+                                        color:
+                                            Colors.white.withValues(alpha: 0.08)),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+
                     // ── Status bar ───────────────────────────────────────────
                     _StatusBar(
                       weight: engine.psychoWeight,
@@ -923,6 +943,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           : () => _queueQuickCommand(lastCommand, submit: false),
                       onWalkthroughNext:
                           _walkthroughUnlocked ? _walkthroughNext : null,
+                      assistVisible: _assistVisible,
+                      onToggleAssist: (quickCommands.isNotEmpty || lastCommand != null)
+                          ? () => setState(() => _assistVisible = !_assistVisible)
+                          : null,
                     ),
 
                     const SizedBox(height: 8),
@@ -1569,6 +1593,9 @@ class _InputRow extends StatelessWidget {
   final String hintText;
   final VoidCallback? onRecallLast;
   final VoidCallback? onWalkthroughNext;
+  // Assist tray toggle — null when there is nothing to show.
+  final VoidCallback? onToggleAssist;
+  final bool assistVisible;
 
   const _InputRow({
     required this.controller,
@@ -1580,6 +1607,8 @@ class _InputRow extends StatelessWidget {
     required this.hintText,
     this.onRecallLast,
     this.onWalkthroughNext,
+    this.onToggleAssist,
+    this.assistVisible = false,
   });
 
   @override
@@ -1610,6 +1639,20 @@ class _InputRow extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 child: Row(
                   children: [
+                    if (onToggleAssist != null)
+                      IconButton(
+                        tooltip: assistVisible ? 'Hide suggestions' : 'Show suggestions',
+                        onPressed: onToggleAssist,
+                        icon: Icon(
+                          assistVisible
+                              ? Icons.lightbulb
+                              : Icons.lightbulb_outline,
+                          size: 20,
+                          color: assistVisible
+                              ? const Color(0xFFB99A58)
+                              : narrativeColor.withValues(alpha: 0.40),
+                        ),
+                      ),
                     if (onRecallLast != null)
                       IconButton(
                         tooltip: 'Reuse last command',

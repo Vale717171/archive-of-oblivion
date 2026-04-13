@@ -4,6 +4,19 @@
 
 ---
 
+### 2026-04-13 — Claude Sonnet 4.6 (UI assist tray + La Zona early-game guard)
+**Role:** UI polish + game-logic fix
+
+**Done:**
+- `game_screen.dart` — collapsible assist tray: removed `_QuickCommandBar` and "Reuse" `ActionChip` from the top of the column (where they were permanently eating space above the text). Added `_assistVisible` bool to `_GameScreenState`; both widgets now live in an `AnimatedSize` tray between the text area and the status bar, visible only when the player toggles them. Added a `💡` (`lightbulb_outline` / `lightbulb`) `IconButton` at the left of `_InputRow`; icon is amber when tray is open, dimmed when closed; button is hidden when there is nothing to show. `_InputRow` gains `onToggleAssist` and `assistVisible` parameters.
+- `game_engine_provider.dart` — La Zona early-game guard: added `hasExplored` check in `_zoneActivationProbability`. La Zona now returns probability 0 until the player has found at least one simulacrum OR completed at least one non-zone puzzle. Prevents the Zone from triggering on the first two navigation commands of a fresh game (consecutive_transits hits 2 after intro_void → la_soglia → sector, giving a spurious 40% roll).
+
+**Architecture notes:**
+- `_assistVisible` is ephemeral (resets on screen navigation) — no persistence needed.
+- The `hasExplored` guard does not affect the `hasAllSimulacra` path (75%) since simulacraCount > 0 is already true in that case.
+
+---
+
 ### 2026-04-13 — Claude Sonnet 4.6 (Cinematic splash screen)
 **Role:** UI feature implementation
 
