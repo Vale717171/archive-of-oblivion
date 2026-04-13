@@ -4,6 +4,30 @@
 
 ---
 
+### 2026-04-13 — Claude Sonnet 4.6 (Finale overlay — epic ending presentation)
+**Role:** UI feature implementation
+
+**Done:**
+- `game_screen.dart` — finale visual system:
+  - Added `_FinaleType` enum (`acceptance`, `oblivion`, `eternalZone`) and helpers `_isFinaleNode()` / `_finaleTypeFor()` at file scope.
+  - Added `_wakeUpFading` bool state; detected when last narrative message contains "— FINE —" (via `addPostFrameCallback` in `data:` callback) and sets flag.
+  - `_BackgroundLayer` gains `opacity` param; finale nodes pass 0.52 (vs default 0.15) so the `bg_memoria.jpg` is clearly visible.
+  - `_SessionCard` hidden for finale nodes — clean, bare screen with just text and input.
+  - Typewriter slowed to 150 ms/char for finale nodes (from default 22 ms) so every word lands with weight.
+  - New `_FinaleBackdrop` (`StatefulWidget with SingleTickerProviderStateMixin`): `Positioned.fill` overlay between vignette and content:
+    - Acceptance: faint warm golden wash (`Color(0xFFD4A017)` at 7% opacity).
+    - Oblivion: `AnimationController` drives a black overlay from 0 → 68% opacity over 8 seconds — the world goes dark as the text is read.
+    - Eternal Zone: cold blue-grey tint (`Color(0xFF1A3A5C)` at 14% opacity).
+  - New `_WakeUpFade` (`StatelessWidget`): `Positioned.fill` white `AnimatedOpacity` (4-second `easeInOut` fade) that covers the entire screen when `_wakeUpFading` becomes true — the acceptance ending dissolves to white.
+  - All new overlays respect `reduceMotion`: animations instant or skipped.
+
+**Architecture notes:**
+- `_wakeUpFading` is ephemeral — resets on `GameScreen` disposal (leaving to HomeScreen and returning).
+- `_FinaleBackdrop` is a separate `StatefulWidget` so the `AnimationController` for oblivion darkening is self-contained and does not touch `_GameScreenState`.
+- The `_WakeUpFade` sits at the top of the Stack (after `_SimulacrumBanner`), so it covers everything including HUD and overlays.
+
+---
+
 ### 2026-04-13 — Claude Sonnet 4.6 (UI assist tray + La Zona early-game guard)
 **Role:** UI polish + game-logic fix
 

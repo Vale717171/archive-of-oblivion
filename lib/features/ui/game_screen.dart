@@ -38,6 +38,23 @@ const Duration _puzzleCueHoldDuration = Duration(milliseconds: 1300);
 const Duration _simulacrumBannerDuration = Duration(milliseconds: 2200);
 // Secret command that activates walkthrough mode (QA only, never persisted).
 const String _walkthroughUnlockCommand = 'Stalker4598!TarkoS?';
+
+// ── Finale helpers ────────────────────────────────────────────────────────────
+enum _FinaleType { acceptance, oblivion, eternalZone }
+
+bool _isFinaleNode(String nodeId) =>
+    nodeId == 'finale_acceptance' ||
+    nodeId == 'finale_oblivion' ||
+    nodeId == 'finale_eternal_zone';
+
+_FinaleType? _finaleTypeFor(String nodeId) {
+  switch (nodeId) {
+    case 'finale_acceptance':   return _FinaleType.acceptance;
+    case 'finale_oblivion':     return _FinaleType.oblivion;
+    case 'finale_eternal_zone': return _FinaleType.eternalZone;
+    default:                    return null;
+  }
+}
 // 5×4 color matrix: +18% RGB gain plus a small +18 luminance lift keeps the
 // mandated 0.15-opacity artwork readable on dimmer screens without making it loud.
 const List<double> _backgroundImageBrightnessMatrix = [
@@ -82,6 +99,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   // Assist tray (quick commands + reuse) — hidden by default so the text
   // area gets maximum space; toggled by the lightbulb icon in the input row.
   bool _assistVisible = false;
+
+  // Finale state — white-screen fade triggered by "— FINE —" in acceptance.
+  bool _wakeUpFading = false;
 
   // Walkthrough mode — activated by the secret unlock command.
   // Never persisted; resets to false on every app restart.
@@ -186,10 +206,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       setState(() => _typewriterRunning = false);
       return;
     }
-    // Variable speed: faster for spaces/punctuation, slower for letters
+    // Variable speed: faster for spaces/punctuation, slower for letters.
+    // Finale nodes use a much slower pace so each word carries weight.
     final ch = _typewriterTarget![_typewriterIndex];
     final settings = ref.read(appSettingsProvider).valueOrNull;
-    final baseDelay = settings?.typewriterMillis ?? 22;
+    final currentNode =
+        ref.read(gameStateProvider).valueOrNull?.currentNode ?? '';
+    final baseDelay = _isFinaleNode(currentNode)
+        ? 150
+        : (settings?.typewriterMillis ?? 22);
     final delay = (ch == ' ' || ch == '\n')
         ? ((baseDelay ~/ 2).clamp(4, 20) as int)
         : baseDelay;
@@ -753,6 +778,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       currentNode,
     );
 
+    // Finale state
+    final finaleType = _finaleTypeFor(currentNode);
+    final isFinale = finaleType != null;
+
     // Oblivion threshold haptic — fires once when crossing 70 and again at 90.
     _consumeOblivionHaptic(profile?.oblivionLevel ?? 0);
 
@@ -764,11 +793,18 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             _BackgroundLayer(
               backgroundPath: backgroundPath,
               flashActive: _backgroundFlashActive,
+              opacity: isFinale ? 0.52 : null,
             ),
             // Vignette: radial gradient that darkens toward the edges.
             // Intensity scales with oblivionLevel (0→100) so the world
             // grows cinematically darker as the player sinks into oblivion.
             _VignetteLayer(oblivionLevel: profile?.oblivionLevel ?? 0),
+            // Finale atmospheric backdrop — tint/darkening per ending type.
+            if (isFinale)
+              _FinaleBackdrop(
+                type: finaleType!,
+                reduceMotion: settings?.reduceMotion ?? false,
+              ),
             // Game content on top — unchanged
             engineAsync.when(
               loading: () => Center(
@@ -791,6 +827,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               data: (engine) {
                 _consumeFeedbackSignals(engine);
                 _consumeSectorChange(currentNode);
+                // Detect the WAKE UP epilogue text to trigger white-screen fade.
+                final lastMsg = engine.messages.lastOrNull;
+                if (lastMsg != null &&
+                    lastMsg.role == MessageRole.narrative &&
+                    lastMsg.text.contains('— FINE —') &&
+                    !_wakeUpFading) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) setState(() => _wakeUpFading = true);
+                  });
+                }
                 if (engine.screenResetCount != _processedScreenResetCount) {
                   _scheduleScreenResetCue(engine.screenResetCount);
                 }
@@ -822,7 +868,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         canReturnToTitle: Navigator.of(context).canPop(),
                       ),
                     ),
-                    if (!keyboardOpen)
+                    if (!keyboardOpen && !isFinale)
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                         child: _SessionCard(
@@ -973,6 +1019,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 ),
               ),
             ),
+            // White-screen fade that plays after "WAKE UP" in finale_acceptance.
+            _WakeUpFade(
+              active: _wakeUpFading,
+              reduceMotion: settings?.reduceMotion ?? false,
+            ),
           ],
         ),
       ),
@@ -985,10 +1036,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 class _BackgroundLayer extends StatelessWidget {
   final String backgroundPath;
   final bool flashActive;
+  /// Override opacity — defaults to [_backgroundImageOpacity] (0.15).
+  final double? opacity;
 
   const _BackgroundLayer({
     required this.backgroundPath,
     required this.flashActive,
+    this.opacity,
   });
 
   @override
@@ -1009,7 +1063,7 @@ class _BackgroundLayer extends StatelessWidget {
 
     return Positioned.fill(
       child: AnimatedOpacity(
-        opacity: flashActive ? 1.0 : _backgroundImageOpacity,
+        opacity: flashActive ? 1.0 : (opacity ?? _backgroundImageOpacity),
         duration: flashActive ? Duration.zero : _backgroundFadeDuration,
         curve: Curves.easeOut,
         child: child,
@@ -1726,6 +1780,95 @@ class _InputRow extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+// ── Finale widgets ────────────────────────────────────────────────────────────
+
+/// Atmospheric backdrop overlay shown when the player is in a finale node.
+/// - Acceptance  : warm, faint golden wash — the Archive grows luminous.
+/// - Oblivion    : progressive black overlay that darkens over 8 seconds.
+/// - Eternal Zone: cold blue-grey tint — the Zone has claimed you.
+class _FinaleBackdrop extends StatefulWidget {
+  final _FinaleType type;
+  final bool reduceMotion;
+
+  const _FinaleBackdrop({required this.type, this.reduceMotion = false});
+
+  @override
+  State<_FinaleBackdrop> createState() => _FinaleBackdropState();
+}
+
+class _FinaleBackdropState extends State<_FinaleBackdrop>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    );
+    if (widget.type == _FinaleType.oblivion) {
+      if (widget.reduceMotion) {
+        _ctrl.value = 1.0;
+      } else {
+        _ctrl.forward();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: switch (widget.type) {
+          _FinaleType.acceptance => Container(
+              color: const Color(0xFFD4A017).withValues(alpha: 0.07),
+            ),
+          _FinaleType.oblivion => AnimatedBuilder(
+              animation: _ctrl,
+              builder: (_, __) => Container(
+                color: Colors.black.withValues(alpha: _ctrl.value * 0.68),
+              ),
+            ),
+          _FinaleType.eternalZone => Container(
+              color: const Color(0xFF1A3A5C).withValues(alpha: 0.14),
+            ),
+        },
+      ),
+    );
+  }
+}
+
+/// White-screen fade triggered by the "WAKE UP" epilogue in finale_acceptance.
+/// Fades from transparent to fully white over 4 seconds.
+class _WakeUpFade extends StatelessWidget {
+  final bool active;
+  final bool reduceMotion;
+
+  const _WakeUpFade({required this.active, this.reduceMotion = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: AnimatedOpacity(
+          opacity: active ? 1.0 : 0.0,
+          duration:
+              reduceMotion ? Duration.zero : const Duration(seconds: 4),
+          curve: Curves.easeInOut,
+          child: Container(color: Colors.white),
+        ),
+      ),
     );
   }
 }
