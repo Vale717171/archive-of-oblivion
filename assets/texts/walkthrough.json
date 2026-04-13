@@ -135,6 +135,6 @@
 
     { "command": "deposit everything", "note": "Set down the notebook and all mundane items → psycho_weight resets to 0; simulacra are kept" },
     { "command": "say human warmth", "note": "Resolution keyword with psycho_weight == 0 → The Antagonist concedes → finale_acceptance (Ending 1: Acceptance)" },
-    { "command": "wake up", "note": "Epilogue command → FINE — walkthrough complete" }
+    { "command": "wake up", "note": "Epilogue command — the Archive empties, time resumes — walkthrough sequence complete" }
   ]
 }

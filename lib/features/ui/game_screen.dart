@@ -36,6 +36,8 @@ const Duration _backgroundFlashHoldDuration = Duration(milliseconds: 180);
 const Duration _backgroundFadeDuration = Duration(milliseconds: 900);
 const Duration _puzzleCueHoldDuration = Duration(milliseconds: 1300);
 const Duration _simulacrumBannerDuration = Duration(milliseconds: 2200);
+// Secret command that activates walkthrough mode (QA only, never persisted).
+const String _walkthroughUnlockCommand = 'Stalker4598!TarkoS?';
 // 5×4 color matrix: +18% RGB gain plus a small +18 luminance lift keeps the
 // mandated 0.15-opacity artwork readable on dimmer screens without making it loud.
 const List<double> _backgroundImageBrightnessMatrix = [
@@ -471,7 +473,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
     if (text.isEmpty) return;
     // Secret walkthrough unlock command — consumed here, never forwarded to engine.
-    if (text == 'Stalker4598!TarkoS?') {
+    if (text == _walkthroughUnlockCommand) {
       _controller.clear();
       setState(() => _walkthroughUnlocked = true);
       _focusNode.requestFocus();
@@ -514,8 +516,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         final decoded = jsonDecode(raw) as Map<String, dynamic>;
         _walkthroughSteps = (decoded['steps'] as List)
             .cast<Map<String, dynamic>>();
-      } catch (_) {
-        // Fail silently — walkthrough.json unavailable or malformed.
+      } catch (e) {
+        // Fail silently in production; print in debug for QA diagnostics.
+        assert(() {
+          // ignore: avoid_print
+          print('[Walkthrough] Failed to load walkthrough.json: $e');
+          return true;
+        }());
         return;
       }
     }
