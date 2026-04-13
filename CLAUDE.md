@@ -94,6 +94,7 @@ Stop words: `{'the', 'a', 'an', 'at', 'to', 'into', 'on', 'up', 'with', 'from', 
 Single-screen UI — text output + command input. Typewriter effect uses `dart:async Timer` (not `Future.delayed`), with `_typewriterTimer` cancelled in `dispose()` and `_skipTypewriter()` to prevent setState-on-disposed-widget. Displays sector background image at 0.15 opacity via `BackgroundService.getBackgroundForNode()`, updated via `gameStateProvider`.
 - `_hapticsOn()` helper: `(s?.enableHaptics ?? true) && !(s?.reduceMotion ?? false)`. All `HapticFeedback.*` calls wrapped with this guard.
 - "Save / Load" menu entry triggers `ArchivePanels.showSaveLoad()`.
+- **Walkthrough mode (QA only):** `_walkthroughUnlocked` (bool, never persisted) is set to `true` when the user submits the exact string `Stalker4598!TarkoS?`. That command is consumed silently — never forwarded to the engine. When unlocked, a small `arrow_forward` `IconButton` appears next to the input field; each press reads the next command from `assets/texts/walkthrough.json` (loaded once via `rootBundle.loadString`, cached in `_walkthroughSteps`) and injects it into the engine via `_queueQuickCommand`. `_walkthroughStep` (int, 0-based) tracks the position; on exhaustion a SnackBar says "Walkthrough complete". Load failures are caught silently.
 
 ### `lib/features/ui/archive_panels.dart`
 Houses the settings sheet (`_SettingsSheet`), the save/load sheet (`_SaveLoadSheet` + `_SlotCard`), and the `showSaveLoad()` static entry point. `_SlotCard` shows: sector label, awareness %, date.
