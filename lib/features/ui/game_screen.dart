@@ -10,6 +10,7 @@
 
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -35,6 +36,8 @@ const Duration _backgroundFlashHoldDuration = Duration(milliseconds: 180);
 const Duration _backgroundFadeDuration = Duration(milliseconds: 900);
 const Duration _puzzleCueHoldDuration = Duration(milliseconds: 1300);
 const Duration _simulacrumBannerDuration = Duration(milliseconds: 2200);
+// Secret command that activates walkthrough mode (QA only, never persisted).
+const String _walkthroughUnlockCommand = 'Stalker4598!TarkoS?';
 // 5×4 color matrix: +18% RGB gain plus a small +18 luminance lift keeps the
 // mandated 0.15-opacity artwork readable on dimmer screens without making it loud.
 const List<double> _backgroundImageBrightnessMatrix = [
@@ -75,6 +78,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   // -1 = "not yet observed" so the very first build never fires a threshold haptic.
   int _lastObservedOblivionLevel = -1;
   String? _lastSubmittedCommand;
+
+  // Walkthrough mode — activated by the secret unlock command.
+  // Never persisted; resets to false on every app restart.
+  bool _walkthroughUnlocked = false;
+  int _walkthroughStep = 0;
+  List<Map<String, dynamic>>? _walkthroughSteps;
 
   // Command history — up/down arrow navigation (classic text-adventure UX).
   final List<String> _commandHistory = [];
@@ -463,6 +472,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       if (text.isEmpty) return;
     }
     if (text.isEmpty) return;
+    // Secret walkthrough unlock command — consumed here, never forwarded to engine.
+    if (text == _walkthroughUnlockCommand) {
+      _controller.clear();
+      setState(() => _walkthroughUnlocked = true);
+      _focusNode.requestFocus();
+      return;
+    }
     // Immediate "key press" feedback — fires before the engine processes the command.
     if (_hapticsOn()) HapticFeedback.mediumImpact();
     _controller.clear();
@@ -491,6 +507,37 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     } else {
       _focusNode.requestFocus();
     }
+  }
+
+  Future<void> _walkthroughNext() async {
+    if (_walkthroughSteps == null) {
+      try {
+        final raw = await rootBundle.loadString('assets/texts/walkthrough.json');
+        final decoded = jsonDecode(raw) as Map<String, dynamic>;
+        _walkthroughSteps = (decoded['steps'] as List)
+            .cast<Map<String, dynamic>>();
+      } catch (e) {
+        // Fail silently in production; print in debug for QA diagnostics.
+        assert(() {
+          // ignore: avoid_print
+          print('[Walkthrough] Failed to load walkthrough.json: $e');
+          return true;
+        }());
+        return;
+      }
+    }
+    final steps = _walkthroughSteps!;
+    if (_walkthroughStep >= steps.length) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Walkthrough complete')),
+        );
+      }
+      return;
+    }
+    final command = steps[_walkthroughStep]['command'] as String;
+    setState(() => _walkthroughStep++);
+    _queueQuickCommand(command);
   }
 
   Future<void> _startNewGame() async {
@@ -874,6 +921,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       onRecallLast: lastCommand == null
                           ? null
                           : () => _queueQuickCommand(lastCommand, submit: false),
+                      onWalkthroughNext:
+                          _walkthroughUnlocked ? _walkthroughNext : null,
                     ),
 
                     const SizedBox(height: 8),
@@ -1519,6 +1568,7 @@ class _InputRow extends StatelessWidget {
   final double textScale;
   final String hintText;
   final VoidCallback? onRecallLast;
+  final VoidCallback? onWalkthroughNext;
 
   const _InputRow({
     required this.controller,
@@ -1529,6 +1579,7 @@ class _InputRow extends StatelessWidget {
     required this.textScale,
     required this.hintText,
     this.onRecallLast,
+    this.onWalkthroughNext,
   });
 
   @override
@@ -1565,6 +1616,15 @@ class _InputRow extends StatelessWidget {
                         onPressed: onRecallLast,
                         icon: Icon(
                           Icons.history,
+                          color: narrativeColor.withValues(alpha: enabled ? 0.65 : 0.25),
+                        ),
+                      ),
+                    if (onWalkthroughNext != null)
+                      IconButton(
+                        tooltip: 'Next walkthrough step',
+                        onPressed: onWalkthroughNext,
+                        icon: Icon(
+                          Icons.arrow_forward,
                           color: narrativeColor.withValues(alpha: enabled ? 0.65 : 0.25),
                         ),
                       ),

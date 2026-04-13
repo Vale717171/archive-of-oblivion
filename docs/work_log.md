@@ -4,7 +4,27 @@
 
 ---
 
-### 2026-04-12 — Claude Sonnet 4.6 (Phase/Echo system, save slots, haptics, puzzle-gate tests)
+### 2026-04-13 — GitHub Copilot (Guided walkthrough mode for QA playtesting)
+**Role:** Feature implementation
+
+**Done:**
+- Analysed `game_engine_provider.dart` end-to-end to reconstruct a valid 129-step command sequence traversing all four main sectors (Garden/North, Observatory/East, Gallery/South, Lab/West), the Fifth Sector (Quinto), and Finale 1 (Acceptance / "WAKE UP"). Sequence accounts for all exit gate dependencies, puzzle ordering constraints (bain-marie external-visit counter triggered during Garden traversal), and the psycho_weight == 0 requirement for the Gallery mirror and the Final Boss resolution.
+- Created `assets/texts/walkthrough.json` — 129 steps with human-readable `note` fields; covered by the existing `assets/texts/` wildcard in `pubspec.yaml` (no pubspec change needed).
+- Added walkthrough mode to `lib/features/ui/game_screen.dart`:
+  - Three new state fields: `_walkthroughUnlocked` (bool, ephemeral), `_walkthroughStep` (int), `_walkthroughSteps` (nullable list, lazy-loaded once).
+  - `_submit()` intercepts the exact string `Stalker4598!TarkoS?`: sets `_walkthroughUnlocked = true`, clears the field, calls `setState()`, returns — command is never forwarded to the engine and never displayed.
+  - `_walkthroughNext()`: loads `walkthrough.json` via `rootBundle.loadString` on first call (catch + silent return on failure), injects `steps[_walkthroughStep]['command']` via `_queueQuickCommand`, increments `_walkthroughStep`, shows a SnackBar "Walkthrough complete" when all steps are exhausted.
+  - `_InputRow` gains an optional `onWalkthroughNext` parameter; when non-null an `arrow_forward` `IconButton` appears next to the input field.
+- Updated `CLAUDE.md` architecture section for `game_screen.dart` to document the secret unlock command and the walkthrough state fields.
+
+**Architecture notes:**
+- `_walkthroughUnlocked` is never persisted — it resets to `false` on every app restart by design.
+- La Zona is probabilistic and cannot be explicitly triggered by command; the walkthrough notes this in the step adjacent to `go north` moves where it may intercept.
+- The bain-marie transformation is time-ordered: the walkthrough visits `lab_bain_marie` before starting the Garden so that the three non-lab navigation events during Garden traversal satisfy the `bain_marie_complete` counter automatically.
+
+---
+
+
 **Role:** Feature implementation + test authoring
 
 **Done:**
