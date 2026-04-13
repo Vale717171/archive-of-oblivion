@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/audio/audio_service.dart';
 import 'features/demiurge/demiurge_service.dart';
-import 'features/ui/home_screen.dart';
+import 'features/ui/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         fontFamily: 'Georgia',
       ),
-      home: HomeScreen(audioFailed: audioFailed),
+      home: SplashScreen(audioFailed: audioFailed),
     );
   }
 }

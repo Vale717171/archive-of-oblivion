@@ -4,6 +4,27 @@
 
 ---
 
+### 2026-04-13 — Claude Sonnet 4.6 (Cinematic splash screen)
+**Role:** UI feature implementation
+
+**Done:**
+- Created `lib/features/ui/splash_screen.dart` — cinematic opening screen:
+  - `bg_soglia.jpg` fades in over 1 500 ms (dark veil at 0.38 opacity, lighter than in-game 0.62, to let the image breathe)
+  - A random Bach sector track (`soglia`, `giardino`, `osservatorio`, `galleria`, `laboratorio`, `memoria`) starts simultaneously via `AudioService().handleTrigger(key)`; `_isFirstTrack` in AudioService ensures a soft 2.5 s fade-in
+  - After 1 600 ms the title container appears; typewriter writes "The Archive of Oblivion" at 75 ms/char
+  - 1 800 ms after the last character: fade transition to `HomeScreen` (800 ms `FadeTransition` via `PageRouteBuilder`)
+  - Tap at any point: fills the title instantly → 400 ms pause → navigate (or immediate if title was already complete)
+  - `reduceMotion` support: all animations instant, full title shown at once, auto-advance after 2 s
+  - Haptic feedback on tap (`lightImpact`), guarded by `_hapticsOn()` pattern consistent with rest of codebase
+- Updated `lib/main.dart`: `home:` changed from `HomeScreen` to `SplashScreen`; `splash_screen.dart` import replaces `home_screen.dart`
+
+**Architecture notes:**
+- `SplashScreen` is a `ConsumerStatefulWidget`; reads `appSettingsProvider` for `reduceMotion`/`enableHaptics`/`musicEnabled`
+- `AudioService().handleTrigger(key)` is called directly — respects `musicEnabled` internally
+- `HomeScreen` is still the app's main menu; splash is a one-shot entry gate (uses `pushReplacement`, not `push`)
+
+---
+
 ### 2026-04-13 — GitHub Copilot (Guided walkthrough mode for QA playtesting)
 **Role:** Feature implementation
 
@@ -24,7 +45,7 @@
 
 ---
 
-
+### 2026-04-12 — Claude Sonnet 4.6 (Phase/Echo system, save slots, haptics, puzzle-gate tests)
 **Role:** Feature implementation + test authoring
 
 **Done:**

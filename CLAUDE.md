@@ -18,7 +18,7 @@ Text and Bach's music. Subtle sector background images at 0.15 opacity. English 
 ## Current architecture — file by file
 
 ### `lib/main.dart`
-App entry point. Initialises `AudioService` (try-catch; non-fatal if it fails) and pre-loads all five Demiurge citation bundles via `DemiurgeService.instance.loadAll()` (also try-catch; bundle failure is non-fatal). Wraps the app in `UncontrolledProviderScope`.
+App entry point. Initialises `AudioService` (try-catch; non-fatal if it fails) and pre-loads all five Demiurge citation bundles via `DemiurgeService.instance.loadAll()` (also try-catch; bundle failure is non-fatal). Wraps the app in `UncontrolledProviderScope`. The app's `home:` is `SplashScreen` (not `HomeScreen` directly).
 
 ### `lib/core/storage/database_service.dart`
 SQLite singleton (sqflite). **Schema v9** — tables: `game_state`, `dialogue_history`, `player_memories`, `app_settings`, `save_slots`. Concurrent init guard uses `static Future<Database>? _initFuture` (single shared future, `??=` idiom — replaces the old Completer pattern). Single-row pattern: always `'id': 1` + `ConflictAlgorithm.replace`.
@@ -98,6 +98,9 @@ Single-screen UI — text output + command input. Typewriter effect uses `dart:a
 
 ### `lib/features/ui/archive_panels.dart`
 Houses the settings sheet (`_SettingsSheet`), the save/load sheet (`_SaveLoadSheet` + `_SlotCard`), and the `showSaveLoad()` static entry point. `_SlotCard` shows: sector label, awareness %, date.
+
+### `lib/features/ui/splash_screen.dart`
+Cinematic opening screen. Sequence: `bg_soglia.jpg` fades in over 1 500 ms (dark veil at 0.38 opacity) → a random Bach sector track starts via `AudioService().handleTrigger(key)` (pool: `soglia`, `giardino`, `osservatorio`, `galleria`, `laboratorio`, `memoria`) → typewriter writes "The Archive of Oblivion" at 75 ms/char → 1 800 ms pause → `FadeTransition` to `HomeScreen`. Tapping at any time fills the title instantly and navigates after 400 ms. `reduceMotion` support: all animations instant, auto-advance after 2 s. Uses `pushReplacement` (not `push`) so the splash is not in the back-stack.
 
 ### `lib/features/ui/home_screen.dart`
 Home screen with `_HomeActionButton` and `_HomeChip` as `ConsumerWidget`s. Reads `AppSettings` for haptic guard; fires `HapticFeedback.selectionClick()` on chip/button press and `mediumImpact()` on Archive opening.
@@ -194,7 +197,8 @@ lib/
         ├── archive_panels.dart             ← settings sheet, save/load sheet
         ├── background_service.dart         ← node → bg image mapping
         ├── game_screen.dart                ← typewriter UI, haptics, command input
-        └── home_screen.dart                ← home with haptic-aware chips/buttons
+        ├── home_screen.dart                ← home with haptic-aware chips/buttons
+        └── splash_screen.dart              ← cinematic opening (app entry point)
 
 assets/
 ├── texts/
@@ -249,8 +253,9 @@ tools/
 10. ~~Multi-slot save system~~ ✅ **DONE** — `SaveService`, auto-save slot 0, manual slots 1–3, Save/Load UI.
 11. ~~Haptic feedback system~~ ✅ **DONE** — `enableHaptics` setting, `_hapticsOn()` guard on all calls.
 12. ~~Automated tests~~ ✅ **DONE** — 105 parser tests + 119 puzzle gate tests.
-13. **⟶ NEXT: End-to-end playtest on a physical Android device** (API 26+, 3 GB RAM). Verify all sector transitions, puzzle gates, La Zona activation, three endings, save/load round-trip.
-14. Polish: audio balance, typewriter speed tuning, edge-case command handling.
+13. ~~Cinematic splash screen~~ ✅ **DONE** — `SplashScreen`: bg_soglia fade-in, typewriter title, random Bach track, tap-to-skip, `reduceMotion` support.
+14. **⟶ NEXT: End-to-end playtest on a physical Android device** (API 26+, 3 GB RAM). Verify all sector transitions, puzzle gates, La Zona activation, three endings, save/load round-trip.
+15. Polish: audio balance, typewriter speed tuning, edge-case command handling.
 
 ---
 
