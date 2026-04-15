@@ -16,6 +16,14 @@ integrated into the repository:
 - `giardino`
 - `aria_goldberg`
 
+The second wave is now integrated as well:
+
+- `osservatorio`
+- `galleria`
+- `laboratorio`
+- `oblivion`
+- `siciliano`
+
 ## Verified Source Pools
 
 ### 1. Open Well-Tempered Clavier

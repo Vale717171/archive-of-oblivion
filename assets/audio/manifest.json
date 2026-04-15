@@ -27,25 +27,25 @@
       "key": "osservatorio",
       "asset": "assets/audio/bach_contrapunctus_observatory.ogg",
       "status": "ready",
-      "source": "BWV 227.1 — Motet 'Jesu, meine Freude' (opening)",
-      "license": "Public Domain",
-      "duration_s": 50.3
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Fugue No. 1 in C major, BWV 846",
+      "license": "CC0 1.0",
+      "duration_s": 116.4
     },
     {
       "key": "galleria",
       "asset": "assets/audio/bach_bwv846_galleria.ogg",
       "status": "ready",
-      "source": "BWV 244.46 — St Matthew Passion chorale 'O Haupt voll Blut und Wunden'",
-      "license": "Public Domain",
-      "duration_s": 24.8
+      "source": "Open Goldberg Variations — Kimiko Ishizaka, Variatio 25 a 2 Clav., BWV 988",
+      "license": "CC0 1.0",
+      "duration_s": 558.3
     },
     {
       "key": "laboratorio",
       "asset": "assets/audio/bach_bwv1008_laboratorio.ogg",
       "status": "ready",
-      "source": "BWV 244.3 — St Matthew Passion chorale 'Herzliebster Jesu'",
-      "license": "Public Domain",
-      "duration_s": 35.0
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Prelude No. 2 in C minor, BWV 847",
+      "license": "CC0 1.0",
+      "duration_s": 107.3
     },
     {
       "key": "memoria",
@@ -67,17 +67,17 @@
       "key": "oblivion",
       "asset": "assets/audio/echo_chamber.ogg",
       "status": "ready",
-      "source": "BWV 245.37 — St John Passion, chorale",
-      "license": "Public Domain",
-      "duration_s": 68.8
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Fugue No. 24 in B minor, BWV 869",
+      "license": "CC0 1.0",
+      "duration_s": 482.2
     },
     {
       "key": "siciliano",
       "asset": "assets/audio/bach_siciliano_bwv1017.ogg",
       "status": "ready",
-      "source": "BWV 244.15 — St Matthew Passion, aria 'Erbarme dich' (slow chorale)",
-      "license": "Public Domain",
-      "duration_s": 60.2
+      "source": "Open Goldberg Variations — Kimiko Ishizaka, Variatio 13 a 2 Clav., BWV 988",
+      "license": "CC0 1.0",
+      "duration_s": 254.5
     },
     {
       "key": "aria_goldberg",
@@ -185,7 +185,7 @@
     }
   ],
   "notes": [
-    "Three shipped cues now use curated CC0 piano masters by Kimiko Ishizaka: soglia, giardino, and aria_goldberg.",
+    "Eight shipped cues now use curated CC0 piano masters by Kimiko Ishizaka: soglia, giardino, osservatorio, galleria, laboratorio, oblivion, siciliano, and aria_goldberg.",
     "Remaining tracks are currently synthesised from public-domain MIDI (Johann Sebastian Bach, 1685-1750).",
     "Synthesis tool: FluidSynth 2.x + FluidR3_GM soundfont (LGPL).",
     "Score data: music21 bundled corpus (MIT licence).",

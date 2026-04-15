@@ -43,6 +43,63 @@ This repository currently ships a hybrid audio catalog:
 - License: `CC0 1.0 Universal`
 - Reuse basis: the Wikimedia file page explicitly marks the performance as `CC0`
 
+### `osservatorio`
+
+- File: `assets/audio/bach_contrapunctus_observatory.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Fugue No. 1 in C major, BWV 846
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_02_Fugue_No._1_in_C_major,_BWV_846.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `laboratorio`
+
+- File: `assets/audio/bach_bwv1008_laboratorio.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Prelude No. 2 in C minor, BWV 847
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_03_Prelude_No._2_in_C_minor,_BWV_847.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `oblivion`
+
+- File: `assets/audio/echo_chamber.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Fugue No. 24 in B minor, BWV 869
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_48_Fugue_No._24_in_B_minor,_BWV_869.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `galleria`
+
+- File: `assets/audio/bach_bwv846_galleria.ogg`
+- Work: *Goldberg Variations*, BWV 988, Variatio 25 a 2 Clav.
+- Performer: Kimiko Ishizaka
+- Source pool: Open Goldberg Variations
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_26_-_Variatio_25_a_2_Clav.ogg)
+- Upstream project: [opengoldbergvariations.org](https://www.opengoldbergvariations.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the file metadata and file page claim `CC0`; note that the
+  Wikimedia page is still marked `license review needed`
+
+### `siciliano`
+
+- File: `assets/audio/bach_siciliano_bwv1017.ogg`
+- Work: *Goldberg Variations*, BWV 988, Variatio 13 a 2 Clav.
+- Performer: Kimiko Ishizaka
+- Source pool: Open Goldberg Variations
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_14_-_Variatio_13_a_2_Clav.ogg)
+- Upstream project: [opengoldbergvariations.org](https://www.opengoldbergvariations.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the file metadata and file page claim `CC0`; note that the
+  Wikimedia page is still marked `license review needed`
+
 ## Remaining Synthesized Repository Audio
 
 All other current music cues still come from the in-repo synthesis pipeline:

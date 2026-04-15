@@ -4,6 +4,41 @@
 
 ---
 
+### 2026-04-15 — Codex GPT-5 (Second CC0 master integration)
+**Role:** Audio asset integration
+
+**Done:**
+- Replaced five more provisional synthesized masters with curated Bach recordings:
+  - `assets/audio/bach_contrapunctus_observatory.ogg`
+  - `assets/audio/bach_bwv846_galleria.ogg`
+  - `assets/audio/bach_bwv1008_laboratorio.ogg`
+  - `assets/audio/echo_chamber.ogg`
+  - `assets/audio/bach_siciliano_bwv1017.ogg`
+- Musical mapping used:
+  - `osservatorio` -> Open WTC, Fugue No. 1 in C major, BWV 846
+  - `galleria` -> Open Goldberg, Variatio 25 a 2 Clav.
+  - `laboratorio` -> Open WTC, Prelude No. 2 in C minor, BWV 847
+  - `oblivion` -> Open WTC, Fugue No. 24 in B minor, BWV 869
+  - `siciliano` -> Open Goldberg, Variatio 13 a 2 Clav.
+- Updated `assets/audio/manifest.json` so the repository catalog now reflects 8 curated masters rather than 3.
+- Expanded `assets/audio/ATTRIBUTION.md` with per-track provenance for the second wave.
+- Updated `README.md` and `docs/audio_master_candidates.md` to reflect the new current state.
+- Updated `tools/audit_audio_assets.py` earlier in the session so repository-side audio audits accept `ATTRIBUTION.md` as a legitimate non-audio companion file.
+
+**Verification:**
+- `python3 tools/audit_audio_assets.py` ✅
+- `flutter analyze` ✅
+- `flutter test` ✅
+
+**Risk note:**
+- The two added Goldberg variation files (`galleria`, `siciliano`) are documented on Wikimedia Commons as `CC0`, but their pages also show `license review needed`. The repository attribution file now records that nuance explicitly instead of flattening it away.
+
+**Architecture notes:**
+- Runtime routing remains unchanged because the existing filenames were preserved.
+- The highest-value remaining audio work is now the room-variation layer and the memory/zone special cues.
+
+---
+
 ### 2026-04-15 — Codex GPT-5 (First CC0 master integration)
 **Role:** Audio asset integration
 

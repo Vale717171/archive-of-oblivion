@@ -69,4 +69,4 @@ The compositions referenced by the project are public-domain works, but recordin
 
 See [docs/audio_asset_pipeline.md](docs/audio_asset_pipeline.md) for the recommended import and verification flow.
 
-The current checked-in audio is lawful and redistributable. Three key cues now ship with curated `CC0` Bach masters, while the rest of the catalog remains provisional synthesized audio. See [assets/audio/ATTRIBUTION.md](assets/audio/ATTRIBUTION.md), [docs/audio_asset_pipeline.md](docs/audio_asset_pipeline.md), and [docs/audio_master_candidates.md](docs/audio_master_candidates.md) for provenance and the remaining replacement shortlist.
+The current checked-in audio is lawful and redistributable. Eight key cues now ship with curated `CC0` Bach masters, while the rest of the catalog remains provisional synthesized audio. See [assets/audio/ATTRIBUTION.md](assets/audio/ATTRIBUTION.md), [docs/audio_asset_pipeline.md](docs/audio_asset_pipeline.md), and [docs/audio_master_candidates.md](docs/audio_master_candidates.md) for provenance and the remaining replacement shortlist.
