@@ -13,8 +13,7 @@ This document maps the current repository state against the main improvement the
 - Persistent audio controls for music and SFX levels/toggles, even before final masters are added.
 - Parser expansion with more verbs, synonyms, hint tiers, and movement affordances.
 - Demiurge content pipeline hardening and validated 200-entry bundles for all sectors.
-- Analyzer-clean workspace and passing automated tests.
-- Analyzer-clean workspace and passing automated tests with additional manifest/helper regression coverage.
+- Passing automated tests, plus analyzer gating and manifest/helper regression coverage.
 - Device playtest checklist.
 - Standalone browser trial slice in HTML for lightweight sharing and tone validation.
 - Audio import pipeline and repository-side asset audit tooling.
@@ -31,7 +30,7 @@ This document maps the current repository state against the main improvement the
 
 ## Still Missing Or Not Ready
 
-- Real audio masters in the app package.
+- Release-quality audio masters in the app package.
 - Typewriter/haptic controls and release-level audio balancing.
 - Widget tests and broader regression coverage for puzzles, transitions, and finale routing.
 - End-to-end or smoke automation for long-form progression.

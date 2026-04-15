@@ -33,4 +33,33 @@ void main() {
       expect(DemiurgeService.sectorForNode('finale_acceptance'), 'universale');
     });
   });
+
+  group('DemiurgeService phase management', () {
+    final service = DemiurgeService.instance;
+
+    setUp(() {
+      service.restorePhase(1);
+    });
+
+    tearDown(() {
+      service.restorePhase(1);
+    });
+
+    test('switchPhase only advances forward', () {
+      service.restorePhase(3);
+
+      service.switchPhase(2);
+      expect(service.currentPhase, 3);
+
+      service.switchPhase(5);
+      expect(service.currentPhase, 5);
+    });
+
+    test('restorePhase supports save-load and reset rollback', () {
+      service.restorePhase(5);
+      service.restorePhase(2);
+
+      expect(service.currentPhase, 2);
+    });
+  });
 }

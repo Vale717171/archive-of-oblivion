@@ -9,7 +9,7 @@ The project is a deterministic parser narrative about memory, burden, ritual, an
 - Core game loop implemented: parser input, puzzle gating, inventory, psycho-weight, persistence.
 - Narrative layer implemented: deterministic Demiurge narrator with curated public-domain bundles.
 - UI shell implemented: home screen, introduction/how-to-play/settings/credits panels, in-game menu, contextual quick commands, autosave-facing session UI.
-- Static verification passes: `flutter analyze` clean, `flutter test` green.
+- Automated verification in active use: `flutter test` green, with `flutter analyze` kept as a release gate.
 - Device playtest still pending as the next major milestone.
 
 ## Stack
@@ -59,7 +59,7 @@ Relevant tools:
 ## Known Gaps Before Release
 
 - Physical Android playtest not completed yet.
-- Real audio masters are still missing from [assets/audio](assets/audio); the repository now includes lawful placeholder `.ogg` assets plus [assets/audio/manifest.json](assets/audio/manifest.json), so runtime wiring can already be tested on device.
+- Release-quality audio masters are still missing; the repository currently ships lawful synthesized Bach renders plus [assets/audio/manifest.json](assets/audio/manifest.json), so runtime wiring can already be tested on device.
 - Test coverage is still limited compared to the size of the game engine.
 - Editorial release materials (store text, screenshots, media kit) are not prepared yet.
 
@@ -69,4 +69,4 @@ The compositions referenced by the project are public-domain works, but recordin
 
 See [docs/audio_asset_pipeline.md](docs/audio_asset_pipeline.md) for the recommended import and verification flow.
 
-For immediate device testing without licensing risk, you can generate lawful placeholder assets locally with [tools/generate_placeholder_audio.py](tools/generate_placeholder_audio.py).
+The current checked-in audio is lawful and redistributable, but still provisional in musical quality. See [assets/audio/ATTRIBUTION.md](assets/audio/ATTRIBUTION.md) and [docs/audio_asset_pipeline.md](docs/audio_asset_pipeline.md) for the provenance and replacement path.

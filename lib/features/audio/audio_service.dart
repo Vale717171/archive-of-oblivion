@@ -25,7 +25,6 @@ class AudioService with WidgetsBindingObserver {
   static const double _sicilianoVolume = 0.78;
   static const double _oblivionVolume = 0.50;
   static const double _zoneVolume = 0.68;
-  static const double _minMixVolume = 0.25;
   static const double _maxMixVolume = 0.90;
   static const double _ambientVolume = 0.32; // ambient layer target (scales with musicVolume)
   factory AudioService() => _instance;
@@ -70,9 +69,10 @@ class AudioService with WidgetsBindingObserver {
   // SFX (one-shot, do not loop)
   final Map<String, String> _sfxAssets = {
     'proustian_trigger':  'assets/audio/sfx_proustian_trigger.ogg',
-    'command_accepted':   'assets/audio/sfx_command_accepted.ogg',
-    'command_rejected':   'assets/audio/sfx_command_rejected.ogg',
-    'sector_entry':       'assets/audio/sfx_sector_entry.ogg',
+    // Reuse the shipped cue until dedicated assets are added.
+    'command_accepted':   'assets/audio/sfx_proustian_trigger.ogg',
+    'command_rejected':   'assets/audio/sfx_proustian_trigger.ogg',
+    'sector_entry':       'assets/audio/sfx_proustian_trigger.ogg',
   };
 
   // Dedicated reusable player for typewriter ticks.
@@ -381,9 +381,11 @@ class AudioService with WidgetsBindingObserver {
       final fadeLabel = isStartup ? ' — startup'
           : fadeInSteps > 15 ? ' — sector change'
           : '';
-      print('[Audio] Playing "$key" → $asset '
-          '(target vol ${targetVol.toStringAsFixed(2)}, '
-          'fade-in ${fadeInSteps * 40} ms$fadeLabel)');
+      debugPrint(
+        '[Audio] Playing "$key" → $asset '
+        '(target vol ${targetVol.toStringAsFixed(2)}, '
+        'fade-in ${fadeInSteps * 40} ms$fadeLabel)',
+      );
       await _rampVolume(targetVol, steps: fadeInSteps);
       // Apply oblivion mood effects once the track is at target volume.
       // _applyMoodEffects is a no-op for special tracks.

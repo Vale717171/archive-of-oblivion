@@ -4,6 +4,64 @@
 
 ---
 
+### 2026-04-15 — Codex GPT-5 (Phase restore fix + audio provenance cleanup)
+**Role:** Bug fix + maintenance
+
+**Done:**
+- Fixed Demiurge phase restoration bug:
+  - Added `DemiurgeService.restorePhase(int)` in `lib/features/demiurge/demiurge_service.dart`
+  - `switchPhase(int)` remains monotonic-only for awareness-driven progression
+  - `psycho_provider.dart` now uses `restorePhase(1)` on profile reset
+  - `game_engine_provider.dart` now uses `restorePhase(slot.phase)` on save-slot load
+- Added regression coverage in `test/demiurge_service_test.dart`:
+  - verified `switchPhase()` never regresses
+  - verified `restorePhase()` supports rollback for reset/load flows
+- Cleaned analyzer warnings:
+  - removed unused `_minMixVolume`
+  - replaced one remaining production `print()` warning with `debugPrint()`
+  - removed unnecessary cast / non-null assertion in `game_screen.dart`
+- Improved audio robustness without adding new binary assets:
+  - `AudioService` SFX map now reuses the shipped `sfx_proustian_trigger.ogg` for `command_accepted`, `command_rejected`, and `sector_entry` until dedicated cues are authored
+- Added `assets/audio/ATTRIBUTION.md` documenting the current lawful synthesized-audio provenance and the replacement policy for final masters
+- Updated release-facing docs (`README.md`, `docs/implementation_status.md`) so they no longer describe the repo as analyzer-clean before verification and now distinguish provisional synthesized renders from final release-quality masters
+- Verification:
+  - `flutter analyze` ✅ no issues
+  - `flutter test` ✅ all tests passed
+
+**Architecture notes:**
+- The Demiurge service now has two distinct responsibilities:
+  - `switchPhase()` for forward-only narrative progression
+  - `restorePhase()` for deterministic state restoration
+- Current shipped music remains legally safe but artistically provisional; the next audio milestone should be curated CC0/public-domain-compatible Bach masters, replacing the existing synthesized renders file-by-file.
+
+---
+
+### 2026-04-15 — Codex GPT-5 (Project audit + audio direction review)
+**Role:** Technical review
+
+**Done:**
+- Reviewed repository structure against `AGENTS.md` and the current implementation.
+- Ran verification locally:
+  - `flutter test` ✅ all tests passed
+  - `flutter analyze` ⚠️ 4 issues remain (`audio_service.dart`, `game_screen.dart`)
+- Audited current audio pipeline:
+  - confirmed shipped `.ogg` files are synthesised from public-domain Bach scores via `music21 + FluidSynth + FluidR3_GM`
+  - confirmed the current “MIDI-like” quality is primarily a timbral/rendering limitation, not a routing problem
+- Identified main risks / inconsistencies:
+  - `README.md` and `docs/implementation_status.md` still claim analyzer-clean status, but `flutter analyze` currently reports warnings
+  - `DemiurgeService.switchPhase()` is monotonic-only, so calls from `resetProfile()` and `loadSlot()` cannot actually restore phase 1 or a lower saved phase
+  - audio SFX map references assets not present in `assets/audio/` (`sfx_command_accepted`, `sfx_command_rejected`, `sfx_sector_entry`), so some polish cues currently degrade silently
+  - automated coverage is useful but still thin relative to the 4k-line engine; several multi-condition gate paths remain documented as skipped tests only
+- Reviewed music replacement strategy:
+  - safest upgrade path is curated higher-quality Bach recordings with explicit CC0 / public-domain-compatible licensing and a repository attribution record
+  - best immediate candidates are CC0/Open Goldberg and CC0 Well-Tempered Clavier recordings rather than additional GM-soundfont renders
+
+**Architecture notes:**
+- Current runtime audio infrastructure is solid enough to support better masters without architectural change.
+- The highest-value pre-release work remains: fix the small correctness/documentation drifts, improve masters, then run the full Android physical-device playtest.
+
+---
+
 ### 2026-04-13 — Claude Sonnet 4.6 (Finale overlay — epic ending presentation)
 **Role:** UI feature implementation
 

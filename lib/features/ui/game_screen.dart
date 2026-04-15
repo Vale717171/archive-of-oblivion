@@ -216,7 +216,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         ? 150
         : (settings?.typewriterMillis ?? 22);
     final delay = (ch == ' ' || ch == '\n')
-        ? ((baseDelay ~/ 2).clamp(4, 20) as int)
+        ? (baseDelay ~/ 2).clamp(4, 20)
         : baseDelay;
 
     _typewriterTimer?.cancel();
@@ -802,7 +802,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             // Finale atmospheric backdrop — tint/darkening per ending type.
             if (isFinale)
               _FinaleBackdrop(
-                type: finaleType!,
+                type: finaleType,
                 reduceMotion: settings?.reduceMotion ?? false,
               ),
             // Game content on top — unchanged

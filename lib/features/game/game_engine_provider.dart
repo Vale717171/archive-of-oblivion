@@ -3757,7 +3757,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     // Force the provider to reload from the updated DB row.
     ref.invalidate(psychoProfileProvider);
     await ref.read(psychoProfileProvider.future);
-    DemiurgeService.instance.switchPhase(slot.phase);
+    DemiurgeService.instance.restorePhase(slot.phase);
 
     // Build a fresh engine state from the restored data.
     final node = _nodes[slot.currentNode];

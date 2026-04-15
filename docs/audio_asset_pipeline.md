@@ -21,6 +21,7 @@ Do not add downloaded recordings unless one of these is true:
 ## Repository Source Of Truth
 
 - Planned catalog: [assets/audio/manifest.json](assets/audio/manifest.json)
+- Provenance record: [assets/audio/ATTRIBUTION.md](../assets/audio/ATTRIBUTION.md)
 - Runtime routing: [lib/features/audio/audio_track_catalog.dart](lib/features/audio/audio_track_catalog.dart)
 - Runtime playback and settings: [lib/features/audio/audio_service.dart](lib/features/audio/audio_service.dart)
 - Verification tool: [tools/audit_audio_assets.py](tools/audit_audio_assets.py)
@@ -90,7 +91,7 @@ If you use the placeholder generator, it can create the whole declared catalog i
 
 ## Attribution Record
 
-Whenever real audio is added, keep a small attribution record in the repository with:
+Whenever real audio is added, update [assets/audio/ATTRIBUTION.md](../assets/audio/ATTRIBUTION.md) with:
 
 - track key
 - file name
@@ -99,7 +100,7 @@ Whenever real audio is added, keep a small attribution record in the repository 
 - license name
 - proof of reuse terms if applicable
 
-If you want, this can later become a dedicated file such as `assets/audio/ATTRIBUTION.md`.
+That file now exists and should remain the canonical provenance record.
 
 ## What This Enables Now
 

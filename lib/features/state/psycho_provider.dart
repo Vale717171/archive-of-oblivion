@@ -151,7 +151,7 @@ class PsychoProfileNotifier extends AsyncNotifier<PsychoProfile> {
       DatabaseService.defaultPsychoProfileRow,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    DemiurgeService.instance.switchPhase(1);
+    DemiurgeService.instance.restorePhase(1);
     state = AsyncValue.data(await _fetchProfile());
   }
 }

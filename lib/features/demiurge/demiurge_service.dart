@@ -65,6 +65,15 @@ class DemiurgeService {
     if (phase > _currentPhase) _currentPhase = phase.clamp(1, 5);
   }
 
+  /// Restores the Demiurge to an exact phase value.
+  ///
+  /// Unlike [switchPhase], this is allowed to move backward and is intended
+  /// only for deterministic state restoration such as loading a save slot or
+  /// resetting the profile to a fresh run.
+  void restorePhase(int phase) {
+    _currentPhase = phase.clamp(1, 5);
+  }
+
   int get currentPhase => _currentPhase;
 
   /// Sector → list of loaded entries.
