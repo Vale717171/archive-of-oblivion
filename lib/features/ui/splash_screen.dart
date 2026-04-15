@@ -8,13 +8,14 @@
 //      AudioService._isFirstTrack).
 //   3. After 1 600 ms the title container becomes visible; the typewriter
 //      begins writing "The Archive of Oblivion" at ~75 ms / char.
-//   4. 1 800 ms after the last character: fade → HomeScreen.
-//   5. Tapping at any point: fills the title instantly, then navigates after
-//      a 400 ms pause (or immediately if the title was already complete).
+//   4. Once the title is complete, a "Play" button appears and waits for the
+//      player, giving the opening music time to breathe.
+//   5. Tapping while the title is still typing fills it instantly, but does
+//      not navigate automatically.
 //
 // With reduceMotion:
-//   All animations are instant; the full title is shown immediately; the
-//   screen auto-advances to HomeScreen after 2 000 ms.
+//   All animations are instant; the full title and "Play" button are shown
+//   immediately, but the screen still waits for explicit confirmation.
 
 import 'dart:async';
 import 'dart:math';
@@ -55,10 +56,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   int _charIndex = 0;
   bool _bgVisible = false;
   bool _titleVisible = false;
+  bool _showPlayButton = false;
   bool _exiting = false;
 
   Timer? _typewriterTimer;
-  Timer? _exitTimer;
 
   // ── lifecycle ──────────────────────────────────────────────────────────────
 
@@ -73,7 +74,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void dispose() {
     _typewriterTimer?.cancel();
-    _exitTimer?.cancel();
     super.dispose();
   }
 
@@ -92,13 +92,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     _playRandomTrack();
 
     if (reduceMotion) {
-      // Skip all animation: show full title at once, then auto-advance.
+      // Skip all animation but still let the player control when to enter.
       setState(() {
         _titleVisible = true;
         _displayedTitle = _fullTitle;
         _charIndex = _fullTitle.length;
+        _showPlayButton = true;
       });
-      _scheduleExit(delay: const Duration(seconds: 2));
     } else {
       // Wait for the background to finish fading before typing begins.
       Future.delayed(const Duration(milliseconds: 1600), () {
@@ -128,15 +128,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         });
       } else {
         timer.cancel();
-        _scheduleExit(delay: const Duration(milliseconds: 1800));
+        if (!mounted || _exiting) return;
+        setState(() => _showPlayButton = true);
       }
-    });
-  }
-
-  void _scheduleExit({required Duration delay}) {
-    _exitTimer?.cancel();
-    _exitTimer = Timer(delay, () {
-      if (mounted && !_exiting) _navigateToHome();
     });
   }
 
@@ -151,24 +145,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       HapticFeedback.lightImpact();
     }
 
-    _typewriterTimer?.cancel();
-    _exitTimer?.cancel();
+    if (_charIndex >= _fullTitle.length) return;
 
-    final alreadyComplete = _charIndex >= _fullTitle.length;
+    _typewriterTimer?.cancel();
 
     setState(() {
       _displayedTitle = _fullTitle;
       _charIndex = _fullTitle.length;
-    });
-
-    // If the title was mid-type give a brief pause so the player sees the
-    // completed text; if it was already done navigate immediately.
-    final pause = alreadyComplete
-        ? Duration.zero
-        : const Duration(milliseconds: 400);
-
-    Future.delayed(pause, () {
-      if (mounted && !_exiting) _navigateToHome();
+      _showPlayButton = true;
     });
   }
 
@@ -241,6 +225,39 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.4,
                       height: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SafeArea(
+                minimum: const EdgeInsets.fromLTRB(24, 24, 24, 40),
+                child: AnimatedOpacity(
+                  opacity: _showPlayButton ? 1.0 : 0.0,
+                  duration: reduceMotion
+                      ? Duration.zero
+                      : const Duration(milliseconds: 280),
+                  child: IgnorePointer(
+                    ignoring: !_showPlayButton || _exiting,
+                    child: FilledButton(
+                      onPressed: _navigateToHome,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xFFE9E3D6),
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 16,
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      child: const Text('PLAY'),
                     ),
                   ),
                 ),

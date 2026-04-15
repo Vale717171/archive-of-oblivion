@@ -4,6 +4,25 @@
 
 ---
 
+### 2026-04-15 — Codex GPT-5 (Splash pacing improvement)
+**Role:** UI / audio presentation polish
+
+**Done:**
+- Updated `lib/features/ui/splash_screen.dart` so the opening no longer auto-advances away from the title.
+- The title now types in, stays on screen, and reveals an explicit `PLAY` button once complete.
+- Tapping during the typewriter still fast-forwards the title, but it no longer skips straight into the menu.
+- `reduceMotion` now shows the full title and `PLAY` button immediately while still waiting for explicit confirmation.
+
+**Verification:**
+- `flutter analyze` ✅
+- `flutter test` ✅
+
+**Architecture notes:**
+- The splash now gives the curated title music room to breathe instead of being cut off by an automatic transition.
+- Navigation remains `pushReplacement`, so the splash still stays out of the back stack once the player enters.
+
+---
+
 ### 2026-04-15 — Codex GPT-5 (Android bootstrap DB fix)
 **Role:** Runtime bugfix / emulator validation
 
