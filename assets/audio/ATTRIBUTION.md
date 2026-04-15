@@ -252,7 +252,7 @@ This repository currently ships a fully curated music catalog:
 - Source pool: Open Goldberg Variations
 - Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Goldberg_Variations_01_Aria.ogg)
 - Upstream project: [opengoldbergvariations.org](https://www.opengoldbergvariations.org/)
-- Repository note: the checked-in `.ogg` asset is a local 3-second excerpt with a short fade-out derived from the `CC0` Aria master
+- Repository note: the checked-in `.ogg` asset is a local 3-second excerpt with light gain staging and a short fade-out derived from the `CC0` Aria master
 - License: `CC0 1.0 Universal`
 - Reuse basis: the Wikimedia file page explicitly marks the performance as `CC0`
 

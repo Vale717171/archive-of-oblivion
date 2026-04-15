@@ -467,10 +467,15 @@ class AudioService with WidgetsBindingObserver {
   double _targetVolumeFor(String key, {double intensityOffset = 0.0}) {
     final musicScale = _musicVolumeScale;
     if (!_isMusicEnabled || musicScale <= 0) return 0.0;
-    if (key == 'aria_goldberg') return _ariaGoldbergVolume * musicScale;
+    final bias = AudioTrackCatalog.mixVolumeBiasForKey(key);
+    if (key == 'aria_goldberg') {
+      return ((_ariaGoldbergVolume + bias) * musicScale).clamp(0.0, _maxMixVolume);
+    }
     if (key == 'siciliano') return _sicilianoVolume * musicScale;
     if (key == 'oblivion') return _oblivionVolume * musicScale;
-    if (key == 'zona' || key == 'zona_eternal') return _zoneVolume * musicScale;
+    if (key == 'zona' || key == 'zona_eternal') {
+      return ((_zoneVolume + bias) * musicScale).clamp(0.0, _maxMixVolume);
+    }
 
     final profile = _lastProfile;
     var target = _baseTrackVolume;
@@ -479,7 +484,8 @@ class AudioService with WidgetsBindingObserver {
       target -= (profile.oblivionLevel / 100) * _oblivionVolumeScale;
       target += (profile.lucidity / 100) * _lucidityVolumeScale;
     }
-    return ((target + intensityOffset) * musicScale).clamp(0.0, _maxMixVolume);
+    return ((target + bias + intensityOffset) * musicScale)
+        .clamp(0.0, _maxMixVolume);
   }
 
   bool get _isMusicEnabled => (_lastSettings?.musicEnabled ?? true);

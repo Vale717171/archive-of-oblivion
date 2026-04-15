@@ -1,12 +1,16 @@
 # Audio Asset Pipeline
 
-This project already contains the runtime audio infrastructure and the planned catalog in [assets/audio/manifest.json](assets/audio/manifest.json). What is still missing is the actual set of shipped masters.
+This project already contains the runtime audio infrastructure and now ships a
+fully curated `CC0` runtime music catalog in [assets/audio/manifest.json](assets/audio/manifest.json).
 
-This document defines the safe path for adding them.
+This document now defines the safe path for maintaining and polishing that
+catalog without introducing licensing ambiguity or runtime mismatches.
 
 ## Goal
 
-Add real audio files for Android playtesting and release candidates without introducing licensing ambiguity or mismatches between the repository and the runtime catalog.
+Maintain, replace, or polish audio files for Android playtesting and release
+candidates without introducing licensing ambiguity or mismatches between the
+repository and the runtime catalog.
 
 ## Important Constraint
 
@@ -27,7 +31,7 @@ Do not add downloaded recordings unless one of these is true:
 - Runtime playback and settings: [lib/features/audio/audio_service.dart](lib/features/audio/audio_service.dart)
 - Verification tool: [tools/audit_audio_assets.py](tools/audit_audio_assets.py)
 
-## Recommended Import Flow
+## Recommended Import Or Replacement Flow
 
 1. Choose the recording source and verify license terms.
 2. Convert or render each file to the repository target format, currently `.ogg`.
@@ -52,47 +56,18 @@ flutter test
 - settings-panel toggles and volume sliders
 - behavior when music is disabled but SFX remains enabled
 
-## Fastest Lawful Path For Device Testing
+## Current Polish Focus
 
-If you want audio on the phone immediately, the safest option is not to download third-party recordings first. Generate temporary placeholder assets locally.
+The main remaining work is no longer licensing or catalog completion. It is:
 
-The repository now includes [tools/generate_placeholder_audio.py](../tools/generate_placeholder_audio.py), which synthesizes `.ogg` files matching the planned catalog using `ffmpeg`.
-
-Run:
-
-```bash
-python3 tools/generate_placeholder_audio.py --overwrite
-python3 tools/audit_audio_assets.py
-flutter analyze
-flutter test
-```
-
-This gives you a fully lawful, redistributable-for-internal-testing audio set because the files are generated locally rather than downloaded from an external recording source.
-
-Later, when you choose final licensed masters, replace the generated placeholders file by file.
-
-## Minimum First Audio Drop
-
-If you want the fastest useful first pass, do not try to fill the whole catalog at once. Start with:
-
-- `bach_bwv846_soglia.ogg`
-- `bach_goldberg_giardino.ogg`
-- `bach_contrapunctus_observatory.ogg`
-- `bach_bwv846_galleria.ogg`
-- `bach_bwv1008_laboratorio.ogg`
-- `bach_memoria_theme.ogg`
-- `bach_fugue_883_zona.ogg`
-- `bach_siciliano_bwv1017.ogg`
-- `bach_aria_goldberg.ogg`
-- `echo_chamber.ogg`
-
-That set is enough to validate the main sector flow and the special finale/memory cues before investing in room-specific variations.
-
-If you use the placeholder generator, it can create the whole declared catalog in one pass, so you do not need to stop at the minimum set unless you prefer to curate manually.
+- loudness balancing across curated masters
+- fade and loop behavior during transitions
+- physical-device validation of startup, room changes, and finale triggers
+- deciding whether any long room-level cues should be shortened or faded for repetition control
 
 ## Attribution Record
 
-Whenever real audio is added, update [assets/audio/ATTRIBUTION.md](../assets/audio/ATTRIBUTION.md) with:
+Whenever audio is added or replaced, update [assets/audio/ATTRIBUTION.md](../assets/audio/ATTRIBUTION.md) with:
 
 - track key
 - file name
@@ -105,11 +80,13 @@ That file now exists and should remain the canonical provenance record.
 
 ## What This Enables Now
 
-The project is already ready for audio integration at the code level:
+The project is already ready for ongoing audio polish at the code level:
 
 - missing files fail safely
 - runtime audio routing is already sector-aware
 - special track triggers are implemented
 - persistent music and SFX controls exist in settings
+- per-track mix compensation can be tuned in `AudioTrackCatalog` without refactoring playback
 
-So once the files exist and pass audit, Android-side audio playtesting can begin immediately.
+So the next meaningful gains come from Android-side listening passes rather than
+new asset acquisition.

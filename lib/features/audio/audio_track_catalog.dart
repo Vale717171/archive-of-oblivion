@@ -69,6 +69,24 @@ class AudioTrackCatalog {
     'oblivion',
   };
 
+  // Per-track mix bias used by AudioService to smooth loudness differences
+  // between curated masters without rewriting the playback graph.
+  // Positive values lift quieter masters; negative values tame hotter ones.
+  static const Map<String, double> _musicVolumeBiases = {
+    'soglia': 0.10,
+    'giardino': 0.04,
+    'galleria': 0.03,
+    'laboratorio': -0.03,
+    'memoria': 0.06,
+    'zona': -0.04,
+    'aria_goldberg': 0.08,
+    'osservatorio_dome': -0.02,
+    'galleria_dark': -0.07,
+    'galleria_mirror': -0.03,
+    'laboratorio_sealed': -0.02,
+    'memoria_ritual': 0.02,
+  };
+
   /// Returns the ambient track key for a sector, or null if no ambient should
   /// play (memoria and la_zona already have their own atmospheric quality;
   /// special tracks such as oblivion/silence are also excluded by the caller).
@@ -92,6 +110,9 @@ class AudioTrackCatalog {
 
   static bool isExplicitTrack(String key) =>
       key == 'silence' || ambienceAssets.containsKey(key);
+
+  static double mixVolumeBiasForKey(String key) =>
+      _musicVolumeBiases[key] ?? 0.0;
 
   static String? trackForNode(String nodeId) {
     final override = _nodeOverrides[nodeId];

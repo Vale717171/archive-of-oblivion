@@ -4,6 +4,27 @@
 
 ---
 
+### 2026-04-15 — Codex GPT-5 (Audio polish: loudness compensation)
+**Role:** Audio systems polish
+
+**Done:**
+- Added per-track mix compensation in `lib/features/audio/audio_track_catalog.dart` for calibrated outliers among the curated masters.
+- Wired `AudioService._targetVolumeFor()` to consume those biases so loudness differences are reduced without changing the existing crossfade architecture.
+- Rebuilt `assets/audio/sfx_proustian_trigger.ogg` with a hotter short excerpt target so feedback SFX stay audible next to the new piano masters.
+- Updated `docs/audio_asset_pipeline.md` to reflect that the catalog is complete and the remaining work is loudness/transition polish rather than asset acquisition.
+- Added regression coverage in `test/audio_track_catalog_test.dart` for the new mix-bias API.
+
+**Verification:**
+- `python3 tools/audit_audio_assets.py` ✅
+- `flutter analyze` ✅
+- `flutter test` ✅
+
+**Architecture notes:**
+- Audio balancing is now data-driven at the catalog layer instead of being hard-coded entirely inside `AudioService`.
+- Future listening-pass tweaks can stay localized to mix-bias values without touching the playback queue or narrator/game flow.
+
+---
+
 ### 2026-04-15 — Codex GPT-5 (Final room-layer CC0 integration)
 **Role:** Audio asset integration
 
