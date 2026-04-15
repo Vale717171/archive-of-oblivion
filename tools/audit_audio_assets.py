@@ -54,11 +54,18 @@ def main() -> int:
             missing.append((key, asset))
 
     audio_dir = repo_root / "assets" / "audio"
+    allowed_non_audio = {"manifest.json", "ATTRIBUTION.md"}
+    allowed_audio_suffixes = {".ogg", ".mp3", ".flac", ".wav", ".m4a"}
+
     unexpected = sorted(
-        path for path in audio_dir.glob("**/*")
+        path
+        for path in audio_dir.glob("**/*")
         if path.is_file()
-        and path.name != "manifest.json"
-        and path.resolve() not in referenced_assets
+        and path.name not in allowed_non_audio
+        and (
+            path.suffix.lower() not in allowed_audio_suffixes
+            or path.resolve() not in referenced_assets
+        )
     )
 
     print(f"Manifest: {manifest_path}")
@@ -67,9 +74,9 @@ def main() -> int:
     print(f"Unexpected files: {len(unexpected)}")
 
     if duplicate_keys:
-      print("Duplicate keys:")
-      for key in duplicate_keys:
-          print(f"  - {key}")
+        print("Duplicate keys:")
+        for key in duplicate_keys:
+            print(f"  - {key}")
 
     if missing:
         print("Missing assets:")
@@ -81,7 +88,7 @@ def main() -> int:
         for path in unexpected:
             print(f"  - {path.relative_to(repo_root)}")
 
-    return 1 if duplicate_keys or missing else 0
+    return 1 if duplicate_keys or missing or unexpected else 0
 
 
 if __name__ == "__main__":

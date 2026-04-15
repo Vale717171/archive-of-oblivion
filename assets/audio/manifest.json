@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "purpose": "Sector-first soundtrack catalog. All tracks synthesised from public-domain Bach scores (music21 corpus) via FluidSynth + FluidR3_GM soundfont. Regenerate with: python tools/generate_audio_assets.py",
+  "version": 3,
+  "purpose": "Sector-first soundtrack catalog. Most tracks are synthesised from public-domain Bach scores (music21 corpus) via FluidSynth + FluidR3_GM, with selected cues replaced by curated CC0 Bach masters.",
   "strategy": {
     "base": "sector-first",
     "overrides": "room-specific",
@@ -11,17 +11,17 @@
       "key": "soglia",
       "asset": "assets/audio/bach_bwv846_soglia.ogg",
       "status": "ready",
-      "source": "BWV 846 — Well-Tempered Clavier Book I, Prelude in C major",
-      "license": "Public Domain",
-      "duration_s": 123.1
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Prelude No. 1 in C major, BWV 846",
+      "license": "CC0 1.0",
+      "duration_s": 162.9
     },
     {
       "key": "giardino",
       "asset": "assets/audio/bach_goldberg_giardino.ogg",
       "status": "ready",
-      "source": "BWV 155.5 — Cantata 'Mein Gott! wie lang', chorale",
-      "license": "Public Domain",
-      "duration_s": 41.9
+      "source": "Open Goldberg Variations — Kimiko Ishizaka, Aria, BWV 988",
+      "license": "CC0 1.0",
+      "duration_s": 299.5
     },
     {
       "key": "osservatorio",
@@ -83,9 +83,9 @@
       "key": "aria_goldberg",
       "asset": "assets/audio/bach_aria_goldberg.ogg",
       "status": "ready",
-      "source": "BWV 244.10 — St Matthew Passion chorale",
-      "license": "Public Domain",
-      "duration_s": 31.6
+      "source": "Open Goldberg Variations — Kimiko Ishizaka, Aria da Capo e Fine, BWV 988",
+      "license": "CC0 1.0",
+      "duration_s": 170.1
     },
     {
       "key": "giardino_fountain",
@@ -185,7 +185,8 @@
     }
   ],
   "notes": [
-    "All audio is synthesised from public-domain MIDI (Johann Sebastian Bach, 1685-1750).",
+    "Three shipped cues now use curated CC0 piano masters by Kimiko Ishizaka: soglia, giardino, and aria_goldberg.",
+    "Remaining tracks are currently synthesised from public-domain MIDI (Johann Sebastian Bach, 1685-1750).",
     "Synthesis tool: FluidSynth 2.x + FluidR3_GM soundfont (LGPL).",
     "Score data: music21 bundled corpus (MIT licence).",
     "To regenerate: python tools/generate_audio_assets.py"

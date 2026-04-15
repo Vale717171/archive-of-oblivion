@@ -7,6 +7,15 @@ The project already ships lawful Bach renders generated from public-domain
 scores, but they are still provisional in musical quality. The goal here is to
 replace them with stronger masters while keeping licensing unambiguous.
 
+## Current Status
+
+As of 2026-04-15, the first three curated replacements have already been
+integrated into the repository:
+
+- `soglia`
+- `giardino`
+- `aria_goldberg`
+
 ## Verified Source Pools
 
 ### 1. Open Well-Tempered Clavier

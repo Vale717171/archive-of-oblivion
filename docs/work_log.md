@@ -4,6 +4,40 @@
 
 ---
 
+### 2026-04-15 — Codex GPT-5 (First CC0 master integration)
+**Role:** Audio asset integration
+
+**Done:**
+- Replaced the first three provisional synthesized masters with curated `CC0` Bach recordings by Kimiko Ishizaka:
+  - `assets/audio/bach_bwv846_soglia.ogg`
+  - `assets/audio/bach_goldberg_giardino.ogg`
+  - `assets/audio/bach_aria_goldberg.ogg`
+- Source pools used:
+  - Open Well-Tempered Clavier (`CC0`)
+  - Open Goldberg Variations (`CC0`)
+- Asset choices:
+  - `soglia` -> BWV 846 Prelude No. 1 in C major
+  - `giardino` -> Goldberg Aria
+  - `aria_goldberg` -> Goldberg Aria da Capo e Fine
+- Transcoded the `aria_goldberg` source from upstream MP3 to local `.ogg` to preserve the repository's runtime asset format.
+- Updated `assets/audio/manifest.json`:
+  - bumped catalog version to 3
+  - marked the three upgraded cues as `CC0 1.0`
+  - updated durations and source descriptions
+  - changed notes to reflect the new hybrid catalog
+- Updated `assets/audio/ATTRIBUTION.md` with track-by-track provenance for the new curated masters.
+- Updated `README.md` and `docs/audio_master_candidates.md` to reflect that the first three master replacements are now complete.
+
+**Verification:**
+- `flutter analyze` ✅ no issues
+- audio asset manifest remained internally consistent after the replacements
+
+**Architecture notes:**
+- No runtime routing changes were required because the existing asset filenames were preserved.
+- The catalog is now intentionally hybrid: first curated masters are live, remaining room/sector tracks are still lawful synthesized placeholders pending further replacement.
+
+---
+
 ### 2026-04-15 — Codex GPT-5 (CC0 Bach shortlist for master replacement)
 **Role:** Audio sourcing and planning
 
