@@ -59,7 +59,7 @@ Relevant tools:
 ## Known Gaps Before Release
 
 - Physical Android playtest not completed yet.
-- Release-quality audio masters are still missing; the repository currently ships lawful synthesized Bach renders plus [assets/audio/manifest.json](assets/audio/manifest.json), so runtime wiring can already be tested on device.
+- Runtime audio is now fully covered by curated `CC0` Bach masters, but loudness balancing and on-device transition feel still need physical-device verification.
 - Test coverage is still limited compared to the size of the game engine.
 - Editorial release materials (store text, screenshots, media kit) are not prepared yet.
 
@@ -69,4 +69,4 @@ The compositions referenced by the project are public-domain works, but recordin
 
 See [docs/audio_asset_pipeline.md](docs/audio_asset_pipeline.md) for the recommended import and verification flow.
 
-The current checked-in audio is lawful and redistributable. Twelve key cues now ship with curated `CC0` Bach masters, while the remaining room-level tracks are still provisional synthesized audio. See [assets/audio/ATTRIBUTION.md](assets/audio/ATTRIBUTION.md), [docs/audio_asset_pipeline.md](docs/audio_asset_pipeline.md), and [docs/audio_master_candidates.md](docs/audio_master_candidates.md) for provenance and the remaining replacement shortlist.
+The current checked-in audio is lawful and redistributable. All 22 runtime music cues now ship with curated `CC0` Bach masters by Kimiko Ishizaka, including the short `proustian_trigger` excerpt derived from the Goldberg Aria. See [assets/audio/ATTRIBUTION.md](assets/audio/ATTRIBUTION.md), [docs/audio_asset_pipeline.md](docs/audio_asset_pipeline.md), and [docs/audio_master_candidates.md](docs/audio_master_candidates.md) for provenance and follow-up polish work.

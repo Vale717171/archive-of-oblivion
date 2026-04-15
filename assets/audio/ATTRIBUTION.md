@@ -1,10 +1,11 @@
 # Audio Attribution
 
-This repository currently ships a hybrid audio catalog:
+This repository currently ships a fully curated music catalog:
 
-- some cues are curated external masters with explicit `CC0` release
-- the remaining cues are lawful in-repo renders synthesized from
-  public-domain Bach score data
+- all runtime music cues come from explicit `CC0` releases by Kimiko Ishizaka
+- `proustian_trigger` is a local excerpt derived from one of those `CC0` masters
+- legacy synthesis tooling remains in the repository, but no checked-in runtime
+  cue currently depends on it
 
 ## Curated External Masters
 
@@ -144,9 +145,121 @@ This repository currently ships a hybrid audio catalog:
 - Reuse basis: the file metadata and file page claim `CC0`; note that the
   Wikimedia page is still marked `license review needed`
 
-## Remaining Synthesized Repository Audio
+### `giardino_fountain`
 
-All other current music cues still come from the in-repo synthesis pipeline:
+- File: `assets/audio/garden_fountain_variation.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Prelude No. 5 in D major, BWV 850
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_09_Prelude_No._5_in_D_major,_BWV_850.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `giardino_stelae`
+
+- File: `assets/audio/garden_stelae_variation.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Fugue No. 6 in D minor, BWV 851
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_12_Fugue_No._6_in_D_minor,_BWV_851.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `osservatorio_calibration`
+
+- File: `assets/audio/observatory_calibration_variation.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Prelude No. 3 in C-sharp major, BWV 848
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_05_Prelude_No._3_in_C-sharp_major,_BWV_848.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `osservatorio_dome`
+
+- File: `assets/audio/observatory_dome_variation.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Fugue No. 3 in C-sharp major, BWV 848
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_06_Fugue_No._3_in_C-sharp_major,_BWV_848.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `galleria_dark`
+
+- File: `assets/audio/gallery_dark_variation.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Fugue No. 4 in C-sharp minor, BWV 849
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_08_Fugue_No._4_in_C-sharp_minor,_BWV_849.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `galleria_light`
+
+- File: `assets/audio/gallery_light_variation.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Prelude No. 7 in E-flat major, BWV 852
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_13_Prelude_No._7_in_E-flat_major,_BWV_852.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `galleria_mirror`
+
+- File: `assets/audio/gallery_mirror_variation.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Fugue No. 7 in E-flat major, BWV 852
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_14_Fugue_No._7_in_E-flat_major,_BWV_852.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `laboratorio_bain_marie`
+
+- File: `assets/audio/lab_bain_marie_variation.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Prelude No. 10 in E minor, BWV 855
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_19_Prelude_No._10_in_E_minor,_BWV_855.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `laboratorio_sealed`
+
+- File: `assets/audio/lab_sealed_variation.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Fugue No. 10 in E minor, BWV 855
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_20_Fugue_No._10_in_E_minor,_BWV_855.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `proustian_trigger`
+
+- File: `assets/audio/sfx_proustian_trigger.ogg`
+- Work: *Goldberg Variations*, BWV 988, Aria
+- Performer: Kimiko Ishizaka
+- Source pool: Open Goldberg Variations
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Goldberg_Variations_01_Aria.ogg)
+- Upstream project: [opengoldbergvariations.org](https://www.opengoldbergvariations.org/)
+- Repository note: the checked-in `.ogg` asset is a local 3-second excerpt with a short fade-out derived from the `CC0` Aria master
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the performance as `CC0`
+
+## Legacy Synthesis Tooling
+
+The repository still retains the in-repo synthesis pipeline for experiments and
+fallback regeneration:
 
 - Composition source: public-domain works by Johann Sebastian Bach
 - Score source: `music21` bundled corpus
@@ -155,12 +268,6 @@ All other current music cues still come from the in-repo synthesis pipeline:
 - Default soundfont used by the generation tool: `FluidR3_GM`
 - Generation script: [tools/generate_audio_assets.py](../../tools/generate_audio_assets.py)
 - Track catalog: [assets/audio/manifest.json](./manifest.json)
-
-## Important Note
-
-The remaining synthesized tracks are legally safe for redistribution, but they
-are still provisional from an artistic standpoint. Their "MIDI-like" quality
-comes from the synthesis chain, not from the compositions themselves.
 
 ## Replacement Policy For Final Masters
 
@@ -173,5 +280,5 @@ When replacing any shipped track, record the following for each new asset:
 - exact license
 - proof that redistribution inside the app and repository is allowed
 
-Prefer `CC0` or clearly public-domain-compatible recordings for final release
-masters.
+Prefer `CC0` or clearly public-domain-compatible recordings for any future
+replacement or alternate master.

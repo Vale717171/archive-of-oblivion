@@ -4,6 +4,34 @@
 
 ---
 
+### 2026-04-15 — Codex GPT-5 (Final room-layer CC0 integration)
+**Role:** Audio asset integration
+
+**Done:**
+- Replaced the remaining room-level and trigger cues with curated `CC0` Kimiko Ishizaka masters:
+  - `assets/audio/garden_fountain_variation.ogg` -> Prelude No. 5 in D major, BWV 850
+  - `assets/audio/garden_stelae_variation.ogg` -> Fugue No. 6 in D minor, BWV 851
+  - `assets/audio/observatory_calibration_variation.ogg` -> Prelude No. 3 in C-sharp major, BWV 848
+  - `assets/audio/observatory_dome_variation.ogg` -> Fugue No. 3 in C-sharp major, BWV 848
+  - `assets/audio/gallery_dark_variation.ogg` -> Fugue No. 4 in C-sharp minor, BWV 849
+  - `assets/audio/gallery_light_variation.ogg` -> Prelude No. 7 in E-flat major, BWV 852
+  - `assets/audio/gallery_mirror_variation.ogg` -> Fugue No. 7 in E-flat major, BWV 852
+  - `assets/audio/lab_bain_marie_variation.ogg` -> Prelude No. 10 in E minor, BWV 855
+  - `assets/audio/lab_sealed_variation.ogg` -> Fugue No. 10 in E minor, BWV 855
+- Rebuilt `assets/audio/sfx_proustian_trigger.ogg` as a short local excerpt derived from the `CC0` Goldberg Aria master.
+- Updated `assets/audio/manifest.json`, `assets/audio/ATTRIBUTION.md`, `README.md`, and `docs/audio_master_candidates.md` so the repository now documents a fully curated runtime music catalog.
+
+**Verification:**
+- `python3 tools/audit_audio_assets.py` ✅
+- `flutter analyze` ✅
+- `flutter test` ✅
+
+**Architecture notes:**
+- All 22 runtime music cues are now backed by curated `CC0` masters or direct excerpts of those masters.
+- The remaining audio polish work is no longer licensing replacement; it is balancing, transitions, and device listening.
+
+---
+
 ### 2026-04-15 — Codex GPT-5 (Third CC0 master integration)
 **Role:** Audio asset integration
 

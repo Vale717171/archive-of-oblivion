@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "purpose": "Sector-first soundtrack catalog. Most tracks are synthesised from public-domain Bach scores (music21 corpus) via FluidSynth + FluidR3_GM, with selected cues replaced by curated CC0 Bach masters.",
+  "purpose": "Sector-first soundtrack catalog. All shipped runtime music cues currently use curated CC0 Bach masters by Kimiko Ishizaka from the Open Well-Tempered Clavier and Open Goldberg Variations projects.",
   "strategy": {
     "base": "sector-first",
     "overrides": "room-specific",
@@ -91,73 +91,73 @@
       "key": "giardino_fountain",
       "asset": "assets/audio/garden_fountain_variation.ogg",
       "status": "ready",
-      "source": "BWV 248.12-2 — Christmas Oratorio, chorale",
-      "license": "Public Domain",
-      "duration_s": 39.0
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Prelude No. 5 in D major, BWV 850",
+      "license": "CC0 1.0",
+      "duration_s": 92.6
     },
     {
       "key": "giardino_stelae",
       "asset": "assets/audio/garden_stelae_variation.ogg",
       "status": "ready",
-      "source": "BWV 244.29-a — St Matthew Passion chorale",
-      "license": "Public Domain",
-      "duration_s": 35.3
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Fugue No. 6 in D minor, BWV 851",
+      "license": "CC0 1.0",
+      "duration_s": 129.4
     },
     {
       "key": "osservatorio_calibration",
       "asset": "assets/audio/observatory_calibration_variation.ogg",
       "status": "ready",
-      "source": "BWV 245.5 — St John Passion, chorale",
-      "license": "Public Domain",
-      "duration_s": 32.8
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Prelude No. 3 in C-sharp major, BWV 848",
+      "license": "CC0 1.0",
+      "duration_s": 75.4
     },
     {
       "key": "osservatorio_dome",
       "asset": "assets/audio/observatory_dome_variation.ogg",
       "status": "ready",
-      "source": "BWV 245.11 — St John Passion, chorale",
-      "license": "Public Domain",
-      "duration_s": 26.8
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Fugue No. 3 in C-sharp major, BWV 848",
+      "license": "CC0 1.0",
+      "duration_s": 155.1
     },
     {
       "key": "galleria_dark",
       "asset": "assets/audio/gallery_dark_variation.ogg",
       "status": "ready",
-      "source": "BWV 245.17 — St John Passion, chorale",
-      "license": "Public Domain",
-      "duration_s": 37.1
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Fugue No. 4 in C-sharp minor, BWV 849",
+      "license": "CC0 1.0",
+      "duration_s": 160.7
     },
     {
       "key": "galleria_light",
       "asset": "assets/audio/gallery_light_variation.ogg",
       "status": "ready",
-      "source": "BWV 245.14 — St John Passion, chorale",
-      "license": "Public Domain",
-      "duration_s": 39.0
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Prelude No. 7 in E-flat major, BWV 852",
+      "license": "CC0 1.0",
+      "duration_s": 213.7
     },
     {
       "key": "galleria_mirror",
       "asset": "assets/audio/gallery_mirror_variation.ogg",
       "status": "ready",
-      "source": "BWV 245.22 — St John Passion, chorale",
-      "license": "Public Domain",
-      "duration_s": 26.8
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Fugue No. 7 in E-flat major, BWV 852",
+      "license": "CC0 1.0",
+      "duration_s": 108.8
     },
     {
       "key": "laboratorio_bain_marie",
       "asset": "assets/audio/lab_bain_marie_variation.ogg",
       "status": "ready",
-      "source": "BWV 245.26 — St John Passion, chorale",
-      "license": "Public Domain",
-      "duration_s": 56.2
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Prelude No. 10 in E minor, BWV 855",
+      "license": "CC0 1.0",
+      "duration_s": 120.8
     },
     {
       "key": "laboratorio_sealed",
       "asset": "assets/audio/lab_sealed_variation.ogg",
       "status": "ready",
-      "source": "BWV 245.28 — St John Passion, chorale",
-      "license": "Public Domain",
-      "duration_s": 60.2
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Fugue No. 10 in E minor, BWV 855",
+      "license": "CC0 1.0",
+      "duration_s": 89.6
     },
     {
       "key": "memoria_ritual",
@@ -179,16 +179,15 @@
       "key": "proustian_trigger",
       "asset": "assets/audio/sfx_proustian_trigger.ogg",
       "status": "ready",
-      "source": "BWV 846 — Well-Tempered Clavier, Prelude in C major (excerpt, 3s)",
-      "license": "Public Domain",
+      "source": "Open Goldberg Variations — Kimiko Ishizaka, Aria, BWV 988 (local 3s excerpt)",
+      "license": "CC0 1.0",
       "duration_s": 3.0
     }
   ],
   "notes": [
-    "Twelve shipped cues now use curated CC0 piano masters by Kimiko Ishizaka: soglia, giardino, osservatorio, galleria, laboratorio, memoria, zona, oblivion, siciliano, aria_goldberg, memoria_ritual, and zona_eternal.",
-    "Remaining room-specific tracks are currently synthesised from public-domain MIDI (Johann Sebastian Bach, 1685-1750).",
-    "Synthesis tool: FluidSynth 2.x + FluidR3_GM soundfont (LGPL).",
-    "Score data: music21 bundled corpus (MIT licence).",
-    "To regenerate: python tools/generate_audio_assets.py"
+    "All 22 shipped music cues now use curated CC0 piano masters by Kimiko Ishizaka, including the local proustian_trigger excerpt derived from the Goldberg Aria.",
+    "Primary source pools: Open Well-Tempered Clavier and Open Goldberg Variations.",
+    "Legacy synthesis tooling remains in the repository for experimentation and fallback regeneration: FluidSynth 2.x + FluidR3_GM with music21 corpus scores.",
+    "Track provenance is recorded in assets/audio/ATTRIBUTION.md."
   ]
 }

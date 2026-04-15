@@ -9,27 +9,18 @@ replace them with stronger masters while keeping licensing unambiguous.
 
 ## Current Status
 
-As of 2026-04-15, the first three curated replacements have already been
-integrated into the repository:
+As of 2026-04-15, the replacement program is complete for the shipped runtime
+catalog.
 
-- `soglia`
-- `giardino`
-- `aria_goldberg`
+All 22 runtime music cues are now backed by curated `CC0` Kimiko Ishizaka
+masters from Open Well-Tempered Clavier and Open Goldberg Variations.
 
-The second wave is now integrated as well:
+This includes:
 
-- `osservatorio`
-- `galleria`
-- `laboratorio`
-- `oblivion`
-- `siciliano`
-
-The third wave is now integrated too:
-
-- `memoria`
-- `zona`
-- `memoria_ritual`
-- `zona_eternal`
+- all sector themes
+- all room-level variation tracks
+- all finale and special cues
+- the short `proustian_trigger` excerpt, derived locally from the Goldberg Aria
 
 ## Verified Source Pools
 
@@ -145,17 +136,7 @@ This is the better release-state option.
 
 ## Suggested Next Execution Order
 
-1. Replace the 7 base tracks first.
-2. Replace `aria_goldberg`, `siciliano`, and `oblivion`.
-3. Normalize loudness and trim/fade each master for looping behavior.
-4. Only after the sector identity feels right, replace room-variation tracks.
-
-## Minimum Deliverable For The Next Session
-
-If you want the fastest audible win, start with these three:
-
-- `bach_bwv846_soglia.ogg` -> Open WTC Prelude No. 1 in C major
-- `bach_goldberg_giardino.ogg` -> Goldberg Aria
-- `bach_aria_goldberg.ogg` -> Goldberg Aria or Aria da Capo
-
-That alone should materially change the perceived quality of the project.
+1. Normalize loudness across the full catalog after a physical-device listening pass.
+2. Trim or fade loop boundaries where Android playback exposes abrupt transitions.
+3. Decide whether any room variations should be shortened to reduce repetition fatigue.
+4. If a cleaner release-state naming pass is desired, rename files and align runtime asset names with the actual works.
