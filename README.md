@@ -69,4 +69,4 @@ The compositions referenced by the project are public-domain works, but recordin
 
 See [docs/audio_asset_pipeline.md](docs/audio_asset_pipeline.md) for the recommended import and verification flow.
 
-The current checked-in audio is lawful and redistributable, but still provisional in musical quality. See [assets/audio/ATTRIBUTION.md](assets/audio/ATTRIBUTION.md) and [docs/audio_asset_pipeline.md](docs/audio_asset_pipeline.md) for the provenance and replacement path.
+The current checked-in audio is lawful and redistributable, but still provisional in musical quality. See [assets/audio/ATTRIBUTION.md](assets/audio/ATTRIBUTION.md), [docs/audio_asset_pipeline.md](docs/audio_asset_pipeline.md), and [docs/audio_master_candidates.md](docs/audio_master_candidates.md) for the provenance and the next replacement shortlist.

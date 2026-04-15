@@ -22,6 +22,7 @@ Do not add downloaded recordings unless one of these is true:
 
 - Planned catalog: [assets/audio/manifest.json](assets/audio/manifest.json)
 - Provenance record: [assets/audio/ATTRIBUTION.md](../assets/audio/ATTRIBUTION.md)
+- Replacement shortlist: [docs/audio_master_candidates.md](audio_master_candidates.md)
 - Runtime routing: [lib/features/audio/audio_track_catalog.dart](lib/features/audio/audio_track_catalog.dart)
 - Runtime playback and settings: [lib/features/audio/audio_service.dart](lib/features/audio/audio_service.dart)
 - Verification tool: [tools/audit_audio_assets.py](tools/audit_audio_assets.py)

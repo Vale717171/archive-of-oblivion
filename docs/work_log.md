@@ -4,6 +4,28 @@
 
 ---
 
+### 2026-04-15 — Codex GPT-5 (CC0 Bach shortlist for master replacement)
+**Role:** Audio sourcing and planning
+
+**Done:**
+- Researched higher-quality Bach recording sources suitable for replacing the current synthesized provisional masters.
+- Verified two primary source pools with clear reuse intent and strong legal confidence:
+  - Open Well-Tempered Clavier (Kimiko Ishizaka, `CC0`)
+  - Open Goldberg Variations (Kimiko Ishizaka, `CC0`)
+- Added `docs/audio_master_candidates.md`:
+  - source-pool overview
+  - legal-confidence notes
+  - first-pass replacement shortlist for all 7 base tracks plus key special cues
+  - recommendation to prefer Open WTC / Open Goldberg over generic aggregator sourcing
+  - implementation advice on "fast path" vs "clean release path" for filenames and manifest alignment
+- Updated `docs/audio_asset_pipeline.md` and `README.md` to point at the new shortlist document.
+
+**Architecture notes:**
+- No runtime audio code changes were needed for this step.
+- The current audio subsystem is ready to accept new masters immediately; the main remaining work is asset curation, loudness/loop normalization, and provenance tracking.
+
+---
+
 ### 2026-04-15 — Codex GPT-5 (Phase restore fix + audio provenance cleanup)
 **Role:** Bug fix + maintenance
 
