@@ -4,6 +4,26 @@
 
 ---
 
+### 2026-04-15 — Codex GPT-5 (Android bootstrap DB fix)
+**Role:** Runtime bugfix / emulator validation
+
+**Done:**
+- Fixed the fresh-install bootstrap path for `psycho_profile` in `lib/core/storage/database_service.dart` so `onCreate()` now creates the phase-system columns it immediately writes.
+- Fixed the fresh-install bootstrap path for `app_settings` so `onCreate()` now includes `mute_in_background` and `enable_haptics` before inserting the singleton settings row.
+- Added an `onOpen()` self-healing schema pass that repairs critical singleton tables (`psycho_profile`, `app_settings`) and ensures required rows exist, so partially migrated local databases recover cleanly.
+- Wiped and relaunched the Android emulator, then verified the app booted without the previous SQL bootstrap crash.
+
+**Verification:**
+- `flutter analyze` ✅
+- Android emulator launch after wipe-data ✅
+- No more `psycho_profile.phase` or `app_settings.mute_in_background` bootstrap SQL errors on fresh app start ✅
+
+**Architecture notes:**
+- The DB layer is now robust against both legacy upgrade paths and inconsistent bootstrap ordering on fresh installs.
+- The remaining emulator warning is only the Dart VM service socket restriction from the sandboxed environment; it does not block app startup or audio playback.
+
+---
+
 ### 2026-04-15 — Codex GPT-5 (Audio polish: loudness compensation)
 **Role:** Audio systems polish
 

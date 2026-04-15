@@ -56,6 +56,7 @@ class DatabaseService {
       version: _databaseVersion,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
+      onOpen: _onOpen,
     );
   }
 
@@ -77,9 +78,14 @@ class DatabaseService {
     await db.execute('''
       CREATE TABLE psycho_profile (
         id INTEGER PRIMARY KEY CHECK (id = 1),
-        lucidity INTEGER DEFAULT 50,
-        oblivion_level INTEGER DEFAULT 0,
-        anxiety INTEGER DEFAULT 10
+        lucidity INTEGER NOT NULL DEFAULT 50,
+        oblivion_level INTEGER NOT NULL DEFAULT 0,
+        anxiety INTEGER NOT NULL DEFAULT 10,
+        phase INTEGER NOT NULL DEFAULT 1,
+        awareness_level INTEGER NOT NULL DEFAULT 0,
+        proust_affinity INTEGER NOT NULL DEFAULT 0,
+        tarkovskij_affinity INTEGER NOT NULL DEFAULT 0,
+        seth_affinity INTEGER NOT NULL DEFAULT 0
       )
     ''');
 
@@ -119,7 +125,9 @@ class DatabaseService {
         sfx_enabled INTEGER NOT NULL DEFAULT 1,
         sfx_volume REAL NOT NULL DEFAULT 0.90,
         text_scale REAL NOT NULL DEFAULT 1.0,
-        typewriter_millis INTEGER NOT NULL DEFAULT 22
+        typewriter_millis INTEGER NOT NULL DEFAULT 22,
+        mute_in_background INTEGER NOT NULL DEFAULT 1,
+        enable_haptics INTEGER NOT NULL DEFAULT 1
       )
     ''');
 
@@ -150,6 +158,10 @@ class DatabaseService {
         conflictAlgorithm: ConflictAlgorithm.replace);
     await db.insert('app_settings', defaultAppSettingsRow,
         conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<void> _onOpen(Database db) async {
+    await _repairCriticalSchema(db);
   }
 
   // ── Versioning protocol ──────────────────────────────────────────────────────
@@ -206,6 +218,112 @@ class DatabaseService {
     if (!exists) {
       await db.execute('ALTER TABLE $table ADD COLUMN $column $definition');
     }
+  }
+
+  Future<void> _ensureSingletonRowIfMissing(
+    DatabaseExecutor db,
+    String table,
+    Map<String, Object?> row,
+  ) async {
+    final result =
+        await db.rawQuery('SELECT 1 FROM $table WHERE id = 1 LIMIT 1');
+    if (result.isEmpty) {
+      await db.insert(
+        table,
+        row,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+  }
+
+  Future<void> _repairCriticalSchema(Database db) async {
+    await db.transaction((txn) async {
+      await txn.execute('''
+        CREATE TABLE IF NOT EXISTS psycho_profile (
+          id INTEGER PRIMARY KEY CHECK (id = 1),
+          lucidity INTEGER NOT NULL DEFAULT 50,
+          oblivion_level INTEGER NOT NULL DEFAULT 0,
+          anxiety INTEGER NOT NULL DEFAULT 10,
+          phase INTEGER NOT NULL DEFAULT 1,
+          awareness_level INTEGER NOT NULL DEFAULT 0,
+          proust_affinity INTEGER NOT NULL DEFAULT 0,
+          tarkovskij_affinity INTEGER NOT NULL DEFAULT 0,
+          seth_affinity INTEGER NOT NULL DEFAULT 0
+        )
+      ''');
+      await _addColumnIfNotExists(txn, 'psycho_profile', 'phase',
+          'INTEGER NOT NULL DEFAULT 1');
+      await _addColumnIfNotExists(txn, 'psycho_profile', 'awareness_level',
+          'INTEGER NOT NULL DEFAULT 0');
+      await _addColumnIfNotExists(txn, 'psycho_profile', 'proust_affinity',
+          'INTEGER NOT NULL DEFAULT 0');
+      await _addColumnIfNotExists(txn, 'psycho_profile', 'tarkovskij_affinity',
+          'INTEGER NOT NULL DEFAULT 0');
+      await _addColumnIfNotExists(txn, 'psycho_profile', 'seth_affinity',
+          'INTEGER NOT NULL DEFAULT 0');
+
+      await txn.execute('''
+        CREATE TABLE IF NOT EXISTS app_settings (
+          id INTEGER PRIMARY KEY CHECK (id = 1),
+          instant_text INTEGER NOT NULL DEFAULT 0,
+          reduce_motion INTEGER NOT NULL DEFAULT 0,
+          high_contrast INTEGER NOT NULL DEFAULT 0,
+          command_assist INTEGER NOT NULL DEFAULT 1,
+          music_enabled INTEGER NOT NULL DEFAULT 1,
+          music_volume REAL NOT NULL DEFAULT 0.85,
+          sfx_enabled INTEGER NOT NULL DEFAULT 1,
+          sfx_volume REAL NOT NULL DEFAULT 0.90,
+          text_scale REAL NOT NULL DEFAULT 1.0,
+          typewriter_millis INTEGER NOT NULL DEFAULT 22,
+          mute_in_background INTEGER NOT NULL DEFAULT 1,
+          enable_haptics INTEGER NOT NULL DEFAULT 1
+        )
+      ''');
+      await _addColumnIfNotExists(
+        txn,
+        'app_settings',
+        'mute_in_background',
+        'INTEGER NOT NULL DEFAULT 1',
+      );
+      await _addColumnIfNotExists(
+        txn,
+        'app_settings',
+        'enable_haptics',
+        'INTEGER NOT NULL DEFAULT 1',
+      );
+
+      await txn.execute('''
+        CREATE TABLE IF NOT EXISTS save_slots (
+          slot INTEGER PRIMARY KEY,
+          current_node TEXT NOT NULL DEFAULT '',
+          completed_puzzles TEXT NOT NULL DEFAULT '[]',
+          puzzle_counters TEXT NOT NULL DEFAULT '{}',
+          inventory TEXT NOT NULL DEFAULT '["notebook"]',
+          psycho_weight INTEGER NOT NULL DEFAULT 0,
+          lucidity INTEGER NOT NULL DEFAULT 50,
+          oblivion_level INTEGER NOT NULL DEFAULT 0,
+          anxiety INTEGER NOT NULL DEFAULT 10,
+          phase INTEGER NOT NULL DEFAULT 1,
+          awareness_level INTEGER NOT NULL DEFAULT 0,
+          proust_affinity INTEGER NOT NULL DEFAULT 0,
+          tarkovskij_affinity INTEGER NOT NULL DEFAULT 0,
+          seth_affinity INTEGER NOT NULL DEFAULT 0,
+          sector_label TEXT NOT NULL DEFAULT '',
+          saved_at TEXT NOT NULL DEFAULT ''
+        )
+      ''');
+
+      await _ensureSingletonRowIfMissing(
+        txn,
+        'psycho_profile',
+        defaultPsychoProfileRow,
+      );
+      await _ensureSingletonRowIfMissing(
+        txn,
+        'app_settings',
+        defaultAppSettingsRow,
+      );
+    });
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
