@@ -51,17 +51,17 @@
       "key": "memoria",
       "asset": "assets/audio/bach_memoria_theme.ogg",
       "status": "ready",
-      "source": "BWV 244.62 — St Matthew Passion, final chorale",
-      "license": "Public Domain",
-      "duration_s": 49.6
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Prelude No. 8 in E-flat minor, BWV 853",
+      "license": "CC0 1.0",
+      "duration_s": 238.1
     },
     {
       "key": "zona",
       "asset": "assets/audio/bach_fugue_883_zona.ogg",
       "status": "ready",
-      "source": "BWV 244.17 — St Matthew Passion chorale 'Ich bins, ich sollte büßen'",
-      "license": "Public Domain",
-      "duration_s": 42.8
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Fugue No. 20 in A minor, BWV 865",
+      "license": "CC0 1.0",
+      "duration_s": 244.5
     },
     {
       "key": "oblivion",
@@ -163,17 +163,17 @@
       "key": "memoria_ritual",
       "asset": "assets/audio/memory_ritual_variation.ogg",
       "status": "ready",
-      "source": "BWV 245.40 — St John Passion, chorale",
-      "license": "Public Domain",
-      "duration_s": 72.8
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Fugue No. 12 in F minor, BWV 857",
+      "license": "CC0 1.0",
+      "duration_s": 237.2
     },
     {
       "key": "zona_eternal",
       "asset": "assets/audio/zona_eternal_variation.ogg",
       "status": "ready",
-      "source": "BWV 244.54 — St Matthew Passion chorale",
-      "license": "Public Domain",
-      "duration_s": 47.4
+      "source": "Open Well-Tempered Clavier — Kimiko Ishizaka, Fugue No. 8 in D-sharp minor, BWV 853",
+      "license": "CC0 1.0",
+      "duration_s": 235.0
     },
     {
       "key": "proustian_trigger",
@@ -185,8 +185,8 @@
     }
   ],
   "notes": [
-    "Eight shipped cues now use curated CC0 piano masters by Kimiko Ishizaka: soglia, giardino, osservatorio, galleria, laboratorio, oblivion, siciliano, and aria_goldberg.",
-    "Remaining tracks are currently synthesised from public-domain MIDI (Johann Sebastian Bach, 1685-1750).",
+    "Twelve shipped cues now use curated CC0 piano masters by Kimiko Ishizaka: soglia, giardino, osservatorio, galleria, laboratorio, memoria, zona, oblivion, siciliano, aria_goldberg, memoria_ritual, and zona_eternal.",
+    "Remaining room-specific tracks are currently synthesised from public-domain MIDI (Johann Sebastian Bach, 1685-1750).",
     "Synthesis tool: FluidSynth 2.x + FluidR3_GM soundfont (LGPL).",
     "Score data: music21 bundled corpus (MIT licence).",
     "To regenerate: python tools/generate_audio_assets.py"

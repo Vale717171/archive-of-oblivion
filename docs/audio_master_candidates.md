@@ -24,6 +24,13 @@ The second wave is now integrated as well:
 - `oblivion`
 - `siciliano`
 
+The third wave is now integrated too:
+
+- `memoria`
+- `zona`
+- `memoria_ritual`
+- `zona_eternal`
+
 ## Verified Source Pools
 
 ### 1. Open Well-Tempered Clavier

@@ -4,6 +4,34 @@
 
 ---
 
+### 2026-04-15 — Codex GPT-5 (Third CC0 master integration)
+**Role:** Audio asset integration
+
+**Done:**
+- Replaced four more synthesized tracks with curated Open Well-Tempered Clavier masters by Kimiko Ishizaka:
+  - `assets/audio/bach_memoria_theme.ogg`
+  - `assets/audio/bach_fugue_883_zona.ogg`
+  - `assets/audio/memory_ritual_variation.ogg`
+  - `assets/audio/zona_eternal_variation.ogg`
+- Musical mapping used:
+  - `memoria` -> Prelude No. 8 in E-flat minor, BWV 853
+  - `zona` -> Fugue No. 20 in A minor, BWV 865
+  - `memoria_ritual` -> Fugue No. 12 in F minor, BWV 857
+  - `zona_eternal` -> Fugue No. 8 in D-sharp minor, BWV 853
+- Updated `assets/audio/manifest.json` so the catalog now reflects 12 curated masters.
+- Expanded `assets/audio/ATTRIBUTION.md`, `README.md`, and `docs/audio_master_candidates.md` to reflect the new state.
+
+**Verification:**
+- `python3 tools/audit_audio_assets.py` ✅
+- `flutter analyze` ✅
+- `flutter test` ✅
+
+**Architecture notes:**
+- All sector-defining and finale-defining long-form cues are now curated masters.
+- The remaining synthesized layer is now mostly room-specific variation material rather than the main identity tracks.
+
+---
+
 ### 2026-04-15 — Codex GPT-5 (Second CC0 master integration)
 **Role:** Audio asset integration
 

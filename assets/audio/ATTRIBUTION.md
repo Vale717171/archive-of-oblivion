@@ -76,6 +76,50 @@ This repository currently ships a hybrid audio catalog:
 - License: `CC0 1.0 Universal`
 - Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
 
+### `memoria`
+
+- File: `assets/audio/bach_memoria_theme.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Prelude No. 8 in E-flat minor, BWV 853
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_15_Prelude_No._8_in_E-flat_minor,_BWV_853.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `zona`
+
+- File: `assets/audio/bach_fugue_883_zona.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Fugue No. 20 in A minor, BWV 865
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_40_Fugue_No._20_in_A_minor,_BWV_865.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `memoria_ritual`
+
+- File: `assets/audio/memory_ritual_variation.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Fugue No. 12 in F minor, BWV 857
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_24_Fugue_No._12_in_F_minor,_BWV_857.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
+### `zona_eternal`
+
+- File: `assets/audio/zona_eternal_variation.ogg`
+- Work: *The Well-Tempered Clavier*, Book 1, Fugue No. 8 in D-sharp minor, BWV 853
+- Performer: Kimiko Ishizaka
+- Source pool: Open Well-Tempered Clavier
+- Source page: [Wikimedia Commons file page](https://commons.wikimedia.org/wiki/File:Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_16_Fugue_No._8_in_D-sharp_minor,_BWV_853.ogg)
+- Upstream project: [welltemperedclavier.org](https://welltemperedclavier.org/)
+- License: `CC0 1.0 Universal`
+- Reuse basis: the Wikimedia file page explicitly marks the recording as `CC0`
+
 ### `galleria`
 
 - File: `assets/audio/bach_bwv846_galleria.ogg`
