@@ -4,6 +4,26 @@
 
 ---
 
+### 2026-04-16 — Codex GPT-5 (Progressive diegetic hints)
+**Role:** Gameplay UX / stuck-state mitigation
+
+**Done:**
+- Added progressive stuck-attempt tracking in `lib/features/game/game_engine_provider.dart` with an ephemeral `_nonProductiveAttemptsByNode` map (in-memory only, never persisted).
+- Integrated automatic diegetic hint injection into `processInput()` so a contextual hint appears only at the 3rd and 5th non-productive attempt in the same node.
+- Defined a productivity heuristic that resets the streak as soon as meaningful progress occurs (node change, puzzle/counter advancement, item gain, profile delta, memory write, etc.).
+- Excluded explicit utility verbs (`hint`, `help`, `inventory`) from streak accumulation to avoid penalizing intentional support usage.
+- Reset progressive-hint state on `build()`, `startNewGame()`, and `loadSlot()` to keep session transitions clean.
+
+**Verification:**
+- `flutter test test/parser_test.dart test/puzzle_gates_test.dart` ✅
+- `dart format lib/features/game/game_engine_provider.dart` ✅
+
+**Architecture notes:**
+- The feature stays inside the existing single `GameEngineNotifier` boundary (no provider split), aligned with project constraints.
+- Hint content reuses existing `_hintTextForNode()` knowledge, but delivery is now adaptive and diegetic during repeated failure loops.
+
+---
+
 ### 2026-04-15 — Codex GPT-5 (Splash pacing improvement)
 **Role:** UI / audio presentation polish
 

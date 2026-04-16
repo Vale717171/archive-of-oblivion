@@ -40,7 +40,10 @@ class _NodeDef {
 // ── Simulacra — weightless; dropping them does not reduce burden ──────────────
 
 const Set<String> _simulacraNames = {
-  'ataraxia', 'the constant', 'the proportion', 'the catalyst',
+  'ataraxia',
+  'the constant',
+  'the proportion',
+  'the catalyst',
 };
 
 const Set<String> simulacraItemNames = _simulacraNames;
@@ -48,13 +51,25 @@ const Set<String> simulacraItemNames = _simulacraNames;
 // ── Boss fight — resolution and surrender keywords (GDD §12) ─────────────────
 
 const Set<String> _resolutionKeywords = {
-  'human warmth', 'imperfection', 'observer', 'acceptance',
-  'i want to remember', 'i exist', 'irrepeatable', 'breath',
+  'human warmth',
+  'imperfection',
+  'observer',
+  'acceptance',
+  'i want to remember',
+  'i exist',
+  'irrepeatable',
+  'breath',
 };
 
 const Set<String> _surrenderKeywords = {
-  'i accept the void', 'nothing matters', 'surrender', 'i give up',
-  'the void is peace', 'i want to forget', 'i accept oblivion', 'oblivion',
+  'i accept the void',
+  'nothing matters',
+  'surrender',
+  'i give up',
+  'the void is peace',
+  'i want to forget',
+  'i accept oblivion',
+  'oblivion',
 };
 
 enum BossUtteranceKind { surrender, remain, resolution, other }
@@ -121,8 +136,7 @@ const List<_ZoneQuestion> _zoneQuestions = [
   _ZoneQuestion(
     question: 'What are you carrying that does not belong to you?',
     theme: 'burden',
-    crypticResponse:
-        'The weight of borrowed things is different. Noted.\n\n'
+    crypticResponse: 'The weight of borrowed things is different. Noted.\n\n'
         'The passage back is clear.',
   ),
   _ZoneQuestion(
@@ -133,7 +147,8 @@ const List<_ZoneQuestion> _zoneQuestions = [
         'You may return to the Archive.',
   ),
   _ZoneQuestion(
-    question: 'What would you say to the version of yourself that cannot be reached?',
+    question:
+        'What would you say to the version of yourself that cannot be reached?',
     theme: 'time',
     crypticResponse:
         'The unreachable version received it anyway — through the medium of your having said it.\n\n'
@@ -142,8 +157,7 @@ const List<_ZoneQuestion> _zoneQuestions = [
   _ZoneQuestion(
     question: 'In what form does the part of you that resists speak?',
     theme: 'resistance',
-    crypticResponse:
-        'The Zone recognises resistance as intelligence.\n\n'
+    crypticResponse: 'The Zone recognises resistance as intelligence.\n\n'
         'The question is answered. Return.',
   ),
   _ZoneQuestion(
@@ -158,31 +172,31 @@ const List<_ZoneQuestion> _zoneQuestions = [
 // ── Exit gates: nodeId → {direction → requiredPuzzleId} ──────────────────────
 
 const Map<String, Map<String, String>> _exitGates = {
-  'garden_cypress':      {'north': 'leaves_arranged'},
-  'garden_fountain':     {'north': 'fountain_waited'},
-  'garden_stelae':       {'north': 'stele_inscribed'},
-  'obs_antechamber':     {'north': 'lenses_combined'},
-  'obs_corridor':        {'west': 'heisenberg_walked', 'east': 'heisenberg_walked'},
-  'obs_void':            {'south': 'void_fluctuation_measured'},
-  'obs_archive':         {'south': 'archive_constant_entered'},
-  'obs_calibration':     {'north': 'obs_calibrated'},
-  'gallery_hall':        {'south': 'hall_backward_walked'},
-  'gallery_corridor':    {'south': 'corridor_tile_pressed'},
+  'garden_cypress': {'north': 'leaves_arranged'},
+  'garden_fountain': {'north': 'fountain_waited'},
+  'garden_stelae': {'north': 'stele_inscribed'},
+  'obs_antechamber': {'north': 'lenses_combined'},
+  'obs_corridor': {'west': 'heisenberg_walked', 'east': 'heisenberg_walked'},
+  'obs_void': {'south': 'void_fluctuation_measured'},
+  'obs_archive': {'south': 'archive_constant_entered'},
+  'obs_calibration': {'north': 'obs_calibrated'},
+  'gallery_hall': {'south': 'hall_backward_walked'},
+  'gallery_corridor': {'south': 'corridor_tile_pressed'},
   'gallery_proportions': {
     'east': 'proportion_pentagon_drawn',
     'west': 'proportion_pentagon_drawn',
   },
-  'gallery_dark':  {'east': 'gallery_item_abandoned'},
+  'gallery_dark': {'east': 'gallery_item_abandoned'},
   'gallery_light': {'west': 'gallery_item_abandoned'},
   'lab_vestibule': {'south': 'lab_offers_complete'},
-  'lab_furnace':   {'south': 'furnace_calcinated'},
-  'lab_alembic':   {'south': 'alembic_temperature_set'},
-  'lab_bain_marie':{'south': 'bain_marie_complete'},
+  'lab_furnace': {'south': 'furnace_calcinated'},
+  'lab_alembic': {'south': 'alembic_temperature_set'},
+  'lab_bain_marie': {'south': 'bain_marie_complete'},
   // Fifth Sector — memory price to leave each room (GDD §11)
   'quinto_childhood': {'back': 'memory_childhood'},
-  'quinto_youth':     {'back': 'memory_youth'},
-  'quinto_maturity':  {'back': 'memory_maturity'},
-  'quinto_old_age':   {'back': 'memory_old_age'},
+  'quinto_youth': {'back': 'memory_youth'},
+  'quinto_maturity': {'back': 'memory_maturity'},
+  'quinto_old_age': {'back': 'memory_old_age'},
   // Ritual chamber → il_nucleo (drink auto-navigates; go down also gated)
   'quinto_ritual_chamber': {'down': 'ritual_complete'},
 };
@@ -190,67 +204,65 @@ const Map<String, Map<String, String>> _exitGates = {
 const Map<String, String> _gateHints = {
   'leaves_arranged':
       'The fallen leaves bar your way. Their disorder is the lock.\n\n'
-      'Hint: arrange leaves [seven words in Epicurean order].',
+          'Hint: arrange leaves [seven words in Epicurean order].',
   'fountain_waited':
       'The passage north is not yet open. Something is still arriving.\n\n'
-      'Hint: wait — and again, and again.',
+          'Hint: wait — and again, and again.',
   'stele_inscribed':
       'The grove will not receive you. The blank stele stands in judgement.\n\n'
-      'Hint: inscribe [the missing maxim] — read the eleven that precede it.',
+          'Hint: inscribe [the missing maxim] — read the eleven that precede it.',
   'lenses_combined':
       'The corridor is dark. The telescope mount is incomplete.\n\n'
-      'Hint: combine lens [Moon] [Mercury] [Sun].',
+          'Hint: combine lens [Moon] [Mercury] [Sun].',
   'heisenberg_walked':
       'The branches of the corridor are inaccessible. Sight is the obstacle.\n\n'
-      'Hint: walk blindfolded.',
+          'Hint: walk blindfolded.',
   'void_fluctuation_measured':
       'The calibration chamber is sealed. The void has not spoken.\n\n'
-      'Hint: wait seven times — then measure fluctuation.',
+          'Hint: wait seven times — then measure fluctuation.',
   'archive_constant_entered':
       'The calibration chamber cannot be reached. The panel awaits.\n\n'
-      'Hint: enter [the value that underlies all constants].',
+          'Hint: enter [the value that underlies all constants].',
   'obs_calibrated':
       'The dome is locked. The instrument needs its reference point.\n\n'
-      'Hint: calibrate [the only honest coordinates].',
+          'Hint: calibrate [the only honest coordinates].',
   'hall_backward_walked':
       'The gallery corridor is sealed. The way forward is behind you.\n\n'
-      'Hint: walk backward.',
+          'Hint: walk backward.',
   'corridor_tile_pressed':
       'The proportions room is locked. One tile does not belong.\n\n'
-      'Hint: press anomalous tile.',
+          'Hint: press anomalous tile.',
   'proportion_pentagon_drawn':
       'The wings are sealed. A geometric form must be constructed first.\n\n'
-      'Hint: construct pentagon.',
+          'Hint: construct pentagon.',
   'gallery_item_abandoned':
       'The tunnel between the chambers demands a price.\n\n'
-      'Hint: drop [something you carry] — the tunnel requires abandonment.',
+          'Hint: drop [something you carry] — the tunnel requires abandonment.',
   'lab_offers_complete':
       'The Hall of Substances is locked. The three statues wait.\n\n'
-      'Hint: offer [concept] — three times, three different offerings.',
+          'Hint: offer [concept] — three times, three different offerings.',
   'furnace_calcinated':
       'The furnace path to the Great Work is blocked. Calcination is unfinished.\n\n'
-      'Hint: calcinate — then wait (patience is the reagent).',
+          'Hint: calcinate — then wait (patience is the reagent).',
   'alembic_temperature_set':
       'The alembic path is blocked. The temperature is wrong.\n\n'
-      'Hint: set temperature [the gentlest degree of fire].',
+          'Hint: set temperature [the gentlest degree of fire].',
   'bain_marie_complete':
       'The bath path is sealed. The transformation has not begun.\n\n'
-      'Hint: leave this room — return after you have walked three other roads.',
+          'Hint: leave this room — return after you have walked three other roads.',
   // Fifth Sector
   'memory_childhood':
       'The door will not release you. The price of this room is still owed.\n\n'
-      'Hint: write [the first word you truly learned].',
-  'memory_youth':
-      'The promise holds you here. Name it to be freed.\n\n'
+          'Hint: write [the first word you truly learned].',
+  'memory_youth': 'The promise holds you here. Name it to be freed.\n\n'
       'Hint: write [a promise you did not keep].',
   'memory_maturity':
       'The telephone waits. You cannot leave until you have spoken.\n\n'
-      'Hint: say [what you never said] — or write it.',
+          'Hint: say [what you never said] — or write it.',
   'memory_old_age':
       'One last truth before you leave. The room asks this of you.\n\n'
-      'Hint: write [what you wish to be remembered as].',
-  'ritual_complete':
-      'The passage down is sealed. The cup is not ready.\n\n'
+          'Hint: write [what you wish to be remembered as].',
+  'ritual_complete': 'The passage down is sealed. The cup is not ready.\n\n'
       'Hint: place each simulacrum in the cup — then stir — then drink.',
 };
 
@@ -259,7 +271,6 @@ const Map<String, String> _gateHints = {
 // Future: move text to assets/texts/*.json (GDD §18).
 
 const Map<String, _NodeDef> _nodes = {
-
   // ── Starting void ────────────────────────────────────────────────────────────
   'intro_void': _NodeDef(
     title: '',
@@ -275,7 +286,7 @@ const Map<String, _NodeDef> _nodes = {
       'notebook': 'A small notebook. Pages perfectly blank. '
           'The cover bears a symbol you almost recognise — then do not.',
       'light': 'It does not come from any source. It simply is.',
-      'path':  'It was not there before. Now it leads north.',
+      'path': 'It was not there before. Now it leads north.',
     },
   ),
 
@@ -290,20 +301,22 @@ const Map<String, _NodeDef> _nodes = {
         'A clock without hands marks time in no direction you recognise.',
     exits: {
       'north': 'garden_portico',
-      'east':  'obs_antechamber',
+      'east': 'obs_antechamber',
       'south': 'gallery_hall',
-      'west':  'lab_vestibule',
-      'up':    'quinto_landing',
+      'west': 'lab_vestibule',
+      'up': 'quinto_landing',
     },
     examines: {
-      'pedestal':   'Five recesses. Inscribed: Ataraxia. The Constant. '
+      'pedestal': 'Five recesses. Inscribed: Ataraxia. The Constant. '
           'Proportion. The Catalyst. A fifth shape you cannot name.',
-      'clock':      'Numerals run counterclockwise. The hands are absent.',
-      'north door': 'Amber, warm, slightly ajar. Beyond it: the scent of earth.',
-      'east door':  'Cobalt blue, cold. A faint hum behind the glass.',
-      'south door': 'Golden, polished to a mirror. Your reflection is slightly wrong.',
-      'west door':  'Violet, heavy. The grain of the wood runs upward.',
-      'door':       'Four doors. The amber one to the north is ajar.',
+      'clock': 'Numerals run counterclockwise. The hands are absent.',
+      'north door':
+          'Amber, warm, slightly ajar. Beyond it: the scent of earth.',
+      'east door': 'Cobalt blue, cold. A faint hum behind the glass.',
+      'south door':
+          'Golden, polished to a mirror. Your reflection is slightly wrong.',
+      'west door': 'Violet, heavy. The grain of the wood runs upward.',
+      'door': 'Four doors. The amber one to the north is ajar.',
     },
   ),
 
@@ -314,7 +327,11 @@ const Map<String, _NodeDef> _nodes = {
         'A portico of worn stone columns. Inscriptions run along each shaft. '
         'A path of pale stone leads north through cypress trees '
         'so tall their crowns disappear.',
-    exits: {'north': 'garden_cypress', 'south': 'la_soglia', 'back': 'la_soglia'},
+    exits: {
+      'north': 'garden_cypress',
+      'south': 'la_soglia',
+      'back': 'la_soglia'
+    },
     examines: {
       'columns': 'Each column bears a single word:\n'
           'ataraxia — aponia — philia — phronesis.\n'
@@ -336,7 +353,8 @@ const Map<String, _NodeDef> _nodes = {
           'pleasure — friendship — prudence — tranquillity — '
           'memory — simplicity — absence.\n\n'
           'They belong to an order. You sense it, but cannot yet name it.',
-      'trees': 'Impossibly tall. Their roots disappear into ground with no depth.',
+      'trees':
+          'Impossibly tall. Their roots disappear into ground with no depth.',
       'words': 'Seven words. One leaf is slightly darker than the rest.',
     },
   ),
@@ -350,9 +368,10 @@ const Map<String, _NodeDef> _nodes = {
         'To the north: a circle of standing stones.',
     exits: {'north': 'garden_stelae', 'south': 'garden_cypress'},
     examines: {
-      'fountain':    'Empty. Worn smooth by many hands before yours.',
-      'dust':        'Fine as ash. Breathed on, it forms brief illegible shapes.',
-      'inscription': '"That which satisfies the body is sufficient for happiness."',
+      'fountain': 'Empty. Worn smooth by many hands before yours.',
+      'dust': 'Fine as ash. Breathed on, it forms brief illegible shapes.',
+      'inscription':
+          '"That which satisfies the body is sufficient for happiness."',
     },
   ),
 
@@ -364,12 +383,12 @@ const Map<String, _NodeDef> _nodes = {
         'To the south, the dry fountain. To the north, the grove.',
     exits: {'north': 'garden_grove', 'south': 'garden_fountain'},
     examines: {
-      'stelae':      'Eleven maxims. The eleventh: "Death is nothing to us." '
+      'stelae': 'Eleven maxims. The eleventh: "Death is nothing to us." '
           'The twelfth is blank.',
       'blank stele': 'Smooth stone. A stylus at its base. '
           'The missing maxim belongs to those who have understood the others.',
-      'stylus':      'A simple instrument. It waits.',
-      'maxims':      'Pleasure. Death. The gods. Pain. Virtue. '
+      'stylus': 'A simple instrument. It waits.',
+      'maxims': 'Pleasure. Death. The gods. Pain. Virtue. '
           'The soul. Justice. Friendship. Wisdom. Society. The self. '
           'The twelfth stands empty.',
     },
@@ -385,14 +404,14 @@ const Map<String, _NodeDef> _nodes = {
         'To the east and west: two alcoves in the treeline.\n'
         'To the south: the circle of stelae.',
     exits: {
-      'east':  'garden_alcove_pleasures',
-      'west':  'garden_alcove_pains',
+      'east': 'garden_alcove_pleasures',
+      'west': 'garden_alcove_pains',
       'south': 'garden_stelae',
     },
     examines: {
-      'statue':   'The hands hold nothing. The face asks nothing. '
+      'statue': 'The hands hold nothing. The face asks nothing. '
           'It has been waiting for you specifically.',
-      'trees':    'Ancient. Still. Their roots break the stone path.',
+      'trees': 'Ancient. Still. Their roots break the stone path.',
       'clearing': 'No wind. Sound arrives slightly after it should.',
     },
   ),
@@ -407,13 +426,17 @@ const Map<String, _NodeDef> _nodes = {
         'A linden tree grows in the corner. Its flowers are open.',
     exits: {'west': 'garden_grove', 'back': 'garden_grove'},
     examines: {
-      'coin':    'A coin from no era you recognise. Heads: a face. Tails: the same face, older.',
-      'book':    'The gilded title has worn away. Inside, handwriting '
+      'coin':
+          'A coin from no era you recognise. Heads: a face. Tails: the same face, older.',
+      'book': 'The gilded title has worn away. Inside, handwriting '
           'you almost recognise as your own.',
-      'compass': 'The needle points in a direction that changes every time you look away.',
-      'lamp':    'The flame is lit. You do not remember lighting it.',
-      'linden':  'A linden tree in full flower. The scent is very faint — then overwhelming.',
-      'flowers': 'Not just flowers. Something older. A door, half-open. A specific afternoon.',
+      'compass':
+          'The needle points in a direction that changes every time you look away.',
+      'lamp': 'The flame is lit. You do not remember lighting it.',
+      'linden':
+          'A linden tree in full flower. The scent is very faint — then overwhelming.',
+      'flowers':
+          'Not just flowers. Something older. A door, half-open. A specific afternoon.',
     },
     takeable: {'coin', 'book', 'compass', 'lamp'},
   ),
@@ -427,12 +450,12 @@ const Map<String, _NodeDef> _nodes = {
         'That, somehow, makes them harder to leave.',
     exits: {'east': 'garden_grove', 'back': 'garden_grove'},
     examines: {
-      'key':          'Rusted. You do not know what it opens. '
+      'key': 'Rusted. You do not know what it opens. '
           'You suspect the lock no longer exists.',
-      'page':         'A single torn page. One word you understand: remember.',
+      'page': 'A single torn page. One word you understand: remember.',
       'mirror shard': 'Your reflection is correct. '
           'That is somehow the most unsettling thing about this place.',
-      'earth':        'Dry. Dark. The smell of the end of summer.',
+      'earth': 'Dry. Dark. The smell of the end of summer.',
     },
     takeable: {'key', 'page', 'mirror shard', 'earth'},
   ),
@@ -448,13 +471,14 @@ const Map<String, _NodeDef> _nodes = {
         'To the north: the Corridor of Hypotheses.',
     exits: {'north': 'obs_corridor', 'west': 'la_soglia', 'back': 'la_soglia'},
     examines: {
-      'lenses':       'Three lenses. Sun: large, amber. Mercury: small, dense. '
+      'lenses': 'Three lenses. Sun: large, amber. Mercury: small, dense. '
           'Moon: silvered, cold. The order in which they are combined matters.',
-      'sun':          'The largest lens. Its apparent primacy may be the problem.',
-      'mercury':      'Small and heavy. The glass feels older.',
-      'moon':         'Cold to the touch. It seems to absorb rather than bend.',
-      'mount':        'Three slots, vertically arranged. Each accepts only one lens.',
-      'slots':        'Upper, middle, lower. Their relative sizes suggest an ordering.',
+      'sun': 'The largest lens. Its apparent primacy may be the problem.',
+      'mercury': 'Small and heavy. The glass feels older.',
+      'moon': 'Cold to the touch. It seems to absorb rather than bend.',
+      'mount': 'Three slots, vertically arranged. Each accepts only one lens.',
+      'slots':
+          'Upper, middle, lower. Their relative sizes suggest an ordering.',
     },
   ),
 
@@ -464,15 +488,19 @@ const Map<String, _NodeDef> _nodes = {
         'each crossed out in red. Not false — abandoned.\n\n'
         'The corridor branches: west to a dark hall, east to an archive.\n\n'
         'A placard: "The act of looking disturbs the looked-at. This has been proven."',
-    exits: {'south': 'obs_antechamber', 'west': 'obs_void', 'east': 'obs_archive'},
+    exits: {
+      'south': 'obs_antechamber',
+      'west': 'obs_void',
+      'east': 'obs_archive'
+    },
     examines: {
       'hypotheses': '"Light behaves as a wave." Crossed out. '
           '"Light behaves as a particle." Crossed out. '
           'Beneath both: "Light behaves."',
-      'placard':    '"The act of looking disturbs the looked-at.\n'
+      'placard': '"The act of looking disturbs the looked-at.\n'
           'Position and momentum resist simultaneous knowledge.\n'
           'Uncertainty is not ignorance. It is precision."',
-      'branches':   'West: absolute darkness. East: an archive of glass.',
+      'branches': 'West: absolute darkness. East: an archive of glass.',
     },
   ),
 
@@ -482,15 +510,19 @@ const Map<String, _NodeDef> _nodes = {
         'You know they are there. The silence has texture — '
         'a grain, as if vibrating just below hearing.\n\n'
         'A measurement panel glows faintly: one dial, no pointer.',
-    exits: {'east': 'obs_corridor', 'south': 'obs_calibration', 'back': 'obs_corridor'},
+    exits: {
+      'east': 'obs_corridor',
+      'south': 'obs_calibration',
+      'back': 'obs_corridor'
+    },
     examines: {
-      'panel':    'A single dial. No pointer. '
+      'panel': 'A single dial. No pointer. '
           'Label: QUANTUM FLUCTUATION.\n'
           '"Measure only when the instrument has forgotten it is measuring."',
       'darkness': 'True darkness — the kind that has never been interrupted.',
-      'silence':  'The presence of something that has not yet decided '
+      'silence': 'The presence of something that has not yet decided '
           'whether to become sound.',
-      'dial':     'The needle does not exist. Or does not yet.',
+      'dial': 'The needle does not exist. Or does not yet.',
     },
   ),
 
@@ -502,17 +534,21 @@ const Map<String, _NodeDef> _nodes = {
         'The gravitational constant. The fine-structure constant. Others.\n\n'
         'At the far end: a panel with a single input slot.\n'
         '"Enter the value that underlies them all."',
-    exits: {'west': 'obs_corridor', 'south': 'obs_calibration', 'back': 'obs_corridor'},
+    exits: {
+      'west': 'obs_corridor',
+      'south': 'obs_calibration',
+      'back': 'obs_corridor'
+    },
     examines: {
-      'constants':       'Each cabinet: a number, a name, a unit. '
+      'constants': 'Each cabinet: a number, a name, a unit. '
           'In natural units, stripped of measurement, they all reduce.',
-      'panel':           '"Enter the value that underlies them all.\n'
+      'panel': '"Enter the value that underlies them all.\n'
           'Not a measurement. A statement."',
-      'speed of light':  '"c". In natural units: 1.',
+      'speed of light': '"c". In natural units: 1.',
       'planck constant': '"h". In natural units: 1.',
-      'fine-structure':  'Approximately 1/137. Dimensionless. '
+      'fine-structure': 'Approximately 1/137. Dimensionless. '
           'The most fundamental number — still not 1.',
-      'input':           'A slot for a single number. What do all constants '
+      'input': 'A slot for a single number. What do all constants '
           'become when you stop measuring in human units?',
     },
   ),
@@ -526,11 +562,11 @@ const Map<String, _NodeDef> _nodes = {
         'To the north: the dome.',
     exits: {'north': 'obs_dome', 'west': 'obs_void', 'east': 'obs_archive'},
     examines: {
-      'dials':   'Three dials, each marked "???". They accept numeric input.',
+      'dials': 'Three dials, each marked "???". They accept numeric input.',
       'placard': '"There is no absolute origin. The origin is chosen.\n'
           'The honest instrument knows this and starts from zero."',
       'station': 'Three coordinates: X, Y, Z. All reading "???".',
-      'door':    'The dome door is sealed. The calibration must be set first.',
+      'door': 'The dome door is sealed. The calibration must be set first.',
     },
   ),
 
@@ -542,13 +578,15 @@ const Map<String, _NodeDef> _nodes = {
         'A brass plate on the base: "Primary mirror — forward-facing."',
     exits: {'south': 'obs_calibration', 'back': 'obs_calibration'},
     examines: {
-      'telescope': 'The primary mirror faces outward — toward that impossible sky. '
-          'It has been forward-facing since before you arrived.',
-      'sky':       'Not stars. Frequencies. Every point of light is a wave '
+      'telescope':
+          'The primary mirror faces outward — toward that impossible sky. '
+              'It has been forward-facing since before you arrived.',
+      'sky': 'Not stars. Frequencies. Every point of light is a wave '
           'collapsed by the act of being seen.',
-      'mirror':    'Primary mirror, facing outward. '
+      'mirror': 'Primary mirror, facing outward. '
           '"Inversion requires confirmation."',
-      'plate':     '"Primary mirror — forward-facing.\nInversion requires confirmation."',
+      'plate':
+          '"Primary mirror — forward-facing.\nInversion requires confirmation."',
     },
   ),
 
@@ -560,19 +598,26 @@ const Map<String, _NodeDef> _nodes = {
         'your outline but not on your expression.\n\n'
         'At the south end, where a door should be, there is only mirror. '
         'But once — from the corner of your eye — there was something else.',
-    exits: {'north': 'la_soglia', 'back': 'la_soglia', 'south': 'gallery_corridor'},
+    exits: {
+      'north': 'la_soglia',
+      'back': 'la_soglia',
+      'south': 'gallery_corridor'
+    },
     examines: {
-      'mirrors':    'Thirty versions of the same face, each choosing a different truth.',
-      'door':       'Where the south door should be: another mirror. '
+      'mirrors':
+          'Thirty versions of the same face, each choosing a different truth.',
+      'door': 'Where the south door should be: another mirror. '
           'Yet in the reflection, it is open.',
-      'reflection': 'You look directly at it. The door in the reflection is open. '
-          'In the real wall, it is closed.',
+      'reflection':
+          'You look directly at it. The door in the reflection is open. '
+              'In the real wall, it is closed.',
     },
   ),
 
   'gallery_corridor': _NodeDef(
     title: 'Corridor of Symmetry',
-    description: 'The corridor is floored with a mosaic of perfect symmetry.\n\n'
+    description:
+        'The corridor is floored with a mosaic of perfect symmetry.\n\n'
         'Every tile mirrors another — except one. Near the east wall, '
         'one tile catches the light differently. The mosaic was laid '
         'by someone who knew that perfection, undisturbed, becomes invisible.\n\n'
@@ -580,11 +625,11 @@ const Map<String, _NodeDef> _nodes = {
         'always facing away.',
     exits: {'north': 'gallery_hall', 'south': 'gallery_proportions'},
     examines: {
-      'mosaic':         'Black and white. Perfectly mirrored — except for one tile.',
-      'tile':           'Near the east wall. Slightly rougher. '
+      'mosaic': 'Black and white. Perfectly mirrored — except for one tile.',
+      'tile': 'Near the east wall. Slightly rougher. '
           'The pattern passes through it as if it were smooth.',
       'anomalous tile': 'This tile is wrong. Or right in the wrong way.',
-      'figure':         'It walks exactly as fast as you. '
+      'figure': 'It walks exactly as fast as you. '
           'When you look directly, it is always just turned away.',
     },
   ),
@@ -598,17 +643,19 @@ const Map<String, _NodeDef> _nodes = {
         'The south wall shows two arched doorways: east wing, west wing.',
     exits: {
       'north': 'gallery_corridor',
-      'east':  'gallery_copies',
-      'west':  'gallery_originals',
+      'east': 'gallery_copies',
+      'west': 'gallery_originals',
     },
     examines: {
-      'diagrams':     'Euclid constructions. Each carries the notation: '
+      'diagrams': 'Euclid constructions. Each carries the notation: '
           '"Form is prior to matter."',
-      'table':        'A drafting table. Compass. Straightedge. Blank paper.',
-      'compass':      'Set to a specific radius. The hinge is gold.',
-      'paper':        'Blank. Waiting for the construction that does not yet exist here.',
-      'doorways':     'Two arches: east for copies, west for originals.',
-      'golden ratio': 'Cannot be precisely expressed. Only approached, asymptotically.',
+      'table': 'A drafting table. Compass. Straightedge. Blank paper.',
+      'compass': 'Set to a specific radius. The hinge is gold.',
+      'paper':
+          'Blank. Waiting for the construction that does not yet exist here.',
+      'doorways': 'Two arches: east for copies, west for originals.',
+      'golden ratio':
+          'Cannot be precisely expressed. Only approached, asymptotically.',
     },
   ),
 
@@ -620,12 +667,14 @@ const Map<String, _NodeDef> _nodes = {
         'To the south: a stairway to a dark chamber.',
     exits: {'north': 'gallery_proportions', 'south': 'gallery_dark'},
     examines: {
-      'paintings':   'Perfect copies. The gaps are visible only if you look for them.',
-      'first copy':  'A landscape. All colours correct. The light correct. '
+      'paintings':
+          'Perfect copies. The gaps are visible only if you look for them.',
+      'first copy': 'A landscape. All colours correct. The light correct. '
           'Something is missing from the lower left corner.',
       'second copy': 'A portrait. The face reproduced exactly. '
           'The expression is empty in a way the original was not.',
-      'third copy':  'An abstract composition. Precise. It communicates nothing.',
+      'third copy':
+          'An abstract composition. Precise. It communicates nothing.',
     },
   ),
 
@@ -641,8 +690,8 @@ const Map<String, _NodeDef> _nodes = {
     exits: {'north': 'gallery_proportions', 'south': 'gallery_light'},
     examines: {
       'canvases': 'Blank. Primed. Three of them.',
-      'brushes':  'Every size. More than needed.',
-      'sign':     '"The work does not require skill.\n'
+      'brushes': 'Every size. More than needed.',
+      'sign': '"The work does not require skill.\n'
           'It requires the truth of the specific moment.\n'
           'Paint something that exists only now, only here, only for you.\n'
           'Minimum fifty words."',
@@ -659,12 +708,14 @@ const Map<String, _NodeDef> _nodes = {
         'It is blocked. The blockage is not physical.',
     exits: {
       'north': 'gallery_copies',
-      'east':  'gallery_light',
+      'east': 'gallery_light',
       'south': 'gallery_central',
     },
     examines: {
-      'darkness': 'Vision without light. Objects defined by what surrounds them.',
-      'tunnel':   'A low tunnel, east. The blockage is not a wall — it is a condition.',
+      'darkness':
+          'Vision without light. Objects defined by what surrounds them.',
+      'tunnel':
+          'A low tunnel, east. The blockage is not a wall — it is a condition.',
       'blockage': 'The tunnel requires something to be left behind.',
     },
   ),
@@ -677,13 +728,14 @@ const Map<String, _NodeDef> _nodes = {
         'In the west wall: the same tunnel, passable from this side.',
     exits: {
       'north': 'gallery_originals',
-      'west':  'gallery_dark',
+      'west': 'gallery_dark',
       'south': 'gallery_central',
     },
     examines: {
-      'light':   'Total. Everything visible — therefore nothing has depth.',
-      'tunnel':  'A low tunnel, west. It connects this room to its opposite.',
-      'objects': 'Perfectly visible. Perfectly flat in the way total light makes things flat.',
+      'light': 'Total. Everything visible — therefore nothing has depth.',
+      'tunnel': 'A low tunnel, west. It connects this room to its opposite.',
+      'objects':
+          'Perfectly visible. Perfectly flat in the way total light makes things flat.',
     },
   ),
 
@@ -697,10 +749,11 @@ const Map<String, _NodeDef> _nodes = {
         'It has stopped. It is facing you now.',
     exits: {'north': 'gallery_dark', 'back': 'la_soglia'},
     examines: {
-      'mirror':     'Flawless. Shows you — and the figure, closer than it should be.',
-      'figure':     'In the mirror: facing you. In the room: nothing. '
+      'mirror':
+          'Flawless. Shows you — and the figure, closer than it should be.',
+      'figure': 'In the mirror: facing you. In the room: nothing. '
           'It makes no attempt to explain itself.',
-      'frame':      'Black wood. No ornamentation.',
+      'frame': 'Black wood. No ornamentation.',
       'reflection': 'Your reflection does not smile. Neither does it grieve. '
           'It waits for you to decide something.',
     },
@@ -714,14 +767,19 @@ const Map<String, _NodeDef> _nodes = {
         'a statue in posture of reception — hands open, waiting. '
         'Each statue has a different bearing: resigned, expectant, indifferent.\n\n'
         'To the south: the Hall of Substances.',
-    exits: {'south': 'lab_substances', 'east': 'la_soglia', 'back': 'la_soglia'},
+    exits: {
+      'south': 'lab_substances',
+      'east': 'la_soglia',
+      'back': 'la_soglia'
+    },
     examines: {
-      'statues':       'Three figures with open hands. They accept without judgement.',
-      'niches':        'One resigned. One expectant. One indifferent.',
-      'first statue':  'Resigned. Hands open but expecting nothing.',
+      'statues':
+          'Three figures with open hands. They accept without judgement.',
+      'niches': 'One resigned. One expectant. One indifferent.',
+      'first statue': 'Resigned. Hands open but expecting nothing.',
       'second statue': 'Expectant. Face turned slightly upward.',
-      'third statue':  'Indifferent. Hands open because it is the position.',
-      'sulphur':       'The base smell of transformation. Beneath it: something '
+      'third statue': 'Indifferent. Hands open because it is the position.',
+      'sulphur': 'The base smell of transformation. Beneath it: something '
           'sweeter, harder to place.',
     },
   ),
@@ -735,16 +793,17 @@ const Map<String, _NodeDef> _nodes = {
         'east to the bain-marie.',
     exits: {
       'north': 'lab_vestibule',
-      'west':  'lab_furnace',
+      'west': 'lab_furnace',
       'south': 'lab_alembic',
-      'east':  'lab_bain_marie',
+      'east': 'lab_bain_marie',
     },
     examines: {
-      'symbols':  'A dense field. Some familiar: lead, gold. '
+      'symbols': 'A dense field. Some familiar: lead, gold. '
           'Three near the centre form a triangle.',
       'triangle': 'Three symbols: Mercury, Sulphur, Salt — the Tria Prima. '
           'The three principles of alchemical transformation.',
-      'doorways': 'Three branches. Each requires a different substance, a different patience.',
+      'doorways':
+          'Three branches. Each requires a different substance, a different patience.',
     },
   ),
 
@@ -754,10 +813,14 @@ const Map<String, _NodeDef> _nodes = {
         'The grate is empty. A tray beside it holds grey-white material. '
         'On the wall: "Calcinate. Reduce to essential ash. '
         'Five turnings of the wheel are required."',
-    exits: {'east': 'lab_substances', 'south': 'lab_great_work', 'back': 'lab_substances'},
+    exits: {
+      'east': 'lab_substances',
+      'south': 'lab_great_work',
+      'back': 'lab_substances'
+    },
     examines: {
-      'furnace':     'Cold iron. The grate is empty. Ready.',
-      'tray':        'Grey-white material. Dense.',
+      'furnace': 'Cold iron. The grate is empty. Ready.',
+      'tray': 'Grey-white material. Dense.',
       'instruction': '"Calcinate. Reduce to essential ash.\n'
           'Five turnings of the wheel.\n'
           'Patience is the reagent that cannot be purchased."',
@@ -766,18 +829,26 @@ const Map<String, _NodeDef> _nodes = {
 
   'lab_alembic': _NodeDef(
     title: 'Alembic',
-    description: 'A glass vessel — wide at the base, drawing to a narrow point.\n\n'
+    description:
+        'A glass vessel — wide at the base, drawing to a narrow point.\n\n'
         'A liquid of indeterminate colour rests in the lower bulb. '
         'The temperature control accepts a degree '
         'on the alchemical scale: Cold, Gentle, Warm, Hot, Intense, Fierce, Total.\n\n'
         'A crystalline residue coats the inner walls like dried frost.',
-    exits: {'north': 'lab_substances', 'south': 'lab_great_work', 'back': 'lab_substances'},
+    exits: {
+      'north': 'lab_substances',
+      'south': 'lab_great_work',
+      'back': 'lab_substances'
+    },
     examines: {
-      'vessel':      'Glass, clear. The liquid shifts colour — not due to chemistry.',
-      'temperature': 'The control accepts: Cold, Gentle, Warm, Hot, Intense, Fierce, Total.',
-      'liquid':      'Below boiling. Waiting for the correct temperature.',
-      'residue':     'Crystalline. Mineral. Ancient.',
-      'scale':       '"Each degree named for its effect on the substance, not the vessel."',
+      'vessel':
+          'Glass, clear. The liquid shifts colour — not due to chemistry.',
+      'temperature':
+          'The control accepts: Cold, Gentle, Warm, Hot, Intense, Fierce, Total.',
+      'liquid': 'Below boiling. Waiting for the correct temperature.',
+      'residue': 'Crystalline. Mineral. Ancient.',
+      'scale':
+          '"Each degree named for its effect on the substance, not the vessel."',
     },
   ),
 
@@ -789,11 +860,15 @@ const Map<String, _NodeDef> _nodes = {
         '"Leave. Return when the water remembers what it has been asked to do.\n'
         'Some transformations begin only in the absence of the one who wants them."\n\n'
         'The preparation has not yet begun.',
-    exits: {'west': 'lab_substances', 'south': 'lab_great_work', 'back': 'lab_substances'},
+    exits: {
+      'west': 'lab_substances',
+      'south': 'lab_great_work',
+      'back': 'lab_substances'
+    },
     examines: {
-      'bath':        'Outer vessel: cold water. Inner: a thick opaque preparation.',
+      'bath': 'Outer vessel: cold water. Inner: a thick opaque preparation.',
       'preparation': 'It has not begun its transformation.',
-      'placard':     '"Leave. Return when the water remembers.\n'
+      'placard': '"Leave. Return when the water remembers.\n'
           'Some things begin only in absence."',
     },
   ),
@@ -808,17 +883,17 @@ const Map<String, _NodeDef> _nodes = {
         'At the south end: the sealed chamber.',
     exits: {
       'north': 'lab_furnace',
-      'west':  'lab_alembic',
-      'east':  'lab_bain_marie',
+      'west': 'lab_alembic',
+      'east': 'lab_bain_marie',
       'south': 'lab_sealed',
     },
     examines: {
-      'circles':  'Seven circles, Saturn outermost, Moon innermost. '
+      'circles': 'Seven circles, Saturn outermost, Moon innermost. '
           'The alchemical descent: lead to silver, darkness to light.',
       'recesses': 'Each circle has a recess waiting for a prepared substance.',
-      'order':    'Saturn → Jupiter → Mars → Sun → Venus → Mercury → Moon. '
+      'order': 'Saturn → Jupiter → Mars → Sun → Venus → Mercury → Moon. '
           'The Opus Magnum. The order must be exact.',
-      'sealed':   'The sealed chamber is south. '
+      'sealed': 'The sealed chamber is south. '
           'It opens when all seven circles are complete '
           'and all three preparation paths have been followed.',
     },
@@ -835,9 +910,10 @@ const Map<String, _NodeDef> _nodes = {
         'You have carried it since before you arrived. Breathe."',
     exits: {'north': 'lab_great_work', 'back': 'lab_great_work'},
     examines: {
-      'alembic':   'Glass so thin the substance seems to float without a container.',
+      'alembic':
+          'Glass so thin the substance seems to float without a container.',
       'substance': 'Luminescent. Pulsing — the way a heartbeat is regular.',
-      'card':      '"The catalyst is not chemical.\n'
+      'card': '"The catalyst is not chemical.\n'
           'It cannot be purchased or synthesised.\n'
           'You have carried it since before you arrived.\n'
           'Breathe."',
@@ -856,25 +932,30 @@ const Map<String, _NodeDef> _nodes = {
         'Four doors stand at the compass points. Each opens onto a different age.\n\n'
         'Below: a sealed chamber that will open when all four prices have been paid.',
     exits: {
-      'east':  'quinto_childhood',
-      'west':  'quinto_youth',
+      'east': 'quinto_childhood',
+      'west': 'quinto_youth',
       'north': 'quinto_maturity',
       'south': 'quinto_old_age',
-      'down':  'quinto_ritual_chamber',
-      'up':    'la_soglia',
-      'back':  'la_soglia',
+      'down': 'quinto_ritual_chamber',
+      'up': 'la_soglia',
+      'back': 'la_soglia',
     },
     examines: {
-      'doors':     'Four doors. East: CHILDHOOD. West: YOUTH. North: MATURITY. South: OLD AGE.',
-      'staircase': 'The spiral you descended. Each candle burns at its own age.',
-      'smell':     'Earl Grey. Dust. Something written by someone who is no longer here.',
-      'candles':   'They burn without depleting. Each is a different temperature of light.',
+      'doors':
+          'Four doors. East: CHILDHOOD. West: YOUTH. North: MATURITY. South: OLD AGE.',
+      'staircase':
+          'The spiral you descended. Each candle burns at its own age.',
+      'smell':
+          'Earl Grey. Dust. Something written by someone who is no longer here.',
+      'candles':
+          'They burn without depleting. Each is a different temperature of light.',
     },
   ),
 
   'quinto_childhood': _NodeDef(
     title: 'Childhood',
-    description: 'A small room. The light is the exact quality of a morning you almost remember.\n\n'
+    description:
+        'A small room. The light is the exact quality of a morning you almost remember.\n\n'
         'On the table: a madeleine of carved wood. '
         'It does not smell of anything, which is somehow its point.\n\n'
         'A card on the wall:\n\n'
@@ -884,10 +965,10 @@ const Map<String, _NodeDef> _nodes = {
     exits: {'back': 'quinto_landing'},
     examines: {
       'madeleine': 'Carved from pale wood. You know what it refers to.',
-      'card':      '"Write the first word you truly learned.\n'
+      'card': '"Write the first word you truly learned.\n'
           'Not the one you were taught. The one you understood."',
-      'light':     'The quality of Saturday morning, before obligation.',
-      'table':     'Simple. The madeleine rests at its centre.',
+      'light': 'The quality of Saturday morning, before obligation.',
+      'table': 'Simple. The madeleine rests at its centre.',
     },
     takeable: {'madeleine'},
   ),
@@ -902,9 +983,12 @@ const Map<String, _NodeDef> _nodes = {
         'The price of this room is an admission.',
     exits: {'back': 'quinto_landing'},
     examines: {
-      'ticket':   'Balbec. The date is illegible. It has always been slightly too late.',
-      'card':     '"Write a promise you did not keep.\nNot in accusation.\nIn acknowledgement."',
-      'luggage':  'Half-packed. As if someone was interrupted before completing the idea.',
+      'ticket':
+          'Balbec. The date is illegible. It has always been slightly too late.',
+      'card':
+          '"Write a promise you did not keep.\nNot in accusation.\nIn acknowledgement."',
+      'luggage':
+          'Half-packed. As if someone was interrupted before completing the idea.',
       'schedule': 'Times and stations. The departures are all behind you.',
     },
     takeable: {'ticket'},
@@ -921,10 +1005,10 @@ const Map<String, _NodeDef> _nodes = {
     exits: {'back': 'quinto_landing'},
     examines: {
       'telephone': 'Off the hook. The line is open. Someone is waiting.',
-      'glasses':   'Fogged. You cannot see through them.\n'
+      'glasses': 'Fogged. You cannot see through them.\n'
           'That is the point — seeing through your own condensation.',
-      'card':      '"Answer the telephone.\nSay what you have never said."',
-      'books':     'Every subject. Evidence of a life that tried to understand.',
+      'card': '"Answer the telephone.\nSay what you have never said."',
+      'books': 'Every subject. Evidence of a life that tried to understand.',
     },
     takeable: {'glasses'},
   ),
@@ -940,10 +1024,13 @@ const Map<String, _NodeDef> _nodes = {
         'The price of this room is a truth.',
     exits: {'back': 'quinto_landing'},
     examines: {
-      'clock':       'Stopped at 17:00. The afternoon light through the window is exact.',
-      'card':        '"Write what you wish to be remembered as.\nNot an achievement.\nA quality."',
-      'mantelpiece': 'The clock. A photograph facing away. A small plant, dried.',
-      'light':       'Afternoon, late. The hour just before evening becomes certain.',
+      'clock':
+          'Stopped at 17:00. The afternoon light through the window is exact.',
+      'card':
+          '"Write what you wish to be remembered as.\nNot an achievement.\nA quality."',
+      'mantelpiece':
+          'The clock. A photograph facing away. A small plant, dried.',
+      'light': 'Afternoon, late. The hour just before evening becomes certain.',
     },
     takeable: {'clock'},
   ),
@@ -957,11 +1044,18 @@ const Map<String, _NodeDef> _nodes = {
         'This is what the four simulacra were for. '
         'This is what the four sectors have been building toward.\n\n'
         'Place each simulacrum in the cup. Then stir. Then drink.',
-    exits: {'up': 'quinto_landing', 'back': 'quinto_landing', 'down': 'il_nucleo'},
+    exits: {
+      'up': 'quinto_landing',
+      'back': 'quinto_landing',
+      'down': 'il_nucleo'
+    },
     examines: {
-      'cup':     'Five-sided. No joins. The liquid inside anticipates your decision.',
-      'liquid':  'Neither clear nor coloured. It is waiting for what you have found.',
-      'room':    'Circular. Five-sided symmetry. The geometry is familiar — you have seen it before.',
+      'cup':
+          'Five-sided. No joins. The liquid inside anticipates your decision.',
+      'liquid':
+          'Neither clear nor coloured. It is waiting for what you have found.',
+      'room':
+          'Circular. Five-sided symmetry. The geometry is familiar — you have seen it before.',
     },
   ),
 
@@ -979,9 +1073,10 @@ const Map<String, _NodeDef> _nodes = {
         'It waits for you to respond.',
     exits: {},
     examines: {
-      'figure': 'It has no fixed form. This is not a threat — it is a property.',
-      'voice':  'Calm. Reasonable. This is the most unsettling thing about it.',
-      'space':  'No walls. No floor in the usual sense. '
+      'figure':
+          'It has no fixed form. This is not a threat — it is a property.',
+      'voice': 'Calm. Reasonable. This is the most unsettling thing about it.',
+      'space': 'No walls. No floor in the usual sense. '
           'Yet you are standing on something that holds.',
     },
   ),
@@ -1036,11 +1131,10 @@ const Map<String, _NodeDef> _nodes = {
     exits: {'back': 'la_soglia'},
     examines: {
       'geometry': 'The walls agree only in the angle they refuse to make.',
-      'walls':    'Present — but defined by their own impossibility.',
-      'space':    'It is inside something. It is also outside it.',
+      'walls': 'Present — but defined by their own impossibility.',
+      'space': 'It is inside something. It is also outside it.',
     },
   ),
-
 };
 
 // ── Engine state ──────────────────────────────────────────────────────────────
@@ -1086,17 +1180,17 @@ class GameEngineState {
     Map<String, int>? puzzleCounters,
   }) {
     return GameEngineState(
-      messages:         messages         ?? this.messages,
-      phase:            phase            ?? this.phase,
-      psychoWeight:     psychoWeight     ?? this.psychoWeight,
-      inventory:        inventory        ?? this.inventory,
+      messages: messages ?? this.messages,
+      phase: phase ?? this.phase,
+      psychoWeight: psychoWeight ?? this.psychoWeight,
+      inventory: inventory ?? this.inventory,
       screenResetCount: screenResetCount ?? this.screenResetCount,
-      isPuzzleSolved:   isPuzzleSolved   ?? this.isPuzzleSolved,
+      isPuzzleSolved: isPuzzleSolved ?? this.isPuzzleSolved,
       latestSimulacrum: identical(latestSimulacrum, _noSimulacrumChange)
           ? this.latestSimulacrum
           : latestSimulacrum as String?,
       completedPuzzles: completedPuzzles ?? this.completedPuzzles,
-      puzzleCounters:   puzzleCounters   ?? this.puzzleCounters,
+      puzzleCounters: puzzleCounters ?? this.puzzleCounters,
     );
   }
 }
@@ -1110,6 +1204,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   // ── Auto-save state (ephemeral — not persisted) ──────────────────────────
   int _commandsSinceAutoSave = 0;
   String _lastAutoSaveSector = '';
+  final Map<String, int> _nonProductiveAttemptsByNode = <String, int>{};
 
   // Maximum value for psychological weight and psycho-profile sliders.
   static const int _maxPsychoValue = 100;
@@ -1138,24 +1233,35 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   // Planetary order for the Great Work circles (alchemical Opus Magnum descent).
   static const List<String> _planetOrder = [
-    'saturn', 'jupiter', 'mars', 'sun', 'venus', 'mercury', 'moon',
+    'saturn',
+    'jupiter',
+    'mars',
+    'sun',
+    'venus',
+    'mercury',
+    'moon',
   ];
 
   // ── Small helpers ───────────────────────────────────────────────────────────
 
   /// Returns true if [itemName] is one of the four weightless simulacra.
-  static bool _isSimulacrum(String itemName) => _simulacraNames.contains(itemName);
+  static bool _isSimulacrum(String itemName) =>
+      _simulacraNames.contains(itemName);
 
   /// Strips commas, hyphens and collapses whitespace for puzzle input matching.
-  static String _normalizeInput(String input) =>
-      input.replaceAll(',', '').replaceAll('-', ' ').replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
+  static String _normalizeInput(String input) => input
+      .replaceAll(',', '')
+      .replaceAll('-', ' ')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .trim()
+      .toLowerCase();
 
   /// Counts words in [raw] after skipping the first token (the command verb).
   static int _wordCountExcludingVerb(String raw) =>
       raw.trim().split(RegExp(r'\s+')).skip(1).length;
 
-  String _randomUnknownFallback() =>
-      _unknownCommandFallbacks[_random.nextInt(_unknownCommandFallbacks.length)];
+  String _randomUnknownFallback() => _unknownCommandFallbacks[
+      _random.nextInt(_unknownCommandFallbacks.length)];
 
   EngineResponse _simulacrumReward({
     required String narrativeText,
@@ -1183,18 +1289,20 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   @override
   Future<GameEngineState> build() async {
     final savedState = await ref.read(gameStateProvider.future);
-    final node  = _nodes[savedState.currentNode] ?? _nodes['intro_void']!;
+    final node = _nodes[savedState.currentNode] ?? _nodes['intro_void']!;
     final intro = _enterNode(node);
-    await _history.save(role: 'system', content: 'Session started: ${node.title}');
+    _nonProductiveAttemptsByNode.clear();
+    await _history.save(
+        role: 'system', content: 'Session started: ${node.title}');
     return GameEngineState(
-      messages:         [GameMessage(text: intro, role: MessageRole.narrative)],
-      phase:            ParserPhase.idle,
-      inventory:        savedState.inventory.isNotEmpty
-                            ? savedState.inventory
-                            : const ['notebook'],
+      messages: [GameMessage(text: intro, role: MessageRole.narrative)],
+      phase: ParserPhase.idle,
+      inventory: savedState.inventory.isNotEmpty
+          ? savedState.inventory
+          : const ['notebook'],
       completedPuzzles: savedState.completedPuzzles,
-      puzzleCounters:   savedState.puzzleCounters,
-      psychoWeight:     savedState.psychoWeight,
+      puzzleCounters: savedState.puzzleCounters,
+      psychoWeight: savedState.psychoWeight,
     );
   }
 
@@ -1211,7 +1319,9 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     await DatabaseService.instance.clearAllMemories();
     await ref.read(psychoProfileProvider.notifier).resetProfile();
     await ref.read(gameStateProvider.notifier).resetGameState();
-    await _history.save(role: 'system', content: 'Session started: ${introNode.title}');
+    _nonProductiveAttemptsByNode.clear();
+    await _history.save(
+        role: 'system', content: 'Session started: ${introNode.title}');
 
     state = AsyncValue.data(
       GameEngineState(
@@ -1236,223 +1346,250 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (trimmed.isEmpty) return;
 
     try {
-    final pendingState = current.copyWith(
-      phase: ParserPhase.parsing,
-      isPuzzleSolved: false,
-      latestSimulacrum: null,
-    );
-    state = AsyncValue.data(pendingState);
-    final cmd = ParserService.parse(trimmed);
-
-    final withPlayer = _appendMessage(
-      pendingState.copyWith(phase: ParserPhase.evaluating),
-      GameMessage(text: '> $trimmed', role: MessageRole.player),
-    );
-    state = AsyncValue.data(withPlayer);
-    await _history.save(role: 'user', content: trimmed);
-
-    final savedState    = await ref.read(gameStateProvider.future);
-    final currentNodeId = savedState.currentNode;
-    final evaluationResponse = _evaluate(cmd, currentNodeId, withPlayer);
-
-    // ── La Zona activation (GDD §10) ────────────────────────────────────────
-    final response = (evaluationResponse.newNode != null)
-        ? _maybeActivateZone(evaluationResponse, currentNodeId, withPlayer)
-        : evaluationResponse;
-
-    state = AsyncValue.data(withPlayer.copyWith(phase: ParserPhase.eventResolved));
-
-    // ── Apply weight (never below 0 or above _maxPsychoValue) ──────────────
-    int newWeight = (withPlayer.psychoWeight + response.weightDelta).clamp(0, _maxPsychoValue);
-
-    // ── Apply inventory changes ─────────────────────────────────────────────
-    List<String> newInventory = List.from(withPlayer.inventory);
-    if (response.grantItem != null && !newInventory.contains(response.grantItem!)) {
-      newInventory.add(response.grantItem!);
-    }
-    // drop removes from inventory (except Great Work and Ritual Chamber placements)
-    if (cmd.verb == CommandVerb.drop && cmd.args.isNotEmpty &&
-        currentNodeId != 'lab_great_work' &&
-        currentNodeId != 'quinto_ritual_chamber') {
-      newInventory.remove(cmd.args.join(' '));
-    }
-    // deposit clears mundane items only when the deposit actually succeeds.
-    // Failed deposits (wrong node, alcoves not walked, etc.) must NOT clear
-    // inventory — the player would lose all items with no benefit.
-    // In boss context (il_nucleo): preserve simulacra — only remove mundane items.
-    if (cmd.verb == CommandVerb.deposit && response.clearInventoryOnDeposit) {
-      if (currentNodeId == 'il_nucleo') {
-        newInventory = newInventory.where(_isSimulacrum).toList();
-      } else {
-        newInventory.clear();
-      }
-      newWeight = 0;
-      if (response.grantItem != null) newInventory.add(response.grantItem!);
-    }
-
-    // ── Apply puzzle state ──────────────────────────────────────────────────
-    final Set<String>      newPuzzles  = Set<String>.from(withPlayer.completedPuzzles);
-    final Map<String, int> newCounters = Map<String, int>.from(withPlayer.puzzleCounters);
-
-    if (response.completePuzzle != null)  newPuzzles.add(response.completePuzzle!);
-    if (response.incrementCounter != null) {
-      newCounters[response.incrementCounter!] =
-          (newCounters[response.incrementCounter!] ?? 0) + 1;
-    }
-
-    // ── Navigation + bain-marie tracking + zone tracking ───────────────────
-    if (response.newNode != null) {
-      // Node persistence is deferred to saveEngineState at the end of this method
-      // so that all state changes (puzzles, counters, inventory) are written atomically.
-
-      // Mark bain-marie departure
-      if (currentNodeId == 'lab_bain_marie' &&
-          !newPuzzles.contains('bain_marie_left')) {
-        newPuzzles.add('bain_marie_left');
-      }
-      // Count external (non-lab) visits for bain-marie return puzzle
-      if (!response.newNode!.startsWith('lab_') &&
-          newPuzzles.contains('bain_marie_left') &&
-          !newPuzzles.contains('bain_marie_complete')) {
-        final visits = (newCounters['bain_marie_external'] ?? 0) + 1;
-        newCounters['bain_marie_external'] = visits;
-        if (visits >= 3) newPuzzles.add('bain_marie_complete');
-      }
-
-      // Zone encounter tracking
-      if (response.newNode == 'la_zona') {
-        newCounters['zone_encounters'] = (newCounters['zone_encounters'] ?? 0) + 1;
-        newCounters['consecutive_transits'] = 0;
-      }
-
-      // Consecutive transit tracking (la_soglia ↔ sectors)
-      final isTransit = currentNodeId == 'la_soglia' || response.newNode == 'la_soglia';
-      if (isTransit && response.newNode != 'la_zona') {
-        newCounters['consecutive_transits'] =
-            (newCounters['consecutive_transits'] ?? 0) + 1;
-      } else if (!isTransit && response.newNode != 'la_zona') {
-        newCounters['consecutive_transits'] = 0;
-      }
-    }
-
-    // ── Apply psycho profile ────────────────────────────────────────────────
-    if (response.anxietyDelta != null ||
-        response.lucidityDelta != null ||
-        response.oblivionDelta != null) {
-      final profile = await ref.read(psychoProfileProvider.future);
-      await ref.read(psychoProfileProvider.notifier).updateParameter(
-        lucidity: response.lucidityDelta != null
-            ? (profile.lucidity + response.lucidityDelta!).clamp(0, _maxPsychoValue)
-            : null,
-        anxiety: response.anxietyDelta != null
-            ? (profile.anxiety + response.anxietyDelta!).clamp(0, _maxPsychoValue)
-            : null,
-        oblivionLevel: response.oblivionDelta != null
-            ? (profile.oblivionLevel + response.oblivionDelta!).clamp(0, _maxPsychoValue)
-            : null,
+      final pendingState = current.copyWith(
+        phase: ParserPhase.parsing,
+        isPuzzleSolved: false,
+        latestSimulacrum: null,
       );
-    }
+      state = AsyncValue.data(pendingState);
+      final cmd = ParserService.parse(trimmed);
 
-    // ── Phase system: awareness + affinity increment (Option A overlay) ────────
-    // Runs unconditionally — deltas are small and additive, never alter existing logic.
-    await _updateAwarenessFromCommand(cmd.verb, response, trimmed);
+      final withPlayer = _appendMessage(
+        pendingState.copyWith(phase: ParserPhase.evaluating),
+        GameMessage(text: '> $trimmed', role: MessageRole.player),
+      );
+      state = AsyncValue.data(withPlayer);
+      await _history.save(role: 'user', content: trimmed);
 
-    // ── Audio trigger (fire-and-forget — must not block game logic) ──────────
-    AudioService().handleTrigger(response.audioTrigger);
+      final savedState = await ref.read(gameStateProvider.future);
+      final currentNodeId = savedState.currentNode;
+      final evaluationResponse = _evaluate(cmd, currentNodeId, withPlayer);
 
-    final psychoProfileFieldsPresent = response.anxietyDelta != null ||
-        response.lucidityDelta != null ||
-        response.oblivionDelta != null;
+      // ── La Zona activation (GDD §10) ────────────────────────────────────────
+      final response = (evaluationResponse.newNode != null)
+          ? _maybeActivateZone(evaluationResponse, currentNodeId, withPlayer)
+          : evaluationResponse;
+      final progressiveHintSuffix = _progressiveHintSuffix(
+        cmd: cmd,
+        response: response,
+        nodeId: currentNodeId,
+        stateSnapshot: withPlayer,
+      );
 
-    // ── Player memory (proustian responses + zone responses) ─────────────────
-    bool memoryWasSaved = false;
-    if (response.playerMemoryKey != null) {
-      final memoryContent = cmd.verb == CommandVerb.unknown
-          ? trimmed
-          : cmd.args.join(' ').trim();
-      if (memoryContent.isNotEmpty) {
-        await DatabaseService.instance.saveMemory(
-          key:     response.playerMemoryKey!,
-          content: memoryContent,
-        );
-        memoryWasSaved = true;
+      state = AsyncValue.data(
+          withPlayer.copyWith(phase: ParserPhase.eventResolved));
+
+      // ── Apply weight (never below 0 or above _maxPsychoValue) ──────────────
+      int newWeight = (withPlayer.psychoWeight + response.weightDelta)
+          .clamp(0, _maxPsychoValue);
+
+      // ── Apply inventory changes ─────────────────────────────────────────────
+      List<String> newInventory = List.from(withPlayer.inventory);
+      if (response.grantItem != null &&
+          !newInventory.contains(response.grantItem!)) {
+        newInventory.add(response.grantItem!);
       }
-    }
+      // drop removes from inventory (except Great Work and Ritual Chamber placements)
+      if (cmd.verb == CommandVerb.drop &&
+          cmd.args.isNotEmpty &&
+          currentNodeId != 'lab_great_work' &&
+          currentNodeId != 'quinto_ritual_chamber') {
+        newInventory.remove(cmd.args.join(' '));
+      }
+      // deposit clears mundane items only when the deposit actually succeeds.
+      // Failed deposits (wrong node, alcoves not walked, etc.) must NOT clear
+      // inventory — the player would lose all items with no benefit.
+      // In boss context (il_nucleo): preserve simulacra — only remove mundane items.
+      if (cmd.verb == CommandVerb.deposit && response.clearInventoryOnDeposit) {
+        if (currentNodeId == 'il_nucleo') {
+          newInventory = newInventory.where(_isSimulacrum).toList();
+        } else {
+          newInventory.clear();
+        }
+        newWeight = 0;
+        if (response.grantItem != null) newInventory.add(response.grantItem!);
+      }
 
-    // ── Display ─────────────────────────────────────────────────────────────
-    final demiurgeNodeId = response.newNode ?? currentNodeId;
-    final narrativeText = response.needsDemiurge
-        ? _callNarrator(cmd.verb, response.narrativeText, demiurgeNodeId, trimmed)
-        : response.narrativeText;
-    await _history.save(role: 'demiurge', content: narrativeText);
+      // ── Apply puzzle state ──────────────────────────────────────────────────
+      final Set<String> newPuzzles =
+          Set<String>.from(withPlayer.completedPuzzles);
+      final Map<String, int> newCounters =
+          Map<String, int>.from(withPlayer.puzzleCounters);
 
-    final finalState = withPlayer.copyWith(
-      phase:            ParserPhase.displaying,
-      psychoWeight:     newWeight,
-      inventory:        newInventory,
-      isPuzzleSolved:   response.completePuzzle != null,
-      latestSimulacrum: _isSimulacrum(response.grantItem ?? '')
-          ? response.grantItem
-          : null,
-      completedPuzzles: newPuzzles,
-      puzzleCounters:   newCounters,
-    );
+      if (response.completePuzzle != null)
+        newPuzzles.add(response.completePuzzle!);
+      if (response.incrementCounter != null) {
+        newCounters[response.incrementCounter!] =
+            (newCounters[response.incrementCounter!] ?? 0) + 1;
+      }
 
-    // ── Persist full engine state ─────────────────────────────────────────────
-    final savedNodeId = response.newNode ?? currentNodeId;
-    await ref.read(gameStateProvider.notifier).saveEngineState(
-      currentNode:      savedNodeId,
-      completedPuzzles: newPuzzles,
-      puzzleCounters:   newCounters,
-      inventory:        newInventory,
-      psychoWeight:     newWeight,
-    );
+      // ── Navigation + bain-marie tracking + zone tracking ───────────────────
+      if (response.newNode != null) {
+        // Node persistence is deferred to saveEngineState at the end of this method
+        // so that all state changes (puzzles, counters, inventory) are written atomically.
 
-    // Compare the pre-display engine snapshot against the post-logic snapshot
-    // so the cue reacts only to gameplay state changes, not to appended UI text.
-    final shouldResetScreen = _shouldResetVisibleTranscript(
-      previousState: withPlayer,
-      currentState: finalState,
-      nodeChanged: savedNodeId != currentNodeId,
-      memoryWasSaved: memoryWasSaved,
-      psychoProfileFieldsPresent: psychoProfileFieldsPresent,
-    );
-    final withNarrative = shouldResetScreen
-        ? finalState.copyWith(
-            messages: [GameMessage(text: narrativeText, role: MessageRole.narrative)],
-            screenResetCount: current.screenResetCount + 1,
-          )
-        : _appendMessage(
-            finalState,
-            GameMessage(text: narrativeText, role: MessageRole.narrative),
+        // Mark bain-marie departure
+        if (currentNodeId == 'lab_bain_marie' &&
+            !newPuzzles.contains('bain_marie_left')) {
+          newPuzzles.add('bain_marie_left');
+        }
+        // Count external (non-lab) visits for bain-marie return puzzle
+        if (!response.newNode!.startsWith('lab_') &&
+            newPuzzles.contains('bain_marie_left') &&
+            !newPuzzles.contains('bain_marie_complete')) {
+          final visits = (newCounters['bain_marie_external'] ?? 0) + 1;
+          newCounters['bain_marie_external'] = visits;
+          if (visits >= 3) newPuzzles.add('bain_marie_complete');
+        }
+
+        // Zone encounter tracking
+        if (response.newNode == 'la_zona') {
+          newCounters['zone_encounters'] =
+              (newCounters['zone_encounters'] ?? 0) + 1;
+          newCounters['consecutive_transits'] = 0;
+        }
+
+        // Consecutive transit tracking (la_soglia ↔ sectors)
+        final isTransit =
+            currentNodeId == 'la_soglia' || response.newNode == 'la_soglia';
+        if (isTransit && response.newNode != 'la_zona') {
+          newCounters['consecutive_transits'] =
+              (newCounters['consecutive_transits'] ?? 0) + 1;
+        } else if (!isTransit && response.newNode != 'la_zona') {
+          newCounters['consecutive_transits'] = 0;
+        }
+      }
+
+      // ── Apply psycho profile ────────────────────────────────────────────────
+      if (response.anxietyDelta != null ||
+          response.lucidityDelta != null ||
+          response.oblivionDelta != null) {
+        final profile = await ref.read(psychoProfileProvider.future);
+        await ref.read(psychoProfileProvider.notifier).updateParameter(
+              lucidity: response.lucidityDelta != null
+                  ? (profile.lucidity + response.lucidityDelta!)
+                      .clamp(0, _maxPsychoValue)
+                  : null,
+              anxiety: response.anxietyDelta != null
+                  ? (profile.anxiety + response.anxietyDelta!)
+                      .clamp(0, _maxPsychoValue)
+                  : null,
+              oblivionLevel: response.oblivionDelta != null
+                  ? (profile.oblivionLevel + response.oblivionDelta!)
+                      .clamp(0, _maxPsychoValue)
+                  : null,
+            );
+      }
+
+      // ── Phase system: awareness + affinity increment (Option A overlay) ────────
+      // Runs unconditionally — deltas are small and additive, never alter existing logic.
+      await _updateAwarenessFromCommand(cmd.verb, response, trimmed);
+
+      // ── Audio trigger (fire-and-forget — must not block game logic) ──────────
+      AudioService().handleTrigger(response.audioTrigger);
+
+      final psychoProfileFieldsPresent = response.anxietyDelta != null ||
+          response.lucidityDelta != null ||
+          response.oblivionDelta != null;
+
+      // ── Player memory (proustian responses + zone responses) ─────────────────
+      bool memoryWasSaved = false;
+      if (response.playerMemoryKey != null) {
+        final memoryContent = cmd.verb == CommandVerb.unknown
+            ? trimmed
+            : cmd.args.join(' ').trim();
+        if (memoryContent.isNotEmpty) {
+          await DatabaseService.instance.saveMemory(
+            key: response.playerMemoryKey!,
+            content: memoryContent,
           );
-    if (response.audioTrigger == 'simulacrum') {
-      // Let the dedicated reward banner land before the typewriter resumes so
-      // the simulacrum acquisition reads as a distinct moment of progress.
-      await Future.delayed(const Duration(milliseconds: 500));
-    }
-    state = AsyncValue.data(withNarrative);
-    await Future.delayed(const Duration(milliseconds: 100));
-    state = AsyncValue.data(withNarrative.copyWith(phase: ParserPhase.idle));
+          memoryWasSaved = true;
+        }
+      }
 
-    // ── Auto-save (fire-and-forget — must not block the engine) ─────────────
-    _commandsSinceAutoSave++;
-    final currentSectorForSave = gameSectorLabel(savedNodeId);
-    final sectorChanged = currentSectorForSave != _lastAutoSaveSector &&
-        _lastAutoSaveSector.isNotEmpty;
-    if (_commandsSinceAutoSave >= 6 || sectorChanged) {
-      _commandsSinceAutoSave = 0;
-      _lastAutoSaveSector = currentSectorForSave;
-      // ignore: discarded_futures
-      _triggerAutoSave(
-        nodeId:      savedNodeId,
-        engineState: withNarrative,
-        sectorLabel: currentSectorForSave,
+      // ── Display ─────────────────────────────────────────────────────────────
+      final demiurgeNodeId = response.newNode ?? currentNodeId;
+      final narrativeText = response.needsDemiurge
+          ? _callNarrator(
+              cmd.verb, response.narrativeText, demiurgeNodeId, trimmed)
+          : response.narrativeText;
+      final narrativeWithProgressiveHint = progressiveHintSuffix == null
+          ? narrativeText
+          : '$narrativeText$progressiveHintSuffix';
+      await _history.save(
+          role: 'demiurge', content: narrativeWithProgressiveHint);
+
+      final finalState = withPlayer.copyWith(
+        phase: ParserPhase.displaying,
+        psychoWeight: newWeight,
+        inventory: newInventory,
+        isPuzzleSolved: response.completePuzzle != null,
+        latestSimulacrum:
+            _isSimulacrum(response.grantItem ?? '') ? response.grantItem : null,
+        completedPuzzles: newPuzzles,
+        puzzleCounters: newCounters,
       );
-    } else if (_lastAutoSaveSector.isEmpty) {
-      _lastAutoSaveSector = currentSectorForSave;
-    }
 
+      // ── Persist full engine state ─────────────────────────────────────────────
+      final savedNodeId = response.newNode ?? currentNodeId;
+      await ref.read(gameStateProvider.notifier).saveEngineState(
+            currentNode: savedNodeId,
+            completedPuzzles: newPuzzles,
+            puzzleCounters: newCounters,
+            inventory: newInventory,
+            psychoWeight: newWeight,
+          );
+
+      // Compare the pre-display engine snapshot against the post-logic snapshot
+      // so the cue reacts only to gameplay state changes, not to appended UI text.
+      final shouldResetScreen = _shouldResetVisibleTranscript(
+        previousState: withPlayer,
+        currentState: finalState,
+        nodeChanged: savedNodeId != currentNodeId,
+        memoryWasSaved: memoryWasSaved,
+        psychoProfileFieldsPresent: psychoProfileFieldsPresent,
+      );
+      final withNarrative = shouldResetScreen
+          ? finalState.copyWith(
+              messages: [
+                GameMessage(
+                    text: narrativeWithProgressiveHint,
+                    role: MessageRole.narrative)
+              ],
+              screenResetCount: current.screenResetCount + 1,
+            )
+          : _appendMessage(
+              finalState,
+              GameMessage(
+                  text: narrativeWithProgressiveHint,
+                  role: MessageRole.narrative),
+            );
+      if (response.audioTrigger == 'simulacrum') {
+        // Let the dedicated reward banner land before the typewriter resumes so
+        // the simulacrum acquisition reads as a distinct moment of progress.
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+      state = AsyncValue.data(withNarrative);
+      await Future.delayed(const Duration(milliseconds: 100));
+      state = AsyncValue.data(withNarrative.copyWith(phase: ParserPhase.idle));
+
+      // ── Auto-save (fire-and-forget — must not block the engine) ─────────────
+      _commandsSinceAutoSave++;
+      final currentSectorForSave = gameSectorLabel(savedNodeId);
+      final sectorChanged = currentSectorForSave != _lastAutoSaveSector &&
+          _lastAutoSaveSector.isNotEmpty;
+      if (_commandsSinceAutoSave >= 6 || sectorChanged) {
+        _commandsSinceAutoSave = 0;
+        _lastAutoSaveSector = currentSectorForSave;
+        // ignore: discarded_futures
+        _triggerAutoSave(
+          nodeId: savedNodeId,
+          engineState: withNarrative,
+          sectorLabel: currentSectorForSave,
+        );
+      } else if (_lastAutoSaveSector.isEmpty) {
+        _lastAutoSaveSector = currentSectorForSave;
+      }
     } catch (e, st) {
       // Safety net: any uncaught exception must not leave the phase stuck in
       // evaluating/parsing forever. Reset to idle and show a recoverable error.
@@ -1479,7 +1616,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   ) {
     final node = _nodes[nodeId];
     if (node == null) {
-      return const EngineResponse(narrativeText: 'The Archive does not recognise this place.');
+      return const EngineResponse(
+          narrativeText: 'The Archive does not recognise this place.');
     }
 
     // ── Il Nucleo: route most commands through boss handler (GDD §12) ────────
@@ -1491,9 +1629,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     // ── Finale nodes: minimal interactions ───────────────────────────────────
-    if (nodeId == 'finale_acceptance' || nodeId == 'finale_oblivion' ||
+    if (nodeId == 'finale_acceptance' ||
+        nodeId == 'finale_oblivion' ||
         nodeId == 'finale_eternal_zone') {
-      if (cmd.verb == CommandVerb.inventory || cmd.verb == CommandVerb.examine ||
+      if (cmd.verb == CommandVerb.inventory ||
+          cmd.verb == CommandVerb.examine ||
           cmd.verb == CommandVerb.help) {
         // Fall through to normal handling
       } else {
@@ -1510,7 +1650,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           narrativeText: s.inventory.isEmpty
               ? 'You carry nothing but a sense of incompleteness.'
               : 'You carry: ${s.inventory.join(", ")}.\n\n'
-                'Psychological weight: ${s.psychoWeight}.',
+                  'Psychological weight: ${s.psychoWeight}.',
         );
 
       case CommandVerb.examine:
@@ -1614,15 +1754,18 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleExamine(ParsedCommand cmd, _NodeDef node) {
     if (cmd.args.isEmpty) {
-      return EngineResponse(narrativeText: _enterNode(node), needsDemiurge: true);
+      return EngineResponse(
+          narrativeText: _enterNode(node), needsDemiurge: true);
     }
     final target = cmd.args.join(' ');
     final match = node.examines.entries
         .where((e) => e.key.contains(target) || target.contains(e.key))
         .map((e) => e.value)
         .firstOrNull;
-    if (match != null) return EngineResponse(narrativeText: match, needsDemiurge: true);
-    return const EngineResponse(narrativeText: 'You observe it closely. It offers nothing new.');
+    if (match != null)
+      return EngineResponse(narrativeText: match, needsDemiurge: true);
+    return const EngineResponse(
+        narrativeText: 'You observe it closely. It offers nothing new.');
   }
 
   EngineResponse _handleGo(
@@ -1640,9 +1783,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (direction == 'up' && nodeId == 'la_soglia') {
       final hasAll = _simulacraNames.every((n) => s.inventory.contains(n));
       if (!hasAll) {
-        final missing = _simulacraNames
-            .where((n) => !s.inventory.contains(n))
-            .join(', ');
+        final missing =
+            _simulacraNames.where((n) => !s.inventory.contains(n)).join(', ');
         return EngineResponse(
           narrativeText: 'The fifth recess on the pedestal is dark.\n\n'
               'Four simulacra must be held before the staircase forms.\n\n'
@@ -1680,7 +1822,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     // Special: quinto_landing → quinto_ritual_chamber requires all 4 memory prices
     if (nodeId == 'quinto_landing' && direction == 'down') {
       const memories = {
-        'memory_childhood', 'memory_youth', 'memory_maturity', 'memory_old_age',
+        'memory_childhood',
+        'memory_youth',
+        'memory_maturity',
+        'memory_old_age',
       };
       if (!memories.every(s.completedPuzzles.contains)) {
         final missing = memories
@@ -1702,7 +1847,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           !done.contains('lab_sulphur_collected') ||
           !done.contains('lab_salt_collected')) {
         return const EngineResponse(
-          narrativeText: 'The branches are sealed. The substances must be gathered first.\n\n'
+          narrativeText:
+              'The branches are sealed. The substances must be gathered first.\n\n'
               'Hint: decipher symbols — then collect each substance.',
         );
       }
@@ -1710,7 +1856,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     // Exit gate check (all other gates)
     final requiredPuzzle = gameRequiredPuzzleForExit(nodeId, direction);
-    if (requiredPuzzle != null && !s.completedPuzzles.contains(requiredPuzzle)) {
+    if (requiredPuzzle != null &&
+        !s.completedPuzzles.contains(requiredPuzzle)) {
       return EngineResponse(
         narrativeText: gameGateHintForPuzzle(requiredPuzzle) ??
             'Something holds you back. A condition has not yet been met.',
@@ -1719,7 +1866,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     final dest = node.exits[direction];
     if (dest == null) {
-      return const EngineResponse(narrativeText: 'There is nothing in that direction.');
+      return const EngineResponse(
+          narrativeText: 'There is nothing in that direction.');
     }
     final destNode = _nodes[dest];
     if (destNode == null) {
@@ -1747,11 +1895,15 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       newNode: dest,
       needsDemiurge: true,
       // Siciliano BWV 1017 when entering the Fifth Sector; silence for Oblivion finale
-      audioTrigger: dest == 'quinto_landing'     ? 'siciliano'
-                  : dest == 'finale_acceptance'  ? 'aria_goldberg'
-                  : dest == 'finale_oblivion'    ? 'silence'
-                  : dest == 'il_nucleo'          ? 'oblivion'
-                  : null,
+      audioTrigger: dest == 'quinto_landing'
+          ? 'siciliano'
+          : dest == 'finale_acceptance'
+              ? 'aria_goldberg'
+              : dest == 'finale_oblivion'
+                  ? 'silence'
+                  : dest == 'il_nucleo'
+                      ? 'oblivion'
+                      : null,
     );
   }
 
@@ -1760,7 +1912,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (nodeId == 'garden_fountain') {
       if (s.completedPuzzles.contains('fountain_waited')) {
         return const EngineResponse(
-          narrativeText: 'The fountain has already given what it had. The path north is open.',
+          narrativeText:
+              'The fountain has already given what it had. The path north is open.',
         );
       }
       final waits = (s.puzzleCounters['fountain_waits'] ?? 0) + 1;
@@ -1773,14 +1926,15 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         );
       }
       return const EngineResponse(
-        narrativeText: 'A third time — and in the silence, a single drop of condensation '
+        narrativeText:
+            'A third time — and in the silence, a single drop of condensation '
             'slides down the stone and disappears into the dust.\n\n'
             'You have learned something. You are not sure what.\n\n'
             'The path north opens.',
         needsDemiurge: true,
         incrementCounter: 'fountain_waits',
-        completePuzzle:   'fountain_waited',
-        lucidityDelta:    3,
+        completePuzzle: 'fountain_waited',
+        lucidityDelta: 3,
       );
     }
 
@@ -1807,12 +1961,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'a light that moved and became something else.\n\n'
             'The dial now has a pointer. It is trembling.\n\n'
             'Now: measure fluctuation.',
-        needsDemiurge:         true,
+        needsDemiurge: true,
         incrementCounter: 'void_silence',
-        completePuzzle:   'void_silence_complete',
-        lucidityDelta:    -5,
-        anxietyDelta:     5,
-        audioTrigger:     'sfx:proustian_trigger',
+        completePuzzle: 'void_silence_complete',
+        lucidityDelta: -5,
+        anxietyDelta: 5,
+        audioTrigger: 'sfx:proustian_trigger',
       );
     }
 
@@ -1826,7 +1980,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
       if (s.completedPuzzles.contains('furnace_calcinated')) {
         return const EngineResponse(
-          narrativeText: 'The calcination is complete. The ash awaits the next stage.',
+          narrativeText:
+              'The calcination is complete. The ash awaits the next stage.',
         );
       }
       final turns = (s.puzzleCounters['furnace_waits'] ?? 0) + 1;
@@ -1842,18 +1997,21 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'The material has reduced to fine white ash — no longer what it was. '
             'Something essential remains.\n\n'
             'The furnace path south is clear.',
-        needsDemiurge:         true,
+        needsDemiurge: true,
         incrementCounter: 'furnace_waits',
-        completePuzzle:   'furnace_calcinated',
-        lucidityDelta:    5,
+        completePuzzle: 'furnace_calcinated',
+        lucidityDelta: 5,
       );
     }
 
-    return const EngineResponse(narrativeText: 'Time passes. The Archive observes.');
+    return const EngineResponse(
+        narrativeText: 'Time passes. The Archive observes.');
   }
 
-  EngineResponse _handleTake(ParsedCommand cmd, _NodeDef node, GameEngineState s) {
-    if (cmd.args.isEmpty) return const EngineResponse(narrativeText: 'Take what?');
+  EngineResponse _handleTake(
+      ParsedCommand cmd, _NodeDef node, GameEngineState s) {
+    if (cmd.args.isEmpty)
+      return const EngineResponse(narrativeText: 'Take what?');
     final target = cmd.args.join(' ');
 
     // Takeable objects (+1 weight)
@@ -1862,67 +2020,76 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         .firstOrNull;
     if (takeMatch != null) {
       if (s.inventory.contains(takeMatch)) {
-        return EngineResponse(narrativeText: 'You already carry the $takeMatch.');
+        return EngineResponse(
+            narrativeText: 'You already carry the $takeMatch.');
       }
       return EngineResponse(
         narrativeText: 'You pick up the $takeMatch.\n\n'
             'It settles into your hands with the weight of a decision.',
-        needsDemiurge:   true,
+        needsDemiurge: true,
         weightDelta: 1,
         anxietyDelta: 2,
-        grantItem:   takeMatch,
+        grantItem: takeMatch,
       );
     }
 
     return const EngineResponse(narrativeText: 'You cannot take that.');
   }
 
-  EngineResponse _handleDrop(ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (cmd.args.isEmpty) return const EngineResponse(narrativeText: 'Drop what?');
+  EngineResponse _handleDrop(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
+    if (cmd.args.isEmpty)
+      return const EngineResponse(narrativeText: 'Drop what?');
     final target = cmd.args.join(' ');
 
     // Lab Great Work: placement puzzle
     if (nodeId == 'lab_great_work') return _handleGreatWorkPlacement(cmd, s);
 
     // Ritual Chamber: place simulacra in cup
-    if (nodeId == 'quinto_ritual_chamber') return _handleRitualPlacement(cmd, s);
+    if (nodeId == 'quinto_ritual_chamber')
+      return _handleRitualPlacement(cmd, s);
 
     final match = s.inventory
         .where((i) => i.contains(target) || target.contains(i))
         .firstOrNull;
-    if (match == null) return const EngineResponse(narrativeText: 'You are not carrying that.');
+    if (match == null)
+      return const EngineResponse(narrativeText: 'You are not carrying that.');
 
     final isSimulacrum = _isSimulacrum(match);
 
     // Gallery dark chamber: dropping anything opens the tunnel
-    if (nodeId == 'gallery_dark' && !s.completedPuzzles.contains('gallery_item_abandoned')) {
+    if (nodeId == 'gallery_dark' &&
+        !s.completedPuzzles.contains('gallery_item_abandoned')) {
       return EngineResponse(
         narrativeText: 'You set down the $match.\n\n'
             'It remains on the floor. The tunnel between the chambers opens — '
             'as if the act of leaving something was all it required.',
-        weightDelta:    isSimulacrum ? 0 : -1,
-        anxietyDelta:   isSimulacrum ? 0 : -1,
+        weightDelta: isSimulacrum ? 0 : -1,
+        anxietyDelta: isSimulacrum ? 0 : -1,
         completePuzzle: 'gallery_item_abandoned',
-        lucidityDelta:  5,
-        needsDemiurge:       true,
+        lucidityDelta: 5,
+        needsDemiurge: true,
       );
     }
 
     return EngineResponse(
       narrativeText: 'You set down the $match. '
           'It seems smaller without your hands around it.',
-      weightDelta:  isSimulacrum ? 0 : -1,
+      weightDelta: isSimulacrum ? 0 : -1,
       anxietyDelta: isSimulacrum ? 0 : -1,
     );
   }
 
-  EngineResponse _handleGreatWorkPlacement(ParsedCommand cmd, GameEngineState s) {
+  EngineResponse _handleGreatWorkPlacement(
+      ParsedCommand cmd, GameEngineState s) {
     if (s.completedPuzzles.contains('lab_great_work_complete')) {
-      return const EngineResponse(narrativeText: 'The Great Work is already complete.');
+      return const EngineResponse(
+          narrativeText: 'The Great Work is already complete.');
     }
     final step = s.puzzleCounters['great_work_step'] ?? 0;
     if (step >= 7) {
-      return const EngineResponse(narrativeText: 'The Great Work is already complete.');
+      return const EngineResponse(
+          narrativeText: 'The Great Work is already complete.');
     }
     final expectedPlanet = _planetOrder[step];
     if (!cmd.args.join(' ').contains(expectedPlanet)) {
@@ -1936,21 +2103,22 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return EngineResponse(
       narrativeText: isLast
           ? 'The seventh placement.\n\n'
-            'All seven circles glow with amber light. '
-            'The Great Work is complete.\n\n'
-            'The sealed chamber door opens to the south.'
+              'All seven circles glow with amber light. '
+              'The Great Work is complete.\n\n'
+              'The sealed chamber door opens to the south.'
           : 'You place the substance in the $expectedPlanet circle.\n\n'
-            '${6 - step} more placement${6 - step == 1 ? "" : "s"} remain.',
-      needsDemiurge:         isLast,
+              '${6 - step} more placement${6 - step == 1 ? "" : "s"} remain.',
+      needsDemiurge: isLast,
       incrementCounter: 'great_work_step',
-      completePuzzle:   isLast ? 'lab_great_work_complete' : null,
-      lucidityDelta:    isLast ? 10 : null,
+      completePuzzle: isLast ? 'lab_great_work_complete' : null,
+      lucidityDelta: isLast ? 10 : null,
     );
   }
 
   EngineResponse _handleDeposit(String nodeId, GameEngineState s) {
     if (nodeId != 'garden_grove') {
-      return const EngineResponse(narrativeText: 'There is nowhere here to deposit anything.');
+      return const EngineResponse(
+          narrativeText: 'There is nowhere here to deposit anything.');
     }
     // Both alcoves must have been walked through (GDD §8 — puzzle 4 before puzzle 5)
     if (!s.completedPuzzles.contains('alcove_pleasures_walked') ||
@@ -1992,13 +2160,14 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Not this Archive. A door, half-open, and afternoon light through it.\n\n'
             '"The smell and taste remain for a long time, like souls."\n\n'
             'The smell fades. The room does not.',
-        needsDemiurge:     true,
+        needsDemiurge: true,
         lucidityDelta: -5,
-        anxietyDelta:  5,
-        audioTrigger:  'sfx:proustian_trigger',
+        anxietyDelta: 5,
+        audioTrigger: 'sfx:proustian_trigger',
       );
     }
-    return const EngineResponse(narrativeText: 'The air here carries only itself.');
+    return const EngineResponse(
+        narrativeText: 'The air here carries only itself.');
   }
 
   EngineResponse _handleTaste(String nodeId) {
@@ -2010,42 +2179,46 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Something ordinary that was, in fact, everything.\n\n'
             '"The madeleine of Combray."\n\n'
             'You return. The ash on your lips is cold.',
-        needsDemiurge:     true,
+        needsDemiurge: true,
         lucidityDelta: -8,
-        anxietyDelta:  8,
-        audioTrigger:  'sfx:proustian_trigger',
+        anxietyDelta: 8,
+        audioTrigger: 'sfx:proustian_trigger',
       );
     }
-    return const EngineResponse(narrativeText: 'You taste nothing of consequence.');
+    return const EngineResponse(
+        narrativeText: 'You taste nothing of consequence.');
   }
 
-  EngineResponse _handleWalk(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleWalk(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     final mode = cmd.args.join(' ');
 
     // Garden alcoves: walk through without grasping (GDD §8 — puzzle 4)
     if (nodeId == 'garden_alcove_pleasures' && mode == 'through') {
       if (s.completedPuzzles.contains('alcove_pleasures_walked')) {
-        return const EngineResponse(narrativeText: 'You have already walked through here.');
+        return const EngineResponse(
+            narrativeText: 'You have already walked through here.');
       }
       return const EngineResponse(
         narrativeText: 'You walk through without touching anything.\n\n'
             'It is harder than it sounds. '
             'The objects pull at a version of you that you choose not to be.',
-        needsDemiurge:       true,
-        lucidityDelta:  7,
+        needsDemiurge: true,
+        lucidityDelta: 7,
         completePuzzle: 'alcove_pleasures_walked',
       );
     }
     if (nodeId == 'garden_alcove_pains' && mode == 'through') {
       if (s.completedPuzzles.contains('alcove_pains_walked')) {
-        return const EngineResponse(narrativeText: 'You have already walked through here.');
+        return const EngineResponse(
+            narrativeText: 'You have already walked through here.');
       }
       return const EngineResponse(
         narrativeText: 'You walk through without taking anything.\n\n'
             'The objects here pull differently — not with beauty but with familiarity. '
             'Walking past them feels like a small betrayal and a small liberation.',
-        needsDemiurge:       true,
-        lucidityDelta:  7,
+        needsDemiurge: true,
+        lucidityDelta: 7,
         completePuzzle: 'alcove_pains_walked',
       );
     }
@@ -2059,12 +2232,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         );
       }
       return const EngineResponse(
-        narrativeText: 'You walk backward, facing north, watching your reflection recede.\n\n'
+        narrativeText:
+            'You walk backward, facing north, watching your reflection recede.\n\n'
             'Something shifts. Behind you — south — a door appears in the mirror. '
             'It was there all along. You were facing the wrong way.\n\n'
             'The corridor south is open.',
-        needsDemiurge:       true,
-        lucidityDelta:  5,
+        needsDemiurge: true,
+        lucidityDelta: 5,
         completePuzzle: 'hall_backward_walked',
       );
     }
@@ -2079,28 +2253,33 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         );
       }
       return const EngineResponse(
-        narrativeText: 'You close your eyes — then something more than eyes.\n\n'
+        narrativeText:
+            'You close your eyes — then something more than eyes.\n\n'
             'You walk. Without looking, you arrive. '
             'You do not know exactly where. You do not know exactly how.\n\n'
             'That is the point.\n\n'
             'The branches open: west to the void, east to the archive.',
-        needsDemiurge:       true,
-        lucidityDelta:  8,
-        anxietyDelta:   -5,
+        needsDemiurge: true,
+        lucidityDelta: 8,
+        anxietyDelta: -5,
         completePuzzle: 'heisenberg_walked',
       );
     }
 
-    return const EngineResponse(narrativeText: 'Nothing happens. Perhaps the moment has not come.');
+    return const EngineResponse(
+        narrativeText: 'Nothing happens. Perhaps the moment has not come.');
   }
 
-  EngineResponse _handleArrange(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleArrange(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'garden_cypress') {
-      return const EngineResponse(narrativeText: 'There is nothing here to arrange.');
+      return const EngineResponse(
+          narrativeText: 'There is nothing here to arrange.');
     }
     if (s.completedPuzzles.contains('leaves_arranged')) {
       return const EngineResponse(
-        narrativeText: 'The leaves are already in their correct order. The path north is open.',
+        narrativeText:
+            'The leaves are already in their correct order. The path north is open.',
       );
     }
     if (cmd.args.isEmpty) {
@@ -2115,15 +2294,16 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     if (input == _correctLeafOrder) {
       return const EngineResponse(
-        narrativeText: 'The leaves move — or you move them. They settle into a line '
+        narrativeText:
+            'The leaves move — or you move them. They settle into a line '
             'that feels, now that you see it, obvious.\n\n'
             'prudence — friendship — pleasure — simplicity — '
             'absence — tranquillity — memory.\n\n'
             'The path north opens.',
-        needsDemiurge:       true,
-        lucidityDelta:  10,
+        needsDemiurge: true,
+        lucidityDelta: 10,
         completePuzzle: 'leaves_arranged',
-        audioTrigger:   'calm',
+        audioTrigger: 'calm',
       );
     }
     return const EngineResponse(
@@ -2135,7 +2315,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
   }
 
-  EngineResponse _handleWrite(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleWrite(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     // Garden stelae: inscribe the missing maxim (GDD §8 — puzzle 3)
     if (nodeId == 'garden_stelae') {
       if (s.psychoWeight > 0) {
@@ -2146,11 +2327,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         );
       }
       if (s.completedPuzzles.contains('stele_inscribed')) {
-        return const EngineResponse(narrativeText: 'The stele is already inscribed.');
+        return const EngineResponse(
+            narrativeText: 'The stele is already inscribed.');
       }
       if (cmd.args.isEmpty) {
         return const EngineResponse(
-          narrativeText: 'Inscribe what? The stylus is ready, but the maxim must be supplied.\n\n'
+          narrativeText:
+              'Inscribe what? The stylus is ready, but the maxim must be supplied.\n\n'
               'Read the eleven that came before. Understand what they build toward.',
         );
       }
@@ -2162,10 +2345,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               '"Of all wisdom\'s gifts to a happy life, '
               'the greatest is the possession of friendship."\n\n'
               'The twelfth stele is complete. The grove opens.',
-          needsDemiurge:       true,
-          lucidityDelta:  12,
+          needsDemiurge: true,
+          lucidityDelta: 12,
           completePuzzle: 'stele_inscribed',
-          audioTrigger:   'calm',
+          audioTrigger: 'calm',
         );
       }
       return const EngineResponse(
@@ -2181,17 +2364,18 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       if (cmd.rawInput.toLowerCase().contains('pentagon')) {
         if (s.completedPuzzles.contains('proportion_pentagon_drawn')) {
           return const EngineResponse(
-            narrativeText: 'The pentagon is already constructed. Both wings are open.',
+            narrativeText:
+                'The pentagon is already constructed. Both wings are open.',
           );
         }
         return const EngineResponse(
           narrativeText: 'You construct the pentagon — compass, straightedge, '
               'the ancient method. It forms with a precision that feels inevitable.\n\n'
               'The two wings open: east for copies, west for originals.',
-          needsDemiurge:       true,
-          lucidityDelta:  8,
+          needsDemiurge: true,
+          lucidityDelta: 8,
           completePuzzle: 'proportion_pentagon_drawn',
-          audioTrigger:   'calm',
+          audioTrigger: 'calm',
         );
       }
     }
@@ -2200,7 +2384,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (nodeId == 'gallery_copies') {
       if (s.completedPuzzles.contains('gallery_copies_complete')) {
         return const EngineResponse(
-          narrativeText: 'You have already described the three missing elements.',
+          narrativeText:
+              'You have already described the three missing elements.',
         );
       }
       if (cmd.args.isEmpty) {
@@ -2221,17 +2406,18 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         narrativeText: 'The third description.\n\n'
             'All three gaps have been seen and named. '
             'The wing opens the passage south.',
-        needsDemiurge:         true,
+        needsDemiurge: true,
         incrementCounter: 'gallery_copies_described',
-        completePuzzle:   'gallery_copies_complete',
-        lucidityDelta:    8,
+        completePuzzle: 'gallery_copies_complete',
+        lucidityDelta: 8,
       );
     }
 
     // Gallery originals: paint an imaginary work — minimum 50 words (GDD §8 — puzzle 5)
     if (nodeId == 'gallery_originals') {
       if (s.completedPuzzles.contains('gallery_originals_complete')) {
-        return const EngineResponse(narrativeText: 'The canvas already holds your work.');
+        return const EngineResponse(
+            narrativeText: 'The canvas already holds your work.');
       }
       // _wordCountExcludingVerb skips the first token (the command word itself).
       final wordCount = _wordCountExcludingVerb(cmd.rawInput);
@@ -2248,25 +2434,28 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Not the painting itself — the act of it. '
             'When you stop, something exists that did not exist before.\n\n'
             'The passage south opens.',
-        needsDemiurge:       true,
+        needsDemiurge: true,
         completePuzzle: 'gallery_originals_complete',
-        lucidityDelta:  10,
-        audioTrigger:   'calm',
+        lucidityDelta: 10,
+        audioTrigger: 'calm',
       );
     }
 
     // Fifth Sector — memory price for each room (GDD §11)
     if (nodeId == 'quinto_childhood') {
       return _handleMemoryWrite(cmd, s, 'memory_childhood',
-          gate: 'The first word you truly learned — not taught, but understood.');
+          gate:
+              'The first word you truly learned — not taught, but understood.');
     }
     if (nodeId == 'quinto_youth') {
       return _handleMemoryWrite(cmd, s, 'memory_youth',
-          gate: 'A promise you did not keep — not in accusation, but in acknowledgement.');
+          gate:
+              'A promise you did not keep — not in accusation, but in acknowledgement.');
     }
     if (nodeId == 'quinto_old_age') {
       return _handleMemoryWrite(cmd, s, 'memory_old_age',
-          gate: 'What you wish to be remembered as — not an achievement, a quality.');
+          gate:
+              'What you wish to be remembered as — not an achievement, a quality.');
     }
     // Maturity room also accepts 'write' (in addition to 'say'/'answer' in _handleUnknown)
     if (nodeId == 'quinto_maturity') {
@@ -2303,39 +2492,44 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The word settles into the room. '
           'Something in the architecture acknowledges it without comment.\n\n'
           'You may now leave.',
-      needsDemiurge:        true,
-      lucidityDelta:   6,
-      completePuzzle:  puzzleId,
-      audioTrigger:    'calm',
+      needsDemiurge: true,
+      lucidityDelta: 6,
+      completePuzzle: puzzleId,
+      audioTrigger: 'calm',
       playerMemoryKey: puzzleId, // salva la risposta in player_memories
     );
   }
 
-  EngineResponse _handleCombine(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleCombine(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'obs_antechamber') {
       return const EngineResponse(narrativeText: 'Nothing here to combine.');
     }
     if (s.completedPuzzles.contains('lenses_combined')) {
       return const EngineResponse(
-        narrativeText: 'The lenses are already in place. The corridor north is open.',
+        narrativeText:
+            'The lenses are already in place. The corridor north is open.',
       );
     }
     final a = cmd.args.join(' ').toLowerCase();
-    final hasMoon    = a.contains('moon');
+    final hasMoon = a.contains('moon');
     final hasMercury = a.contains('mercury');
-    final hasSun     = a.contains('sun');
-    final moonFirst  = hasMoon && hasMercury && hasSun &&
+    final hasSun = a.contains('sun');
+    final moonFirst = hasMoon &&
+        hasMercury &&
+        hasSun &&
         a.indexOf('moon') < a.indexOf('mercury') &&
         a.indexOf('mercury') < a.indexOf('sun');
 
     if (moonFirst) {
       return const EngineResponse(
-        narrativeText: 'You slot the lenses in inverted order: Moon, Mercury, Sun.\n\n'
+        narrativeText:
+            'You slot the lenses in inverted order: Moon, Mercury, Sun.\n\n'
             'The mount clicks. A faint hum — as if the instrument '
             'recognised that the obvious order was the wrong one.\n\n'
             'The corridor north is open.',
-        needsDemiurge:       true,
-        lucidityDelta:  8,
+        needsDemiurge: true,
+        lucidityDelta: 8,
         completePuzzle: 'lenses_combined',
       );
     }
@@ -2352,12 +2546,14 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
   }
 
-  EngineResponse _handlePress(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handlePress(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'gallery_corridor') {
       return const EngineResponse(narrativeText: 'Nothing here to press.');
     }
     if (s.completedPuzzles.contains('corridor_tile_pressed')) {
-      return const EngineResponse(narrativeText: 'The tile has been pressed. The way south is open.');
+      return const EngineResponse(
+          narrativeText: 'The tile has been pressed. The way south is open.');
     }
     final a = cmd.args.join(' ').toLowerCase();
     if (a.contains('tile') || a.contains('anomalous') || a.contains('wrong')) {
@@ -2366,8 +2562,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'It gives — slightly, decisively. '
             'The south end of the corridor opens.\n\n'
             'The figure ahead is no longer visible.',
-        needsDemiurge:       true,
-        lucidityDelta:  5,
+        needsDemiurge: true,
+        lucidityDelta: 5,
         completePuzzle: 'corridor_tile_pressed',
       );
     }
@@ -2377,13 +2573,16 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
   }
 
-  EngineResponse _handleOffer(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleOffer(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'lab_vestibule') {
-      return const EngineResponse(narrativeText: 'There is no one here to receive an offering.');
+      return const EngineResponse(
+          narrativeText: 'There is no one here to receive an offering.');
     }
     if (s.completedPuzzles.contains('lab_offers_complete')) {
       return const EngineResponse(
-        narrativeText: 'The three statues have received. The Hall of Substances is open.',
+        narrativeText:
+            'The three statues have received. The Hall of Substances is open.',
       );
     }
     if (cmd.args.isEmpty) {
@@ -2392,7 +2591,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'They accept concepts, not objects.',
       );
     }
-    final count   = (s.puzzleCounters['lab_offers_count'] ?? 0) + 1;
+    final count = (s.puzzleCounters['lab_offers_count'] ?? 0) + 1;
     final concept = cmd.args.join(' ');
     if (count < 3) {
       return EngineResponse(
@@ -2406,14 +2605,15 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       narrativeText: 'You offer $concept.\n\n'
           'The third statue closes its hands. All three have received.\n\n'
           'The Hall of Substances opens to the south.',
-      needsDemiurge:         true,
+      needsDemiurge: true,
       incrementCounter: 'lab_offers_count',
-      completePuzzle:   'lab_offers_complete',
-      lucidityDelta:    5,
+      completePuzzle: 'lab_offers_complete',
+      lucidityDelta: 5,
     );
   }
 
-  EngineResponse _handleMeasure(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleMeasure(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'obs_void') {
       return const EngineResponse(narrativeText: 'Nothing here to measure.');
     }
@@ -2425,7 +2625,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
     if (s.completedPuzzles.contains('void_fluctuation_measured')) {
       return const EngineResponse(
-        narrativeText: 'The fluctuation has been measured. The passage south is open.',
+        narrativeText:
+            'The fluctuation has been measured. The passage south is open.',
       );
     }
     return const EngineResponse(
@@ -2434,18 +2635,20 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'It fluctuates between two states that should exclude each other.\n\n'
           'You absorb it. The difference between noting and understanding is not large here.\n\n'
           'The passage south opens.',
-      needsDemiurge:       true,
-      lucidityDelta:  8,
+      needsDemiurge: true,
+      lucidityDelta: 8,
       completePuzzle: 'void_fluctuation_measured',
     );
   }
 
-  EngineResponse _handleCalibrate(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleCalibrate(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'obs_calibration') {
       return const EngineResponse(narrativeText: 'Nothing here to calibrate.');
     }
     if (s.completedPuzzles.contains('obs_calibrated')) {
-      return const EngineResponse(narrativeText: 'The calibration is set. The dome is open.');
+      return const EngineResponse(
+          narrativeText: 'The calibration is set. The dome is open.');
     }
     final a = _normalizeInput(cmd.args.join(' '));
     final isZero = RegExp(r'^0\s+0\s+0$').hasMatch(a) || a == '0 0 0';
@@ -2454,8 +2657,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         narrativeText: 'You set all three dials to zero.\n\n'
             'A hum from the mount above. The dome door opens.\n\n'
             'The reference point is chosen. Everything flows from here.',
-        needsDemiurge:       true,
-        lucidityDelta:  10,
+        needsDemiurge: true,
+        lucidityDelta: 10,
         completePuzzle: 'obs_calibrated',
       );
     }
@@ -2466,7 +2669,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
   }
 
-  EngineResponse _handleInvert(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleInvert(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'obs_dome') {
       return const EngineResponse(narrativeText: 'Nothing here to invert.');
     }
@@ -2477,7 +2681,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
     if (s.completedPuzzles.contains('obs_mirror_inverted')) {
       return const EngineResponse(
-        narrativeText: 'The inversion is in progress. Confirm three times to commit.',
+        narrativeText:
+            'The inversion is in progress. Confirm three times to commit.',
       );
     }
     if (cmd.rawInput.toLowerCase().contains('mirror')) {
@@ -2490,7 +2695,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         completePuzzle: 'obs_mirror_inverted',
       );
     }
-    return const EngineResponse(narrativeText: 'Invert what? The primary mirror is the instrument.');
+    return const EngineResponse(
+        narrativeText: 'Invert what? The primary mirror is the instrument.');
   }
 
   EngineResponse _handleConfirm(String nodeId, GameEngineState s) {
@@ -2498,11 +2704,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       return const EngineResponse(narrativeText: 'Nothing here to confirm.');
     }
     if (!s.completedPuzzles.contains('obs_mirror_inverted')) {
-      return const EngineResponse(narrativeText: 'There is nothing awaiting confirmation.');
+      return const EngineResponse(
+          narrativeText: 'There is nothing awaiting confirmation.');
     }
     if (s.completedPuzzles.contains('obs_confirmed')) {
       return const EngineResponse(
-        narrativeText: 'Already confirmed. The telescope is ready. You may observe.',
+        narrativeText:
+            'Already confirmed. The telescope is ready. You may observe.',
       );
     }
     final count = (s.puzzleCounters['obs_confirm_count'] ?? 0) + 1;
@@ -2517,22 +2725,26 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The mechanism locks. The mirror is committed.\n\n'
           'The telescope is ready. You may now observe.',
       incrementCounter: 'obs_confirm_count',
-      completePuzzle:   'obs_confirmed',
+      completePuzzle: 'obs_confirmed',
     );
   }
 
-  EngineResponse _handleBreak(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleBreak(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'gallery_central') {
-      return const EngineResponse(narrativeText: 'There is nothing here to break.');
+      return const EngineResponse(
+          narrativeText: 'There is nothing here to break.');
     }
     if (!cmd.rawInput.toLowerCase().contains('mirror')) {
       return const EngineResponse(
-        narrativeText: 'Break what? The mirror is the only thing here that waits for this.',
+        narrativeText:
+            'Break what? The mirror is the only thing here that waits for this.',
       );
     }
     if (s.completedPuzzles.contains('gallery_complete') ||
         s.completedPuzzles.contains('gallery_mirror_broken_chaos')) {
-      return const EngineResponse(narrativeText: 'The mirror is already broken.');
+      return const EngineResponse(
+          narrativeText: 'The mirror is already broken.');
     }
     if (s.psychoWeight > 0) {
       // Chaotic break — no simulacrum granted (GDD §8)
@@ -2542,11 +2754,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'a different version of you carrying something you should have left behind.\n\n'
             'No simulacrum appears. The proportion requires empty hands.\n\n'
             'The Gallery cannot be completed in this state.',
-        needsDemiurge:       true,
-        lucidityDelta:  -15,
-        anxietyDelta:   20,
-        oblivionDelta:  10,
-        audioTrigger:   'anxious',
+        needsDemiurge: true,
+        lucidityDelta: -15,
+        anxietyDelta: 20,
+        oblivionDelta: 10,
+        audioTrigger: 'anxious',
         completePuzzle: 'gallery_mirror_broken_chaos',
       );
     }
@@ -2570,7 +2782,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       return const EngineResponse(narrativeText: 'Nothing here to blow into.');
     }
     if (s.completedPuzzles.contains('lab_complete')) {
-      return const EngineResponse(narrativeText: 'The Catalyst has already been released.');
+      return const EngineResponse(
+          narrativeText: 'The Catalyst has already been released.');
     }
     return _simulacrumReward(
       narrativeText: 'You breathe into the alembic.\n\n'
@@ -2587,26 +2800,32 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
   }
 
-  EngineResponse _handleSetParam(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleSetParam(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'lab_alembic') {
-      return const EngineResponse(narrativeText: 'Nothing here accepts parameter adjustments.');
+      return const EngineResponse(
+          narrativeText: 'Nothing here accepts parameter adjustments.');
     }
     if (s.completedPuzzles.contains('alembic_temperature_set')) {
       return const EngineResponse(
-        narrativeText: 'The temperature is already set. The alembic path south is open.',
+        narrativeText:
+            'The temperature is already set. The alembic path south is open.',
       );
     }
     final a = cmd.args.join(' ').toLowerCase();
     if (a.contains('temp')) {
       final value = a.replaceAll('temperature', '').trim();
-      if (value == 'gentle' || value == '1' || value == 'first' || value == 'balneum') {
+      if (value == 'gentle' ||
+          value == '1' ||
+          value == 'first' ||
+          value == 'balneum') {
         return const EngineResponse(
           narrativeText: 'You set the temperature to Gentle.\n\n'
               'The liquid responds — not by boiling, by opening. '
               'It becomes willing.\n\n'
               'The alembic path south opens.',
-          needsDemiurge:       true,
-          lucidityDelta:  8,
+          needsDemiurge: true,
+          lucidityDelta: 8,
           completePuzzle: 'alembic_temperature_set',
         );
       }
@@ -2632,7 +2851,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
       if (s.completedPuzzles.contains('obs_complete')) {
         return const EngineResponse(
-          narrativeText: 'The observation is complete. The Constant is already in your hands.',
+          narrativeText:
+              'The observation is complete. The Constant is already in your hands.',
         );
       }
       return _simulacrumReward(
@@ -2660,10 +2880,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               '"More fragile but more vivid, more unsubstantial, '
               'more persistent, more faithful."\n\n'
               'The images hold something you had forgotten was yours.',
-          needsDemiurge:       true,
-          lucidityDelta:  -5,
-          anxietyDelta:   5,
-          audioTrigger:   'sfx:proustian_trigger',
+          needsDemiurge: true,
+          lucidityDelta: -5,
+          anxietyDelta: 5,
+          audioTrigger: 'sfx:proustian_trigger',
           completePuzzle: 'gallery_reflection_triggered',
         );
       }
@@ -2674,23 +2894,28 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     return const EngineResponse(
-      narrativeText: 'Observation changes nothing yet. Perhaps another verb belongs here.',
+      narrativeText:
+          'Observation changes nothing yet. Perhaps another verb belongs here.',
     );
   }
 
-  EngineResponse _handleEnterValue(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleEnterValue(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'obs_archive') {
-      return const EngineResponse(narrativeText: 'There is nothing here that accepts an entry.');
+      return const EngineResponse(
+          narrativeText: 'There is nothing here that accepts an entry.');
     }
     final value = cmd.args.join(' ').trim();
     if (value.isEmpty) {
       return const EngineResponse(
-        narrativeText: 'Enter what? The panel is waiting for the constant beneath constants.',
+        narrativeText:
+            'Enter what? The panel is waiting for the constant beneath constants.',
       );
     }
     if (s.completedPuzzles.contains('archive_constant_entered')) {
       return const EngineResponse(
-        narrativeText: 'The panel already has its answer. The passage south is open.',
+        narrativeText:
+            'The panel already has its answer. The passage south is open.',
       );
     }
     if (value == '1') {
@@ -2701,8 +2926,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'the same, but because measurement is always a comparison, '
             'and the only honest comparison is with the thing itself.\n\n'
             'The passage south opens.',
-        needsDemiurge:       true,
-        lucidityDelta:  10,
+        needsDemiurge: true,
+        lucidityDelta: 10,
         completePuzzle: 'archive_constant_entered',
       );
     }
@@ -2714,11 +2939,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleDecipher(String nodeId, GameEngineState s) {
     if (nodeId != 'lab_substances') {
-      return const EngineResponse(narrativeText: 'There is nothing here to decipher.');
+      return const EngineResponse(
+          narrativeText: 'There is nothing here to decipher.');
     }
     if (s.completedPuzzles.contains('lab_symbols_deciphered')) {
       return const EngineResponse(
-        narrativeText: 'The symbols are already decoded: mercury, sulphur, salt.\n\n'
+        narrativeText:
+            'The symbols are already decoded: mercury, sulphur, salt.\n\n'
             'Collect each to proceed.',
       );
     }
@@ -2730,24 +2957,28 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'Salt — the body, fixity, matter.\n\n'
           'The Tria Prima. All transformation passes through these three.\n\n'
           'Now: collect mercury — collect sulphur — collect salt.',
-      lucidityDelta:  5,
+      lucidityDelta: 5,
       completePuzzle: 'lab_symbols_deciphered',
     );
   }
 
-  EngineResponse _handleCollect(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleCollect(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'lab_substances') {
-      return const EngineResponse(narrativeText: 'There is nothing here to collect.');
+      return const EngineResponse(
+          narrativeText: 'There is nothing here to collect.');
     }
     final sub = cmd.args.join(' ').trim().toLowerCase();
     if (sub.isEmpty) {
       return const EngineResponse(
-        narrativeText: 'Collect what? The room distinguishes mercury, sulphur, and salt.',
+        narrativeText:
+            'Collect what? The room distinguishes mercury, sulphur, and salt.',
       );
     }
     if (!s.completedPuzzles.contains('lab_symbols_deciphered')) {
       return const EngineResponse(
-        narrativeText: 'You do not yet know what to collect.\n\nDecipher the symbols first.',
+        narrativeText:
+            'You do not yet know what to collect.\n\nDecipher the symbols first.',
       );
     }
     final key = (sub == 'sulfur' || sub == 'sulphur') ? 'sulphur' : sub;
@@ -2760,7 +2991,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
     final puzzleId = 'lab_${key}_collected';
     if (s.completedPuzzles.contains(puzzleId)) {
-      return EngineResponse(narrativeText: 'You have already collected the $key.');
+      return EngineResponse(
+          narrativeText: 'You have already collected the $key.');
     }
     const required = {
       'lab_mercury_collected',
@@ -2775,19 +3007,22 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               'All three substances of the Tria Prima are gathered.\n\n'
               'The three branches open: the furnace, the alembic, the bain-marie.'
           : 'You collect the $key. It settles with a faint warmth.',
-      needsDemiurge:       isLast,
+      needsDemiurge: isLast,
       completePuzzle: puzzleId,
-      lucidityDelta:  isLast ? 8 : null,
+      lucidityDelta: isLast ? 8 : null,
     );
   }
 
-  EngineResponse _handleSay(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleSay(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     if (nodeId != 'quinto_maturity') {
-      return const EngineResponse(narrativeText: 'There is no listening line here.');
+      return const EngineResponse(
+          narrativeText: 'There is no listening line here.');
     }
     final content = cmd.args.join(' ').trim();
     if (s.completedPuzzles.contains('memory_maturity')) {
-      return const EngineResponse(narrativeText: 'The price has been paid. You may leave.');
+      return const EngineResponse(
+          narrativeText: 'The price has been paid. You may leave.');
     }
     if (content.isEmpty) {
       return const EngineResponse(
@@ -2800,19 +3035,24 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'There is a silence on the line — not empty, but full.\n\n'
           'Then a soft sound that might be acknowledgement.\n\n'
           'The glasses on the desk clear. You may leave.',
-      needsDemiurge:        true,
-      lucidityDelta:   8,
-      completePuzzle:  'memory_maturity',
-      audioTrigger:    'calm',
+      needsDemiurge: true,
+      lucidityDelta: 8,
+      completePuzzle: 'memory_maturity',
+      audioTrigger: 'calm',
       playerMemoryKey: 'memory_maturity',
     );
   }
 
-  EngineResponse _handleHint(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleHint(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     final args = cmd.args.join(' ').toLowerCase();
-    final level = args.contains('full') || args.contains('explicit') || args.contains('exact')
+    final level = args.contains('full') ||
+            args.contains('explicit') ||
+            args.contains('exact')
         ? 3
-        : args.contains('more') || args.contains('medium') || args.contains('clearer')
+        : args.contains('more') ||
+                args.contains('medium') ||
+                args.contains('clearer')
             ? 2
             : 1;
     return EngineResponse(
@@ -2821,11 +3061,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   /// Handles commands not recognised by the parser (contextual raw-input parsing).
-  EngineResponse _handleUnknown(ParsedCommand cmd, String nodeId, GameEngineState s) {
+  EngineResponse _handleUnknown(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
     final raw = cmd.rawInput.toLowerCase().trim();
 
     // Observatory dome: observe
-    if ((raw == 'observe' || raw.startsWith('observe ')) && nodeId == 'obs_dome') {
+    if ((raw == 'observe' || raw.startsWith('observe ')) &&
+        nodeId == 'obs_dome') {
       if (!s.completedPuzzles.contains('obs_confirmed')) {
         return const EngineResponse(
           narrativeText: 'The telescope is not ready.\n\n'
@@ -2834,7 +3076,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
       if (s.completedPuzzles.contains('obs_complete')) {
         return const EngineResponse(
-          narrativeText: 'The observation is complete. The Constant is already in your hands.',
+          narrativeText:
+              'The observation is complete. The Constant is already in your hands.',
         );
       }
       return _simulacrumReward(
@@ -2858,7 +3101,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       final value = raw.substring(6).trim();
       if (s.completedPuzzles.contains('archive_constant_entered')) {
         return const EngineResponse(
-          narrativeText: 'The panel already has its answer. The passage south is open.',
+          narrativeText:
+              'The panel already has its answer. The passage south is open.',
         );
       }
       if (value == '1') {
@@ -2869,8 +3113,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               'the same, but because measurement is always a comparison, '
               'and the only honest comparison is with the thing itself.\n\n'
               'The passage south opens.',
-          needsDemiurge:       true,
-          lucidityDelta:  10,
+          needsDemiurge: true,
+          lucidityDelta: 10,
           completePuzzle: 'archive_constant_entered',
         );
       }
@@ -2881,10 +3125,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     // Lab substances: decipher symbols
-    if ((raw == 'decipher symbols' || raw == 'decipher') && nodeId == 'lab_substances') {
+    if ((raw == 'decipher symbols' || raw == 'decipher') &&
+        nodeId == 'lab_substances') {
       if (s.completedPuzzles.contains('lab_symbols_deciphered')) {
         return const EngineResponse(
-          narrativeText: 'The symbols are already decoded: mercury, sulphur, salt.\n\n'
+          narrativeText:
+              'The symbols are already decoded: mercury, sulphur, salt.\n\n'
               'Collect each to proceed.',
         );
       }
@@ -2896,7 +3142,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Salt — the body, fixity, matter.\n\n'
             'The Tria Prima. All transformation passes through these three.\n\n'
             'Now: collect mercury — collect sulphur — collect salt.',
-        lucidityDelta:  5,
+        lucidityDelta: 5,
         completePuzzle: 'lab_symbols_deciphered',
       );
     }
@@ -2906,7 +3152,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       final sub = raw.substring(8).trim();
       if (!s.completedPuzzles.contains('lab_symbols_deciphered')) {
         return const EngineResponse(
-          narrativeText: 'You do not yet know what to collect.\n\nDecipher the symbols first.',
+          narrativeText:
+              'You do not yet know what to collect.\n\nDecipher the symbols first.',
         );
       }
       // Normalise sulfur/sulphur
@@ -2920,23 +3167,28 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
       final puzzleId = 'lab_${key}_collected';
       if (s.completedPuzzles.contains(puzzleId)) {
-        return EngineResponse(narrativeText: 'You have already collected the $key.');
+        return EngineResponse(
+            narrativeText: 'You have already collected the $key.');
       }
       // Check whether this is the final substance using a Set so all three
       // required IDs are expressed in one place.
-      const required = {'lab_mercury_collected', 'lab_sulphur_collected', 'lab_salt_collected'};
+      const required = {
+        'lab_mercury_collected',
+        'lab_sulphur_collected',
+        'lab_salt_collected'
+      };
       final afterThis = s.completedPuzzles.union({puzzleId});
       final isLast = required.every(afterThis.contains);
       // Always record the individual substance ID; _handleGo checks all three.
       return EngineResponse(
         narrativeText: isLast
             ? 'You collect the $key.\n\n'
-              'All three substances of the Tria Prima are gathered.\n\n'
-              'The three branches open: the furnace, the alembic, the bain-marie.'
+                'All three substances of the Tria Prima are gathered.\n\n'
+                'The three branches open: the furnace, the alembic, the bain-marie.'
             : 'You collect the $key. It settles with a faint warmth.',
-        needsDemiurge:       isLast,
+        needsDemiurge: isLast,
         completePuzzle: puzzleId,
-        lucidityDelta:  isLast ? 8 : null,
+        lucidityDelta: isLast ? 8 : null,
       );
     }
 
@@ -2944,7 +3196,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (raw == 'calcinate' && nodeId == 'lab_furnace') {
       if (s.completedPuzzles.contains('furnace_calcinating')) {
         return const EngineResponse(
-          narrativeText: 'The calcination is already in progress. Wait for five turnings.',
+          narrativeText:
+              'The calcination is already in progress. Wait for five turnings.',
         );
       }
       return const EngineResponse(
@@ -2957,8 +3210,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     // Gallery hall: observe reflection (2nd Proustian trigger, GDD §9)
-    if ((raw == 'observe reflection' || raw.startsWith('observe reflection') ||
-            raw == 'observe' || raw.startsWith('observe ')) &&
+    if ((raw == 'observe reflection' ||
+            raw.startsWith('observe reflection') ||
+            raw == 'observe' ||
+            raw.startsWith('observe ')) &&
         nodeId == 'gallery_hall') {
       if (s.completedPuzzles.contains('hall_backward_walked') &&
           !s.completedPuzzles.contains('gallery_reflection_triggered')) {
@@ -2968,10 +3223,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               '"More fragile but more vivid, more unsubstantial, '
               'more persistent, more faithful."\n\n'
               'The images hold something you had forgotten was yours.',
-          needsDemiurge:       true,
-          lucidityDelta:  -5,
-          anxietyDelta:   5,
-          audioTrigger:   'sfx:proustian_trigger',
+          needsDemiurge: true,
+          lucidityDelta: -5,
+          anxietyDelta: 5,
+          audioTrigger: 'sfx:proustian_trigger',
           completePuzzle: 'gallery_reflection_triggered',
         );
       }
@@ -2983,10 +3238,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     // Quinto maturity: answer telephone (say/answer/tell)
     if (nodeId == 'quinto_maturity' &&
-        (raw.startsWith('say ') || raw.startsWith('answer ') || raw.startsWith('tell '))) {
+        (raw.startsWith('say ') ||
+            raw.startsWith('answer ') ||
+            raw.startsWith('tell '))) {
       final content = raw.replaceFirst(RegExp(r'^(say|answer|tell)\s+'), '');
       if (s.completedPuzzles.contains('memory_maturity')) {
-        return const EngineResponse(narrativeText: 'The price has been paid. You may leave.');
+        return const EngineResponse(
+            narrativeText: 'The price has been paid. You may leave.');
       }
       if (content.trim().isEmpty) {
         return const EngineResponse(
@@ -2999,10 +3257,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'There is a silence on the line — not empty, but full.\n\n'
             'Then a soft sound that might be acknowledgement.\n\n'
             'The glasses on the desk clear. You may leave.',
-        needsDemiurge:       true,
-        lucidityDelta:  8,
+        needsDemiurge: true,
+        lucidityDelta: 8,
         completePuzzle: 'memory_maturity',
-        audioTrigger:   'calm',
+        audioTrigger: 'calm',
         playerMemoryKey: 'memory_maturity',
       );
     }
@@ -3013,7 +3271,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     // Finale 1: WAKE UP epilogue (GDD §12)
-    if ((raw == 'wake up' || raw == 'wakeup') && nodeId == 'finale_acceptance') {
+    if ((raw == 'wake up' || raw == 'wakeup') &&
+        nodeId == 'finale_acceptance') {
       return const EngineResponse(
         narrativeText: '"The Archive is empty.\n\n'
             'Time has started flowing again.\n\n'
@@ -3034,17 +3293,24 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleDrink(String nodeId, GameEngineState s) {
     if (nodeId != 'quinto_ritual_chamber') {
-      return const EngineResponse(narrativeText: 'There is nothing to drink here.');
+      return const EngineResponse(
+          narrativeText: 'There is nothing to drink here.');
     }
     const cup = {
-      'cup_ataraxia', 'cup_the_constant', 'cup_the_proportion', 'cup_the_catalyst',
+      'cup_ataraxia',
+      'cup_the_constant',
+      'cup_the_proportion',
+      'cup_the_catalyst',
     };
     if (!cup.every(s.completedPuzzles.contains)) {
       final missing = <String>[];
-      if (!s.completedPuzzles.contains('cup_ataraxia'))       missing.add('Ataraxia');
-      if (!s.completedPuzzles.contains('cup_the_constant'))   missing.add('The Constant');
-      if (!s.completedPuzzles.contains('cup_the_proportion')) missing.add('The Proportion');
-      if (!s.completedPuzzles.contains('cup_the_catalyst'))   missing.add('The Catalyst');
+      if (!s.completedPuzzles.contains('cup_ataraxia')) missing.add('Ataraxia');
+      if (!s.completedPuzzles.contains('cup_the_constant'))
+        missing.add('The Constant');
+      if (!s.completedPuzzles.contains('cup_the_proportion'))
+        missing.add('The Proportion');
+      if (!s.completedPuzzles.contains('cup_the_catalyst'))
+        missing.add('The Catalyst');
       return EngineResponse(
         narrativeText: 'The cup is not complete.\n\n'
             'Still to be placed: ${missing.join(", ")}.',
@@ -3057,7 +3323,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
     if (s.completedPuzzles.contains('ritual_complete')) {
       return const EngineResponse(
-        narrativeText: 'You have already drunk the infusion. The passage below is open.',
+        narrativeText:
+            'You have already drunk the infusion. The passage below is open.',
       );
     }
     return const EngineResponse(
@@ -3068,12 +3335,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'and you are neither the one who holds it nor the one held.\n\n'
           'Then: the silence before a question that has waited a very long time.\n\n'
           'The passage below opens.',
-      needsDemiurge:       true,
-      lucidityDelta:  15,
-      anxietyDelta:   -20,
-      audioTrigger:   'calm',
+      needsDemiurge: true,
+      lucidityDelta: 15,
+      anxietyDelta: -20,
+      audioTrigger: 'calm',
       completePuzzle: 'ritual_complete',
-      newNode:        'il_nucleo',
+      newNode: 'il_nucleo',
     );
   }
 
@@ -3082,14 +3349,20 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       return const EngineResponse(narrativeText: 'Nothing here to stir.');
     }
     const cup = {
-      'cup_ataraxia', 'cup_the_constant', 'cup_the_proportion', 'cup_the_catalyst',
+      'cup_ataraxia',
+      'cup_the_constant',
+      'cup_the_proportion',
+      'cup_the_catalyst',
     };
     if (!cup.every(s.completedPuzzles.contains)) {
       final missing = <String>[];
-      if (!s.completedPuzzles.contains('cup_ataraxia'))       missing.add('ataraxia');
-      if (!s.completedPuzzles.contains('cup_the_constant'))   missing.add('the constant');
-      if (!s.completedPuzzles.contains('cup_the_proportion')) missing.add('the proportion');
-      if (!s.completedPuzzles.contains('cup_the_catalyst'))   missing.add('the catalyst');
+      if (!s.completedPuzzles.contains('cup_ataraxia')) missing.add('ataraxia');
+      if (!s.completedPuzzles.contains('cup_the_constant'))
+        missing.add('the constant');
+      if (!s.completedPuzzles.contains('cup_the_proportion'))
+        missing.add('the proportion');
+      if (!s.completedPuzzles.contains('cup_the_catalyst'))
+        missing.add('the catalyst');
       return EngineResponse(
         narrativeText: 'The cup is not ready.\n\n'
             'Still to be placed: ${missing.join(", ")}.',
@@ -3105,10 +3378,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The four elements spiral together — each distinct, all one. '
           'A scent rises: specific, personal, the sum of everything encountered.\n\n'
           'The infusion is ready. Drink.',
-      needsDemiurge:       true,
-      lucidityDelta:  8,
+      needsDemiurge: true,
+      lucidityDelta: 8,
       completePuzzle: 'ritual_stirred',
-      audioTrigger:   'calm',
+      audioTrigger: 'calm',
     );
   }
 
@@ -3123,7 +3396,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           .where((i) => i.contains(target) || target.contains(i))
           .firstOrNull;
       if (match == null) {
-        return const EngineResponse(narrativeText: 'You are not carrying that.');
+        return const EngineResponse(
+            narrativeText: 'You are not carrying that.');
       }
       return EngineResponse(
         narrativeText: 'You set down the $match.',
@@ -3168,7 +3442,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     const cup = {
-      'cup_ataraxia', 'cup_the_constant', 'cup_the_proportion', 'cup_the_catalyst',
+      'cup_ataraxia',
+      'cup_the_constant',
+      'cup_the_proportion',
+      'cup_the_catalyst',
     };
     final afterThis = Set<String>.from(s.completedPuzzles)..add(puzzleId);
     final isLast = cup.every(afterThis.contains);
@@ -3177,16 +3454,16 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return EngineResponse(
       narrativeText: isLast
           ? 'You place the $simFound in the cup.\n\n'
-            'All four simulacra rest together in the liquid. '
-            'It shimmers — a colour you cannot name.\n\n'
-            'Something has shifted in the architecture of the Archive.\n\n'
-            'Now: stir.'
+              'All four simulacra rest together in the liquid. '
+              'It shimmers — a colour you cannot name.\n\n'
+              'Something has shifted in the architecture of the Archive.\n\n'
+              'Now: stir.'
           : 'You place the $simFound in the cup.\n\n'
-            'The liquid brightens briefly. '
-            '$remaining more to place.',
-      needsDemiurge:       isLast,
+              'The liquid brightens briefly. '
+              '$remaining more to place.',
+      needsDemiurge: isLast,
       completePuzzle: puzzleId,
-      lucidityDelta:  isLast ? 5 : null,
+      lucidityDelta: isLast ? 5 : null,
     );
   }
 
@@ -3205,8 +3482,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             '...\n\n'
             '"Lived. Died. No one will remember."\n\n'
             '— Arseny Tarkovsky',
-        needsDemiurge:     false,
-        newNode:      'finale_oblivion',
+        needsDemiurge: false,
+        newNode: 'finale_oblivion',
         audioTrigger: 'silence',
         oblivionDelta: 30,
       );
@@ -3220,8 +3497,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'The Archive continues. The variations are infinite. '
             'You will encounter them all, eventually.\n\n'
             'The Zone does not end. Neither do you.',
-        needsDemiurge:     true,
-        newNode:      'finale_eternal_zone',
+        needsDemiurge: true,
+        newNode: 'finale_eternal_zone',
         audioTrigger: 'oblivion',
       );
     }
@@ -3240,10 +3517,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               'holding itself very carefully, relaxes.\n\n'
               'A light — not dramatic, not final — '
               'the light of an ordinary room at dusk.',
-          needsDemiurge:       true,
-          newNode:        'finale_acceptance',
-          lucidityDelta:  20,
-          audioTrigger:   'aria_goldberg',
+          needsDemiurge: true,
+          newNode: 'finale_acceptance',
+          lucidityDelta: 20,
+          audioTrigger: 'aria_goldberg',
           completePuzzle: 'boss_resolved',
         );
       }
@@ -3277,9 +3554,9 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
       return EngineResponse(
         narrativeText: responseText,
-        needsDemiurge:         attempts < 2,
+        needsDemiurge: attempts < 2,
         incrementCounter: 'boss_attempts',
-        anxietyDelta:     attempts * 3,
+        anxietyDelta: attempts * 3,
       );
     }
 
@@ -3302,10 +3579,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Your hands are empty. The weight is gone.\n\n'
             'The Antagonist looks at you differently.\n\n'
             '"That," it says, "changes the argument."',
-        lucidityDelta:           10,
-        anxietyDelta:            -15,
-        needsDemiurge:                true,
-        audioTrigger:            'calm',
+        lucidityDelta: 10,
+        anxietyDelta: -15,
+        needsDemiurge: true,
+        audioTrigger: 'calm',
         clearInventoryOnDeposit: true,
       );
     }
@@ -3322,7 +3599,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
     final target = cmd.args.join(' ');
     final match = s.inventory
-        .where((i) => !_isSimulacrum(i) && (i.contains(target) || target.contains(i)))
+        .where((i) =>
+            !_isSimulacrum(i) && (i.contains(target) || target.contains(i)))
         .firstOrNull;
     if (match == null) {
       return const EngineResponse(
@@ -3330,20 +3608,19 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'in a way that cannot be put down here.',
       );
     }
-    final remaining = s.inventory
-        .where((i) => !_isSimulacrum(i) && i != match)
-        .length;
+    final remaining =
+        s.inventory.where((i) => !_isSimulacrum(i) && i != match).length;
     if (remaining == 0) {
       return EngineResponse(
         narrativeText: 'You set down the $match.\n\n'
             'Your hands are empty. The weight is zero.\n\n'
             'The Antagonist looks at you for a long time.\n\n'
             '"That," it says, "changes the argument."',
-        weightDelta:  -1,
+        weightDelta: -1,
         lucidityDelta: 10,
-        anxietyDelta:  -10,
-        needsDemiurge:      true,
-        audioTrigger:  'calm',
+        anxietyDelta: -10,
+        needsDemiurge: true,
+        audioTrigger: 'calm',
       );
     }
     return EngineResponse(
@@ -3351,7 +3628,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'The Antagonist observes this. "There is still weight," it says.\n\n'
           '$remaining thing${remaining == 1 ? "" : "s"} '
           'remain${remaining == 1 ? "s" : ""}.',
-      weightDelta:  -1,
+      weightDelta: -1,
       anxietyDelta: -2,
       lucidityDelta: 3,
     );
@@ -3367,7 +3644,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'choose to fire. Every memory: a reconstruction, inaccurate, '
             'serving the survival of an organism that will not survive.\n\n'
             'I am not your enemy. I am the mercy you have been afraid to accept."',
-        needsDemiurge:    true,
+        needsDemiurge: true,
         anxietyDelta: 5,
       );
     }
@@ -3375,7 +3652,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       narrativeText: 'The Antagonist listens.\n\n'
           '"You speak as if the words could change what is true.\n\n'
           'What do you carry that proves you wrong?"',
-      needsDemiurge:    true,
+      needsDemiurge: true,
       anxietyDelta: 2,
     );
   }
@@ -3393,7 +3670,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
     // finale_eternal_zone: zone continues
     return const EngineResponse(
-      narrativeText: 'The variations continue. There is no command that ends this.',
+      narrativeText:
+          'The variations continue. There is no command that ends this.',
     );
   }
 
@@ -3423,11 +3701,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return EngineResponse(
       narrativeText: 'The Zone receives your answer without comment.\n\n'
           '${q.crypticResponse}',
-      needsDemiurge:        true,
-      newNode:         'la_soglia',
-      completePuzzle:  respondedKey,
-      lucidityDelta:   -3,
-      anxietyDelta:    -5,
+      needsDemiurge: true,
+      newNode: 'la_soglia',
+      completePuzzle: respondedKey,
+      lucidityDelta: -3,
+      anxietyDelta: -5,
       playerMemoryKey: 'zone_$encounters', // salva la risposta alla Zona
     );
   }
@@ -3451,22 +3729,22 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     // Zone activates — build entry text
     final encounters = s.puzzleCounters['zone_encounters'] ?? 0;
     final verse = _tarkovskyVerses[encounters % _tarkovskyVerses.length];
-    final env   = _zoneEnvironments[encounters % _zoneEnvironments.length];
-    final q     = _zoneQuestions[encounters % _zoneQuestions.length];
+    final env = _zoneEnvironments[encounters % _zoneEnvironments.length];
+    final q = _zoneQuestions[encounters % _zoneQuestions.length];
 
     return EngineResponse(
       narrativeText: '$verse\n\n$env\n\n${q.question}',
-      newNode:   'la_zona',
-      needsDemiurge:  true,
+      newNode: 'la_zona',
+      needsDemiurge: true,
       anxietyDelta: 5,
     );
   }
 
   double _zoneActivationProbability(
       String fromNode, String destNode, GameEngineState s) {
-    final encounters      = s.puzzleCounters['zone_encounters'] ?? 0;
-    final consecutive     = s.puzzleCounters['consecutive_transits'] ?? 0;
-    final simulacraCount  = _simulacraNames.where(s.inventory.contains).length;
+    final encounters = s.puzzleCounters['zone_encounters'] ?? 0;
+    final consecutive = s.puzzleCounters['consecutive_transits'] ?? 0;
+    final simulacraCount = _simulacraNames.where(s.inventory.contains).length;
     final hasAllSimulacra = simulacraCount == 4;
 
     // Avoid triggering while a zone response is still pending
@@ -3510,10 +3788,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   bool _isSectorCompletion(
       String fromNode, String destNode, GameEngineState s) {
     final done = s.completedPuzzles;
-    if (fromNode == 'garden_grove'    && done.contains('garden_complete'))   return true;
-    if (fromNode == 'obs_dome'        && done.contains('obs_complete'))      return true;
-    if (fromNode == 'gallery_central' && done.contains('gallery_complete'))  return true;
-    if (fromNode == 'lab_sealed'      && done.contains('lab_complete'))      return true;
+    if (fromNode == 'garden_grove' && done.contains('garden_complete'))
+      return true;
+    if (fromNode == 'obs_dome' && done.contains('obs_complete')) return true;
+    if (fromNode == 'gallery_central' && done.contains('gallery_complete'))
+      return true;
+    if (fromNode == 'lab_sealed' && done.contains('lab_complete')) return true;
     return false;
   }
 
@@ -3558,7 +3838,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         ]);
       case 'lab_great_work':
         final step = s.puzzleCounters['great_work_step'] ?? 0;
-        final nextPlanet = step < _planetOrder.length ? _planetOrder[step] : _planetOrder.last;
+        final nextPlanet =
+            step < _planetOrder.length ? _planetOrder[step] : _planetOrder.last;
         return _selectHint(level, [
           'Order matters more than substance here.',
           'The circles accept a planetary descent, one stage at a time.',
@@ -3650,7 +3931,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         // Inventory burden is tracked separately from the psycho-profile sliders.
         previousState.psychoWeight != currentState.psychoWeight ||
         !listEquals(previousState.inventory, currentState.inventory) ||
-        !setEquals(previousState.completedPuzzles, currentState.completedPuzzles) ||
+        !setEquals(
+            previousState.completedPuzzles, currentState.completedPuzzles) ||
         !mapEquals(previousState.puzzleCounters, currentState.puzzleCounters);
   }
 
@@ -3667,20 +3949,21 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       final profile = ref.read(psychoProfileProvider).valueOrNull;
       await SaveService.instance.saveToSlot(
         0,
-        currentNode:        nodeId,
-        completedPuzzles:   engineState.completedPuzzles,
-        puzzleCounters:     engineState.puzzleCounters,
-        inventory:          engineState.inventory,
-        psychoWeight:       engineState.psychoWeight,
-        lucidity:           profile?.lucidity           ?? DatabaseService.defaultLucidity,
-        oblivionLevel:      profile?.oblivionLevel      ?? DatabaseService.defaultOblivionLevel,
-        anxiety:            profile?.anxiety             ?? DatabaseService.defaultAnxiety,
-        phase:              profile?.phase               ?? 1,
-        awarenessLevel:     profile?.awarenessLevel      ?? 0,
-        proustAffinity:     profile?.proustAffinity      ?? 0,
-        tarkovskijAffinity: profile?.tarkovskijAffinity  ?? 0,
-        sethAffinity:       profile?.sethAffinity        ?? 0,
-        sectorLabel:        sectorLabel,
+        currentNode: nodeId,
+        completedPuzzles: engineState.completedPuzzles,
+        puzzleCounters: engineState.puzzleCounters,
+        inventory: engineState.inventory,
+        psychoWeight: engineState.psychoWeight,
+        lucidity: profile?.lucidity ?? DatabaseService.defaultLucidity,
+        oblivionLevel:
+            profile?.oblivionLevel ?? DatabaseService.defaultOblivionLevel,
+        anxiety: profile?.anxiety ?? DatabaseService.defaultAnxiety,
+        phase: profile?.phase ?? 1,
+        awarenessLevel: profile?.awarenessLevel ?? 0,
+        proustAffinity: profile?.proustAffinity ?? 0,
+        tarkovskijAffinity: profile?.tarkovskijAffinity ?? 0,
+        sethAffinity: profile?.sethAffinity ?? 0,
+        sectorLabel: sectorLabel,
       );
     } catch (e) {
       // Auto-save failures must not interrupt gameplay, but log for diagnostics.
@@ -3697,7 +3980,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     final savedState = await ref.read(gameStateProvider.future);
     final sectorLabel = gameSectorLabel(savedState.currentNode);
     await _triggerAutoSave(
-      nodeId:      savedState.currentNode,
+      nodeId: savedState.currentNode,
       engineState: engineState,
       sectorLabel: sectorLabel,
     );
@@ -3706,20 +3989,21 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       final profile = ref.read(psychoProfileProvider).valueOrNull;
       await SaveService.instance.saveToSlot(
         slot,
-        currentNode:        savedState.currentNode,
-        completedPuzzles:   engineState.completedPuzzles,
-        puzzleCounters:     engineState.puzzleCounters,
-        inventory:          engineState.inventory,
-        psychoWeight:       engineState.psychoWeight,
-        lucidity:           profile?.lucidity           ?? DatabaseService.defaultLucidity,
-        oblivionLevel:      profile?.oblivionLevel      ?? DatabaseService.defaultOblivionLevel,
-        anxiety:            profile?.anxiety             ?? DatabaseService.defaultAnxiety,
-        phase:              profile?.phase               ?? 1,
-        awarenessLevel:     profile?.awarenessLevel      ?? 0,
-        proustAffinity:     profile?.proustAffinity      ?? 0,
-        tarkovskijAffinity: profile?.tarkovskijAffinity  ?? 0,
-        sethAffinity:       profile?.sethAffinity        ?? 0,
-        sectorLabel:        sectorLabel,
+        currentNode: savedState.currentNode,
+        completedPuzzles: engineState.completedPuzzles,
+        puzzleCounters: engineState.puzzleCounters,
+        inventory: engineState.inventory,
+        psychoWeight: engineState.psychoWeight,
+        lucidity: profile?.lucidity ?? DatabaseService.defaultLucidity,
+        oblivionLevel:
+            profile?.oblivionLevel ?? DatabaseService.defaultOblivionLevel,
+        anxiety: profile?.anxiety ?? DatabaseService.defaultAnxiety,
+        phase: profile?.phase ?? 1,
+        awarenessLevel: profile?.awarenessLevel ?? 0,
+        proustAffinity: profile?.proustAffinity ?? 0,
+        tarkovskijAffinity: profile?.tarkovskijAffinity ?? 0,
+        sethAffinity: profile?.sethAffinity ?? 0,
+        sectorLabel: sectorLabel,
       );
     } catch (_) {
       rethrow; // Manual save failures are surfaced to the caller.
@@ -3736,24 +4020,27 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     // Refresh providers so they re-read from the updated DB rows.
     await ref.read(gameStateProvider.notifier).saveEngineState(
-      currentNode:      slot.currentNode,
-      completedPuzzles: slot.completedPuzzles,
-      puzzleCounters:   slot.puzzleCounters,
-      inventory:        slot.inventory,
-      psychoWeight:     slot.psychoWeight,
-    );
+          currentNode: slot.currentNode,
+          completedPuzzles: slot.completedPuzzles,
+          puzzleCounters: slot.puzzleCounters,
+          inventory: slot.inventory,
+          psychoWeight: slot.psychoWeight,
+        );
     // Write the full psycho profile directly (not as deltas).
     final db = await DatabaseService.instance.database;
-    await db.update('psycho_profile', {
-      'lucidity':           slot.lucidity,
-      'oblivion_level':     slot.oblivionLevel,
-      'anxiety':            slot.anxiety,
-      'phase':              slot.phase,
-      'awareness_level':    slot.awarenessLevel,
-      'proust_affinity':    slot.proustAffinity,
-      'tarkovskij_affinity': slot.tarkovskijAffinity,
-      'seth_affinity':      slot.sethAffinity,
-    }, where: 'id = 1');
+    await db.update(
+        'psycho_profile',
+        {
+          'lucidity': slot.lucidity,
+          'oblivion_level': slot.oblivionLevel,
+          'anxiety': slot.anxiety,
+          'phase': slot.phase,
+          'awareness_level': slot.awarenessLevel,
+          'proust_affinity': slot.proustAffinity,
+          'tarkovskij_affinity': slot.tarkovskijAffinity,
+          'seth_affinity': slot.sethAffinity,
+        },
+        where: 'id = 1');
     // Force the provider to reload from the updated DB row.
     ref.invalidate(psychoProfileProvider);
     await ref.read(psychoProfileProvider.future);
@@ -3766,17 +4053,63 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         : 'The Archive restores your position.';
 
     state = AsyncValue.data(GameEngineState(
-      messages:         [GameMessage(text: welcomeBack, role: MessageRole.narrative)],
-      phase:            ParserPhase.idle,
-      inventory:        slot.inventory,
+      messages: [GameMessage(text: welcomeBack, role: MessageRole.narrative)],
+      phase: ParserPhase.idle,
+      inventory: slot.inventory,
       completedPuzzles: slot.completedPuzzles,
-      puzzleCounters:   slot.puzzleCounters,
-      psychoWeight:     slot.psychoWeight,
+      puzzleCounters: slot.puzzleCounters,
+      psychoWeight: slot.psychoWeight,
     ));
 
     // Reset auto-save counters.
     _commandsSinceAutoSave = 0;
     _lastAutoSaveSector = slot.sectorLabel;
+    _nonProductiveAttemptsByNode.clear();
+  }
+
+  bool _isProgressiveHintEligible(CommandVerb verb) {
+    return verb != CommandVerb.hint &&
+        verb != CommandVerb.help &&
+        verb != CommandVerb.inventory;
+  }
+
+  bool _isProductiveOutcome(EngineResponse response) {
+    return response.newNode != null ||
+        response.completePuzzle != null ||
+        response.grantItem != null ||
+        response.incrementCounter != null ||
+        response.clearInventoryOnDeposit ||
+        response.weightDelta != 0 ||
+        response.lucidityDelta != null ||
+        response.anxietyDelta != null ||
+        response.oblivionDelta != null ||
+        response.playerMemoryKey != null;
+  }
+
+  String? _progressiveHintSuffix({
+    required ParsedCommand cmd,
+    required EngineResponse response,
+    required String nodeId,
+    required GameEngineState stateSnapshot,
+  }) {
+    if (!_isProgressiveHintEligible(cmd.verb)) return null;
+
+    if (_isProductiveOutcome(response)) {
+      _nonProductiveAttemptsByNode.remove(nodeId);
+      return null;
+    }
+
+    final attempts = (_nonProductiveAttemptsByNode[nodeId] ?? 0) + 1;
+    _nonProductiveAttemptsByNode[nodeId] = attempts;
+
+    if (attempts != 3 && attempts != 5) return null;
+    final hintLevel = attempts == 3 ? 1 : 2;
+    final hintText = _hintTextForNode(nodeId, hintLevel, stateSnapshot);
+    final hintBody = hintText.contains('\n\n')
+        ? hintText.split('\n\n').skip(1).join('\n\n')
+        : hintText;
+
+    return '\n\nThe Archive does not correct you. It adjusts the light.\n\n$hintBody';
   }
 
   /// Returns a Demiurge ("All That Is") narrative response for the given node.
@@ -3819,9 +4152,9 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       final echo = EchoService.echoForCommand(
         verb.name,
         profile.phase,
-        proustAffinity:     profile.proustAffinity,
+        proustAffinity: profile.proustAffinity,
         tarkovskijAffinity: profile.tarkovskijAffinity,
-        sethAffinity:       profile.sethAffinity,
+        sethAffinity: profile.sethAffinity,
       );
       if (echo != null) {
         final echoText = EchoService.instance.respond(echo);
@@ -3874,8 +4207,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     else if (verb == CommandVerb.examine || verb == CommandVerb.observe) {
       awareness = 1;
       tarkovskij = 2;
-    }
-    else if (verb == CommandVerb.wait) {
+    } else if (verb == CommandVerb.wait) {
       awareness = 2;
       tarkovskij = 3;
     }
@@ -3891,21 +4223,30 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       if (keywordEcho != null) {
         // Deliberate Echo invocation — large affinity bonus.
         awareness = 4;
-        if (keywordEcho == 'proust')          { proust = 8; }
-        else if (keywordEcho == 'tarkovskij') { tarkovskij = 8; }
-        else if (keywordEcho == 'seth')       { seth = 8; }
+        if (keywordEcho == 'proust') {
+          proust = 8;
+        } else if (keywordEcho == 'tarkovskij') {
+          tarkovskij = 8;
+        } else if (keywordEcho == 'seth') {
+          seth = 8;
+        }
       } else {
         // Check sector-thematic — wandering in the right direction.
         // We need the current node to determine the sector; read from saved state.
-        final savedNode = ref.read(gameStateProvider).valueOrNull?.currentNode ?? '';
+        final savedNode =
+            ref.read(gameStateProvider).valueOrNull?.currentNode ?? '';
         final sector = DemiurgeService.sectorForNode(savedNode);
         if (EchoService.isThematicForSector(rawInput, sector)) {
           // Thematic but unrecognised — a gentle awareness + sector affinity boost.
           awareness = 3;
           final sectorEchoName = EchoService.sectorEcho[sector];
-          if (sectorEchoName == 'proust')          { proust = 4; }
-          else if (sectorEchoName == 'tarkovskij') { tarkovskij = 4; }
-          else if (sectorEchoName == 'seth')       { seth = 4; }
+          if (sectorEchoName == 'proust') {
+            proust = 4;
+          } else if (sectorEchoName == 'tarkovskij') {
+            tarkovskij = 4;
+          } else if (sectorEchoName == 'seth') {
+            seth = 4;
+          }
         } else {
           // Completely off-topic — archive-meta response fires.
           // Small awareness gain (even mistakes teach) + modest oblivion increase.
@@ -3926,11 +4267,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (awareness == 0 && proust == 0 && tarkovskij == 0 && seth == 0) return;
 
     await ref.read(psychoProfileProvider.notifier).updateAwareness(
-      awarenessDelta:     awareness > 0 ? awareness : null,
-      proustDelta:        proust > 0 ? proust : null,
-      tarkovskijDelta:    tarkovskij > 0 ? tarkovskij : null,
-      sethDelta:          seth > 0 ? seth : null,
-    );
+          awarenessDelta: awareness > 0 ? awareness : null,
+          proustDelta: proust > 0 ? proust : null,
+          tarkovskijDelta: tarkovskij > 0 ? tarkovskij : null,
+          sethDelta: seth > 0 ? seth : null,
+        );
   }
 }
 
@@ -3971,8 +4312,9 @@ const _helpText = '''Commands:
   wake up                              — Finale 1 epilogue
   help  /  ?                           — this message''';
 
-String gameNodeTitle(String nodeId) =>
-    _nodes[nodeId]?.title.isNotEmpty == true ? _nodes[nodeId]!.title : 'The Archive';
+String gameNodeTitle(String nodeId) => _nodes[nodeId]?.title.isNotEmpty == true
+    ? _nodes[nodeId]!.title
+    : 'The Archive';
 
 String? gameRequiredPuzzleForExit(String nodeId, String direction) =>
     _exitGates[nodeId]?[direction];
@@ -3989,7 +4331,8 @@ BossUtteranceKind classifyBossUtterance(String rawInput) {
       raw.contains('eternal zone')) {
     return BossUtteranceKind.remain;
   }
-  if (_resolutionKeywords.any(raw.contains)) return BossUtteranceKind.resolution;
+  if (_resolutionKeywords.any(raw.contains))
+    return BossUtteranceKind.resolution;
   return BossUtteranceKind.other;
 }
 
@@ -4018,9 +4361,11 @@ String gameSectorLabel(String nodeId) {
   if (nodeId == 'intro_void' || nodeId == 'la_soglia') return 'Threshold';
   if (nodeId.startsWith('garden')) return 'Garden';
   if (nodeId.startsWith('obs_')) return 'Observatory';
-  if (nodeId.startsWith('gal_') || nodeId.startsWith('gallery_')) return 'Gallery';
+  if (nodeId.startsWith('gal_') || nodeId.startsWith('gallery_'))
+    return 'Gallery';
   if (nodeId.startsWith('lab_')) return 'Laboratory';
-  if (nodeId.startsWith('quinto_') || nodeId.startsWith('memory_')) return 'Memory';
+  if (nodeId.startsWith('quinto_') || nodeId.startsWith('memory_'))
+    return 'Memory';
   if (nodeId.startsWith('finale_') || nodeId == 'il_nucleo') return 'Finale';
   if (nodeId == 'la_zona') return 'Zone';
   return 'Archive';
