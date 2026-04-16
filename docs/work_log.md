@@ -4,6 +4,29 @@
 
 ---
 
+### 2026-04-16 — Codex GPT-5 (Session recap after load/resume)
+**Role:** Gameplay UX / session continuity
+
+**Done:**
+- Added a reusable three-line recap builder in `lib/features/game/game_engine_provider.dart`:
+  - `Where`: current sector and node
+  - `What`: carried items, burden, completed thresholds
+  - `Next`: contextual actionable thread derived from node hint level 1
+- Updated `loadSlot(SaveSlot)` to prepend the recap when restoring a save, then continue with node narrative text.
+- Added `appendSessionRecap()` in `GameEngineNotifier` to append the same recap format into the live transcript during idle gameplay.
+- Updated `lib/features/ui/game_screen.dart` to implement `WidgetsBindingObserver` and trigger recap on app return to foreground only after a real background pause (`_resumeRecapArmed` guard), preventing duplicate recap spam.
+
+**Verification:**
+- `dart format lib/features/game/game_engine_provider.dart lib/features/ui/game_screen.dart` ✅
+- `flutter analyze` ✅ (info-level `curly_braces_in_flow_control_structures` warnings pre-existing in project)
+- `flutter test test/parser_test.dart test/puzzle_gates_test.dart` ✅
+
+**Architecture notes:**
+- Recap generation remains inside the single `GameEngineNotifier` boundary (no provider split), consistent with project rules.
+- Resume recap is lifecycle-driven in UI, while content authority stays in engine/domain code.
+
+---
+
 ### 2026-04-16 — Codex GPT-5 (Progressive diegetic hints)
 **Role:** Gameplay UX / stuck-state mitigation
 

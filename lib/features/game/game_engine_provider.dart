@@ -3938,6 +3938,33 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   // ── Save / load ──────────────────────────────────────────────────────────────
 
+  String _sessionNextThread({
+    required String nodeId,
+    required GameEngineState engineState,
+  }) {
+    final raw = _hintTextForNode(nodeId, 1, engineState).trim();
+    final body =
+        raw.contains('\n\n') ? raw.split('\n\n').skip(1).join(' ').trim() : raw;
+    if (body.isEmpty)
+      return 'Listen to the room, then act on the first concrete verb.';
+    return body;
+  }
+
+  String _buildSessionRecap({
+    required String nodeId,
+    required GameEngineState engineState,
+  }) {
+    final sectorLabel = gameSectorLabel(nodeId);
+    final nodeTitle = gameNodeTitle(nodeId);
+    final nextThread = _sessionNextThread(
+      nodeId: nodeId,
+      engineState: engineState,
+    );
+    return 'Where: $sectorLabel - $nodeTitle.\n'
+        'What: ${engineState.inventory.length} items carried, burden ${engineState.psychoWeight}, ${engineState.completedPuzzles.length} thresholds crossed.\n'
+        'Next: $nextThread';
+  }
+
   /// Writes the current game state to auto-save slot 0.
   /// Fire-and-forget — exceptions are swallowed to avoid disrupting gameplay.
   Future<void> _triggerAutoSave({
@@ -4047,24 +4074,49 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     DemiurgeService.instance.restorePhase(slot.phase);
 
     // Build a fresh engine state from the restored data.
-    final node = _nodes[slot.currentNode];
-    final welcomeBack = node != null
-        ? 'Resuming from ${slot.sectorLabel}.\n\n${_enterNode(node)}'
-        : 'The Archive restores your position.';
-
-    state = AsyncValue.data(GameEngineState(
-      messages: [GameMessage(text: welcomeBack, role: MessageRole.narrative)],
+    final restoredState = GameEngineState(
       phase: ParserPhase.idle,
       inventory: slot.inventory,
       completedPuzzles: slot.completedPuzzles,
       puzzleCounters: slot.puzzleCounters,
       psychoWeight: slot.psychoWeight,
-    ));
+    );
+    final node = _nodes[slot.currentNode];
+    final recap = _buildSessionRecap(
+      nodeId: slot.currentNode,
+      engineState: restoredState,
+    );
+    final welcomeBack = node != null ? '$recap\n\n${_enterNode(node)}' : recap;
+
+    state = AsyncValue.data(
+      restoredState.copyWith(
+        messages: [GameMessage(text: welcomeBack, role: MessageRole.narrative)],
+      ),
+    );
 
     // Reset auto-save counters.
     _commandsSinceAutoSave = 0;
     _lastAutoSaveSector = slot.sectorLabel;
     _nonProductiveAttemptsByNode.clear();
+  }
+
+  /// Appends a short three-line recap to the transcript when returning to the app.
+  Future<void> appendSessionRecap() async {
+    final engineState = state.valueOrNull;
+    if (engineState == null || engineState.phase != ParserPhase.idle) return;
+    final persisted = await ref.read(gameStateProvider.future);
+    final recap = _buildSessionRecap(
+      nodeId: persisted.currentNode,
+      engineState: engineState,
+    );
+    await _history.save(role: 'system', content: 'Session recap emitted.');
+    await _history.save(role: 'demiurge', content: recap);
+    state = AsyncValue.data(
+      _appendMessage(
+        engineState,
+        GameMessage(text: recap, role: MessageRole.narrative),
+      ),
+    );
   }
 
   bool _isProgressiveHintEligible(CommandVerb verb) {

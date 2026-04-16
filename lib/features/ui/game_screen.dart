@@ -49,19 +49,40 @@ bool _isFinaleNode(String nodeId) =>
 
 _FinaleType? _finaleTypeFor(String nodeId) {
   switch (nodeId) {
-    case 'finale_acceptance':   return _FinaleType.acceptance;
-    case 'finale_oblivion':     return _FinaleType.oblivion;
-    case 'finale_eternal_zone': return _FinaleType.eternalZone;
-    default:                    return null;
+    case 'finale_acceptance':
+      return _FinaleType.acceptance;
+    case 'finale_oblivion':
+      return _FinaleType.oblivion;
+    case 'finale_eternal_zone':
+      return _FinaleType.eternalZone;
+    default:
+      return null;
   }
 }
+
 // 5×4 color matrix: +18% RGB gain plus a small +18 luminance lift keeps the
 // mandated 0.15-opacity artwork readable on dimmer screens without making it loud.
 const List<double> _backgroundImageBrightnessMatrix = [
-  1.18, 0, 0, 0, 18,
-  0, 1.18, 0, 0, 18,
-  0, 0, 1.18, 0, 18,
-  0, 0, 0, 1, 0,
+  1.18,
+  0,
+  0,
+  0,
+  18,
+  0,
+  1.18,
+  0,
+  0,
+  18,
+  0,
+  0,
+  1.18,
+  0,
+  18,
+  0,
+  0,
+  0,
+  1,
+  0,
 ];
 
 class GameScreen extends ConsumerStatefulWidget {
@@ -71,7 +92,8 @@ class GameScreen extends ConsumerStatefulWidget {
   ConsumerState<GameScreen> createState() => _GameScreenState();
 }
 
-class _GameScreenState extends ConsumerState<GameScreen> {
+class _GameScreenState extends ConsumerState<GameScreen>
+    with WidgetsBindingObserver {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
   final _focusNode = FocusNode();
@@ -111,7 +133,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   // Command history — up/down arrow navigation (classic text-adventure UX).
   final List<String> _commandHistory = [];
-  int _historyIndex = -1;   // -1 = not browsing history
+  int _historyIndex = -1; // -1 = not browsing history
   String _historyDraft = ''; // text typed before entering history mode
   int _processedScreenResetCount = 0;
   int _queuedScreenResetCount = 0;
@@ -119,10 +141,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   // preserves the order of successful commands when several land in one frame.
   final Queue<int> _pendingScreenResetCounts = Queue<int>();
   bool _screenResetCallbackScheduled = false;
+  bool _resumeRecapArmed = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _focusNode.onKeyEvent = (_, event) {
       if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
         return KeyEventResult.ignored;
@@ -149,6 +173,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _typewriterTimer?.cancel();
     _backgroundFlashTimer?.cancel();
     _puzzleCueTimer?.cancel();
@@ -159,14 +184,30 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     super.dispose();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _resumeRecapArmed = true;
+      return;
+    }
+    if (state == AppLifecycleState.resumed && _resumeRecapArmed) {
+      _resumeRecapArmed = false;
+      // ignore: discarded_futures
+      ref.read(gameEngineProvider.notifier).appendSessionRecap();
+    }
+  }
+
   // ── Palette ─────────────────────────────────────────────────────────────
 
   /// Text colour for narrative messages — shifts with psychological state.
   Color _narrativeColor(PsychoProfile? profile) {
     if (profile == null) return Colors.white;
-    if (profile.anxiety > _panicAnxietyThreshold) return const Color(0xFFFFD8D8);
-    if (profile.lucidity < _lowLucidityThreshold) return const Color(0xFFCCCCCC);
-    if (profile.oblivionLevel > _highOblivionThreshold) return const Color(0xFFCCDDEE);
+    if (profile.anxiety > _panicAnxietyThreshold)
+      return const Color(0xFFFFD8D8);
+    if (profile.lucidity < _lowLucidityThreshold)
+      return const Color(0xFFCCCCCC);
+    if (profile.oblivionLevel > _highOblivionThreshold)
+      return const Color(0xFFCCDDEE);
     return Colors.white;
   }
 
@@ -212,12 +253,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final settings = ref.read(appSettingsProvider).valueOrNull;
     final currentNode =
         ref.read(gameStateProvider).valueOrNull?.currentNode ?? '';
-    final baseDelay = _isFinaleNode(currentNode)
-        ? 150
-        : (settings?.typewriterMillis ?? 22);
-    final delay = (ch == ' ' || ch == '\n')
-        ? (baseDelay ~/ 2).clamp(4, 20)
-        : baseDelay;
+    final baseDelay =
+        _isFinaleNode(currentNode) ? 150 : (settings?.typewriterMillis ?? 22);
+    final delay =
+        (ch == ' ' || ch == '\n') ? (baseDelay ~/ 2).clamp(4, 20) : baseDelay;
 
     _typewriterTimer?.cancel();
     _typewriterTimer = Timer(Duration(milliseconds: delay), () {
@@ -233,7 +272,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       if (_typewriterIndex % 3 == 0 &&
           (settings?.enableHaptics ?? true) &&
           !(settings?.reduceMotion ?? false)) {
-        (baseDelay >= 28 ? HapticFeedback.mediumImpact : HapticFeedback.lightImpact)();
+        (baseDelay >= 28
+            ? HapticFeedback.mediumImpact
+            : HapticFeedback.lightImpact)();
       }
       // Typewriter click — fire-and-forget, very low volume (0.08×sfxScale).
       // Uses a single cached AudioPlayer (seek+play), not a new instance per char.
@@ -362,7 +403,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   /// [currentNode] is the node ID already resolved in the build() frame.
   void _consumeSectorChange(String currentNode) {
     final sector = gameSectorLabel(currentNode);
-    if (_lastObservedSectorLabel.isNotEmpty && sector != _lastObservedSectorLabel) {
+    if (_lastObservedSectorLabel.isNotEmpty &&
+        sector != _lastObservedSectorLabel) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _triggerSectorChangeHaptic();
       });
@@ -407,7 +449,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     _lastObservedPuzzleSolved = engine.isPuzzleSolved;
 
     final latestSimulacrum = engine.latestSimulacrum;
-    if (latestSimulacrum != null && _lastObservedSimulacrum != latestSimulacrum) {
+    if (latestSimulacrum != null &&
+        _lastObservedSimulacrum != latestSimulacrum) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _showSimulacrumBanner(latestSimulacrum);
       });
@@ -438,7 +481,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     _queuedScreenResetCount = screenResetCount;
     if (_screenResetCallbackScheduled) return;
     _screenResetCallbackScheduled = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) => _consumeScreenResetCue());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _consumeScreenResetCue());
   }
 
   void _clearScheduledScreenResetCue() {
@@ -461,7 +505,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       _clearScheduledScreenResetCue();
       return;
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) => _consumeScreenResetCue());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _consumeScreenResetCue());
   }
 
   // ── Input ────────────────────────────────────────────────────────────────
@@ -541,10 +586,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Future<void> _walkthroughNext() async {
     if (_walkthroughSteps == null) {
       try {
-        final raw = await rootBundle.loadString('assets/texts/walkthrough.json');
+        final raw =
+            await rootBundle.loadString('assets/texts/walkthrough.json');
         final decoded = jsonDecode(raw) as Map<String, dynamic>;
-        _walkthroughSteps = (decoded['steps'] as List)
-            .cast<Map<String, dynamic>>();
+        _walkthroughSteps =
+            (decoded['steps'] as List).cast<Map<String, dynamic>>();
       } catch (e) {
         // Fail silently in production; print in debug for QA diagnostics.
         assert(() {
@@ -652,7 +698,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     return 'type a command';
   }
 
-  List<_QuickCommand> _quickCommandsForNode(String nodeId, GameEngineState engine) {
+  List<_QuickCommand> _quickCommandsForNode(
+      String nodeId, GameEngineState engine) {
     final commands = <_QuickCommand>[
       const _QuickCommand('Look', 'look'),
       const _QuickCommand('Inventory', 'inventory'),
@@ -741,8 +788,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       ]);
     } else if (nodeId == 'il_nucleo' &&
         engine.inventory.any(
-          (item) =>
-              !simulacraItemNames.contains(item),
+          (item) => !simulacraItemNames.contains(item),
         )) {
       commands.insertAll(0, const [
         _QuickCommand('Deposit', 'deposit everything'),
@@ -820,7 +866,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               error: (e, _) => Center(
                 child: Text(
                   'The Archive is inaccessible.\n$e',
-                  style: const TextStyle(color: Colors.red, fontFamily: 'monospace'),
+                  style: const TextStyle(
+                      color: Colors.red, fontFamily: 'monospace'),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -864,7 +911,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         nodeTitle: gameNodeTitle(currentNode),
                         narrativeColor: narrativeColor,
                         textScale: textScale,
-                        onMenuSelected: (action) => _handleMenuAction(action, engine),
+                        onMenuSelected: (action) =>
+                            _handleMenuAction(action, engine),
                         canReturnToTitle: Navigator.of(context).canPop(),
                       ),
                     ),
@@ -900,32 +948,36 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                               onTap: _skipTypewriter,
                               child: ListView.builder(
                                 controller: _scrollController,
-                                padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-                          itemCount: engine.messages.length,
-                          itemBuilder: (context, index) {
-                            final msg = engine.messages[index];
-                            final isLast = index == engine.messages.length - 1;
-                            final isLastNarrative =
-                                isLast && msg.role == MessageRole.narrative;
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 24, 20, 8),
+                                itemCount: engine.messages.length,
+                                itemBuilder: (context, index) {
+                                  final msg = engine.messages[index];
+                                  final isLast =
+                                      index == engine.messages.length - 1;
+                                  final isLastNarrative = isLast &&
+                                      msg.role == MessageRole.narrative;
 
-                            // Display typewriter buffer for the last narrative message
-                            final displayText =
-                                isLastNarrative ? _typewriterBuffer : msg.text;
+                                  // Display typewriter buffer for the last narrative message
+                                  final displayText = isLastNarrative
+                                      ? _typewriterBuffer
+                                      : msg.text;
 
-                            return _MessageTile(
-                              text: displayText,
-                              role: msg.role,
-                              narrativeColor: narrativeColor,
-                              showCursor: isLastNarrative && _typewriterRunning,
-                              textScale: textScale,
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                                  return _MessageTile(
+                                    text: displayText,
+                                    role: msg.role,
+                                    narrativeColor: narrativeColor,
+                                    showCursor:
+                                        isLastNarrative && _typewriterRunning,
+                                    textScale: textScale,
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ),
                       ),
+                    ),
 
                     // ── Assist tray (quick commands) — visible on demand ─────
                     if (_assistVisible)
@@ -937,7 +989,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                           children: [
                             if (quickCommands.isNotEmpty)
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
+                                padding:
+                                    const EdgeInsets.fromLTRB(12, 6, 12, 0),
                                 child: _QuickCommandBar(
                                   commands: quickCommands,
                                   onCommand: _queueQuickCommand,
@@ -946,18 +999,20 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                               ),
                             if (lastCommand != null)
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
+                                padding:
+                                    const EdgeInsets.fromLTRB(12, 4, 12, 0),
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: ActionChip(
                                     label: Text('↑ $lastCommand'),
-                                    onPressed: () =>
-                                        _queueQuickCommand(lastCommand, submit: false),
+                                    onPressed: () => _queueQuickCommand(
+                                        lastCommand,
+                                        submit: false),
                                     backgroundColor:
                                         Colors.white.withValues(alpha: 0.05),
                                     side: BorderSide(
-                                        color:
-                                            Colors.white.withValues(alpha: 0.08)),
+                                        color: Colors.white
+                                            .withValues(alpha: 0.08)),
                                   ),
                                 ),
                               ),
@@ -986,12 +1041,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                       hintText: _inputHintForNode(currentNode),
                       onRecallLast: lastCommand == null
                           ? null
-                          : () => _queueQuickCommand(lastCommand, submit: false),
+                          : () =>
+                              _queueQuickCommand(lastCommand, submit: false),
                       onWalkthroughNext:
                           _walkthroughUnlocked ? _walkthroughNext : null,
                       assistVisible: _assistVisible,
-                      onToggleAssist: (quickCommands.isNotEmpty || lastCommand != null)
-                          ? () => setState(() => _assistVisible = !_assistVisible)
+                      onToggleAssist: (quickCommands.isNotEmpty ||
+                              lastCommand != null)
+                          ? () =>
+                              setState(() => _assistVisible = !_assistVisible)
                           : null,
                     ),
 
@@ -1036,6 +1094,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 class _BackgroundLayer extends StatelessWidget {
   final String backgroundPath;
   final bool flashActive;
+
   /// Override opacity — defaults to [_backgroundImageOpacity] (0.15).
   final double? opacity;
 
@@ -1441,7 +1500,8 @@ class _StatusBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
       child: Tooltip(
-        message: 'Lucidity · Anxiety · Oblivion — these shape the Archive’s response.',
+        message:
+            'Lucidity · Anxiety · Oblivion — these shape the Archive’s response.',
         preferBelow: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1547,41 +1607,42 @@ class _PuzzleSolvedOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedOpacity(
       opacity: active ? 1 : 0,
-      duration: reduceMotion ? Duration.zero : const Duration(milliseconds: 220),
+      duration:
+          reduceMotion ? Duration.zero : const Duration(milliseconds: 220),
       child: Center(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 32),
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 22),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.22),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFFB99A58), width: 1.2),
-            ),
-            child: const Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '✦',
-                  style: TextStyle(
-                    color: Color(0xFFDEC58A),
-                    fontSize: 28,
-                    fontWeight: FontWeight.w600,
-                  ),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 22),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.22),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFFB99A58), width: 1.2),
+          ),
+          child: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '✦',
+                style: TextStyle(
+                  color: Color(0xFFDEC58A),
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'Puzzle resolved',
-                  style: TextStyle(
-                    color: Color(0xFFF3E8CF),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.6,
-                  ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Puzzle resolved',
+                style: TextStyle(
+                  color: Color(0xFFF3E8CF),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.6,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
+      ),
     );
   }
 }
@@ -1598,41 +1659,43 @@ class _SimulacrumBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSlide(
-        duration: reduceMotion ? Duration.zero : const Duration(milliseconds: 260),
-        offset: text == null ? const Offset(0, -1.1) : Offset.zero,
-        curve: Curves.easeOutCubic,
-        child: AnimatedOpacity(
-          opacity: text == null ? 0 : 1,
-          duration: reduceMotion ? Duration.zero : const Duration(milliseconds: 220),
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 420),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF17120A).withValues(alpha: 0.94),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFB99A58)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.28),
-                    blurRadius: 18,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Text(
-                text ?? '',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Color(0xFFF1E5C9),
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.4,
+      duration:
+          reduceMotion ? Duration.zero : const Duration(milliseconds: 260),
+      offset: text == null ? const Offset(0, -1.1) : Offset.zero,
+      curve: Curves.easeOutCubic,
+      child: AnimatedOpacity(
+        opacity: text == null ? 0 : 1,
+        duration:
+            reduceMotion ? Duration.zero : const Duration(milliseconds: 220),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 420),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF17120A).withValues(alpha: 0.94),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFB99A58)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.28),
+                  blurRadius: 18,
+                  offset: const Offset(0, 6),
                 ),
+              ],
+            ),
+            child: Text(
+              text ?? '',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xFFF1E5C9),
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.4,
               ),
             ),
           ),
         ),
+      ),
     );
   }
 }
@@ -1695,7 +1758,9 @@ class _InputRow extends StatelessWidget {
                   children: [
                     if (onToggleAssist != null)
                       IconButton(
-                        tooltip: assistVisible ? 'Hide suggestions' : 'Show suggestions',
+                        tooltip: assistVisible
+                            ? 'Hide suggestions'
+                            : 'Show suggestions',
                         onPressed: onToggleAssist,
                         icon: Icon(
                           assistVisible
@@ -1713,7 +1778,8 @@ class _InputRow extends StatelessWidget {
                         onPressed: onRecallLast,
                         icon: Icon(
                           Icons.history,
-                          color: narrativeColor.withValues(alpha: enabled ? 0.65 : 0.25),
+                          color: narrativeColor.withValues(
+                              alpha: enabled ? 0.65 : 0.25),
                         ),
                       ),
                     if (onWalkthroughNext != null)
@@ -1722,13 +1788,15 @@ class _InputRow extends StatelessWidget {
                         onPressed: onWalkthroughNext,
                         icon: Icon(
                           Icons.arrow_forward,
-                          color: narrativeColor.withValues(alpha: enabled ? 0.65 : 0.25),
+                          color: narrativeColor.withValues(
+                              alpha: enabled ? 0.65 : 0.25),
                         ),
                       ),
                     Text(
                       '>',
                       style: TextStyle(
-                        color: narrativeColor.withValues(alpha: enabled ? 0.8 : 0.3),
+                        color: narrativeColor.withValues(
+                            alpha: enabled ? 0.8 : 0.3),
                         fontFamily: 'monospace',
                         fontSize: 16 * textScale,
                       ),
@@ -1863,8 +1931,7 @@ class _WakeUpFade extends StatelessWidget {
       child: IgnorePointer(
         child: AnimatedOpacity(
           opacity: active ? 1.0 : 0.0,
-          duration:
-              reduceMotion ? Duration.zero : const Duration(seconds: 4),
+          duration: reduceMotion ? Duration.zero : const Duration(seconds: 4),
           curve: Curves.easeInOut,
           child: Container(color: Colors.white),
         ),
