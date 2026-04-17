@@ -4,6 +4,33 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Phase/Affinity gameplay feedback cues)
+**Role:** Gameplay UX / psycho-profile readability
+
+**Done:**
+- Extended `GameEngineState` in `lib/features/game/game_engine_provider.dart` with psycho-shift signal fields (`psychoShiftCount`, `latestPsychoShiftIsPhase`) so UI can react to phase/affinity progression events.
+- Upgraded `_updateAwarenessFromCommand(...)` to return a structured psycho-shift result instead of a pure side effect, including:
+  - awareness/affinity deltas after clamped DB update
+  - explicit phase transition detection (`Phase X -> Y attained.`)
+  - concise micro-copy line (`Inner shift: ...`) for readability in the narrative stream.
+- Integrated psycho-shift messaging into `processInput()` so progression feedback appears inline with narration and is persisted in dialogue history.
+- Added dedicated UI cue handling in `lib/features/ui/game_screen.dart`:
+  - new `_triggerPsychoShiftCue(...)`
+  - one-shot detection based on `psychoShiftCount`
+  - audio trigger `sfx:command_accepted`
+  - medium haptic, doubled when the shift includes a phase transition.
+
+**Verification:**
+- `dart format lib/features/game/game_engine_provider.dart lib/features/ui/game_screen.dart` ✅
+- `flutter test test/parser_test.dart test/puzzle_gates_test.dart` ✅
+- `flutter analyze` ✅ (info-level `curly_braces_in_flow_control_structures` warnings are pre-existing style warnings in project)
+
+**Architecture notes:**
+- Feature remains within the single `GameEngineNotifier` Riverpod boundary.
+- Cue emission is event-driven from engine state deltas, avoiding duplicate haptic/audio playback on rebuilds.
+
+---
+
 ### 2026-04-16 — Codex GPT-5 (Session recap after load/resume)
 **Role:** Gameplay UX / session continuity
 

@@ -1149,6 +1149,8 @@ class GameEngineState {
   final int screenResetCount;
   final bool isPuzzleSolved;
   final String? latestSimulacrum;
+  final int psychoShiftCount;
+  final bool latestPsychoShiftIsPhase;
 
   /// Puzzle IDs that have been solved, e.g. 'leaves_arranged'.
   final Set<String> completedPuzzles;
@@ -1164,6 +1166,8 @@ class GameEngineState {
     this.screenResetCount = 0,
     this.isPuzzleSolved = false,
     this.latestSimulacrum,
+    this.psychoShiftCount = 0,
+    this.latestPsychoShiftIsPhase = false,
     this.completedPuzzles = const {},
     this.puzzleCounters = const {},
   });
@@ -1176,6 +1180,8 @@ class GameEngineState {
     int? screenResetCount,
     bool? isPuzzleSolved,
     Object? latestSimulacrum = _noSimulacrumChange,
+    int? psychoShiftCount,
+    bool? latestPsychoShiftIsPhase,
     Set<String>? completedPuzzles,
     Map<String, int>? puzzleCounters,
   }) {
@@ -1189,10 +1195,23 @@ class GameEngineState {
       latestSimulacrum: identical(latestSimulacrum, _noSimulacrumChange)
           ? this.latestSimulacrum
           : latestSimulacrum as String?,
+      psychoShiftCount: psychoShiftCount ?? this.psychoShiftCount,
+      latestPsychoShiftIsPhase:
+          latestPsychoShiftIsPhase ?? this.latestPsychoShiftIsPhase,
       completedPuzzles: completedPuzzles ?? this.completedPuzzles,
       puzzleCounters: puzzleCounters ?? this.puzzleCounters,
     );
   }
+}
+
+class _PsychoShiftResult {
+  final String text;
+  final bool phaseChanged;
+
+  const _PsychoShiftResult({
+    required this.text,
+    required this.phaseChanged,
+  });
 }
 
 // ── Notifier ──────────────────────────────────────────────────────────────────
@@ -1483,7 +1502,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
       // ── Phase system: awareness + affinity increment (Option A overlay) ────────
       // Runs unconditionally — deltas are small and additive, never alter existing logic.
-      await _updateAwarenessFromCommand(cmd.verb, response, trimmed);
+      final psychoShift = await _updateAwarenessFromCommand(
+        cmd.verb,
+        response,
+        trimmed,
+      );
 
       // ── Audio trigger (fire-and-forget — must not block game logic) ──────────
       AudioService().handleTrigger(response.audioTrigger);
@@ -1516,8 +1539,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       final narrativeWithProgressiveHint = progressiveHintSuffix == null
           ? narrativeText
           : '$narrativeText$progressiveHintSuffix';
-      await _history.save(
-          role: 'demiurge', content: narrativeWithProgressiveHint);
+      final narrativeWithPsychoShift = psychoShift == null
+          ? narrativeWithProgressiveHint
+          : '$narrativeWithProgressiveHint\n\n${psychoShift.text}';
+      await _history.save(role: 'demiurge', content: narrativeWithPsychoShift);
 
       final finalState = withPlayer.copyWith(
         phase: ParserPhase.displaying,
@@ -1526,6 +1551,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         isPuzzleSolved: response.completePuzzle != null,
         latestSimulacrum:
             _isSimulacrum(response.grantItem ?? '') ? response.grantItem : null,
+        psychoShiftCount: psychoShift == null
+            ? withPlayer.psychoShiftCount
+            : withPlayer.psychoShiftCount + 1,
+        latestPsychoShiftIsPhase:
+            psychoShift?.phaseChanged ?? withPlayer.latestPsychoShiftIsPhase,
         completedPuzzles: newPuzzles,
         puzzleCounters: newCounters,
       );
@@ -1553,16 +1583,14 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           ? finalState.copyWith(
               messages: [
                 GameMessage(
-                    text: narrativeWithProgressiveHint,
-                    role: MessageRole.narrative)
+                    text: narrativeWithPsychoShift, role: MessageRole.narrative)
               ],
               screenResetCount: current.screenResetCount + 1,
             )
           : _appendMessage(
               finalState,
               GameMessage(
-                  text: narrativeWithProgressiveHint,
-                  role: MessageRole.narrative),
+                  text: narrativeWithPsychoShift, role: MessageRole.narrative),
             );
       if (response.audioTrigger == 'simulacrum') {
         // Let the dedicated reward banner land before the typewriter resumes so
@@ -4239,7 +4267,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   /// Increments awareness and per-Echo affinity based on the command verb
   /// and, for unknown verbs, on keyword recognition in [rawInput].
   /// Pure side-effect — does not alter [response] or any existing game state.
-  Future<void> _updateAwarenessFromCommand(
+  Future<_PsychoShiftResult?> _updateAwarenessFromCommand(
     CommandVerb verb,
     EngineResponse response,
     String rawInput,
@@ -4316,14 +4344,59 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     // Puzzle solutions are insight moments
     if (response.completePuzzle != null) awareness += 8;
 
-    if (awareness == 0 && proust == 0 && tarkovskij == 0 && seth == 0) return;
+    if (awareness == 0 && proust == 0 && tarkovskij == 0 && seth == 0) {
+      return null;
+    }
 
+    final before = await ref.read(psychoProfileProvider.future);
     await ref.read(psychoProfileProvider.notifier).updateAwareness(
           awarenessDelta: awareness > 0 ? awareness : null,
           proustDelta: proust > 0 ? proust : null,
           tarkovskijDelta: tarkovskij > 0 ? tarkovskij : null,
           sethDelta: seth > 0 ? seth : null,
         );
+    final after = await ref.read(psychoProfileProvider.future);
+
+    final awarenessDelta = after.awarenessLevel - before.awarenessLevel;
+    final proustDelta = after.proustAffinity - before.proustAffinity;
+    final tarkovskijDelta =
+        after.tarkovskijAffinity - before.tarkovskijAffinity;
+    final sethDelta = after.sethAffinity - before.sethAffinity;
+    final phaseChanged = after.phase > before.phase;
+
+    final fragments = <String>[];
+    if (awarenessDelta > 0) {
+      fragments.add('awareness +$awarenessDelta');
+    }
+    if (proustDelta > 0) {
+      fragments.add('Proust +$proustDelta');
+    }
+    if (tarkovskijDelta > 0) {
+      fragments.add('Tarkovskij +$tarkovskijDelta');
+    }
+    if (sethDelta > 0) {
+      fragments.add('Seth +$sethDelta');
+    }
+
+    final phaseLine = phaseChanged
+        ? 'Phase ${before.phase} -> ${after.phase} attained.'
+        : null;
+    final shiftLine =
+        fragments.isEmpty ? null : 'Inner shift: ${fragments.join(' | ')}.';
+
+    if (phaseLine == null && shiftLine == null) {
+      return null;
+    }
+
+    final text = phaseLine == null
+        ? shiftLine!
+        : shiftLine == null
+            ? phaseLine
+            : '$phaseLine\n$shiftLine';
+    return _PsychoShiftResult(
+      text: text,
+      phaseChanged: phaseChanged,
+    );
   }
 }
 

@@ -112,6 +112,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
   String? _simulacrumBannerText;
   bool _lastObservedPuzzleSolved = false;
   String? _lastObservedSimulacrum;
+  int _lastObservedPsychoShiftCount = 0;
   int _lastObservedMessageCount = 0;
   String _lastObservedSectorLabel = '';
   // -1 = "not yet observed" so the very first build never fires a threshold haptic.
@@ -440,6 +441,20 @@ class _GameScreenState extends ConsumerState<GameScreen>
     });
   }
 
+  void _triggerPsychoShiftCue({required bool phaseChanged}) {
+    if (_hapticsOn()) {
+      HapticFeedback.mediumImpact();
+      if (phaseChanged) {
+        Timer(const Duration(milliseconds: 70), () {
+          if (!mounted) return;
+          HapticFeedback.mediumImpact();
+        });
+      }
+    }
+    // ignore: discarded_futures
+    AudioService().handleTrigger('sfx:command_accepted');
+  }
+
   void _consumeFeedbackSignals(GameEngineState engine) {
     if (engine.isPuzzleSolved && !_lastObservedPuzzleSolved) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -456,6 +471,16 @@ class _GameScreenState extends ConsumerState<GameScreen>
       });
     }
     _lastObservedSimulacrum = latestSimulacrum;
+
+    if (engine.psychoShiftCount > _lastObservedPsychoShiftCount) {
+      final phaseChanged = engine.latestPsychoShiftIsPhase;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _triggerPsychoShiftCue(phaseChanged: phaseChanged);
+        }
+      });
+    }
+    _lastObservedPsychoShiftCount = engine.psychoShiftCount;
 
     // Detect new error messages and play pitched-down rejection SFX.
     final msgCount = engine.messages.length;
