@@ -4,6 +4,55 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Shared sector infrastructure: router + pure progression service)
+**Role:** Cross-sector extraction infrastructure before Observatory migration
+
+**Done:**
+- Added generic sector dispatch layer:
+  - `lib/features/game/sector_router.dart`
+  - Introduced `SectorCommandContext`, `SectorEnterContext`, `SectorHandler`, `SectorRouter`.
+  - `GameEngineNotifier` now routes sector-specific command and enter-node hooks through `SectorRouter` instead of direct per-sector branching.
+- Added pure progression pipeline:
+  - `lib/features/game/progression_service.dart`
+  - Introduced `ProgressionService.applyTurn(...)` and `SectorProgressionRule`.
+  - Centralized:
+    - surface/deep completion evaluation
+    - sector depth-signature tracking
+    - cross-sector progression markers (`progress_surface_*`, `progress_deep_*`)
+    - threshold resonance input counter (`progress_threshold_resonance_input`).
+  - Kept Garden-specific deep semantics generalized through rule callback (`deepEvaluator: GardenModule.isDeepComplete`) instead of duplicating logic.
+- Kept Garden playable through shared infrastructure:
+  - Added `lib/features/game/garden/garden_sector.dart` (`GardenSectorHandler`) wrapping extracted Garden module reducers.
+  - `GameEngineNotifier` now delegates Garden command reducers and enter-node revisit hook via router.
+- Prepared Observatory extraction path:
+  - Added `lib/features/game/observatory/observatory_sector.dart` (`ObservatorySectorHandler`) as sector-interface adapter stub to avoid forking patterns in upcoming migration.
+- Updated systemic wiring:
+  - `lib/features/game/systemic_state.dart` now consumes shared `progress_threshold_resonance_input` first, preserving fallback behavior.
+- Removed notifier-owned duplicated depth accounting helpers now superseded by `ProgressionService`.
+
+**Tests added:**
+- `test/sector_router_test.dart`
+  - router dispatches Garden commands correctly
+  - unrelated sectors return null
+  - enter-node hook routing works
+- `test/progression_service_test.dart`
+  - depth signatures count once
+  - generalized completion markers are emitted
+  - threshold resonance input is updated
+
+**Verification:**
+- `dart format lib/features/game/sector_router.dart lib/features/game/progression_service.dart lib/features/game/garden/garden_sector.dart lib/features/game/observatory/observatory_sector.dart lib/features/game/game_engine_provider.dart lib/features/game/systemic_state.dart test/sector_router_test.dart test/progression_service_test.dart` ✅
+- `flutter test test/sector_router_test.dart test/progression_service_test.dart test/garden_module_test.dart test/systemic_state_test.dart test/puzzle_gates_test.dart` ✅
+- `flutter test` ✅
+
+**Architecture notes:**
+- `GameEngineNotifier` intentionally remains responsible for:
+  - global side effects (db/profile/audio/history/autosave)
+  - parser orchestration and command lifecycle
+  - non-sector global rules (global gates, session state, end transitions).
+- Next extraction step after this slice:
+  - migrate Observatory puzzle reducers into `observatory_module.dart` + `ObservatorySectorHandler` implementation, then remove remaining notifier-owned `obs_*` branching.
+
 ### 2026-04-17 — Codex GPT-5 (Garden architectural extraction: state-driven module)
 **Role:** Sector architecture refactor (first real extraction slice)
 

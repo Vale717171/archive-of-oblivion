@@ -18,6 +18,10 @@ import '../parser/parser_service.dart';
 import '../parser/parser_state.dart';
 import 'game_node.dart';
 import 'garden/garden_module.dart';
+import 'garden/garden_sector.dart';
+import 'observatory/observatory_sector.dart';
+import 'progression_service.dart';
+import 'sector_router.dart';
 import 'systemic_state.dart';
 import '../state/game_state_provider.dart';
 import '../state/psycho_provider.dart';
@@ -1075,6 +1079,10 @@ class _PsychoShiftResult {
 class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   final _history = DialogueHistoryService.instance;
   final Random _random = Random();
+  final SectorRouter _sectorRouter = const SectorRouter([
+    GardenSectorHandler(),
+    ObservatorySectorHandler(),
+  ]);
 
   // ── Auto-save state (ephemeral — not persisted) ──────────────────────────
   int _commandsSinceAutoSave = 0;
@@ -1142,76 +1150,39 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
   }
 
+  EngineResponse? _routeSectorCommand({
+    required ParsedCommand cmd,
+    required String nodeId,
+    required GameEngineState state,
+  }) {
+    final node = _nodes[nodeId];
+    if (node == null) return null;
+    return _sectorRouter.routeCommand(
+      SectorCommandContext(
+        cmd: cmd,
+        nodeId: nodeId,
+        node: node,
+        gameState: _gardenView(nodeId: nodeId, state: state),
+      ),
+    );
+  }
+
   static String _hintRequestCounterKey(String nodeId) =>
       'hint_requests_$nodeId';
-
-  static String _depthCounterKey(String sector) => 'depth_$sector';
-
-  static String _depthSignatureKey({
-    required String sector,
-    required String nodeId,
-    required CommandVerb verb,
-  }) =>
-      'depth_sig_${sector}_${nodeId}_${verb.name}';
-
-  static String? _depthSectorForNode(String nodeId) {
-    if (nodeId.startsWith('garden_')) return 'garden';
-    if (nodeId.startsWith('obs_')) return 'observatory';
-    if (nodeId.startsWith('gallery_') || nodeId.startsWith('gal_')) {
-      return 'gallery';
-    }
-    if (nodeId.startsWith('lab_')) return 'laboratory';
-    if (nodeId.startsWith('quinto_') || nodeId.startsWith('memory_')) {
-      return 'memory';
-    }
-    return null;
-  }
-
-  bool _isDepthSignificantInteraction(
-      ParsedCommand cmd, EngineResponse response) {
-    if (cmd.verb == CommandVerb.help ||
-        cmd.verb == CommandVerb.inventory ||
-        cmd.verb == CommandVerb.hint ||
-        cmd.verb == CommandVerb.unknown) {
-      return false;
-    }
-    return response.completePuzzle != null ||
-        response.grantItem != null ||
-        response.incrementCounter != null ||
-        response.playerMemoryKey != null ||
-        response.newNode != null ||
-        response.needsDemiurge;
-  }
-
-  void _recordSectorDepthInteraction({
-    required ParsedCommand cmd,
-    required EngineResponse response,
-    required String nodeId,
-    required Set<String> puzzles,
-    required Map<String, int> counters,
-  }) {
-    final sector = _depthSectorForNode(nodeId);
-    if (sector == null) return;
-    if (!_isDepthSignificantInteraction(cmd, response)) return;
-    final signature =
-        _depthSignatureKey(sector: sector, nodeId: nodeId, verb: cmd.verb);
-    if (puzzles.contains(signature)) return;
-    puzzles.add(signature);
-    final key = _depthCounterKey(sector);
-    counters[key] = (counters[key] ?? 0) + 1;
-  }
 
   List<String> _missingDepthSectorsForQuinto(GameEngineState s) {
     final missing = <String>[];
     for (final entry in _depthThresholdsToQuinto.entries) {
-      final count = s.puzzleCounters[_depthCounterKey(entry.key)] ?? 0;
+      final count =
+          s.puzzleCounters[ProgressionService.depthCounterKey(entry.key)] ?? 0;
       if (count < entry.value) missing.add(entry.key);
     }
     return missing;
   }
 
   bool _hasMemoryDepthForNucleo(GameEngineState s) {
-    final depth = s.puzzleCounters[_depthCounterKey('memory')] ?? 0;
+    final depth =
+        s.puzzleCounters[ProgressionService.depthCounterKey('memory')] ?? 0;
     return depth >= _memoryDepthThresholdToNucleo;
   }
 
@@ -1424,15 +1395,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             (newCounters[response.incrementCounter!] ?? 0) + 1;
       }
 
-      // ── Sector depth tracking (unique meaningful interactions per sector) ──
-      _recordSectorDepthInteraction(
-        cmd: cmd,
-        response: response,
-        nodeId: currentNodeId,
-        puzzles: newPuzzles,
-        counters: newCounters,
-      );
-
       // ── Navigation + bain-marie tracking + zone tracking ───────────────────
       if (response.newNode != null) {
         // Node persistence is deferred to saveEngineState at the end of this method
@@ -1471,6 +1433,21 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         }
       }
 
+      // ── Shared progression pipeline (pure) ────────────────────────────────
+      final progression = ProgressionService.applyTurn(
+        cmd: cmd,
+        response: response,
+        nodeId: currentNodeId,
+        puzzles: newPuzzles,
+        counters: newCounters,
+      );
+      newPuzzles
+        ..clear()
+        ..addAll(progression.puzzles);
+      newCounters
+        ..clear()
+        ..addAll(progression.counters);
+
       // ── Systemic shells (notebook / coherence / depth / threshold / weights)
       // Stored in counters+puzzles to remain save-slot compatible during refactor.
       SystemicStateCodec.applyShells(
@@ -1482,12 +1459,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         psychoWeight: newWeight,
         counters: newCounters,
         puzzles: newPuzzles,
-      );
-      newPuzzles.addAll(
-        GardenModule.completionMarkers(
-          puzzles: newPuzzles,
-          counters: newCounters,
-        ),
       );
 
       // ── Apply psycho profile ────────────────────────────────────────────────
@@ -1836,10 +1807,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
-    final gardenResponse = GardenModule.handleExamine(
+    final gardenResponse = _routeSectorCommand(
+      cmd: cmd,
       nodeId: nodeId,
-      target: target,
-      state: _gardenView(nodeId: nodeId, state: s),
+      state: s,
     );
     if (gardenResponse != null) return gardenResponse;
     final match = node.examines.entries
@@ -1995,10 +1966,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
-    final gardenEnterHook = GardenModule.onEnterNode(
-      fromNode: nodeId,
-      destNode: dest,
-      state: _gardenView(nodeId: nodeId, state: s),
+    final gardenEnterHook = _sectorRouter.onEnterNode(
+      SectorEnterContext(
+        fromNode: nodeId,
+        destNode: dest,
+        gameState: _gardenView(nodeId: nodeId, state: s),
+      ),
     );
     if (gardenEnterHook != null) return gardenEnterHook;
 
@@ -2020,8 +1993,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   EngineResponse _handleWait(String nodeId, GameEngineState s) {
-    final gardenResponse = GardenModule.handleWait(
-      state: _gardenView(nodeId: nodeId, state: s),
+    final gardenResponse = _routeSectorCommand(
+      cmd: const ParsedCommand(
+          verb: CommandVerb.wait, args: [], rawInput: 'wait'),
+      nodeId: nodeId,
+      state: s,
     );
     if (gardenResponse != null) return gardenResponse;
 
@@ -2209,8 +2185,14 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   EngineResponse _handleDeposit(String nodeId, GameEngineState s) {
-    final gardenResponse = GardenModule.handleDeposit(
-      state: _gardenView(nodeId: nodeId, state: s),
+    final gardenResponse = _routeSectorCommand(
+      cmd: const ParsedCommand(
+        verb: CommandVerb.deposit,
+        args: [],
+        rawInput: 'deposit',
+      ),
+      nodeId: nodeId,
+      state: s,
     );
     if (gardenResponse != null) return gardenResponse;
     return const EngineResponse(
@@ -2257,10 +2239,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleWalk(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    final gardenResponse = GardenModule.handleWalk(
-      cmd: cmd,
-      state: _gardenView(nodeId: nodeId, state: s),
-    );
+    final gardenResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
     if (gardenResponse != null) return gardenResponse;
 
     final mode = cmd.args.join(' ');
@@ -2314,10 +2294,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleArrange(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    final gardenResponse = GardenModule.handleArrange(
-      cmd: cmd,
-      state: _gardenView(nodeId: nodeId, state: s),
-    );
+    final gardenResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
     if (gardenResponse != null) return gardenResponse;
     return const EngineResponse(
         narrativeText: 'There is nothing here to arrange.');
@@ -2325,10 +2303,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleWrite(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    final gardenResponse = GardenModule.handleWrite(
-      cmd: cmd,
-      state: _gardenView(nodeId: nodeId, state: s),
-    );
+    final gardenResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
     if (gardenResponse != null) return gardenResponse;
 
     // Gallery proportions: construct pentagon (GDD §8 — puzzle 3)
@@ -2547,10 +2523,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleOffer(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    final gardenResponse = GardenModule.handleOffer(
-      cmd: cmd,
-      state: _gardenView(nodeId: nodeId, state: s),
-    );
+    final gardenResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
     if (gardenResponse != null) return gardenResponse;
 
     if (nodeId != 'lab_vestibule') {

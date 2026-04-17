@@ -1,4 +1,5 @@
 import '../parser/parser_state.dart';
+import 'progression_service.dart';
 
 class WeightState {
   final int material;
@@ -264,18 +265,14 @@ class SystemicStateCodec {
       counters[_zonePressure] = _clamp(_counter(counters, _zonePressure) + 1);
     }
 
-    for (final sector in _sectors) {
-      final depth = counters['depth_$sector'] ?? 0;
-      final surface =
-          puzzles.contains(_surfacePuzzleBySector[sector] ?? '__none__');
-      if (surface && depth >= 7) {
-        puzzles.add(_deepKey(sector));
-      }
-    }
-
     final deepCount = _deepCount(puzzles);
     final contradictions = _counter(counters, _contradictions);
-    final resonance = deepCount + contradictions;
+    final progressionInput = _counter(
+      counters,
+      ProgressionService.thresholdResonanceInputCounter,
+    );
+    final resonanceBase = progressionInput > 0 ? progressionInput : deepCount;
+    final resonance = resonanceBase + contradictions;
     counters[_thresholdResonance] = _clamp(resonance, max: 50);
     if (resonance >= 2) {
       puzzles.add('sys_threshold_unstable_light');
