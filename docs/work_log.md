@@ -4,6 +4,71 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Zone extraction + final-arc adjudication foundation)
+**Role:** Run-reactive Zone subsystem extraction + final-arc persistence/adjudication hardening
+
+**Done:**
+- Part A — extracted Zone out of notifier into dedicated module:
+  - Added `lib/features/game/zone/zone_module.dart`.
+  - Moved Zone prompt generation out of `game_engine_provider.dart` into pure run-state logic:
+    - prompts now derive from contradictions, dominant weight axis, unresolved protections, sector depth markers, notebook habitation, and Memory readiness.
+  - Moved Zone response evaluation to heuristic pure logic:
+    - minimum substance threshold
+    - generic/decorative rejection
+    - specific/costly signal detection
+    - tag/context matching against the active prompt
+    - contradiction-alignment detection.
+  - Moved Zone effects to module-side state transitions:
+    - contradiction escalation/resolution
+    - zone pressure increase/decrease
+    - notebook habitation updates
+    - per-encounter metadata markers
+    - activation-time prompt source/tag markers.
+  - `GameEngineNotifier` now delegates Zone turn resolution (`resolveTurn`) and applies only returned patches as orchestration.
+- Part B — improved final-arc persistence inputs:
+  - Added richer structured metadata persistence for Zone in `puzzle_counters`/`completed_puzzles`:
+    - quality tiers, source counts, tag counts, contradiction alignment/intensification/resolution counters, encounter-scoped metadata markers.
+  - Added richer structured metadata persistence for Memory responses:
+    - `MemoryModule.evaluateAnswerMetadataForPersistence(...)` +
+      notifier integration to persist quality/specific/costly/chamber/tag/contradiction-reference counters.
+  - Kept backward safety: missing metadata in legacy saves defaults to zero and does not break progression derivation.
+- Part C — final-arc adjudication helper:
+  - Added `lib/features/game/final_arc_adjudication.dart` (pure aggregator only; no Nucleus content migration).
+  - Aggregates:
+    - sector surface/deep completion
+    - quote exposure + notebook habitation readiness
+    - coherence/contradiction band
+    - dominant weight axis
+    - Memory readiness/quality inputs
+    - Zone outcomes
+    - unresolved protections
+    - normalized `nucleusEligibilityInput` signal.
+
+**Notifier changes (intentional orchestration-only scope):**
+- Removed notifier-owned Zone internals:
+  - deleted `_handleZoneResponse`, `_maybeActivateZone`, `_zoneActivationProbability`, `_isSectorCompletion`.
+- Replaced with:
+  - `ZoneModule.resolveTurn(...)` in `processInput()`
+  - `ZoneModule.canLeaveZone(...)` for Zone exit gating
+  - `gameTransitEligibleForZone(...)` now delegates to `ZoneModule`.
+
+**Tests added/updated:**
+- New `test/zone_module_test.dart`:
+  - prompt variance by run state
+  - evasive vs substantial response divergence
+  - contradiction intensify/resolve outcomes
+  - save/load compatibility of Zone prompt/metadata context
+  - activation turn integration.
+- New `test/final_arc_adjudication_test.dart`:
+  - consistent aggregation across multi-axis run state
+  - backward-safe defaults on legacy-like states.
+- Updated `test/cross_sector_continuity_test.dart`:
+  - metadata persistence roundtrip coverage for Memory + Zone counters.
+
+**Verification:**
+- `flutter test test/zone_module_test.dart test/final_arc_adjudication_test.dart test/cross_sector_continuity_test.dart test/game_engine_helpers_test.dart` ✅
+- `flutter test` ✅
+
 ### 2026-04-17 — Codex GPT-5 (Stabilization pass + Memory extraction)
 **Role:** Persistence/progression hardening + fifth extracted state-driven sector
 

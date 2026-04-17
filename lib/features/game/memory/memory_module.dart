@@ -107,6 +107,24 @@ class AnswerEvaluation {
   });
 }
 
+class MemoryAnswerMetadata {
+  final String chamber;
+  final int qualityTier;
+  final bool specific;
+  final bool costly;
+  final bool contradictionReference;
+  final Set<String> tags;
+
+  const MemoryAnswerMetadata({
+    required this.chamber,
+    required this.qualityTier,
+    required this.specific,
+    required this.costly,
+    required this.contradictionReference,
+    required this.tags,
+  });
+}
+
 class MemoryModule {
   static const String surfacePuzzle = 'ritual_complete';
   static const String surfaceMarkerPuzzle = 'memory_surface_complete';
@@ -491,6 +509,92 @@ class MemoryModule {
       unresolvedProtections: unresolved,
       simulacraCount: simulacraCount,
     );
+  }
+
+  static MemoryAnswerMetadata? evaluateAnswerMetadataForPersistence({
+    required String memoryKey,
+    required String content,
+  }) {
+    final cleaned = content.trim();
+    if (cleaned.isEmpty) return null;
+
+    final chamber = switch (memoryKey) {
+      'memory_childhood' => 'childhood',
+      'memory_youth' => 'youth',
+      'memory_maturity' => 'maturity',
+      'memory_old_age' => 'old_age',
+      _ => null,
+    };
+    if (chamber == null) return null;
+
+    final mode =
+        chamber == 'childhood' ? _AnswerMode.singleWord : _AnswerMode.narrative;
+    final evaluation = evaluateAnswer(cleaned, mode: mode);
+    final tags = _tagsForMemoryAnswer(chamber: chamber, text: cleaned);
+    final contradictionReference = _mentionsContradiction(cleaned);
+    final qualityTier = !evaluation.accepted
+        ? 0
+        : (evaluation.specific && (evaluation.costly || contradictionReference))
+            ? 2
+            : 1;
+
+    return MemoryAnswerMetadata(
+      chamber: chamber,
+      qualityTier: qualityTier,
+      specific: evaluation.specific,
+      costly: evaluation.costly,
+      contradictionReference: contradictionReference,
+      tags: tags,
+    );
+  }
+
+  static bool _mentionsContradiction(String text) {
+    final lower = text.toLowerCase();
+    return lower.contains('but') ||
+        lower.contains('yet') ||
+        lower.contains('still') ||
+        lower.contains('although') ||
+        lower.contains('however');
+  }
+
+  static Set<String> _tagsForMemoryAnswer({
+    required String chamber,
+    required String text,
+  }) {
+    final lower = text.toLowerCase();
+    final tags = <String>{chamber};
+
+    if (lower.contains('name') ||
+        lower.contains('street') ||
+        lower.contains('room') ||
+        lower.contains('door')) {
+      tags.add('place');
+    }
+    if (lower.contains('clock') ||
+        lower.contains('17') ||
+        lower.contains('time') ||
+        lower.contains('year')) {
+      tags.add('time');
+    }
+    if (lower.contains('promise') ||
+        lower.contains('kept') ||
+        lower.contains('failed')) {
+      tags.add('promise');
+    }
+    if (lower.contains('voice') ||
+        lower.contains('telephone') ||
+        lower.contains('said')) {
+      tags.add('speech');
+    }
+    if (lower.contains('remember') ||
+        lower.contains('legacy') ||
+        lower.contains('quality')) {
+      tags.add('legacy');
+    }
+    if (_costTerms.any(lower.contains)) {
+      tags.add('cost');
+    }
+    return tags;
   }
 
   static EngineResponse? onEnterNode({

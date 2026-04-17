@@ -31,6 +31,7 @@ import 'progression_service.dart';
 import 'sector_contract.dart';
 import 'sector_router.dart';
 import 'systemic_state.dart';
+import 'zone/zone_module.dart';
 import '../state/game_state_provider.dart';
 import '../state/psycho_provider.dart';
 
@@ -70,101 +71,6 @@ const Set<String> _surrenderKeywords = {
 };
 
 enum BossUtteranceKind { surrender, remain, resolution, other }
-
-// ── La Zona — Arseny Tarkovsky verse variants (GDD §10) ──────────────────────
-
-const List<String> _tarkovskyVerses = [
-  '"I was ill, or perhaps merely alive,\nand you came from a time that did not yet exist."',
-  '"What has been will be again.\nI shall arrange it differently next time."',
-  '"Life is not so short,\nand not so long — it is exactly as long as it needs to be."',
-  '"The soul has no shoulders\nand cannot carry what the body carried."',
-  '"From beyond the mirror, a world\nthat has always been waiting."',
-  '"All that glitters is not gold,\nbut all that disappears was real."',
-  '"I dreamed the world was a staircase\nand I was neither ascending nor descending."',
-  '"Nothing can be taken away\nthat was not, once, truly given."',
-];
-
-const List<String> _zoneEnvironments = [
-  'A corridor that is also a room. The walls meet at angles that should not exist.',
-  'The floor continues past where the floor should end. Below: the same floor, continuing.',
-  'Three shadows — yours, and two others whose sources cannot be located.',
-  'A staircase descending to the level you are standing on.',
-  'The ceiling is very close. Then it is very far. The distance does not change.',
-  'A window onto a room exactly like this one, except in that room there is no window.',
-  'Sound arrives before the movement that caused it.',
-  'The walls are made of the same light as what falls through windows you cannot find.',
-];
-
-// ── La Zona — introspective questions (from zona_templates.json) ──────────────
-
-class _ZoneQuestion {
-  final String question;
-  final String theme;
-  final String crypticResponse;
-  const _ZoneQuestion({
-    required this.question,
-    required this.theme,
-    required this.crypticResponse,
-  });
-}
-
-const List<_ZoneQuestion> _zoneQuestions = [
-  _ZoneQuestion(
-    question: 'What did you leave behind that still has your shape?',
-    theme: 'loss',
-    crypticResponse:
-        'Something in the architecture shifts — very slightly, but permanently.\n\n'
-        'The corridor opens back toward the Archive.',
-  ),
-  _ZoneQuestion(
-    question: 'When did you last do something that could not be undone?',
-    theme: 'irreversibility',
-    crypticResponse:
-        'The Zone records this. Not as judgement — as coordinate.\n\n'
-        'You know where you are now. The Archive is north.',
-  ),
-  _ZoneQuestion(
-    question: 'Name the moment you would return to, if return were possible.',
-    theme: 'memory',
-    crypticResponse:
-        'The impossibility of return is what makes the moment permanent.\n\n'
-        'You may leave.',
-  ),
-  _ZoneQuestion(
-    question: 'What are you carrying that does not belong to you?',
-    theme: 'burden',
-    crypticResponse: 'The weight of borrowed things is different. Noted.\n\n'
-        'The passage back is clear.',
-  ),
-  _ZoneQuestion(
-    question: 'Who taught you that what you feel is not enough?',
-    theme: 'wound',
-    crypticResponse:
-        'The Zone holds this carefully. It will not repeat the lesson.\n\n'
-        'You may return to the Archive.',
-  ),
-  _ZoneQuestion(
-    question:
-        'What would you say to the version of yourself that cannot be reached?',
-    theme: 'time',
-    crypticResponse:
-        'The unreachable version received it anyway — through the medium of your having said it.\n\n'
-        'The Archive is through here.',
-  ),
-  _ZoneQuestion(
-    question: 'In what form does the part of you that resists speak?',
-    theme: 'resistance',
-    crypticResponse: 'The Zone recognises resistance as intelligence.\n\n'
-        'The question is answered. Return.',
-  ),
-  _ZoneQuestion(
-    question: 'What do you know now that you already knew then?',
-    theme: 'recognition',
-    crypticResponse:
-        'Recognition is the only form of time travel available.\n\n'
-        'The Archive is waiting.',
-  ),
-];
 
 // ── Exit gates: nodeId → {direction → requiredPuzzleId} ──────────────────────
 
@@ -633,11 +539,17 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       final savedState = await ref.read(gameStateProvider.future);
       final currentNodeId = savedState.currentNode;
       final evaluationResponse = _evaluate(cmd, currentNodeId, withPlayer);
-
-      // ── La Zona activation (GDD §10) ────────────────────────────────────────
-      final response = (evaluationResponse.newNode != null)
-          ? _maybeActivateZone(evaluationResponse, currentNodeId, withPlayer)
-          : evaluationResponse;
+      final zoneResolution = ZoneModule.resolveTurn(
+        cmd: cmd,
+        nodeId: currentNodeId,
+        evaluationResponse: evaluationResponse,
+        puzzles: withPlayer.completedPuzzles,
+        counters: withPlayer.puzzleCounters,
+        inventory: withPlayer.inventory,
+        psychoWeight: withPlayer.psychoWeight,
+        randomRoll: _random.nextDouble(),
+      );
+      final response = zoneResolution.response;
       final progressiveHintSuffix = _progressiveHintSuffix(
         cmd: cmd,
         response: response,
@@ -695,8 +607,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         newCounters[response.incrementCounter!] =
             (newCounters[response.incrementCounter!] ?? 0) + 1;
       }
+      newPuzzles.addAll(zoneResolution.puzzleAdds);
+      for (final entry in zoneResolution.counterUpdates.entries) {
+        newCounters[entry.key] = entry.value;
+      }
 
-      // ── Navigation + sector transition tracking + zone tracking ────────────
+      // ── Navigation + sector transition tracking ────────────────────────────
       if (response.newNode != null) {
         // Node persistence is deferred to saveEngineState at the end of this method
         // so that all state changes (puzzles, counters, inventory) are written atomically.
@@ -713,24 +629,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         newCounters
           ..clear()
           ..addAll(labNav.counters);
-
-        // Zone encounter tracking
-        if (response.newNode == 'la_zona') {
-          newCounters['zone_encounters'] =
-              (newCounters['zone_encounters'] ?? 0) + 1;
-          newCounters['consecutive_transits'] = 0;
-          SystemicStateCodec.onZoneActivated(newCounters);
-        }
-
-        // Consecutive transit tracking (la_soglia ↔ sectors)
-        final isTransit =
-            currentNodeId == 'la_soglia' || response.newNode == 'la_soglia';
-        if (isTransit && response.newNode != 'la_zona') {
-          newCounters['consecutive_transits'] =
-              (newCounters['consecutive_transits'] ?? 0) + 1;
-        } else if (!isTransit && response.newNode != 'la_zona') {
-          newCounters['consecutive_transits'] = 0;
-        }
       }
 
       // ── Shared progression pipeline (pure) ────────────────────────────────
@@ -807,6 +705,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           await DatabaseService.instance.saveMemory(
             key: response.playerMemoryKey!,
             content: memoryContent,
+          );
+          _applyFinalArcMetadataFromMemory(
+            memoryKey: response.playerMemoryKey!,
+            memoryContent: memoryContent,
+            counters: newCounters,
           );
           memoryWasSaved = true;
         }
@@ -1158,9 +1061,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     if (nodeId == 'la_zona' && direction == 'back') {
-      final encounters = s.puzzleCounters['zone_encounters'] ?? 0;
-      final respondedKey = 'zone_responded_$encounters';
-      if (!s.completedPuzzles.contains(respondedKey)) {
+      final canLeave = ZoneModule.canLeaveZone(
+        puzzles: s.completedPuzzles,
+        counters: s.puzzleCounters,
+      );
+      if (!canLeave) {
         return const EngineResponse(
           narrativeText: 'The Zone does not release you yet.\n\n'
               'It is still waiting for your answer.',
@@ -1583,11 +1488,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     final raw = cmd.rawInput.toLowerCase().trim();
 
-    // La Zona: free-text response to the introspective question (GDD §10)
-    if (nodeId == 'la_zona') {
-      return _handleZoneResponse(raw, s);
-    }
-
     // Finale 1: WAKE UP epilogue (GDD §12)
     if ((raw == 'wake up' || raw == 'wakeup') &&
         nodeId == 'finale_acceptance') {
@@ -1846,130 +1746,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
   }
 
-  // ── La Zona handlers ──────────────────────────────────────────────────────
-
-  EngineResponse _handleZoneResponse(String raw, GameEngineState s) {
-    final encounters = s.puzzleCounters['zone_encounters'] ?? 0;
-    final respondedKey = 'zone_responded_$encounters';
-    if (s.completedPuzzles.contains(respondedKey)) {
-      return const EngineResponse(
-        narrativeText: 'The Zone has heard you. The Archive is back.',
-        newNode: 'la_soglia',
-      );
-    }
-
-    final wordCount = raw.trim().split(RegExp(r'\s+')).length;
-    if (wordCount < 3) {
-      return const EngineResponse(
-        narrativeText: 'The Zone does not accept the half-answer.\n\n'
-            'It waits. Something in the geometry tightens.\n\n'
-            'Try again — more fully.',
-        anxietyDelta: 5,
-      );
-    }
-
-    final q = _zoneQuestions[encounters % _zoneQuestions.length];
-    return EngineResponse(
-      narrativeText: 'The Zone receives your answer without comment.\n\n'
-          '${q.crypticResponse}',
-      needsDemiurge: true,
-      newNode: 'la_soglia',
-      completePuzzle: respondedKey,
-      lucidityDelta: -3,
-      anxietyDelta: -5,
-      playerMemoryKey: 'zone_$encounters', // salva la risposta alla Zona
-    );
-  }
-
-  /// Probabilistic La Zona activation on navigation (GDD §10).
-  EngineResponse _maybeActivateZone(
-    EngineResponse resp,
-    String fromNodeId,
-    GameEngineState s,
-  ) {
-    final dest = resp.newNode!;
-    // Do not activate when entering/leaving finales, nucleo, or zone itself
-    if (!gameTransitEligibleForZone(fromNodeId, dest)) {
-      return resp;
-    }
-
-    final prob = _zoneActivationProbability(fromNodeId, dest, s);
-    if (prob <= 0) return resp;
-    if (Random().nextDouble() >= prob) return resp;
-
-    // Zone activates — build entry text
-    final encounters = s.puzzleCounters['zone_encounters'] ?? 0;
-    final verse = _tarkovskyVerses[encounters % _tarkovskyVerses.length];
-    final env = _zoneEnvironments[encounters % _zoneEnvironments.length];
-    final q = _zoneQuestions[encounters % _zoneQuestions.length];
-
-    return EngineResponse(
-      narrativeText: '$verse\n\n$env\n\n${q.question}',
-      newNode: 'la_zona',
-      needsDemiurge: true,
-      anxietyDelta: 5,
-    );
-  }
-
-  double _zoneActivationProbability(
-      String fromNode, String destNode, GameEngineState s) {
-    final encounters = s.puzzleCounters['zone_encounters'] ?? 0;
-    final consecutive = s.puzzleCounters['consecutive_transits'] ?? 0;
-    final simulacraCount = _simulacraNames.where(s.inventory.contains).length;
-    final hasAllSimulacra = simulacraCount == 4;
-
-    // Avoid triggering while a zone response is still pending
-    if (encounters > 0) {
-      final pendingKey = 'zone_responded_$encounters';
-      if (!s.completedPuzzles.contains(pendingKey)) {
-        return 0; // Still in zone (haven't responded yet)
-      }
-    }
-
-    // La Zona must not interrupt a player who has not truly explored yet.
-    // Require at least one simulacrum found OR one non-zone puzzle completed.
-    // This prevents the Zone from activating on the very first navigations
-    // (e.g. consecutive_transits hits 2 after just two moves on a fresh game).
-    final bool hasExplored = simulacraCount > 0 ||
-        s.completedPuzzles.any((p) => !p.startsWith('zone_'));
-    if (!hasExplored) return 0;
-
-    double prob;
-
-    if (hasAllSimulacra && encounters == 0) {
-      // Pre-fifth sector: no zone encounters yet — inevitable first time (GDD §10 — 75%)
-      return 0.75;
-    } else if (simulacraCount >= 3) {
-      prob = 0.50; // After third simulacrum
-    } else if (consecutive >= 2) {
-      prob = 0.40; // Third consecutive transit
-    } else if (_isSectorCompletion(fromNode, destNode, s)) {
-      prob = 0.25; // After sector completion
-    } else if (fromNode == 'la_soglia' || destNode == 'la_soglia') {
-      prob = 0.15; // Normal threshold transit
-    } else {
-      return 0;
-    }
-
-    // +5% per simulacrum
-    prob += simulacraCount * 0.05;
-    // Additional run-reactive pressure from systemic contradictions/shell state.
-    prob += SystemicStateCodec.zoneActivationBoost(s.puzzleCounters);
-    return prob.clamp(0.0, 0.9);
-  }
-
-  bool _isSectorCompletion(
-      String fromNode, String destNode, GameEngineState s) {
-    final done = s.completedPuzzles;
-    if (fromNode == 'garden_grove' && done.contains('garden_complete'))
-      return true;
-    if (fromNode == 'obs_dome' && done.contains('obs_complete')) return true;
-    if (fromNode == 'gallery_central' && done.contains('gallery_complete'))
-      return true;
-    if (fromNode == 'lab_sealed' && done.contains('lab_complete')) return true;
-    return false;
-  }
-
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
   String _enterNode(NodeDef node) {
@@ -2086,6 +1862,36 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   GameEngineState _appendMessage(GameEngineState s, GameMessage msg) {
     return s.copyWith(messages: [...s.messages, msg]);
+  }
+
+  void _applyFinalArcMetadataFromMemory({
+    required String memoryKey,
+    required String memoryContent,
+    required Map<String, int> counters,
+  }) {
+    final metadata = MemoryModule.evaluateAnswerMetadataForPersistence(
+      memoryKey: memoryKey,
+      content: memoryContent,
+    );
+    if (metadata == null) return;
+
+    counters['memory_meta_quality_sum'] =
+        (counters['memory_meta_quality_sum'] ?? 0) + metadata.qualityTier;
+    counters['memory_meta_specific_count'] =
+        (counters['memory_meta_specific_count'] ?? 0) +
+            (metadata.specific ? 1 : 0);
+    counters['memory_meta_costly_count'] =
+        (counters['memory_meta_costly_count'] ?? 0) + (metadata.costly ? 1 : 0);
+    counters['memory_meta_contradiction_ref_count'] =
+        (counters['memory_meta_contradiction_ref_count'] ?? 0) +
+            (metadata.contradictionReference ? 1 : 0);
+    final chamberKey = 'memory_meta_chamber_${metadata.chamber}_count';
+    counters[chamberKey] = (counters[chamberKey] ?? 0) + 1;
+
+    for (final tag in metadata.tags) {
+      final tagKey = 'memory_meta_tag_${tag}_count';
+      counters[tagKey] = (counters[tagKey] ?? 0) + 1;
+    }
   }
 
   bool _shouldResetVisibleTranscript({
@@ -2633,24 +2439,7 @@ BossUtteranceKind classifyBossUtterance(String rawInput) {
 }
 
 bool gameTransitEligibleForZone(String fromNodeId, String destNodeId) {
-  if (destNodeId.startsWith('finale_') ||
-      destNodeId == 'il_nucleo' ||
-      destNodeId == 'la_zona') {
-    return false;
-  }
-  if (fromNodeId == 'la_zona' ||
-      fromNodeId.startsWith('finale_') ||
-      fromNodeId == 'il_nucleo') {
-    return false;
-  }
-  if (destNodeId.startsWith('quinto_') || fromNodeId.startsWith('quinto_')) {
-    return false;
-  }
-  // Never intercept the very first move (intro_void → la_soglia)
-  if (fromNodeId == 'intro_void' || destNodeId == 'intro_void') {
-    return false;
-  }
-  return true;
+  return ZoneModule.transitEligibleForZone(fromNodeId, destNodeId);
 }
 
 String gameSectorLabel(String nodeId) {

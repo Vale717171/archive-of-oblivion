@@ -6,6 +6,7 @@ import 'package:archive_of_oblivion/features/game/garden/garden_module.dart';
 import 'package:archive_of_oblivion/features/game/memory/memory_module.dart';
 import 'package:archive_of_oblivion/features/game/observatory/observatory_module.dart';
 import 'package:archive_of_oblivion/features/game/progression_service.dart';
+import 'package:archive_of_oblivion/features/game/final_arc_adjudication.dart';
 import 'package:archive_of_oblivion/features/parser/parser_state.dart';
 import 'package:archive_of_oblivion/features/state/game_state_provider.dart';
 
@@ -183,6 +184,39 @@ void main() {
       expect(runtime.quoteThresholdMet, isFalse);
       expect(runtime.epitaphInput.specificAnswers, 0);
       expect(runtime.epitaphInput.costlyAnswers, 0);
+    });
+
+    test('memory and zone metadata survive persistence roundtrip', () {
+      final saved = GameState(
+        currentNode: 'la_zona',
+        completedPuzzles: const {
+          'zone_prompt_2_source_contradiction',
+          'zone_prompt_2_tag_contradiction',
+          'memory_childhood',
+          'memory_youth',
+        },
+        puzzleCounters: const {
+          'zone_encounters': 2,
+          'zone_meta_responses': 3,
+          'zone_meta_quality_sum': 4,
+          'memory_meta_quality_sum': 5,
+          'memory_meta_specific_count': 3,
+          'memory_meta_costly_count': 1,
+        },
+        inventory: const ['notebook'],
+      );
+      final restored = _fromDbRow(_toDbRow(saved));
+      final adjudication = FinalArcAdjudication.aggregate(
+        puzzles: restored.completedPuzzles,
+        counters: restored.puzzleCounters,
+        inventory: restored.inventory,
+        psychoWeight: restored.psychoWeight,
+      );
+
+      expect(adjudication.zoneResponses, 3);
+      expect(adjudication.memoryQualityScore, 5);
+      expect(adjudication.memorySpecificCount, 3);
+      expect(adjudication.memoryCostlyCount, 1);
     });
   });
 }
