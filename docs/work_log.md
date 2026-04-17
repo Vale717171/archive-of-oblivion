@@ -4,6 +4,36 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Depth gates + quote exposure + assist hardening)
+**Role:** Gameplay progression hardening (diegetic, non-punitive)
+
+**Done:**
+- Added sector depth-gating in `lib/features/game/game_engine_provider.dart` with a new "meaningful interactions" metric per sector (unique `node + verb` signatures tracked in engine state):
+  - `garden >= 5`, `observatory >= 5`, `gallery >= 5`, `laboratory >= 5` required before ascending from `la_soglia` to Quinto.
+  - `memory >= 4` required before final descent readiness.
+- Added quote exposure gating for the final stretch:
+  - tracked `quote_exposure_seen` in engine counters whenever a Demiurge/Echo narrative response is delivered (`needsDemiurge` flow).
+  - introduced a session-wide monotonic floor in `GameEngineNotifier` so exposure remains coherent across load-slot rewinds in the same run.
+  - required `quote_exposure_seen >= 18` before allowing descent from the ritual chamber to `il_nucleo` (applies to both `go down` and `drink` paths).
+- Added diegetic gate feedback texts (English-only, no technical UI wording) for depth and quote gates.
+- Hardened hints (lightly, accessibility-preserving):
+  - `hint full` no longer unlocks full explicit guidance on first ask.
+  - per-node hint escalation now unlocks level 1 → 2 → 3 over repeated hint requests (`hint_requests_<node>` counters).
+- Hardened assist tray quick suggestions in `lib/features/ui/game_screen.dart`:
+  - removed immediate solver commands from puzzle hotspots.
+  - replaced with exploratory actions (`examine ...`, `hint more`) and less explicit input hints.
+- Added `DialogueHistoryService.countByRole(...)` for history-level telemetry support.
+- Added public gameplay-threshold helpers and coverage in `test/game_engine_helpers_test.dart`.
+
+**Verification:**
+- `dart format lib/core/storage/dialogue_history_service.dart lib/features/game/game_engine_provider.dart lib/features/ui/game_screen.dart test/game_engine_helpers_test.dart` ✅
+- `flutter test` ✅ (all passing; 3 pre-existing integration TODOs remain skipped in `test/puzzle_gates_test.dart`)
+
+**Architecture notes:**
+- `GameEngineNotifier` remains monolithic (no provider split).
+- Demiurge/Echo path remains deterministic and offline (no LLM introduced).
+- Gameplay strings added in this pass are English-only and diegetic.
+
 ### 2026-04-17 — Codex GPT-5 (Readability pass: bigger text, slower typewriter, sector tints)
 **Role:** UX readability and presentation polish
 

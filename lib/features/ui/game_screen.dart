@@ -737,12 +737,12 @@ class _GameScreenState extends ConsumerState<GameScreen>
     if (nodeId == 'intro_void') return 'try: go north';
     if (nodeId == 'la_soglia') return 'try: go north / east / south / west';
     if (nodeId == 'garden_cypress') return 'try: examine leaves';
-    if (nodeId == 'garden_fountain') return 'try: wait';
-    if (nodeId == 'obs_antechamber') return 'try: combine moon mercury sun';
-    if (nodeId == 'gallery_hall') return 'try: walk backward';
-    if (nodeId == 'lab_substances') return 'try: decipher symbols';
-    if (nodeId == 'quinto_ritual_chamber') return 'try: hint';
-    if (nodeId == 'il_nucleo') return 'try: answer, drop, or deposit';
+    if (nodeId == 'garden_fountain') return 'try: examine fountain';
+    if (nodeId == 'obs_antechamber') return 'try: examine lenses and mount';
+    if (nodeId == 'gallery_hall') return 'try: study the reflections';
+    if (nodeId == 'lab_substances') return 'try: examine symbols';
+    if (nodeId == 'quinto_ritual_chamber') return 'try: examine cup';
+    if (nodeId == 'il_nucleo') return 'try: answer, observe, or unburden';
     return 'type a command';
   }
 
@@ -767,60 +767,60 @@ class _GameScreenState extends ConsumerState<GameScreen>
     } else if (nodeId == 'garden_cypress') {
       commands.insertAll(0, const [
         _QuickCommand('Examine leaves', 'examine leaves'),
-        _QuickCommand('Arrange leaves', 'arrange leaves'),
+        _QuickCommand('Hint more', 'hint more'),
       ]);
     } else if (nodeId == 'garden_fountain') {
       commands.insertAll(0, const [
-        _QuickCommand('Wait', 'wait'),
-        _QuickCommand('Hint full', 'hint full'),
+        _QuickCommand('Examine fountain', 'examine fountain'),
+        _QuickCommand('Hint more', 'hint more'),
       ]);
     } else if (nodeId == 'garden_grove') {
       commands.insertAll(0, const [
-        _QuickCommand('Deposit everything', 'deposit everything'),
+        _QuickCommand('Examine statue', 'examine statue'),
         _QuickCommand('Go east', 'go east'),
         _QuickCommand('Go west', 'go west'),
       ]);
     } else if (nodeId == 'obs_antechamber') {
       commands.insertAll(0, const [
-        _QuickCommand('Combine lenses', 'combine moon mercury sun'),
+        _QuickCommand('Examine lenses', 'examine lenses'),
+        _QuickCommand('Examine mount', 'examine mount'),
         _QuickCommand('Go north', 'go north'),
       ]);
     } else if (nodeId == 'obs_void') {
       commands.insertAll(0, const [
         _QuickCommand('Wait', 'wait'),
-        _QuickCommand('Measure', 'measure fluctuation'),
+        _QuickCommand('Examine panel', 'examine panel'),
       ]);
     } else if (nodeId == 'obs_dome') {
       commands.insertAll(0, const [
-        _QuickCommand('Invert mirror', 'invert mirror'),
-        _QuickCommand('Confirm', 'confirm'),
-        _QuickCommand('Observe', 'observe'),
+        _QuickCommand('Examine telescope', 'examine telescope'),
+        _QuickCommand('Examine mirror', 'examine mirror'),
+        _QuickCommand('Hint more', 'hint more'),
       ]);
     } else if (nodeId == 'gallery_hall') {
       commands.insertAll(0, const [
-        _QuickCommand('Walk backward', 'walk backward'),
-        _QuickCommand('Observe', 'observe'),
+        _QuickCommand('Examine mirrors', 'examine mirrors'),
+        _QuickCommand('Hint more', 'hint more'),
       ]);
     } else if (nodeId == 'gallery_corridor') {
       commands.insertAll(0, const [
-        _QuickCommand('Press tile', 'press anomalous tile'),
-        _QuickCommand('Hint full', 'hint full'),
+        _QuickCommand('Examine mosaic', 'examine mosaic'),
+        _QuickCommand('Hint more', 'hint more'),
       ]);
     } else if (nodeId == 'gallery_central') {
       commands.insertAll(0, const [
-        _QuickCommand('Break mirror', 'break mirror'),
-        _QuickCommand('Hint full', 'hint full'),
+        _QuickCommand('Examine mirror', 'examine mirror'),
+        _QuickCommand('Hint more', 'hint more'),
       ]);
     } else if (nodeId == 'lab_substances') {
       commands.insertAll(0, const [
         _QuickCommand('Decipher', 'decipher symbols'),
-        _QuickCommand('Collect mercury', 'collect mercury'),
-        _QuickCommand('Collect sulphur', 'collect sulphur'),
-        _QuickCommand('Collect salt', 'collect salt'),
+        _QuickCommand('Examine symbols', 'examine symbols'),
+        _QuickCommand('Hint more', 'hint more'),
       ]);
     } else if (nodeId == 'lab_furnace') {
       commands.insertAll(0, const [
-        _QuickCommand('Calcinate', 'calcinate'),
+        _QuickCommand('Examine furnace', 'examine furnace'),
         _QuickCommand('Wait', 'wait'),
       ]);
     } else if (nodeId == 'quinto_maturity') {
@@ -830,17 +830,17 @@ class _GameScreenState extends ConsumerState<GameScreen>
       ]);
     } else if (nodeId == 'quinto_ritual_chamber') {
       commands.insertAll(0, const [
-        _QuickCommand('Place simulacrum', 'place ataraxia in cup'),
-        _QuickCommand('Stir', 'stir'),
-        _QuickCommand('Drink', 'drink'),
+        _QuickCommand('Examine cup', 'examine cup'),
+        _QuickCommand('Inventory', 'inventory'),
+        _QuickCommand('Hint more', 'hint more'),
       ]);
     } else if (nodeId == 'il_nucleo' &&
         engine.inventory.any(
           (item) => !simulacraItemNames.contains(item),
         )) {
       commands.insertAll(0, const [
-        _QuickCommand('Deposit', 'deposit everything'),
-        _QuickCommand('Drop item', 'drop notebook'),
+        _QuickCommand('Examine antagonist', 'examine antagonist'),
+        _QuickCommand('Hint more', 'hint more'),
       ]);
     }
 

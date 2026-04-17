@@ -3,7 +3,7 @@
 // All four sectors + Fifth Sector + Final Boss + La Zona implemented.
 // Narrator: DemiurgeService ("All That Is") — deterministic, offline (GDD §5).
 
-import 'dart:math' show Random;
+import 'dart:math' show Random, max, min;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -265,6 +265,18 @@ const Map<String, String> _gateHints = {
   'ritual_complete': 'The passage down is sealed. The cup is not ready.\n\n'
       'Hint: place each simulacrum in the cup — then stir — then drink.',
 };
+
+// ── Depth / exposure gates (anti-speedrun, diegetic) ───────────────────────
+
+const Map<String, int> _depthThresholdsToQuinto = {
+  'garden': 5,
+  'observatory': 5,
+  'gallery': 5,
+  'laboratory': 5,
+};
+
+const int _memoryDepthThresholdToNucleo = 4;
+const int _quoteExposureThresholdToNucleo = 18;
 
 // ── Node definitions ──────────────────────────────────────────────────────────
 // Nodes are in English as required by GDD §1.
@@ -1158,6 +1170,9 @@ class GameEngineState {
   /// Integer counters for multi-step puzzles, e.g. 'fountain_waits': 2.
   final Map<String, int> puzzleCounters;
 
+  /// Session-total narrative quote/citation exposure tracked by the engine.
+  final int quoteExposureSeen;
+
   const GameEngineState({
     this.messages = const [],
     this.phase = ParserPhase.idle,
@@ -1170,6 +1185,7 @@ class GameEngineState {
     this.latestPsychoShiftIsPhase = false,
     this.completedPuzzles = const {},
     this.puzzleCounters = const {},
+    this.quoteExposureSeen = 0,
   });
 
   GameEngineState copyWith({
@@ -1184,6 +1200,7 @@ class GameEngineState {
     bool? latestPsychoShiftIsPhase,
     Set<String>? completedPuzzles,
     Map<String, int>? puzzleCounters,
+    int? quoteExposureSeen,
   }) {
     return GameEngineState(
       messages: messages ?? this.messages,
@@ -1200,6 +1217,7 @@ class GameEngineState {
           latestPsychoShiftIsPhase ?? this.latestPsychoShiftIsPhase,
       completedPuzzles: completedPuzzles ?? this.completedPuzzles,
       puzzleCounters: puzzleCounters ?? this.puzzleCounters,
+      quoteExposureSeen: quoteExposureSeen ?? this.quoteExposureSeen,
     );
   }
 }
@@ -1224,6 +1242,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   int _commandsSinceAutoSave = 0;
   String _lastAutoSaveSector = '';
   final Map<String, int> _nonProductiveAttemptsByNode = <String, int>{};
+  int _sessionQuoteExposureFloor = 0;
 
   // Maximum value for psychological weight and psycho-profile sliders.
   static const int _maxPsychoValue = 100;
@@ -1279,6 +1298,116 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   static int _wordCountExcludingVerb(String raw) =>
       raw.trim().split(RegExp(r'\s+')).skip(1).length;
 
+  static String _hintRequestCounterKey(String nodeId) =>
+      'hint_requests_$nodeId';
+
+  static String _depthCounterKey(String sector) => 'depth_$sector';
+
+  static String _depthSignatureKey({
+    required String sector,
+    required String nodeId,
+    required CommandVerb verb,
+  }) =>
+      'depth_sig_${sector}_${nodeId}_${verb.name}';
+
+  static String? _depthSectorForNode(String nodeId) {
+    if (nodeId.startsWith('garden_')) return 'garden';
+    if (nodeId.startsWith('obs_')) return 'observatory';
+    if (nodeId.startsWith('gallery_') || nodeId.startsWith('gal_')) {
+      return 'gallery';
+    }
+    if (nodeId.startsWith('lab_')) return 'laboratory';
+    if (nodeId.startsWith('quinto_') || nodeId.startsWith('memory_')) {
+      return 'memory';
+    }
+    return null;
+  }
+
+  bool _isDepthSignificantInteraction(
+      ParsedCommand cmd, EngineResponse response) {
+    if (cmd.verb == CommandVerb.help ||
+        cmd.verb == CommandVerb.inventory ||
+        cmd.verb == CommandVerb.hint ||
+        cmd.verb == CommandVerb.unknown) {
+      return false;
+    }
+    return response.completePuzzle != null ||
+        response.grantItem != null ||
+        response.incrementCounter != null ||
+        response.playerMemoryKey != null ||
+        response.newNode != null ||
+        response.needsDemiurge;
+  }
+
+  void _recordSectorDepthInteraction({
+    required ParsedCommand cmd,
+    required EngineResponse response,
+    required String nodeId,
+    required Set<String> puzzles,
+    required Map<String, int> counters,
+  }) {
+    final sector = _depthSectorForNode(nodeId);
+    if (sector == null) return;
+    if (!_isDepthSignificantInteraction(cmd, response)) return;
+    final signature =
+        _depthSignatureKey(sector: sector, nodeId: nodeId, verb: cmd.verb);
+    if (puzzles.contains(signature)) return;
+    puzzles.add(signature);
+    final key = _depthCounterKey(sector);
+    counters[key] = (counters[key] ?? 0) + 1;
+  }
+
+  List<String> _missingDepthSectorsForQuinto(GameEngineState s) {
+    final missing = <String>[];
+    for (final entry in _depthThresholdsToQuinto.entries) {
+      final count = s.puzzleCounters[_depthCounterKey(entry.key)] ?? 0;
+      if (count < entry.value) missing.add(entry.key);
+    }
+    return missing;
+  }
+
+  bool _hasMemoryDepthForNucleo(GameEngineState s) {
+    final depth = s.puzzleCounters[_depthCounterKey('memory')] ?? 0;
+    return depth >= _memoryDepthThresholdToNucleo;
+  }
+
+  int _quoteExposureShortfall(GameEngineState s) {
+    final seen = max(_sessionQuoteExposureFloor, s.quoteExposureSeen);
+    return max(0, _quoteExposureThresholdToNucleo - seen);
+  }
+
+  String _depthGateTextForQuinto(List<String> missingSectors) {
+    final names = missingSectors.map((s) {
+      switch (s) {
+        case 'garden':
+          return 'the Garden';
+        case 'observatory':
+          return 'the Observatory';
+        case 'gallery':
+          return 'the Gallery';
+        case 'laboratory':
+          return 'the Laboratory';
+        default:
+          return 'the Archive';
+      }
+    }).join(', ');
+    return 'The fifth stair forms, then folds back into stone.\n\n'
+        'The Archive has not heard you long enough in $names.\n\n'
+        'Linger, answer, and let each wing leave its mark before you ascend.';
+  }
+
+  String _depthGateTextForNucleo() {
+    return 'The passage trembles but does not yield.\n\n'
+        'The rooms of memory still keep part of your voice.\n\n'
+        'Return, speak, write, and remain a little longer before descending.';
+  }
+
+  String _quoteExposureGateText() {
+    return 'The descent darkens, then pauses.\n\n'
+        'Too few voices have passed through you for the Nucleus to answer.\n\n'
+        'Listen longer. Let more citations and replies take root, then try again.';
+  }
+
   String _randomUnknownFallback() => _unknownCommandFallbacks[
       _random.nextInt(_unknownCommandFallbacks.length)];
 
@@ -1310,6 +1439,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     final savedState = await ref.read(gameStateProvider.future);
     final node = _nodes[savedState.currentNode] ?? _nodes['intro_void']!;
     final intro = _enterNode(node);
+    _sessionQuoteExposureFloor =
+        savedState.puzzleCounters['quote_exposure_seen'] ?? 0;
     _nonProductiveAttemptsByNode.clear();
     await _history.save(
         role: 'system', content: 'Session started: ${node.title}');
@@ -1322,6 +1453,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       completedPuzzles: savedState.completedPuzzles,
       puzzleCounters: savedState.puzzleCounters,
       psychoWeight: savedState.psychoWeight,
+      quoteExposureSeen: _sessionQuoteExposureFloor,
     );
   }
 
@@ -1339,6 +1471,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     await ref.read(psychoProfileProvider.notifier).resetProfile();
     await ref.read(gameStateProvider.notifier).resetGameState();
     _nonProductiveAttemptsByNode.clear();
+    _sessionQuoteExposureFloor = 0;
     await _history.save(
         role: 'system', content: 'Session started: ${introNode.title}');
 
@@ -1350,6 +1483,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         completedPuzzles: const {},
         puzzleCounters: const {},
         psychoWeight: 0,
+        quoteExposureSeen: 0,
         isPuzzleSolved: false,
         latestSimulacrum: null,
       ),
@@ -1441,6 +1575,15 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         newCounters[response.incrementCounter!] =
             (newCounters[response.incrementCounter!] ?? 0) + 1;
       }
+
+      // ── Sector depth tracking (unique meaningful interactions per sector) ──
+      _recordSectorDepthInteraction(
+        cmd: cmd,
+        response: response,
+        nodeId: currentNodeId,
+        puzzles: newPuzzles,
+        counters: newCounters,
+      );
 
       // ── Navigation + bain-marie tracking + zone tracking ───────────────────
       if (response.newNode != null) {
@@ -1544,6 +1687,20 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           : '$narrativeWithProgressiveHint\n\n${psychoShift.text}';
       await _history.save(role: 'demiurge', content: narrativeWithPsychoShift);
 
+      int quoteExposureSeen = withPlayer.quoteExposureSeen;
+      if (response.needsDemiurge) {
+        final next =
+            (newCounters['quote_exposure_seen'] ?? quoteExposureSeen) + 1;
+        newCounters['quote_exposure_seen'] = next;
+        _sessionQuoteExposureFloor = max(_sessionQuoteExposureFloor, next);
+        quoteExposureSeen = _sessionQuoteExposureFloor;
+      } else {
+        quoteExposureSeen = max(
+          _sessionQuoteExposureFloor,
+          newCounters['quote_exposure_seen'] ?? quoteExposureSeen,
+        );
+      }
+
       final finalState = withPlayer.copyWith(
         phase: ParserPhase.displaying,
         psychoWeight: newWeight,
@@ -1558,6 +1715,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             psychoShift?.phaseChanged ?? withPlayer.latestPsychoShiftIsPhase,
         completedPuzzles: newPuzzles,
         puzzleCounters: newCounters,
+        quoteExposureSeen: quoteExposureSeen,
       );
 
       // ── Persist full engine state ─────────────────────────────────────────────
@@ -1819,6 +1977,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               'You are missing: $missing.',
         );
       }
+      final missingDepth = _missingDepthSectorsForQuinto(s);
+      if (missingDepth.isNotEmpty) {
+        return EngineResponse(
+          narrativeText: _depthGateTextForQuinto(missingDepth),
+        );
+      }
     }
 
     if (nodeId == 'la_zona' && direction == 'back') {
@@ -1864,6 +2028,21 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           narrativeText: 'The lower chamber is sealed.\n\n'
               'Four prices remain unpaid: $missing.\n\n'
               'Return through each room and pay the price.',
+        );
+      }
+      if (!_hasMemoryDepthForNucleo(s)) {
+        return EngineResponse(
+          narrativeText: _depthGateTextForNucleo(),
+        );
+      }
+    }
+
+    // Final descent hard gate: requires enough narrative quote exposure.
+    if (nodeId == 'quinto_ritual_chamber' && direction == 'down') {
+      final shortfall = _quoteExposureShortfall(s);
+      if (shortfall > 0) {
+        return EngineResponse(
+          narrativeText: _quoteExposureGateText(),
         );
       }
     }
@@ -3074,7 +3253,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   EngineResponse _handleHint(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
     final args = cmd.args.join(' ').toLowerCase();
-    final level = args.contains('full') ||
+    final requestedLevel = args.contains('full') ||
             args.contains('explicit') ||
             args.contains('exact')
         ? 3
@@ -3083,8 +3262,21 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
                 args.contains('clearer')
             ? 2
             : 1;
+    final key = _hintRequestCounterKey(nodeId);
+    final requestCount = (s.puzzleCounters[key] ?? 0) + 1;
+    final unlockedLevel = requestCount >= 3
+        ? 3
+        : requestCount >= 2
+            ? 2
+            : 1;
+    final level = min(requestedLevel, unlockedLevel);
+    final hintText = _hintTextForNode(nodeId, level, s);
+    final softened = requestedLevel > unlockedLevel
+        ? '$hintText\n\nThe Archive withholds the final contour for now. Ask again, and it will reveal more.'
+        : hintText;
     return EngineResponse(
-      narrativeText: _hintTextForNode(nodeId, level, s),
+      narrativeText: softened,
+      incrementCounter: key,
     );
   }
 
@@ -3353,6 +3545,17 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       return const EngineResponse(
         narrativeText:
             'You have already drunk the infusion. The passage below is open.',
+      );
+    }
+    if (!_hasMemoryDepthForNucleo(s)) {
+      return EngineResponse(
+        narrativeText: _depthGateTextForNucleo(),
+      );
+    }
+    final shortfall = _quoteExposureShortfall(s);
+    if (shortfall > 0) {
+      return EngineResponse(
+        narrativeText: _quoteExposureGateText(),
       );
     }
     return const EngineResponse(
@@ -4101,6 +4304,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     await ref.read(psychoProfileProvider.future);
     DemiurgeService.instance.restorePhase(slot.phase);
 
+    final slotQuoteExposure = slot.puzzleCounters['quote_exposure_seen'] ?? 0;
+    _sessionQuoteExposureFloor =
+        max(_sessionQuoteExposureFloor, slotQuoteExposure);
+
     // Build a fresh engine state from the restored data.
     final restoredState = GameEngineState(
       phase: ParserPhase.idle,
@@ -4108,6 +4315,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       completedPuzzles: slot.completedPuzzles,
       puzzleCounters: slot.puzzleCounters,
       psychoWeight: slot.psychoWeight,
+      quoteExposureSeen: _sessionQuoteExposureFloor,
     );
     final node = _nodes[slot.currentNode];
     final recap = _buildSessionRecap(
@@ -4445,6 +4653,13 @@ String? gameRequiredPuzzleForExit(String nodeId, String direction) =>
     _exitGates[nodeId]?[direction];
 
 String? gameGateHintForPuzzle(String puzzleId) => _gateHints[puzzleId];
+
+int? gameDepthThresholdForSectorToQuinto(String sector) =>
+    _depthThresholdsToQuinto[sector];
+
+int gameMemoryDepthThresholdToNucleo() => _memoryDepthThresholdToNucleo;
+
+int gameQuoteExposureThresholdToNucleo() => _quoteExposureThresholdToNucleo;
 
 BossUtteranceKind classifyBossUtterance(String rawInput) {
   final raw = rawInput.toLowerCase().trim();

@@ -51,4 +51,18 @@ class DialogueHistoryService {
     final db = await _db.database;
     await db.delete('dialogue_history');
   }
+
+  /// Counts stored entries for a specific [role].
+  Future<int> countByRole(String role) async {
+    final db = await _db.database;
+    final rows = await db.rawQuery(
+      'SELECT COUNT(*) AS c FROM dialogue_history WHERE role = ?',
+      [role],
+    );
+    if (rows.isEmpty) return 0;
+    final raw = rows.first['c'];
+    if (raw is int) return raw;
+    if (raw is num) return raw.toInt();
+    return 0;
+  }
 }
