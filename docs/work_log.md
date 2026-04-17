@@ -4,6 +4,84 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Systemic Garden migration slice + assist hardening pass 2)
+**Role:** Incremental refactor execution (Garden-first systemic vertical slice)
+
+**Done:**
+- Extended `GameEngineNotifier` with Garden systemic staging while keeping existing command loop and save model stable:
+  - leaf gate now requires preparatory reading of both the Portico columns and Cypress leaves before a valid arrangement can lock.
+  - leaf arrangement now recognises plausible-but-wrong philosophical orders and responds diegetically without opening the path.
+  - fountain gate now rewards attentive patience instead of pure command spam: second/third waits are blocked until the player re-engages with fountain/dust/inscription.
+  - stele writing now uses lightweight heuristics (minimum length, anti-generic phrases, friendship token, concrete/costly cues) before accepting inscription.
+  - grove statue now requires triadic relinquishment coverage (useful / identity-bound / pain-bound) before `deposit everything` can yield Ataraxia.
+- Added Garden revisit and cross-sector hooks:
+  - first post-completion return to `garden_portico` emits altered-return text and marks `garden_revisited`.
+  - first `examine pedestal` at Threshold after Garden completion emits an east-wing resonance hook.
+- Notebook-centric safeguard:
+  - `notebook` can no longer be dropped.
+  - deposit flows preserve `notebook` (both Garden and Nucleus deposit contexts), while still clearing mundane burden.
+- Hardened assist/hint anti-shortcut behavior (non-punitive):
+  - full hint escalation now unlocks one step later (`hint` request count 4 for level 3).
+  - quick suggestions demoted from `hint more` to `hint` in puzzle hotspots.
+  - removed immediate solver quick action (`decipher symbols`) from Lab suggestions.
+- Added test coverage for new helper-level heuristics:
+  - `gameGardenSteleInscriptionLooksSpecific(...)`
+  - `gameGardenRelinquishmentCoverage(...)`
+  - tests added in `test/game_engine_helpers_test.dart`.
+
+**Verification:**
+- `dart format lib/features/game/game_engine_provider.dart lib/features/ui/game_screen.dart test/game_engine_helpers_test.dart` ✅
+- `flutter test test/game_engine_helpers_test.dart test/systemic_state_test.dart test/puzzle_gates_test.dart` ✅
+- `flutter test` ✅ (all passing; existing skipped integration TODOs unchanged)
+
+**Architecture notes:**
+- No provider split introduced: `GameEngineNotifier` remains the orchestration center as requested.
+- Deterministic narrator stack unchanged (Demiurge/Echo only, no LLM runtime path).
+- State persistence remains backward-compatible through `completed_puzzles` + `puzzle_counters`.
+
+### 2026-04-17 — Codex GPT-5 (Systemic refactor bootstrap: audit + phase-1 vertical slice)
+**Role:** Architecture refactor kickoff (incremental, gameplay-safe)
+
+**Done:**
+- Audited the current codebase against the requested systemic direction and confirmed:
+  - monolithic orchestration in `GameEngineNotifier` is the safest integration point
+  - parser is already command-structured and suitable for controlled free-text windows
+  - persistence can safely evolve via `puzzle_counters` / `completed_puzzles` without immediate table explosion.
+- Introduced systemic state foundations in a new pure module:
+  - `lib/features/game/systemic_state.dart`
+  - Added typed shells:
+    - `WeightState` (material/verbal/symbolic)
+    - `NotebookState` (pages/hidden/torn/habitation)
+    - `CoherenceState` (contradictions)
+    - `SectorState` (surface/deep/depth signals)
+    - `ZoneState` (pressure)
+    - `ThresholdState` (resonance, unstable light, incomplete stair)
+    - `EndingState` (eligibility shell)
+  - Added `SystemicStateCodec` for:
+    - decoding runtime systemic snapshot from existing counters/puzzles
+    - applying incremental shell transitions (`applyShells`)
+    - zone pressure boost/decay hooks
+    - threshold diegetic return signals
+    - notebook inspection text rendering.
+- Integrated phase-1 shells into `GameEngineNotifier` with no provider split:
+  - `processInput()` now applies systemic shells every turn using existing runtime data.
+  - zone activation probability now includes a bounded systemic boost from run pressure.
+  - zone activation consumes one unit of pressure.
+  - returning to `la_soglia` may append diegetic resonance lines (unstable light/incomplete stair/hum).
+  - `examine notebook` now surfaces a systemic notebook/status readout.
+- Added tests for pure systemic transitions:
+  - `test/systemic_state_test.dart`.
+
+**Verification:**
+- `dart format lib/features/game/systemic_state.dart lib/features/game/game_engine_provider.dart test/systemic_state_test.dart` ✅
+- `flutter test test/systemic_state_test.dart test/parser_test.dart test/puzzle_gates_test.dart` ✅
+- `flutter test` ✅ (all passing; existing 3 skipped integration TODOs unchanged)
+
+**Architecture notes:**
+- This is a bootstrap slice only: no full Garden migration yet.
+- State foundations are intentionally encoded in existing persistence channels (`puzzle_counters` + `completed_puzzles`) to keep save/load stable during refactor.
+- Next safe vertical slice is Garden staged-state migration on top of these shells.
+
 ### 2026-04-17 — Codex GPT-5 (Depth gates + quote exposure + assist hardening)
 **Role:** Gameplay progression hardening (diegetic, non-punitive)
 

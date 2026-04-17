@@ -767,12 +767,12 @@ class _GameScreenState extends ConsumerState<GameScreen>
     } else if (nodeId == 'garden_cypress') {
       commands.insertAll(0, const [
         _QuickCommand('Examine leaves', 'examine leaves'),
-        _QuickCommand('Hint more', 'hint more'),
+        _QuickCommand('Hint', 'hint'),
       ]);
     } else if (nodeId == 'garden_fountain') {
       commands.insertAll(0, const [
         _QuickCommand('Examine fountain', 'examine fountain'),
-        _QuickCommand('Hint more', 'hint more'),
+        _QuickCommand('Hint', 'hint'),
       ]);
     } else if (nodeId == 'garden_grove') {
       commands.insertAll(0, const [
@@ -795,28 +795,27 @@ class _GameScreenState extends ConsumerState<GameScreen>
       commands.insertAll(0, const [
         _QuickCommand('Examine telescope', 'examine telescope'),
         _QuickCommand('Examine mirror', 'examine mirror'),
-        _QuickCommand('Hint more', 'hint more'),
+        _QuickCommand('Hint', 'hint'),
       ]);
     } else if (nodeId == 'gallery_hall') {
       commands.insertAll(0, const [
         _QuickCommand('Examine mirrors', 'examine mirrors'),
-        _QuickCommand('Hint more', 'hint more'),
+        _QuickCommand('Hint', 'hint'),
       ]);
     } else if (nodeId == 'gallery_corridor') {
       commands.insertAll(0, const [
         _QuickCommand('Examine mosaic', 'examine mosaic'),
-        _QuickCommand('Hint more', 'hint more'),
+        _QuickCommand('Hint', 'hint'),
       ]);
     } else if (nodeId == 'gallery_central') {
       commands.insertAll(0, const [
         _QuickCommand('Examine mirror', 'examine mirror'),
-        _QuickCommand('Hint more', 'hint more'),
+        _QuickCommand('Hint', 'hint'),
       ]);
     } else if (nodeId == 'lab_substances') {
       commands.insertAll(0, const [
-        _QuickCommand('Decipher', 'decipher symbols'),
         _QuickCommand('Examine symbols', 'examine symbols'),
-        _QuickCommand('Hint more', 'hint more'),
+        _QuickCommand('Hint', 'hint'),
       ]);
     } else if (nodeId == 'lab_furnace') {
       commands.insertAll(0, const [
@@ -832,7 +831,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
       commands.insertAll(0, const [
         _QuickCommand('Examine cup', 'examine cup'),
         _QuickCommand('Inventory', 'inventory'),
-        _QuickCommand('Hint more', 'hint more'),
+        _QuickCommand('Hint', 'hint'),
       ]);
     } else if (nodeId == 'il_nucleo' &&
         engine.inventory.any(
@@ -840,7 +839,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
         )) {
       commands.insertAll(0, const [
         _QuickCommand('Examine antagonist', 'examine antagonist'),
-        _QuickCommand('Hint more', 'hint more'),
+        _QuickCommand('Hint', 'hint'),
       ]);
     }
 

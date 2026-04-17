@@ -52,6 +52,25 @@ void main() {
       expect(gameQuoteExposureThresholdToNucleo(), 18);
     });
 
+    test('evaluates garden stele specificity heuristics', () {
+      expect(gameGardenSteleInscriptionLooksSpecific('friendship'), isFalse);
+      expect(
+        gameGardenSteleInscriptionLooksSpecific(
+          'friendship asks me to return to that winter street and apologize by name',
+        ),
+        isTrue,
+      );
+    });
+
+    test('classifies garden relinquishment categories from inventory', () {
+      final coverage = gameGardenRelinquishmentCoverage(
+        const ['book', 'mirror shard', 'coin'],
+      );
+      expect(coverage['useful'], isTrue);
+      expect(coverage['identity'], isTrue);
+      expect(coverage['pain'], isTrue);
+    });
+
     test('classifies zone-eligible transits conservatively', () {
       expect(gameTransitEligibleForZone('garden_cypress', 'garden_fountain'),
           isTrue);

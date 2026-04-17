@@ -16,6 +16,7 @@ import '../demiurge/demiurge_service.dart';
 import '../demiurge/echo_service.dart';
 import '../parser/parser_service.dart';
 import '../parser/parser_state.dart';
+import 'systemic_state.dart';
 import '../state/game_state_provider.dart';
 import '../state/psycho_provider.dart';
 
@@ -204,13 +205,13 @@ const Map<String, Map<String, String>> _exitGates = {
 const Map<String, String> _gateHints = {
   'leaves_arranged':
       'The fallen leaves bar your way. Their disorder is the lock.\n\n'
-          'Hint: arrange leaves [seven words in Epicurean order].',
+          'Hint: read columns and leaves, then arrange leaves [seven words in Epicurean order].',
   'fountain_waited':
       'The passage north is not yet open. Something is still arriving.\n\n'
-          'Hint: wait — and again, and again.',
+          'Hint: wait, but not mechanically. Attend to fountain and dust between turnings.',
   'stele_inscribed':
       'The grove will not receive you. The blank stele stands in judgement.\n\n'
-          'Hint: inscribe [the missing maxim] — read the eleven that precede it.',
+          'Hint: inscribe a concrete, costly line about friendship — not a slogan.',
   'lenses_combined':
       'The corridor is dark. The telescope mount is incomplete.\n\n'
           'Hint: combine lens [Moon] [Mercury] [Sun].',
@@ -1280,6 +1281,74 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     'moon',
   ];
 
+  static const Set<String> _gardenUsefulItems = {
+    'coin',
+    'book',
+    'compass',
+    'lamp',
+    'key',
+    'stylus',
+  };
+
+  static const Set<String> _gardenIdentityItems = {
+    'notebook',
+    'book',
+    'coin',
+    'compass',
+    'lamp',
+    'page',
+  };
+
+  static const Set<String> _gardenPainItems = {
+    'rusted key',
+    'key',
+    'torn page',
+    'page',
+    'mirror shard',
+    'earth',
+  };
+
+  static const Set<String> _gardenSteleGenericPhrases = {
+    'friendship',
+    'be good',
+    'be kind',
+    'love wins',
+    'all is one',
+    'live laugh love',
+    'peace and love',
+  };
+
+  static const Set<String> _gardenSteleConcreteTerms = {
+    'friend',
+    'name',
+    'door',
+    'winter',
+    'summer',
+    'grave',
+    'voice',
+    'hand',
+    'letter',
+    'street',
+    'house',
+    'room',
+  };
+
+  static const Set<String> _gardenSteleCostTerms = {
+    'risk',
+    'lose',
+    'loss',
+    'cost',
+    'hurt',
+    'forgive',
+    'fear',
+    'ashamed',
+    'wait',
+    'remain',
+    'return',
+    'apologize',
+    'apologise',
+  };
+
   // ── Small helpers ───────────────────────────────────────────────────────────
 
   /// Returns true if [itemName] is one of the four weightless simulacra.
@@ -1297,6 +1366,44 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   /// Counts words in [raw] after skipping the first token (the command verb).
   static int _wordCountExcludingVerb(String raw) =>
       raw.trim().split(RegExp(r'\s+')).skip(1).length;
+
+  static bool _containsToken(String text, String token) =>
+      RegExp('\\b${RegExp.escape(token)}\\b').hasMatch(text);
+
+  static bool _inventoryHasCategoryItem(
+    Iterable<String> inventory,
+    Set<String> category,
+  ) {
+    for (final item in inventory) {
+      final lower = item.toLowerCase();
+      for (final token in category) {
+        if (lower == token || lower.contains(token)) return true;
+      }
+    }
+    return false;
+  }
+
+  static bool _gardenSteleLooksSpecific(String inscription) {
+    final text = inscription.toLowerCase().trim();
+    if (text.isEmpty) return false;
+    final words =
+        text.split(RegExp(r'\s+')).where((w) => w.trim().isNotEmpty).toList();
+    if (words.length < 8) return false;
+
+    if (_gardenSteleGenericPhrases.contains(text)) return false;
+    if (!_containsToken(text, 'friendship')) return false;
+
+    final hasConcrete =
+        _gardenSteleConcreteTerms.any((term) => _containsToken(text, term));
+    final hasCost =
+        _gardenSteleCostTerms.any((term) => _containsToken(text, term));
+    final hasFirstPerson = _containsToken(text, 'i') ||
+        _containsToken(text, 'me') ||
+        _containsToken(text, 'my') ||
+        _containsToken(text, 'mine');
+
+    return hasConcrete && (hasCost || hasFirstPerson);
+  }
 
   static String _hintRequestCounterKey(String nodeId) =>
       'hint_requests_$nodeId';
@@ -1537,6 +1644,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           .clamp(0, _maxPsychoValue);
 
       // ── Apply inventory changes ─────────────────────────────────────────────
+      final beforeInventory = List<String>.from(withPlayer.inventory);
       List<String> newInventory = List.from(withPlayer.inventory);
       if (response.grantItem != null &&
           !newInventory.contains(response.grantItem!)) {
@@ -1555,9 +1663,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       // In boss context (il_nucleo): preserve simulacra — only remove mundane items.
       if (cmd.verb == CommandVerb.deposit && response.clearInventoryOnDeposit) {
         if (currentNodeId == 'il_nucleo') {
-          newInventory = newInventory.where(_isSimulacrum).toList();
+          newInventory = newInventory
+              .where((item) => _isSimulacrum(item) || item == 'notebook')
+              .toList();
         } else {
-          newInventory.clear();
+          newInventory =
+              newInventory.where((item) => item == 'notebook').toList();
         }
         newWeight = 0;
         if (response.grantItem != null) newInventory.add(response.grantItem!);
@@ -1609,6 +1720,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           newCounters['zone_encounters'] =
               (newCounters['zone_encounters'] ?? 0) + 1;
           newCounters['consecutive_transits'] = 0;
+          SystemicStateCodec.onZoneActivated(newCounters);
         }
 
         // Consecutive transit tracking (la_soglia ↔ sectors)
@@ -1621,6 +1733,19 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           newCounters['consecutive_transits'] = 0;
         }
       }
+
+      // ── Systemic shells (notebook / coherence / depth / threshold / weights)
+      // Stored in counters+puzzles to remain save-slot compatible during refactor.
+      SystemicStateCodec.applyShells(
+        cmd: cmd,
+        response: response,
+        nodeId: currentNodeId,
+        beforeInventory: beforeInventory,
+        afterInventory: newInventory,
+        psychoWeight: newWeight,
+        counters: newCounters,
+        puzzles: newPuzzles,
+      );
 
       // ── Apply psycho profile ────────────────────────────────────────────────
       if (response.anxietyDelta != null ||
@@ -1685,7 +1810,16 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       final narrativeWithPsychoShift = psychoShift == null
           ? narrativeWithProgressiveHint
           : '$narrativeWithProgressiveHint\n\n${psychoShift.text}';
-      await _history.save(role: 'demiurge', content: narrativeWithPsychoShift);
+      final savedNodeId = response.newNode ?? currentNodeId;
+      final thresholdSignal = SystemicStateCodec.thresholdReturnSignal(
+        nodeId: savedNodeId,
+        counters: newCounters,
+        puzzles: newPuzzles,
+      );
+      final narrativeWithThreshold = thresholdSignal == null
+          ? narrativeWithPsychoShift
+          : '$narrativeWithPsychoShift\n\n$thresholdSignal';
+      await _history.save(role: 'demiurge', content: narrativeWithThreshold);
 
       int quoteExposureSeen = withPlayer.quoteExposureSeen;
       if (response.needsDemiurge) {
@@ -1719,7 +1853,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
 
       // ── Persist full engine state ─────────────────────────────────────────────
-      final savedNodeId = response.newNode ?? currentNodeId;
       await ref.read(gameStateProvider.notifier).saveEngineState(
             currentNode: savedNodeId,
             completedPuzzles: newPuzzles,
@@ -1741,14 +1874,14 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           ? finalState.copyWith(
               messages: [
                 GameMessage(
-                    text: narrativeWithPsychoShift, role: MessageRole.narrative)
+                    text: narrativeWithThreshold, role: MessageRole.narrative)
               ],
               screenResetCount: current.screenResetCount + 1,
             )
           : _appendMessage(
               finalState,
               GameMessage(
-                  text: narrativeWithPsychoShift, role: MessageRole.narrative),
+                  text: narrativeWithThreshold, role: MessageRole.narrative),
             );
       if (response.audioTrigger == 'simulacrum') {
         // Let the dedicated reward banner land before the typewriter resumes so
@@ -1840,7 +1973,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         );
 
       case CommandVerb.examine:
-        return _handleExamine(cmd, node);
+        return _handleExamine(cmd, nodeId, node, s);
 
       case CommandVerb.go:
         return _handleGo(cmd, node, nodeId, s);
@@ -1938,12 +2071,83 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
 
-  EngineResponse _handleExamine(ParsedCommand cmd, _NodeDef node) {
+  EngineResponse _handleExamine(
+    ParsedCommand cmd,
+    String nodeId,
+    _NodeDef node,
+    GameEngineState s,
+  ) {
     if (cmd.args.isEmpty) {
       return EngineResponse(
           narrativeText: _enterNode(node), needsDemiurge: true);
     }
     final target = cmd.args.join(' ');
+    if (target.contains('notebook') || target == 'book') {
+      final systemic = SystemicStateCodec.fromSnapshot(
+        psychoWeight: s.psychoWeight,
+        counters: s.puzzleCounters,
+        puzzles: s.completedPuzzles,
+      );
+      return EngineResponse(
+        narrativeText: SystemicStateCodec.notebookExamineText(systemic),
+      );
+    }
+
+    if (nodeId == 'garden_portico' && target.contains('column')) {
+      return const EngineResponse(
+        narrativeText: 'Each column bears one word:\n'
+            'ataraxia — aponia — philia — phronesis.\n\n'
+            'The sequence feels like instruction, not decoration.',
+        completePuzzle: 'garden_columns_read',
+        needsDemiurge: true,
+      );
+    }
+    if (nodeId == 'garden_cypress' && target.contains('leaves')) {
+      return const EngineResponse(
+        narrativeText: 'You kneel among the leaves and read them slowly:\n'
+            'pleasure — friendship — prudence — tranquillity — memory — simplicity — absence.\n\n'
+            'It is not a random list. It is a philosophy waiting for order.',
+        completePuzzle: 'garden_leaves_read',
+        needsDemiurge: true,
+      );
+    }
+    if (nodeId == 'garden_fountain' &&
+        (target.contains('fountain') ||
+            target.contains('dust') ||
+            target.contains('inscription'))) {
+      final waits = s.puzzleCounters['fountain_waits'] ?? 0;
+      if (waits >= 2 && !s.completedPuzzles.contains('fountain_reflection_2')) {
+        return const EngineResponse(
+          narrativeText: 'You trace the rim with your fingertips.\n\n'
+              'The dust is no longer inert. It answers pressure with a line that vanishes at once.\n\n'
+              'The room asks for waiting with attention, not repetition.',
+          completePuzzle: 'fountain_reflection_2',
+          needsDemiurge: true,
+        );
+      }
+      if (waits >= 1 && !s.completedPuzzles.contains('fountain_reflection_1')) {
+        return const EngineResponse(
+          narrativeText:
+              'Looking closely, you notice the dust drift against no wind.\n\n'
+              'Patience here is not passivity. It is participation.',
+          completePuzzle: 'fountain_reflection_1',
+          needsDemiurge: true,
+        );
+      }
+    }
+
+    if (nodeId == 'la_soglia' &&
+        target.contains('pedestal') &&
+        s.completedPuzzles.contains('garden_complete') &&
+        !s.completedPuzzles.contains('garden_cross_sector_hint')) {
+      return const EngineResponse(
+        narrativeText:
+            'Ataraxia rests in your hand, and the eastern door answers with a colder hum.\n\n'
+            'Stillness has altered measure somewhere else in the Archive.',
+        completePuzzle: 'garden_cross_sector_hint',
+        needsDemiurge: true,
+      );
+    }
     final match = node.examines.entries
         .where((e) => e.key.contains(target) || target.contains(e.key))
         .map((e) => e.value)
@@ -2097,6 +2301,20 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
+    if (dest == 'garden_portico' &&
+        s.completedPuzzles.contains('garden_complete') &&
+        !s.completedPuzzles.contains('garden_revisited')) {
+      return EngineResponse(
+        narrativeText: 'Portico (returned)\n\n'
+            'The same columns, but a different silence.\n\n'
+            'The words no longer read like doctrine. They read like memory.\n\n'
+            'In the distance, from the eastern wing, a measured metallic tone answers your step.',
+        newNode: dest,
+        needsDemiurge: true,
+        completePuzzle: 'garden_revisited',
+      );
+    }
+
     return EngineResponse(
       narrativeText: _enterNode(destNode),
       newNode: dest,
@@ -2124,6 +2342,21 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         );
       }
       final waits = (s.puzzleCounters['fountain_waits'] ?? 0) + 1;
+      if (waits == 2 && !s.completedPuzzles.contains('fountain_reflection_1')) {
+        return const EngineResponse(
+          narrativeText:
+              'You wait again, but the fountain remains perfectly mute.\n\n'
+              'It does not reward repetition alone.\n\n'
+              'Study the dust or the inscription, then return to stillness.',
+        );
+      }
+      if (waits >= 3 && !s.completedPuzzles.contains('fountain_reflection_2')) {
+        return const EngineResponse(
+          narrativeText:
+              'Your patience hardens into routine, and the room closes around it.\n\n'
+              'Attend once more to what the fountain is showing before you wait again.',
+        );
+      }
       if (waits < 3) {
         return EngineResponse(
           narrativeText: waits == 1
@@ -2261,6 +2494,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         .firstOrNull;
     if (match == null)
       return const EngineResponse(narrativeText: 'You are not carrying that.');
+    if (match == 'notebook') {
+      return const EngineResponse(
+        narrativeText: 'The notebook resists your hand.\n\n'
+            'It is not an object you can discard here.',
+      );
+    }
 
     final isSimulacrum = _isSimulacrum(match);
 
@@ -2342,6 +2581,38 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         narrativeText: 'You carry only what you cannot deposit.\n\n'
             'The statue\'s open hands seem to already know this.',
         needsDemiurge: true,
+      );
+    }
+    final mundaneInventory = s.inventory.where((i) => !_isSimulacrum(i));
+    final hasUseful = _inventoryHasCategoryItem(
+      mundaneInventory,
+      _gardenUsefulItems,
+    );
+    final hasIdentity = _inventoryHasCategoryItem(
+      mundaneInventory,
+      _gardenIdentityItems,
+    );
+    final hasPain = _inventoryHasCategoryItem(
+      mundaneInventory,
+      _gardenPainItems,
+    );
+    final offeredUseful = s.completedPuzzles.contains('garden_offer_useful');
+    final offeredIdentity =
+        s.completedPuzzles.contains('garden_offer_identity');
+    final offeredPain = s.completedPuzzles.contains('garden_offer_pain');
+
+    final missingKinds = <String>[];
+    if (!(hasUseful || offeredUseful)) missingKinds.add('something useful');
+    if (!(hasIdentity || offeredIdentity))
+      missingKinds.add('something tied to who you are');
+    if (!(hasPain || offeredPain)) missingKinds.add('something tied to pain');
+
+    if (missingKinds.isNotEmpty) {
+      return EngineResponse(
+        narrativeText:
+            'The statue does not refuse you, but neither does it receive.\n\n'
+            'Three relinquishments are required: one useful thing, one identity-bound thing, one pain-bound thing.\n\n'
+            'What is still missing: ${missingKinds.join(', ')}.',
       );
     }
     return _simulacrumReward(
@@ -2496,8 +2767,32 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Hint: arrange leaves [word word word word word word word]',
       );
     }
+    final prepared = s.completedPuzzles.contains('garden_columns_read') &&
+        s.completedPuzzles.contains('garden_leaves_read');
+    if (!prepared) {
+      return const EngineResponse(
+        narrativeText:
+            'You begin to order the leaves, but the sequence refuses to hold.\n\n'
+            'The path asks for two memories at once: what the columns taught and what the leaves repeat.\n\n'
+            'Read both before arranging.',
+      );
+    }
     // Normalise: strip commas, hyphens, extra spaces (shared helper)
     final input = _normalizeInput(cmd.args.join(' '));
+
+    const alternativeOrders = {
+      'prudence friendship absence tranquillity pleasure simplicity memory',
+      'friendship prudence pleasure simplicity absence tranquillity memory',
+      'pleasure friendship prudence simplicity absence tranquillity memory',
+    };
+
+    if (alternativeOrders.contains(input)) {
+      return const EngineResponse(
+        narrativeText: 'The arrangement is coherent, almost persuasive.\n\n'
+            'For a breath, the avenue seems ready to open.\n\n'
+            'Then the darker leaf twists out of line. This is a philosophy, but not the one this path obeys.',
+      );
+    }
 
     if (input == _correctLeafOrder) {
       return const EngineResponse(
@@ -2544,9 +2839,16 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
               'Read the eleven that came before. Understand what they build toward.',
         );
       }
-      // Use word-boundary regex so "friendship" inside e.g. "no friendship" still
-      // counts but "unfriendship" would not — consistent with the puzzle intent.
-      if (RegExp(r'\bfriendship\b').hasMatch(cmd.rawInput.toLowerCase())) {
+      final inscription = cmd.args.join(' ').toLowerCase();
+      if (_gardenSteleGenericPhrases.contains(inscription) ||
+          inscription.split(RegExp(r'\s+')).length < 5) {
+        return const EngineResponse(
+          narrativeText: 'The stylus scratches, then stalls.\n\n'
+              'The stele rejects slogans.\n\n'
+              'Write something concrete: what friendship costs, what it asks, what it changes.',
+        );
+      }
+      if (_gardenSteleLooksSpecific(inscription)) {
         return const EngineResponse(
           narrativeText: 'The stylus moves. The words appear:\n\n'
               '"Of all wisdom\'s gifts to a happy life, '
@@ -2559,10 +2861,9 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         );
       }
       return const EngineResponse(
-        narrativeText: 'The marks fade.\n\n'
-            'The maxim is not yet right. '
-            'Consider the column words in the portico. '
-            'One of the seven leaf words is what the statue\'s open hands are asking for.',
+        narrativeText: 'The marks fade before they settle.\n\n'
+            'The stone is asking for a specific and costly truth about friendship, not an abstract praise.\n\n'
+            'Name an action, a risk, a memory, or a wound carried together.',
       );
     }
 
@@ -2782,6 +3083,66 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleOffer(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
+    if (nodeId == 'garden_grove') {
+      if (cmd.args.isEmpty) {
+        return const EngineResponse(
+          narrativeText:
+              'Offer what? The statue receives things, not declarations.\n\n'
+              'Offer one useful object, one identity-bound object, and one pain-bound object.',
+        );
+      }
+      final target = cmd.args.join(' ');
+      final match = s.inventory
+          .where((i) => i.contains(target) || target.contains(i))
+          .firstOrNull;
+      if (match == null) {
+        return const EngineResponse(
+          narrativeText: 'You are not carrying that.',
+        );
+      }
+      final lower = match.toLowerCase();
+      final isUseful = _gardenUsefulItems
+          .any((token) => lower == token || lower.contains(token));
+      final isIdentity = _gardenIdentityItems
+          .any((token) => lower == token || lower.contains(token));
+      final isPain = _gardenPainItems
+          .any((token) => lower == token || lower.contains(token));
+      if (!isUseful && !isIdentity && !isPain) {
+        return const EngineResponse(
+          narrativeText:
+              'The statue does not answer. This is not one of the things it asks to be relinquished.',
+        );
+      }
+
+      String? categoryLabel;
+      String? completePuzzle;
+      if (isUseful && !s.completedPuzzles.contains('garden_offer_useful')) {
+        categoryLabel = 'useful';
+        completePuzzle = 'garden_offer_useful';
+      } else if (isIdentity &&
+          !s.completedPuzzles.contains('garden_offer_identity')) {
+        categoryLabel = 'identity-bound';
+        completePuzzle = 'garden_offer_identity';
+      } else if (isPain && !s.completedPuzzles.contains('garden_offer_pain')) {
+        categoryLabel = 'pain-bound';
+        completePuzzle = 'garden_offer_pain';
+      }
+      if (categoryLabel == null) {
+        return const EngineResponse(
+          narrativeText:
+              'The statue inclines by a fraction. It has already counted this kind of relinquishment.\n\n'
+              'Offer what is still missing, or deposit what you have chosen to set down.',
+        );
+      }
+      return EngineResponse(
+        narrativeText: 'You place the $match on the stone.\n\n'
+            'The open palms do not close, but the air around them changes.\n\n'
+            'The Archive marks this as $categoryLabel.',
+        completePuzzle: completePuzzle,
+        needsDemiurge: true,
+      );
+    }
+
     if (nodeId != 'lab_vestibule') {
       return const EngineResponse(
           narrativeText: 'There is no one here to receive an offering.');
@@ -3264,7 +3625,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             : 1;
     final key = _hintRequestCounterKey(nodeId);
     final requestCount = (s.puzzleCounters[key] ?? 0) + 1;
-    final unlockedLevel = requestCount >= 3
+    final unlockedLevel = requestCount >= 4
         ? 3
         : requestCount >= 2
             ? 2
@@ -4013,6 +4374,8 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     // +5% per simulacrum
     prob += simulacraCount * 0.05;
+    // Additional run-reactive pressure from systemic contradictions/shell state.
+    prob += SystemicStateCodec.zoneActivationBoost(s.puzzleCounters);
     return prob.clamp(0.0, 0.9);
   }
 
@@ -4041,7 +4404,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         return _selectHint(level, const [
           'The statue is asking for relinquishment, not acquisition.',
           'You must pass through pleasure and pain before the statue accepts what you carry.',
-          'Walk through both alcoves without taking anything. Then deposit everything at the statue.',
+          'Relinquish one useful object, one identity-bound object, and one pain-bound object; then deposit everything at the statue.',
         ]);
       case 'gallery_copies':
         return _selectHint(level, const [
@@ -4625,7 +4988,7 @@ const _helpText = '''Commands:
   combine [items]                      — Observatory Antechamber puzzle
   press [target]                       — Gallery Corridor puzzle
   construct / describe / paint / write [content]   — writing puzzles
-  offer [concept]                      — Lab Vestibule puzzle
+  offer [item/concept]                 — Garden statue or Lab Vestibule puzzle
   calibrate [x] [y] [z]               — Observatory Calibration puzzle
   invert [target]                      — Observatory Dome puzzle
   confirm  /  yes                      — multi-step confirmation
@@ -4660,6 +5023,26 @@ int? gameDepthThresholdForSectorToQuinto(String sector) =>
 int gameMemoryDepthThresholdToNucleo() => _memoryDepthThresholdToNucleo;
 
 int gameQuoteExposureThresholdToNucleo() => _quoteExposureThresholdToNucleo;
+
+bool gameGardenSteleInscriptionLooksSpecific(String text) =>
+    GameEngineNotifier._gardenSteleLooksSpecific(text);
+
+Map<String, bool> gameGardenRelinquishmentCoverage(Iterable<String> inventory) {
+  return {
+    'useful': GameEngineNotifier._inventoryHasCategoryItem(
+      inventory,
+      GameEngineNotifier._gardenUsefulItems,
+    ),
+    'identity': GameEngineNotifier._inventoryHasCategoryItem(
+      inventory,
+      GameEngineNotifier._gardenIdentityItems,
+    ),
+    'pain': GameEngineNotifier._inventoryHasCategoryItem(
+      inventory,
+      GameEngineNotifier._gardenPainItems,
+    ),
+  };
+}
 
 BossUtteranceKind classifyBossUtterance(String rawInput) {
   final raw = rawInput.toLowerCase().trim();
