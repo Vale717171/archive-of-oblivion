@@ -25,8 +25,7 @@ class ArchivePanels {
       context: context,
       builder: (context) => const _ArchiveTextDialog(
         title: 'How to play',
-        body:
-            'This is a parser narrative. Type short commands.\n\n'
+        body: 'This is a parser narrative. Type short commands.\n\n'
             'Useful verbs:\n'
             '• go north / south / east / west\n'
             '• look\n'
@@ -47,8 +46,7 @@ class ArchivePanels {
       context: context,
       builder: (context) => const _ArchiveTextDialog(
         title: 'Credits',
-        body:
-            "The Archive of Oblivion\n\n"
+        body: "The Archive of Oblivion\n\n"
             'A psycho-philosophical interactive fiction for Android.\n\n'
             'Built with Flutter, Riverpod, sqflite, just_audio, and the deterministic narrator “All That Is”.\n\n'
             'Citations are curated from public-domain sources.',
@@ -173,27 +171,35 @@ class _SettingsSheet extends ConsumerWidget {
               ),
               SwitchListTile(
                 value: settings.reduceMotion,
-                onChanged: (value) => notifier.saveSettings(reduceMotion: value),
+                onChanged: (value) =>
+                    notifier.saveSettings(reduceMotion: value),
                 title: const Text('Reduce motion'),
-                subtitle: const Text('Tone down flashes and animated transitions.'),
+                subtitle:
+                    const Text('Tone down flashes and animated transitions.'),
               ),
               SwitchListTile(
                 value: settings.highContrast,
-                onChanged: (value) => notifier.saveSettings(highContrast: value),
+                onChanged: (value) =>
+                    notifier.saveSettings(highContrast: value),
                 title: const Text('High contrast'),
-                subtitle: const Text('Increase readability on dim or low-quality screens.'),
+                subtitle: const Text(
+                    'Increase readability on dim or low-quality screens.'),
               ),
               SwitchListTile(
                 value: settings.commandAssist,
-                onChanged: (value) => notifier.saveSettings(commandAssist: value),
+                onChanged: (value) =>
+                    notifier.saveSettings(commandAssist: value),
                 title: const Text('Command assist'),
-                subtitle: const Text('Show quick commands and contextual hints.'),
+                subtitle:
+                    const Text('Show quick commands and contextual hints.'),
               ),
               SwitchListTile(
                 value: settings.musicEnabled,
-                onChanged: (value) => notifier.saveSettings(musicEnabled: value),
+                onChanged: (value) =>
+                    notifier.saveSettings(musicEnabled: value),
                 title: const Text('Music and ambience'),
-                subtitle: const Text('Enable background music, ritual cues, and atmospheric transitions.'),
+                subtitle: const Text(
+                    'Enable background music, ritual cues, and atmospheric transitions.'),
               ),
               Text('Music volume · ${(settings.musicVolume * 100).round()}%'),
               Slider(
@@ -210,7 +216,8 @@ class _SettingsSheet extends ConsumerWidget {
                 value: settings.sfxEnabled,
                 onChanged: (value) => notifier.saveSettings(sfxEnabled: value),
                 title: const Text('Sound effects'),
-                subtitle: const Text('Enable one-shot cues such as Proustian or ritual effects when assets are present.'),
+                subtitle: const Text(
+                    'Enable one-shot cues such as Proustian or ritual effects when assets are present.'),
               ),
               Text('Effects volume · ${(settings.sfxVolume * 100).round()}%'),
               Slider(
@@ -236,28 +243,30 @@ class _SettingsSheet extends ConsumerWidget {
                 onChanged: (value) =>
                     notifier.saveSettings(enableHaptics: value),
                 title: const Text('Haptic feedback'),
-                subtitle: const Text('Vibration cues for commands, puzzle events, and narrative thresholds.'),
+                subtitle: const Text(
+                    'Vibration cues for commands, puzzle events, and narrative thresholds.'),
               ),
               const SizedBox(height: 8),
               Text('Text size · ${(settings.textScale * 100).round()}%'),
               Slider(
                 value: settings.textScale,
-                min: 0.9,
-                max: 1.4,
-                divisions: 5,
+                min: 1.0,
+                max: 1.8,
+                divisions: 8,
                 label: '${(settings.textScale * 100).round()}%',
                 onChanged: (value) => notifier.saveSettings(textScale: value),
               ),
               Text('Typewriter pace · ${settings.typewriterMillis} ms'),
               Slider(
                 value: settings.typewriterMillis.toDouble(),
-                min: 8,
-                max: 40,
-                divisions: 8,
+                min: 12,
+                max: 60,
+                divisions: 12,
                 label: '${settings.typewriterMillis} ms',
                 onChanged: settings.instantText
                     ? null
-                    : (value) => notifier.saveSettings(typewriterMillis: value.round()),
+                    : (value) =>
+                        notifier.saveSettings(typewriterMillis: value.round()),
               ),
               const SizedBox(height: 12),
               Align(
@@ -580,7 +589,9 @@ class _SaveLoadSheetState extends ConsumerState<_SaveLoadSheet> {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.fromLTRB(
-          20, 20, 20,
+          20,
+          20,
+          20,
           20 + MediaQuery.of(context).viewInsets.bottom,
         ),
         child: Column(
@@ -637,17 +648,16 @@ class _SlotCard extends StatelessWidget {
     required this.onLoad,
   });
 
-  String get _label =>
-      slot.slot == 0 ? 'Auto save' : 'Slot ${slot.slot}';
+  String get _label => slot.slot == 0 ? 'Auto save' : 'Slot ${slot.slot}';
 
   String get _preview {
     if (slot.isEmpty) return 'Empty';
     final date = slot.savedAt;
     final dateStr = date != null
         ? '${date.day.toString().padLeft(2, '0')}/'
-          '${date.month.toString().padLeft(2, '0')} '
-          '${date.hour.toString().padLeft(2, '0')}:'
-          '${date.minute.toString().padLeft(2, '0')}'
+            '${date.month.toString().padLeft(2, '0')} '
+            '${date.hour.toString().padLeft(2, '0')}:'
+            '${date.minute.toString().padLeft(2, '0')}'
         : '';
     return '${slot.sectorLabel}  ·  Awareness ${slot.awarenessLevel}%'
         '${dateStr.isNotEmpty ? '  ·  $dateStr' : ''}';
@@ -674,8 +684,8 @@ class _SlotCard extends StatelessWidget {
                         fontWeight: FontWeight.w600, fontSize: 14)),
                 const SizedBox(height: 3),
                 Text(_preview,
-                    style: const TextStyle(
-                        color: Colors.white54, fontSize: 12)),
+                    style:
+                        const TextStyle(color: Colors.white54, fontSize: 12)),
               ],
             ),
           ),

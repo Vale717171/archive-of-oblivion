@@ -4,6 +4,34 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Readability pass: bigger text, slower typewriter, sector tints)
+**Role:** UX readability and presentation polish
+
+**Done:**
+- Increased baseline readability in `lib/features/ui/game_screen.dart`:
+  - enforced a minimum effective text scale (`1.08`) during rendering
+  - raised typewriter pacing by applying a mystery-oriented slowdown factor (`+25%`) to normal nodes
+  - finale pacing tuned further (`170 ms` base) for heavier dramatic cadence.
+- Added sector-aware narrative text tinting (Threshold/Garden/Observatory/Gallery/Laboratory/Memory/Finale/Zone), keeping high contrast and white-legibility as the primary anchor.
+- Updated settings defaults and clamps in:
+  - `lib/features/settings/app_settings_provider.dart`
+  - `lib/core/storage/database_service.dart`
+  so new/default profiles start from more readable values (`text_scale: 1.08`, `typewriter_millis: 30`).
+- Expanded settings sliders in `lib/features/ui/archive_panels.dart`:
+  - Text size: `1.0 → 1.8`
+  - Typewriter pace: `12 → 60 ms`
+  for better user-level accessibility control.
+
+**Verification:**
+- `dart format` on touched files ✅
+- `flutter test test/parser_test.dart test/puzzle_gates_test.dart` ✅
+- `flutter analyze` ✅ (only pre-existing info-level brace-style lints in `game_engine_provider.dart`)
+
+**Architecture notes:**
+- No gameplay mechanics changed; this pass is presentation-only (readability, pacing, legibility).
+
+---
+
 ### 2026-04-17 — Codex GPT-5 (Diegetic micro-copy polish for psycho shifts)
 **Role:** Narrative UX polish
 

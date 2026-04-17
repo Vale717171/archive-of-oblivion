@@ -32,6 +32,7 @@ const int _panicAnxietyThreshold = 70; // anxiety > this → reddish text
 const int _lowLucidityThreshold = 30; // lucidity < this → grey text
 const int _highOblivionThreshold = 60; // oblivionLevel > this → blue-grey text
 const double _backgroundImageOpacity = 0.15;
+const double _minimumReadableTextScale = 1.08;
 const Duration _backgroundFlashHoldDuration = Duration(milliseconds: 180);
 const Duration _backgroundFadeDuration = Duration(milliseconds: 900);
 const Duration _puzzleCueHoldDuration = Duration(milliseconds: 1300);
@@ -201,15 +202,36 @@ class _GameScreenState extends ConsumerState<GameScreen>
   // ── Palette ─────────────────────────────────────────────────────────────
 
   /// Text colour for narrative messages — shifts with psychological state.
-  Color _narrativeColor(PsychoProfile? profile) {
-    if (profile == null) return Colors.white;
-    if (profile.anxiety > _panicAnxietyThreshold)
-      return const Color(0xFFFFD8D8);
-    if (profile.lucidity < _lowLucidityThreshold)
-      return const Color(0xFFCCCCCC);
-    if (profile.oblivionLevel > _highOblivionThreshold)
-      return const Color(0xFFCCDDEE);
-    return Colors.white;
+  Color _narrativeColor(
+    PsychoProfile? profile, {
+    required String nodeId,
+    required bool highContrast,
+  }) {
+    Color base = Colors.white;
+    if (profile != null) {
+      if (profile.anxiety > _panicAnxietyThreshold) {
+        base = const Color(0xFFFFD8D8);
+      } else if (profile.lucidity < _lowLucidityThreshold) {
+        base = const Color(0xFFCCCCCC);
+      } else if (profile.oblivionLevel > _highOblivionThreshold) {
+        base = const Color(0xFFCCDDEE);
+      }
+    }
+
+    final sector = gameSectorLabel(nodeId);
+    final tint = switch (sector) {
+      'Threshold' => const Color(0xFFF4EBD8),
+      'Garden' => const Color(0xFFE9F4DF),
+      'Observatory' => const Color(0xFFE5F0FF),
+      'Gallery' => const Color(0xFFF3E8D7),
+      'Laboratory' => const Color(0xFFE9F1E1),
+      'Memory' => const Color(0xFFF2E6D8),
+      'Finale' => const Color(0xFFF6EFE2),
+      'Zone' => const Color(0xFFE3F5FF),
+      _ => const Color(0xFFF2EEE4),
+    };
+    final blend = highContrast ? 0.06 : 0.18;
+    return Color.lerp(base, tint, blend) ?? base;
   }
 
   /// Subtle background tint — deepens as oblivion rises.
@@ -254,8 +276,9 @@ class _GameScreenState extends ConsumerState<GameScreen>
     final settings = ref.read(appSettingsProvider).valueOrNull;
     final currentNode =
         ref.read(gameStateProvider).valueOrNull?.currentNode ?? '';
-    final baseDelay =
-        _isFinaleNode(currentNode) ? 150 : (settings?.typewriterMillis ?? 22);
+    final tunedDelay =
+        (((settings?.typewriterMillis ?? 30) * 1.25).round()).clamp(12, 60);
+    final baseDelay = _isFinaleNode(currentNode) ? 170 : tunedDelay;
     final delay =
         (ch == ' ' || ch == '\n') ? (baseDelay ~/ 2).clamp(4, 20) : baseDelay;
 
@@ -834,15 +857,21 @@ class _GameScreenState extends ConsumerState<GameScreen>
     final settingsAsync = ref.watch(appSettingsProvider);
     final profile = psychoAsync.valueOrNull;
     final settings = settingsAsync.valueOrNull;
-    final textScale = settings?.textScale ?? 1.0;
+    final textScale =
+        (settings?.textScale ?? 1.0).clamp(_minimumReadableTextScale, 1.8);
     final highContrast = settings?.highContrast ?? false;
     final currentNode = gameStateAsync.valueOrNull?.currentNode ?? 'intro_void';
 
     final keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     final bgColor = _backgroundColor(profile);
-    final narrativeColor =
-        highContrast ? const Color(0xFFF6F2E8) : _narrativeColor(profile);
+    final narrativeColor = highContrast
+        ? const Color(0xFFF6F2E8)
+        : _narrativeColor(
+            profile,
+            nodeId: currentNode,
+            highContrast: highContrast,
+          );
 
     // Resolve background image from current node
     final backgroundPath = BackgroundService.getBackgroundForNodeOrDefault(

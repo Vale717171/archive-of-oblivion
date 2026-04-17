@@ -42,8 +42,8 @@ class AppSettings {
       musicVolume: (map['music_volume'] as num? ?? 0.85).toDouble(),
       sfxEnabled: (map['sfx_enabled'] as int? ?? 1) == 1,
       sfxVolume: (map['sfx_volume'] as num? ?? 0.90).toDouble(),
-      textScale: (map['text_scale'] as num? ?? 1.0).toDouble(),
-      typewriterMillis: (map['typewriter_millis'] as num? ?? 22).toInt(),
+      textScale: (map['text_scale'] as num? ?? 1.08).toDouble(),
+      typewriterMillis: (map['typewriter_millis'] as num? ?? 30).toInt(),
       muteInBackground: (map['mute_in_background'] as int? ?? 1) == 1,
       enableHaptics: (map['enable_haptics'] as int? ?? 1) == 1,
     );
@@ -84,14 +84,14 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
   final _dbService = DatabaseService.instance;
 
   double _clampTextScale(double value) {
-    if (value < 0.9) return 0.9;
-    if (value > 1.4) return 1.4;
+    if (value < 1.0) return 1.0;
+    if (value > 1.8) return 1.8;
     return value;
   }
 
   int _clampTypewriterMillis(int value) {
-    if (value < 8) return 8;
-    if (value > 40) return 40;
+    if (value < 12) return 12;
+    if (value > 60) return 60;
     return value;
   }
 
@@ -183,5 +183,5 @@ class AppSettingsNotifier extends AsyncNotifier<AppSettings> {
 
 final appSettingsProvider =
     AsyncNotifierProvider<AppSettingsNotifier, AppSettings>(
-      AppSettingsNotifier.new,
-    );
+  AppSettingsNotifier.new,
+);

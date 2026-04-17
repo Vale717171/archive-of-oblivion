@@ -30,8 +30,8 @@ class DatabaseService {
     'music_volume': 0.85,
     'sfx_enabled': 1,
     'sfx_volume': 0.90,
-    'text_scale': 1.0,
-    'typewriter_millis': 22,
+    'text_scale': 1.08,
+    'typewriter_millis': 30,
     'mute_in_background': 1,
     'enable_haptics': 1,
   };
@@ -124,8 +124,8 @@ class DatabaseService {
         music_volume REAL NOT NULL DEFAULT 0.85,
         sfx_enabled INTEGER NOT NULL DEFAULT 1,
         sfx_volume REAL NOT NULL DEFAULT 0.90,
-        text_scale REAL NOT NULL DEFAULT 1.0,
-        typewriter_millis INTEGER NOT NULL DEFAULT 22,
+        text_scale REAL NOT NULL DEFAULT 1.08,
+        typewriter_millis INTEGER NOT NULL DEFAULT 30,
         mute_in_background INTEGER NOT NULL DEFAULT 1,
         enable_haptics INTEGER NOT NULL DEFAULT 1
       )
@@ -251,16 +251,16 @@ class DatabaseService {
           seth_affinity INTEGER NOT NULL DEFAULT 0
         )
       ''');
-      await _addColumnIfNotExists(txn, 'psycho_profile', 'phase',
-          'INTEGER NOT NULL DEFAULT 1');
+      await _addColumnIfNotExists(
+          txn, 'psycho_profile', 'phase', 'INTEGER NOT NULL DEFAULT 1');
       await _addColumnIfNotExists(txn, 'psycho_profile', 'awareness_level',
           'INTEGER NOT NULL DEFAULT 0');
       await _addColumnIfNotExists(txn, 'psycho_profile', 'proust_affinity',
           'INTEGER NOT NULL DEFAULT 0');
       await _addColumnIfNotExists(txn, 'psycho_profile', 'tarkovskij_affinity',
           'INTEGER NOT NULL DEFAULT 0');
-      await _addColumnIfNotExists(txn, 'psycho_profile', 'seth_affinity',
-          'INTEGER NOT NULL DEFAULT 0');
+      await _addColumnIfNotExists(
+          txn, 'psycho_profile', 'seth_affinity', 'INTEGER NOT NULL DEFAULT 0');
 
       await txn.execute('''
         CREATE TABLE IF NOT EXISTS app_settings (
@@ -273,8 +273,8 @@ class DatabaseService {
           music_volume REAL NOT NULL DEFAULT 0.85,
           sfx_enabled INTEGER NOT NULL DEFAULT 1,
           sfx_volume REAL NOT NULL DEFAULT 0.90,
-          text_scale REAL NOT NULL DEFAULT 1.0,
-          typewriter_millis INTEGER NOT NULL DEFAULT 22,
+          text_scale REAL NOT NULL DEFAULT 1.08,
+          typewriter_millis INTEGER NOT NULL DEFAULT 30,
           mute_in_background INTEGER NOT NULL DEFAULT 1,
           enable_haptics INTEGER NOT NULL DEFAULT 1
         )
@@ -337,8 +337,8 @@ class DatabaseService {
             'TEXT NOT NULL DEFAULT \'{}\'');
         await _addColumnIfNotExists(txn, 'game_state', 'inventory',
             'TEXT NOT NULL DEFAULT \'["notebook"]\'');
-        await _addColumnIfNotExists(txn, 'game_state', 'psycho_weight',
-            'INTEGER NOT NULL DEFAULT 0');
+        await _addColumnIfNotExists(
+            txn, 'game_state', 'psycho_weight', 'INTEGER NOT NULL DEFAULT 0');
 
         await txn.execute('''
           CREATE TABLE IF NOT EXISTS player_memories (
@@ -430,14 +430,14 @@ class DatabaseService {
     if (oldVersion < 8) {
       // v7 → v8: add phase system columns to psycho_profile.
       await db.transaction((txn) async {
-        await _addColumnIfNotExists(txn, 'psycho_profile', 'phase',
-            'INTEGER NOT NULL DEFAULT 1');
+        await _addColumnIfNotExists(
+            txn, 'psycho_profile', 'phase', 'INTEGER NOT NULL DEFAULT 1');
         await _addColumnIfNotExists(txn, 'psycho_profile', 'awareness_level',
             'INTEGER NOT NULL DEFAULT 0');
         await _addColumnIfNotExists(txn, 'psycho_profile', 'proust_affinity',
             'INTEGER NOT NULL DEFAULT 0');
-        await _addColumnIfNotExists(txn, 'psycho_profile', 'tarkovskij_affinity',
-            'INTEGER NOT NULL DEFAULT 0');
+        await _addColumnIfNotExists(txn, 'psycho_profile',
+            'tarkovskij_affinity', 'INTEGER NOT NULL DEFAULT 0');
         await _addColumnIfNotExists(txn, 'psycho_profile', 'seth_affinity',
             'INTEGER NOT NULL DEFAULT 0');
       });
@@ -470,7 +470,8 @@ class DatabaseService {
   // ── Player memories ──────────────────────────────────────────────────────────
 
   /// Salva (o aggiorna) una memoria del giocatore identificata da [key].
-  Future<void> saveMemory({required String key, required String content}) async {
+  Future<void> saveMemory(
+      {required String key, required String content}) async {
     final db = await database;
     await db.insert(
       'player_memories',
@@ -484,8 +485,7 @@ class DatabaseService {
     final db = await database;
     final rows = await db.query('player_memories', orderBy: 'created_at ASC');
     return {
-      for (final r in rows)
-        r['memory_key'] as String: r['content'] as String,
+      for (final r in rows) r['memory_key'] as String: r['content'] as String,
     };
   }
 
