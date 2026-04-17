@@ -4,6 +4,7 @@ import 'package:archive_of_oblivion/features/game/gallery/gallery_sector.dart';
 import 'package:archive_of_oblivion/features/game/game_node.dart';
 import 'package:archive_of_oblivion/features/game/garden/garden_sector.dart';
 import 'package:archive_of_oblivion/features/game/laboratory/laboratory_sector.dart';
+import 'package:archive_of_oblivion/features/game/memory/memory_sector.dart';
 import 'package:archive_of_oblivion/features/game/observatory/observatory_sector.dart';
 import 'package:archive_of_oblivion/features/game/sector_contract.dart';
 import 'package:archive_of_oblivion/features/game/sector_router.dart';
@@ -15,6 +16,7 @@ void main() {
     ObservatorySectorHandler(),
     GallerySectorHandler(),
     LaboratorySectorHandler(),
+    MemorySectorHandler(),
   ]);
 
   const snapshot = SectorRuntimeSnapshot(
@@ -109,6 +111,25 @@ void main() {
 
       expect(response, isNotNull);
       expect(response!.incrementCounter, 'lab_offers_count');
+    });
+
+    test('routes memory command to memory sector handler', () {
+      final response = router.routeCommand(
+        SectorCommandContext(
+          cmd: const ParsedCommand(
+            verb: CommandVerb.write,
+            args: ['forgiveness'],
+            rawInput: 'write forgiveness',
+          ),
+          nodeId: 'quinto_childhood',
+          node: memorySectorContract.roomDefinitions['quinto_childhood']!,
+          snapshot: snapshot,
+        ),
+      );
+
+      expect(response, isNotNull);
+      expect(response!.completePuzzle, 'memory_childhood');
+      expect(response.playerMemoryKey, 'memory_childhood');
     });
 
     test('returns null for unrelated node', () {

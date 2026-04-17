@@ -98,5 +98,49 @@ void main() {
       expect(result.puzzles, isNot(contains('progress_deep_observatory')));
       expect(result.puzzles, isNot(contains('sys_deep_observatory')));
     });
+
+    test('memory deep progression requires ritual + epitaph + revisit', () {
+      final counters = {
+        ProgressionService.depthCounterKey('memory'): 4,
+        'memory_childhood_specific_count': 1,
+        'memory_youth_specific_count': 1,
+        'memory_maturity_costly_count': 1,
+        'memory_old_age_costly_count': 1,
+      };
+      final puzzles = {
+        'ritual_complete',
+      };
+
+      final shallow = ProgressionService.applyTurn(
+        cmd: const ParsedCommand(
+          verb: CommandVerb.examine,
+          args: [],
+          rawInput: 'look',
+        ),
+        response: const EngineResponse(narrativeText: 'x'),
+        nodeId: 'quinto_landing',
+        puzzles: puzzles,
+        counters: counters,
+      );
+
+      expect(shallow.puzzles, contains('progress_surface_memory'));
+      expect(shallow.puzzles, contains('memory_epitaph_ready'));
+      expect(shallow.puzzles, isNot(contains('sys_deep_memory')));
+
+      final deep = ProgressionService.applyTurn(
+        cmd: const ParsedCommand(
+          verb: CommandVerb.examine,
+          args: [],
+          rawInput: 'look',
+        ),
+        response: const EngineResponse(narrativeText: 'x'),
+        nodeId: 'quinto_landing',
+        puzzles: {...puzzles, 'memory_revisited'},
+        counters: counters,
+      );
+
+      expect(deep.puzzles, contains('sys_deep_memory'));
+      expect(deep.puzzles, contains('memory_deep_complete'));
+    });
   });
 }

@@ -18,34 +18,39 @@ void main() {
   // Source: _exitGates in game_engine_provider.dart (lines 160-188).
   const List<(String, String, String)> knownGates = [
     // Garden sector
-    ('garden_cypress',      'north', 'leaves_arranged'),
-    ('garden_fountain',     'north', 'fountain_waited'),
-    ('garden_stelae',       'north', 'stele_inscribed'),
+    ('garden_cypress', 'north', 'leaves_arranged'),
+    ('garden_fountain', 'north', 'fountain_waited'),
+    ('garden_stelae', 'north', 'stele_inscribed'),
     // Observatory sector
-    ('obs_antechamber',     'north', 'lenses_combined'),
-    ('obs_corridor',        'west',  'heisenberg_walked'),
-    ('obs_corridor',        'east',  'heisenberg_walked'),
-    ('obs_void',            'south', 'void_fluctuation_measured'),
-    ('obs_archive',         'south', 'archive_constant_entered'),
-    ('obs_calibration',     'north', 'obs_calibrated'),
+    ('obs_antechamber', 'north', 'lenses_combined'),
+    ('obs_corridor', 'west', 'heisenberg_walked'),
+    ('obs_corridor', 'east', 'heisenberg_walked'),
+    ('obs_void', 'south', 'void_fluctuation_measured'),
+    ('obs_archive', 'south', 'archive_constant_entered'),
+    ('obs_calibration', 'north', 'obs_calibrated'),
     // Gallery sector
-    ('gallery_hall',        'south', 'hall_backward_walked'),
-    ('gallery_corridor',    'south', 'corridor_tile_pressed'),
-    ('gallery_proportions', 'east',  'proportion_pentagon_drawn'),
-    ('gallery_proportions', 'west',  'proportion_pentagon_drawn'),
-    ('gallery_dark',        'east',  'gallery_item_abandoned'),
-    ('gallery_light',       'west',  'gallery_item_abandoned'),
+    ('gallery_hall', 'south', 'hall_backward_walked'),
+    ('gallery_corridor', 'south', 'corridor_tile_pressed'),
+    ('gallery_proportions', 'east', 'proportion_pentagon_drawn'),
+    ('gallery_proportions', 'west', 'proportion_pentagon_drawn'),
+    ('gallery_dark', 'east', 'gallery_item_abandoned'),
+    ('gallery_light', 'west', 'gallery_item_abandoned'),
     // Laboratory sector
-    ('lab_vestibule',       'south', 'lab_offers_complete'),
-    ('lab_furnace',         'south', 'furnace_calcinated'),
-    ('lab_alembic',         'south', 'alembic_temperature_set'),
-    ('lab_bain_marie',      'south', 'bain_marie_complete'),
+    ('lab_vestibule', 'south', 'lab_offers_complete'),
+    ('lab_substances', 'west', 'lab_substances_ready'),
+    ('lab_substances', 'south', 'lab_substances_ready'),
+    ('lab_substances', 'east', 'lab_substances_ready'),
+    ('lab_furnace', 'south', 'furnace_calcinated'),
+    ('lab_alembic', 'south', 'alembic_temperature_set'),
+    ('lab_bain_marie', 'south', 'bain_marie_complete'),
+    ('lab_great_work', 'south', 'lab_process_ready'),
     // Fifth Sector (memory price)
-    ('quinto_childhood',        'back', 'memory_childhood'),
-    ('quinto_youth',            'back', 'memory_youth'),
-    ('quinto_maturity',         'back', 'memory_maturity'),
-    ('quinto_old_age',          'back', 'memory_old_age'),
-    ('quinto_ritual_chamber',   'down', 'ritual_complete'),
+    ('quinto_childhood', 'back', 'memory_childhood'),
+    ('quinto_youth', 'back', 'memory_youth'),
+    ('quinto_maturity', 'back', 'memory_maturity'),
+    ('quinto_old_age', 'back', 'memory_old_age'),
+    ('quinto_landing', 'down', 'memory_descent_ready'),
+    ('quinto_ritual_chamber', 'down', 'ritual_complete'),
   ];
 
   // All puzzle IDs referenced in _exitGates.
@@ -162,17 +167,8 @@ void main() {
   // documentation and are marked as pending/skip.
 
   group('special multi-condition gates (pending engine integration tests)', () {
-    test('lab_great_work → south requires furnace + alembic + bain_marie + great_work_complete', () {
-      // Special case: ALL FOUR puzzles must be complete before south exit opens.
-      // Cannot be tested with static helpers — needs engine instantiation.
-    }, skip: 'requires engine; tracked as integration-test TODO');
-
-    test('quinto_landing → down requires all four quinto memory puzzles', () {
-      // memory_childhood + memory_youth + memory_maturity + memory_old_age
-      // AND quinto_landing has no _exitGates entry — handled inline.
-    }, skip: 'requires engine; tracked as integration-test TODO');
-
-    test('lab_substances → non-north requires all three substance offerings', () {
+    test('lab_substances → non-north requires all three substance offerings',
+        () {
       // substance_body + substance_time + substance_idea
     }, skip: 'requires engine; tracked as integration-test TODO');
   });

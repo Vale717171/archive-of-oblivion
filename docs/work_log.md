@@ -4,6 +4,65 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Stabilization pass + Memory extraction)
+**Role:** Persistence/progression hardening + fifth extracted state-driven sector
+
+**Done:**
+- Part A — stabilization pass (run integrity):
+  - Audited persistence contract for extracted sectors: Garden/Observatory/Gallery/Laboratory runtime remains fully derivable from persisted `completed_puzzles` + `puzzle_counters` + inventory/weight.
+  - Added cross-sector continuity integration tests:
+    - simulacrum continuity across save/load into Memory ritual flow
+    - revisit hook eligibility surviving persistence
+    - deep marker persistence + re-evaluation after reload
+    - threshold resonance input updates across multiple deep sectors
+    - legacy-like memory saves (missing quality counters) degrade safely to zeroed runtime quality.
+- Part B — migrated Memory as fifth extracted sector:
+  - Added `lib/features/game/memory/memory_module.dart`:
+    - room definitions moved out of notifier
+    - gate definitions/hints moved out of notifier
+    - explicit runtime model:
+      - chamber answer states (childhood/youth/maturity/old age)
+      - answer quality tracking (specific/costly counters)
+      - epitaph-input derivation from run state
+      - chalice progression state (cup placements/stir/drink)
+      - descent readiness/depth/quote thresholds
+      - revisit + cross-sector hook flags
+    - pure reducers for:
+      - chamber writing/speaking evaluation
+      - maturity free-text unknown-command compatibility (`say/answer/tell`)
+      - ritual cup placement (`drop ... in cup`)
+      - stir and drink progression to Nucleus.
+  - Added `lib/features/game/memory/memory_sector.dart` contract adapter.
+  - Updated `lib/features/game/game_engine_provider.dart`:
+    - router now includes `MemorySectorHandler`
+    - `_nodes`, `_exitGates`, `_gateHints` consume `MemoryModule` data
+    - removed notifier-owned Memory branching:
+      - chamber write/say/unknown handlers
+      - ritual placement/stir/drink handlers
+      - quinto inline descent special-cases now represented by Memory gates/markers.
+  - Updated `lib/features/game/progression_service.dart`:
+    - Memory deep evaluator now module-driven
+    - Memory completion markers integrated.
+
+**Tests added/updated:**
+- New `test/memory_module_test.dart`:
+  - distinct chamber answer-state handling
+  - generic vs specific/costly answer distinction
+  - coherent epitaph input derivation
+  - chalice prerequisite enforcement
+  - save/load preservation for Memory progression.
+- New `test/cross_sector_continuity_test.dart`:
+  - persistence + cross-sector continuity and threshold resonance integration checks.
+- Updated:
+  - `test/sector_router_test.dart` (Memory routing)
+  - `test/sector_contract_test.dart` (Memory contract coverage)
+  - `test/progression_service_test.dart` (Memory deep-evaluator behavior)
+  - `test/puzzle_gates_test.dart` (new extracted gate map expectations).
+
+**Verification:**
+- `flutter test test/memory_module_test.dart test/cross_sector_continuity_test.dart test/sector_router_test.dart test/sector_contract_test.dart test/progression_service_test.dart test/puzzle_gates_test.dart` ✅
+- `flutter test` ✅ (all passing; existing skip count unchanged except removed obsolete inline-gate assumptions now covered statically)
+
 ### 2026-04-17 — Codex GPT-5 (Laboratory extraction: fourth real state-driven sector)
 **Role:** Staged-process sector extraction + notifier de-coupling
 

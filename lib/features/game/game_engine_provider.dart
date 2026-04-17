@@ -23,6 +23,8 @@ import 'garden/garden_module.dart';
 import 'garden/garden_sector.dart';
 import 'laboratory/laboratory_module.dart';
 import 'laboratory/laboratory_sector.dart';
+import 'memory/memory_module.dart';
+import 'memory/memory_sector.dart';
 import 'observatory/observatory_module.dart';
 import 'observatory/observatory_sector.dart';
 import 'progression_service.dart';
@@ -171,13 +173,7 @@ const Map<String, Map<String, String>> _exitGates = {
   ...ObservatoryModule.exitGates,
   ...GalleryModule.exitGates,
   ...LaboratoryModule.exitGates,
-  // Fifth Sector — memory price to leave each room (GDD §11)
-  'quinto_childhood': {'back': 'memory_childhood'},
-  'quinto_youth': {'back': 'memory_youth'},
-  'quinto_maturity': {'back': 'memory_maturity'},
-  'quinto_old_age': {'back': 'memory_old_age'},
-  // Ritual chamber → il_nucleo (drink auto-navigates; go down also gated)
-  'quinto_ritual_chamber': {'down': 'ritual_complete'},
+  ...MemoryModule.exitGates,
 };
 
 const Map<String, String> _gateHints = {
@@ -185,20 +181,7 @@ const Map<String, String> _gateHints = {
   ...ObservatoryModule.gateHints,
   ...GalleryModule.gateHints,
   ...LaboratoryModule.gateHints,
-  // Fifth Sector
-  'memory_childhood':
-      'The door will not release you. The price of this room is still owed.\n\n'
-          'Hint: write [the first word you truly learned].',
-  'memory_youth': 'The promise holds you here. Name it to be freed.\n\n'
-      'Hint: write [a promise you did not keep].',
-  'memory_maturity':
-      'The telephone waits. You cannot leave until you have spoken.\n\n'
-          'Hint: say [what you never said] — or write it.',
-  'memory_old_age':
-      'One last truth before you leave. The room asks this of you.\n\n'
-          'Hint: write [what you wish to be remembered as].',
-  'ritual_complete': 'The passage down is sealed. The cup is not ready.\n\n'
-      'Hint: place each simulacrum in the cup — then stir — then drink.',
+  ...MemoryModule.gateHints,
 };
 
 // ── Depth / exposure gates (anti-speedrun, diegetic) ───────────────────────
@@ -209,9 +192,6 @@ const Map<String, int> _depthThresholdsToQuinto = {
   'gallery': 5,
   'laboratory': 5,
 };
-
-const int _memoryDepthThresholdToNucleo = 4;
-const int _quoteExposureThresholdToNucleo = 18;
 
 // ── Node definitions ──────────────────────────────────────────────────────────
 // Nodes are in English as required by GDD §1.
@@ -279,144 +259,8 @@ const Map<String, NodeDef> _nodes = {
   // ── Alchemical Laboratory ────────────────────────────────────────────────────
   ...LaboratoryModule.roomDefinitions,
 
-  // ── Fifth Sector stub — accessible once all four simulacra are in inventory ──
-  'quinto_landing': NodeDef(
-    title: 'The Fifth Sector — Memory',
-    description: 'A spiral staircase brought you here.\n\n'
-        'Each candle on the descent was a different age.\n\n'
-        'The smell: Earl Grey, dust, and paper that has held ideas for a long time.\n\n'
-        'Distant: the Siciliano in B minor.\n\n'
-        '"The real life, the life finally discovered and illuminated, '
-        'the only life therefore really lived, is literature."\n\n'
-        'Four doors stand at the compass points. Each opens onto a different age.\n\n'
-        'Below: a sealed chamber that will open when all four prices have been paid.',
-    exits: {
-      'east': 'quinto_childhood',
-      'west': 'quinto_youth',
-      'north': 'quinto_maturity',
-      'south': 'quinto_old_age',
-      'down': 'quinto_ritual_chamber',
-      'up': 'la_soglia',
-      'back': 'la_soglia',
-    },
-    examines: {
-      'doors':
-          'Four doors. East: CHILDHOOD. West: YOUTH. North: MATURITY. South: OLD AGE.',
-      'staircase':
-          'The spiral you descended. Each candle burns at its own age.',
-      'smell':
-          'Earl Grey. Dust. Something written by someone who is no longer here.',
-      'candles':
-          'They burn without depleting. Each is a different temperature of light.',
-    },
-  ),
-
-  'quinto_childhood': NodeDef(
-    title: 'Childhood',
-    description:
-        'A small room. The light is the exact quality of a morning you almost remember.\n\n'
-        'On the table: a madeleine of carved wood. '
-        'It does not smell of anything, which is somehow its point.\n\n'
-        'A card on the wall:\n\n'
-        '"Write the first word you truly learned — '
-        'not the first word you were taught, but the first one you understood."\n\n'
-        'The price of this room is a word.',
-    exits: {'back': 'quinto_landing'},
-    examines: {
-      'madeleine': 'Carved from pale wood. You know what it refers to.',
-      'card': '"Write the first word you truly learned.\n'
-          'Not the one you were taught. The one you understood."',
-      'light': 'The quality of Saturday morning, before obligation.',
-      'table': 'Simple. The madeleine rests at its centre.',
-    },
-    takeable: {'madeleine'},
-  ),
-
-  'quinto_youth': NodeDef(
-    title: 'Youth',
-    description: 'A room with the feeling of being in transit.\n\n'
-        'Luggage partially packed. A train schedule half-read and set down.\n\n'
-        'On the table: a train ticket to Balbec, never used.\n\n'
-        'A card:\n\n'
-        '"Write a promise you did not keep — not in accusation, but in acknowledgement."\n\n'
-        'The price of this room is an admission.',
-    exits: {'back': 'quinto_landing'},
-    examines: {
-      'ticket':
-          'Balbec. The date is illegible. It has always been slightly too late.',
-      'card':
-          '"Write a promise you did not keep.\nNot in accusation.\nIn acknowledgement."',
-      'luggage':
-          'Half-packed. As if someone was interrupted before completing the idea.',
-      'schedule': 'Times and stations. The departures are all behind you.',
-    },
-    takeable: {'ticket'},
-  ),
-
-  'quinto_maturity': NodeDef(
-    title: 'Maturity',
-    description: 'A study. Books on every surface.\n\n'
-        'A telephone on the desk, receiver off the hook.\n\n'
-        'On the desk: a pair of glasses, fogged from breath.\n\n'
-        'A card:\n\n'
-        '"Answer the telephone. Say what you have never said to the person on the other end."\n\n'
-        'The price of this room is speech.',
-    exits: {'back': 'quinto_landing'},
-    examines: {
-      'telephone': 'Off the hook. The line is open. Someone is waiting.',
-      'glasses': 'Fogged. You cannot see through them.\n'
-          'That is the point — seeing through your own condensation.',
-      'card': '"Answer the telephone.\nSay what you have never said."',
-      'books': 'Every subject. Evidence of a life that tried to understand.',
-    },
-    takeable: {'glasses'},
-  ),
-
-  'quinto_old_age': NodeDef(
-    title: 'Old Age',
-    description: 'A room that has settled into itself completely.\n\n'
-        'Everything is in its place. Everything has a history visible in its surface.\n\n'
-        'On the mantelpiece: a clock. The hands are stopped at 17:00. '
-        'The light through the window matches.\n\n'
-        'A card:\n\n'
-        '"Write what you wish to be remembered as. Not an achievement. A quality."\n\n'
-        'The price of this room is a truth.',
-    exits: {'back': 'quinto_landing'},
-    examines: {
-      'clock':
-          'Stopped at 17:00. The afternoon light through the window is exact.',
-      'card':
-          '"Write what you wish to be remembered as.\nNot an achievement.\nA quality."',
-      'mantelpiece':
-          'The clock. A photograph facing away. A small plant, dried.',
-      'light': 'Afternoon, late. The hour just before evening becomes certain.',
-    },
-    takeable: {'clock'},
-  ),
-
-  'quinto_ritual_chamber': NodeDef(
-    title: 'The Ritual Chamber',
-    description: 'A circular room, low-ceilinged.\n\n'
-        'At the centre: a cup of extraordinary simplicity. '
-        'Five-sided, made of no material you can name. '
-        'It holds a liquid that is neither clear nor coloured.\n\n'
-        'This is what the four simulacra were for. '
-        'This is what the four sectors have been building toward.\n\n'
-        'Place each simulacrum in the cup. Then stir. Then drink.',
-    exits: {
-      'up': 'quinto_landing',
-      'back': 'quinto_landing',
-      'down': 'il_nucleo'
-    },
-    examines: {
-      'cup':
-          'Five-sided. No joins. The liquid inside anticipates your decision.',
-      'liquid':
-          'Neither clear nor coloured. It is waiting for what you have found.',
-      'room':
-          'Circular. Five-sided symmetry. The geometry is familiar — you have seen it before.',
-    },
-  ),
+  // ── Fifth Sector (Memory) ────────────────────────────────────────────────────
+  ...MemoryModule.roomDefinitions,
 
   // ── Il Nucleo — The Final Confrontation (GDD §12) ─────────────────────────
   'il_nucleo': NodeDef(
@@ -589,6 +433,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     ObservatorySectorHandler(),
     GallerySectorHandler(),
     LaboratorySectorHandler(),
+    MemorySectorHandler(),
   ]);
 
   // ── Auto-save state (ephemeral — not persisted) ──────────────────────────
@@ -659,17 +504,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return missing;
   }
 
-  bool _hasMemoryDepthForNucleo(GameEngineState s) {
-    final depth =
-        s.puzzleCounters[ProgressionService.depthCounterKey('memory')] ?? 0;
-    return depth >= _memoryDepthThresholdToNucleo;
-  }
-
-  int _quoteExposureShortfall(GameEngineState s) {
-    final seen = max(_sessionQuoteExposureFloor, s.quoteExposureSeen);
-    return max(0, _quoteExposureThresholdToNucleo - seen);
-  }
-
   String _depthGateTextForQuinto(List<String> missingSectors) {
     final names = missingSectors.map((s) {
       switch (s) {
@@ -688,18 +522,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     return 'The fifth stair forms, then folds back into stone.\n\n'
         'The Archive has not heard you long enough in $names.\n\n'
         'Linger, answer, and let each wing leave its mark before you ascend.';
-  }
-
-  String _depthGateTextForNucleo() {
-    return 'The passage trembles but does not yield.\n\n'
-        'The rooms of memory still keep part of your voice.\n\n'
-        'Return, speak, write, and remain a little longer before descending.';
-  }
-
-  String _quoteExposureGateText() {
-    return 'The descent darkens, then pauses.\n\n'
-        'Too few voices have passed through you for the Nucleus to answer.\n\n'
-        'Listen longer. Let more citations and replies take root, then try again.';
   }
 
   String _randomUnknownFallback() => _unknownCommandFallbacks[
@@ -1346,42 +1168,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
     }
 
-    // Special: quinto_landing → quinto_ritual_chamber requires all 4 memory prices
-    if (nodeId == 'quinto_landing' && direction == 'down') {
-      const memories = {
-        'memory_childhood',
-        'memory_youth',
-        'memory_maturity',
-        'memory_old_age',
-      };
-      if (!memories.every(s.completedPuzzles.contains)) {
-        final missing = memories
-            .where((m) => !s.completedPuzzles.contains(m))
-            .map((m) => m.replaceFirst('memory_', '').replaceAll('_', ' '))
-            .join(', ');
-        return EngineResponse(
-          narrativeText: 'The lower chamber is sealed.\n\n'
-              'Four prices remain unpaid: $missing.\n\n'
-              'Return through each room and pay the price.',
-        );
-      }
-      if (!_hasMemoryDepthForNucleo(s)) {
-        return EngineResponse(
-          narrativeText: _depthGateTextForNucleo(),
-        );
-      }
-    }
-
-    // Final descent hard gate: requires enough narrative quote exposure.
-    if (nodeId == 'quinto_ritual_chamber' && direction == 'down') {
-      final shortfall = _quoteExposureShortfall(s);
-      if (shortfall > 0) {
-        return EngineResponse(
-          narrativeText: _quoteExposureGateText(),
-        );
-      }
-    }
-
     // Exit gate check (all other gates)
     final requiredPuzzle = gameRequiredPuzzleForExit(nodeId, direction);
     if (requiredPuzzle != null &&
@@ -1497,10 +1283,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       return const EngineResponse(narrativeText: 'Drop what?');
     final target = cmd.args.join(' ');
 
-    // Ritual Chamber: place simulacra in cup
-    if (nodeId == 'quinto_ritual_chamber')
-      return _handleRitualPlacement(cmd, s);
-
     final match = s.inventory
         .where((i) => i.contains(target) || target.contains(i))
         .firstOrNull;
@@ -1597,66 +1379,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleWrite(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    final gardenResponse =
+    final sectorResponse =
         _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
-    if (gardenResponse != null) return gardenResponse;
-
-    // Fifth Sector — memory price for each room (GDD §11)
-    if (nodeId == 'quinto_childhood') {
-      return _handleMemoryWrite(cmd, s, 'memory_childhood',
-          gate:
-              'The first word you truly learned — not taught, but understood.');
-    }
-    if (nodeId == 'quinto_youth') {
-      return _handleMemoryWrite(cmd, s, 'memory_youth',
-          gate:
-              'A promise you did not keep — not in accusation, but in acknowledgement.');
-    }
-    if (nodeId == 'quinto_old_age') {
-      return _handleMemoryWrite(cmd, s, 'memory_old_age',
-          gate:
-              'What you wish to be remembered as — not an achievement, a quality.');
-    }
-    // Maturity room also accepts 'write' (in addition to 'say'/'answer' in _handleUnknown)
-    if (nodeId == 'quinto_maturity') {
-      return _handleMemoryWrite(cmd, s, 'memory_maturity',
-          gate: 'What you have never said — the telephone is waiting.');
-    }
+    if (sectorResponse != null) return sectorResponse;
 
     return const EngineResponse(
       narrativeText: 'Nothing happens. The Archive observes your writing.',
-    );
-  }
-
-  /// Shared helper for the four memory room writing puzzles.
-  EngineResponse _handleMemoryWrite(
-    ParsedCommand cmd,
-    GameEngineState s,
-    String puzzleId, {
-    required String gate,
-  }) {
-    if (s.completedPuzzles.contains(puzzleId)) {
-      return const EngineResponse(
-        narrativeText: 'The price has been paid. You may leave.',
-      );
-    }
-    if (cmd.args.isEmpty) {
-      return EngineResponse(
-        narrativeText: 'Write what?\n\n$gate',
-      );
-    }
-    final words = cmd.args.join(' ');
-    return EngineResponse(
-      narrativeText: 'You write.\n\n'
-          '"$words"\n\n'
-          'The word settles into the room. '
-          'Something in the architecture acknowledges it without comment.\n\n'
-          'You may now leave.',
-      needsDemiurge: true,
-      lucidityDelta: 6,
-      completePuzzle: puzzleId,
-      audioTrigger: 'calm',
-      playerMemoryKey: puzzleId, // salva la risposta in player_memories
     );
   }
 
@@ -1809,32 +1537,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleSay(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId != 'quinto_maturity') {
-      return const EngineResponse(
-          narrativeText: 'There is no listening line here.');
-    }
-    final content = cmd.args.join(' ').trim();
-    if (s.completedPuzzles.contains('memory_maturity')) {
-      return const EngineResponse(
-          narrativeText: 'The price has been paid. You may leave.');
-    }
-    if (content.isEmpty) {
-      return const EngineResponse(
-        narrativeText: 'Say what? The line is open. Someone is waiting.',
-      );
-    }
-    return EngineResponse(
-      narrativeText: 'You speak into the telephone.\n\n'
-          '"$content"\n\n'
-          'There is a silence on the line — not empty, but full.\n\n'
-          'Then a soft sound that might be acknowledgement.\n\n'
-          'The glasses on the desk clear. You may leave.',
-      needsDemiurge: true,
-      lucidityDelta: 8,
-      completePuzzle: 'memory_maturity',
-      audioTrigger: 'calm',
-      playerMemoryKey: 'memory_maturity',
-    );
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(
+        narrativeText: 'There is no listening line here.');
   }
 
   EngineResponse _handleHint(
@@ -1876,35 +1583,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     final raw = cmd.rawInput.toLowerCase().trim();
 
-    // Quinto maturity: answer telephone (say/answer/tell)
-    if (nodeId == 'quinto_maturity' &&
-        (raw.startsWith('say ') ||
-            raw.startsWith('answer ') ||
-            raw.startsWith('tell '))) {
-      final content = raw.replaceFirst(RegExp(r'^(say|answer|tell)\s+'), '');
-      if (s.completedPuzzles.contains('memory_maturity')) {
-        return const EngineResponse(
-            narrativeText: 'The price has been paid. You may leave.');
-      }
-      if (content.trim().isEmpty) {
-        return const EngineResponse(
-          narrativeText: 'Say what? The line is open. Someone is waiting.',
-        );
-      }
-      return EngineResponse(
-        narrativeText: 'You speak into the telephone.\n\n'
-            '"$content"\n\n'
-            'There is a silence on the line — not empty, but full.\n\n'
-            'Then a soft sound that might be acknowledgement.\n\n'
-            'The glasses on the desk clear. You may leave.',
-        needsDemiurge: true,
-        lucidityDelta: 8,
-        completePuzzle: 'memory_maturity',
-        audioTrigger: 'calm',
-        playerMemoryKey: 'memory_maturity',
-      );
-    }
-
     // La Zona: free-text response to the introspective question (GDD §10)
     if (nodeId == 'la_zona') {
       return _handleZoneResponse(raw, s);
@@ -1932,190 +1610,32 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   // ── New handlers ─────────────────────────────────────────────────────────────
 
   EngineResponse _handleDrink(String nodeId, GameEngineState s) {
-    if (nodeId != 'quinto_ritual_chamber') {
-      return const EngineResponse(
-          narrativeText: 'There is nothing to drink here.');
-    }
-    const cup = {
-      'cup_ataraxia',
-      'cup_the_constant',
-      'cup_the_proportion',
-      'cup_the_catalyst',
-    };
-    if (!cup.every(s.completedPuzzles.contains)) {
-      final missing = <String>[];
-      if (!s.completedPuzzles.contains('cup_ataraxia')) missing.add('Ataraxia');
-      if (!s.completedPuzzles.contains('cup_the_constant'))
-        missing.add('The Constant');
-      if (!s.completedPuzzles.contains('cup_the_proportion'))
-        missing.add('The Proportion');
-      if (!s.completedPuzzles.contains('cup_the_catalyst'))
-        missing.add('The Catalyst');
-      return EngineResponse(
-        narrativeText: 'The cup is not complete.\n\n'
-            'Still to be placed: ${missing.join(", ")}.',
-      );
-    }
-    if (!s.completedPuzzles.contains('ritual_stirred')) {
-      return const EngineResponse(
-        narrativeText: 'Stir the infusion before drinking.',
-      );
-    }
-    if (s.completedPuzzles.contains('ritual_complete')) {
-      return const EngineResponse(
-        narrativeText:
-            'You have already drunk the infusion. The passage below is open.',
-      );
-    }
-    if (!_hasMemoryDepthForNucleo(s)) {
-      return EngineResponse(
-        narrativeText: _depthGateTextForNucleo(),
-      );
-    }
-    final shortfall = _quoteExposureShortfall(s);
-    if (shortfall > 0) {
-      return EngineResponse(
-        narrativeText: _quoteExposureGateText(),
-      );
-    }
-    return const EngineResponse(
-      narrativeText: 'You drink.\n\n'
-          'The taste is impossible — all four at once and separately: '
-          'emptiness, light, proportion, and the warm quickening of breath.\n\n'
-          'For a moment the cup is the Archive and the Archive is the cup '
-          'and you are neither the one who holds it nor the one held.\n\n'
-          'Then: the silence before a question that has waited a very long time.\n\n'
-          'The passage below opens.',
-      needsDemiurge: true,
-      lucidityDelta: 15,
-      anxietyDelta: -20,
-      audioTrigger: 'calm',
-      completePuzzle: 'ritual_complete',
-      newNode: 'il_nucleo',
+    final sectorResponse = _routeSectorCommand(
+      cmd: const ParsedCommand(
+        verb: CommandVerb.drink,
+        args: [],
+        rawInput: 'drink',
+      ),
+      nodeId: nodeId,
+      state: s,
     );
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(
+        narrativeText: 'There is nothing to drink here.');
   }
 
   EngineResponse _handleStir(String nodeId, GameEngineState s) {
-    if (nodeId != 'quinto_ritual_chamber') {
-      return const EngineResponse(narrativeText: 'Nothing here to stir.');
-    }
-    const cup = {
-      'cup_ataraxia',
-      'cup_the_constant',
-      'cup_the_proportion',
-      'cup_the_catalyst',
-    };
-    if (!cup.every(s.completedPuzzles.contains)) {
-      final missing = <String>[];
-      if (!s.completedPuzzles.contains('cup_ataraxia')) missing.add('ataraxia');
-      if (!s.completedPuzzles.contains('cup_the_constant'))
-        missing.add('the constant');
-      if (!s.completedPuzzles.contains('cup_the_proportion'))
-        missing.add('the proportion');
-      if (!s.completedPuzzles.contains('cup_the_catalyst'))
-        missing.add('the catalyst');
-      return EngineResponse(
-        narrativeText: 'The cup is not ready.\n\n'
-            'Still to be placed: ${missing.join(", ")}.',
-      );
-    }
-    if (s.completedPuzzles.contains('ritual_stirred')) {
-      return const EngineResponse(
-        narrativeText: 'The infusion has been stirred. Now drink.',
-      );
-    }
-    return const EngineResponse(
-      narrativeText: 'You stir the infusion.\n\n'
-          'The four elements spiral together — each distinct, all one. '
-          'A scent rises: specific, personal, the sum of everything encountered.\n\n'
-          'The infusion is ready. Drink.',
-      needsDemiurge: true,
-      lucidityDelta: 8,
-      completePuzzle: 'ritual_stirred',
-      audioTrigger: 'calm',
+    final sectorResponse = _routeSectorCommand(
+      cmd: const ParsedCommand(
+        verb: CommandVerb.stir,
+        args: [],
+        rawInput: 'stir',
+      ),
+      nodeId: nodeId,
+      state: s,
     );
-  }
-
-  EngineResponse _handleRitualPlacement(ParsedCommand cmd, GameEngineState s) {
-    final raw = cmd.rawInput.toLowerCase();
-
-    // Must reference the cup to be a ritual placement (vs a normal drop)
-    if (!raw.contains('cup')) {
-      // Normal drop behaviour in ritual chamber
-      final target = cmd.args.join(' ');
-      final match = s.inventory
-          .where((i) => i.contains(target) || target.contains(i))
-          .firstOrNull;
-      if (match == null) {
-        return const EngineResponse(
-            narrativeText: 'You are not carrying that.');
-      }
-      return EngineResponse(
-        narrativeText: 'You set down the $match.',
-        weightDelta: _isSimulacrum(match) ? 0 : -1,
-        anxietyDelta: _isSimulacrum(match) ? 0 : -1,
-      );
-    }
-
-    // Identify which simulacrum is being placed
-    String? simFound;
-    for (final sim in _simulacraNames) {
-      if (raw.contains(sim) && s.inventory.contains(sim)) {
-        simFound = sim;
-        break;
-      }
-    }
-
-    if (simFound == null) {
-      // Check if player is trying to place a mundane item
-      final mundane = s.inventory.where((i) => !_isSimulacrum(i));
-      for (final item in mundane) {
-        if (raw.contains(item)) {
-          return const EngineResponse(
-            narrativeText: 'The cup does not accept mundane things.\n\n'
-                'Only the four simulacra belong here.',
-          );
-        }
-      }
-      return const EngineResponse(
-        narrativeText: 'Place what in the cup?\n\n'
-            'The four simulacra must be placed: '
-            'ataraxia, the constant, the proportion, the catalyst.',
-      );
-    }
-
-    // Encode puzzle ID: 'cup_ataraxia', 'cup_the_constant', etc.
-    final puzzleId = 'cup_${simFound.replaceAll(' ', '_')}';
-    if (s.completedPuzzles.contains(puzzleId)) {
-      return EngineResponse(
-        narrativeText: 'You have already placed the $simFound in the cup.',
-      );
-    }
-
-    const cup = {
-      'cup_ataraxia',
-      'cup_the_constant',
-      'cup_the_proportion',
-      'cup_the_catalyst',
-    };
-    final afterThis = Set<String>.from(s.completedPuzzles)..add(puzzleId);
-    final isLast = cup.every(afterThis.contains);
-    final remaining = cup.where((c) => !afterThis.contains(c)).length;
-
-    return EngineResponse(
-      narrativeText: isLast
-          ? 'You place the $simFound in the cup.\n\n'
-              'All four simulacra rest together in the liquid. '
-              'It shimmers — a colour you cannot name.\n\n'
-              'Something has shifted in the architecture of the Archive.\n\n'
-              'Now: stir.'
-          : 'You place the $simFound in the cup.\n\n'
-              'The liquid brightens briefly. '
-              '$remaining more to place.',
-      needsDemiurge: isLast,
-      completePuzzle: puzzleId,
-      lucidityDelta: isLast ? 5 : null,
-    );
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(narrativeText: 'Nothing here to stir.');
   }
 
   // ── Il Nucleo handlers ────────────────────────────────────────────────────
@@ -3076,9 +2596,10 @@ String? gameGateHintForPuzzle(String puzzleId) => _gateHints[puzzleId];
 int? gameDepthThresholdForSectorToQuinto(String sector) =>
     _depthThresholdsToQuinto[sector];
 
-int gameMemoryDepthThresholdToNucleo() => _memoryDepthThresholdToNucleo;
+int gameMemoryDepthThresholdToNucleo() => MemoryModule.depthThresholdToNucleo;
 
-int gameQuoteExposureThresholdToNucleo() => _quoteExposureThresholdToNucleo;
+int gameQuoteExposureThresholdToNucleo() =>
+    MemoryModule.quoteExposureThresholdToNucleo;
 
 bool gameGardenSteleInscriptionLooksSpecific(String text) =>
     GardenModule.steleInscriptionLooksSpecific(text);

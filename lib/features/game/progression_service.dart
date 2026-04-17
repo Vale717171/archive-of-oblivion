@@ -2,6 +2,7 @@ import '../parser/parser_state.dart';
 import 'gallery/gallery_module.dart';
 import 'garden/garden_module.dart';
 import 'laboratory/laboratory_module.dart';
+import 'memory/memory_module.dart';
 import 'observatory/observatory_module.dart';
 
 class ProgressionResult {
@@ -86,6 +87,7 @@ class ProgressionService {
       sector: 'memory',
       surfacePuzzle: 'ritual_complete',
       deepPuzzle: 'sys_deep_memory',
+      deepEvaluator: MemoryModule.isDeepComplete,
     ),
   ];
 
@@ -184,6 +186,12 @@ class ProgressionService {
     );
     nextPuzzles.addAll(
       LaboratoryModule.completionMarkers(
+        puzzles: nextPuzzles,
+        counters: nextCounters,
+      ),
+    );
+    nextPuzzles.addAll(
+      MemoryModule.completionMarkers(
         puzzles: nextPuzzles,
         counters: nextCounters,
       ),

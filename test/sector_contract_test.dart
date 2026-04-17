@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:archive_of_oblivion/features/game/gallery/gallery_sector.dart';
 import 'package:archive_of_oblivion/features/game/garden/garden_sector.dart';
 import 'package:archive_of_oblivion/features/game/laboratory/laboratory_sector.dart';
+import 'package:archive_of_oblivion/features/game/memory/memory_sector.dart';
 import 'package:archive_of_oblivion/features/game/observatory/observatory_sector.dart';
 
 void main() {
@@ -11,6 +12,7 @@ void main() {
     observatorySectorContract,
     gallerySectorContract,
     laboratorySectorContract,
+    memorySectorContract,
   ];
 
   test('extracted sectors expose the common contract surface', () {
