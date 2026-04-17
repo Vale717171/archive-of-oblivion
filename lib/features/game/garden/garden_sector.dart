@@ -1,60 +1,80 @@
 import '../../parser/parser_state.dart';
+import '../sector_contract.dart';
 import '../sector_router.dart';
 import 'garden_module.dart';
 
-class GardenSectorHandler implements SectorHandler {
-  const GardenSectorHandler();
+Object _buildGardenState(String nodeId, SectorRuntimeSnapshot snapshot) {
+  return GardenStateView(
+    nodeId: nodeId,
+    completedPuzzles: snapshot.completedPuzzles,
+    puzzleCounters: snapshot.puzzleCounters,
+    inventory: snapshot.inventory,
+    psychoWeight: snapshot.psychoWeight,
+  );
+}
 
-  GardenStateView? _view(SectorCommandContext context) {
-    final state = context.gameState;
-    if (state is! GardenStateView) return null;
-    return state;
+EngineResponse? _handleGardenCommand(
+  ParsedCommand cmd,
+  String nodeId,
+  Object stateView,
+) {
+  if (stateView is! GardenStateView) return null;
+
+  switch (cmd.verb) {
+    case CommandVerb.examine:
+      if (cmd.args.isEmpty) return null;
+      return GardenModule.handleExamine(
+        nodeId: nodeId,
+        target: cmd.args.join(' '),
+        state: stateView,
+      );
+    case CommandVerb.arrange:
+      return GardenModule.handleArrange(cmd: cmd, state: stateView);
+    case CommandVerb.wait:
+      return GardenModule.handleWait(state: stateView);
+    case CommandVerb.write:
+      return GardenModule.handleWrite(cmd: cmd, state: stateView);
+    case CommandVerb.walk:
+      return GardenModule.handleWalk(cmd: cmd, state: stateView);
+    case CommandVerb.offer:
+      return GardenModule.handleOffer(cmd: cmd, state: stateView);
+    case CommandVerb.deposit:
+      return GardenModule.handleDeposit(state: stateView);
+    default:
+      return null;
   }
+}
 
-  GardenStateView? _enterView(SectorEnterContext context) {
-    final state = context.gameState;
-    if (state is! GardenStateView) return null;
-    return state;
-  }
+EngineResponse? _onEnterGardenNode(
+  String fromNode,
+  String destNode,
+  Object stateView,
+) {
+  if (stateView is! GardenStateView) return null;
+  return GardenModule.onEnterNode(
+    fromNode: fromNode,
+    destNode: destNode,
+    state: stateView,
+  );
+}
 
-  @override
-  EngineResponse? handleCommand(SectorCommandContext context) {
-    final view = _view(context);
-    if (view == null) return null;
+final SectorContract gardenSectorContract = SectorContract(
+  id: 'garden',
+  surfacePuzzle: GardenModule.surfacePuzzle,
+  deepPuzzle: 'sys_deep_garden',
+  roomDefinitions: GardenModule.roomDefinitions,
+  exitGates: GardenModule.exitGates,
+  gateHints: GardenModule.gateHints,
+  handlesNode: (nodeId) =>
+      GardenModule.isGardenNode(nodeId) || nodeId == 'la_soglia',
+  buildStateView: _buildGardenState,
+  handleCommand: _handleGardenCommand,
+  onEnterNode: _onEnterGardenNode,
+  isSurfaceComplete: GardenModule.isSurfaceComplete,
+  isDeepComplete: GardenModule.isDeepComplete,
+  completionMarkers: GardenModule.completionMarkers,
+);
 
-    switch (context.cmd.verb) {
-      case CommandVerb.examine:
-        if (context.cmd.args.isEmpty) return null;
-        return GardenModule.handleExamine(
-          nodeId: context.nodeId,
-          target: context.cmd.args.join(' '),
-          state: view,
-        );
-      case CommandVerb.arrange:
-        return GardenModule.handleArrange(cmd: context.cmd, state: view);
-      case CommandVerb.wait:
-        return GardenModule.handleWait(state: view);
-      case CommandVerb.write:
-        return GardenModule.handleWrite(cmd: context.cmd, state: view);
-      case CommandVerb.walk:
-        return GardenModule.handleWalk(cmd: context.cmd, state: view);
-      case CommandVerb.offer:
-        return GardenModule.handleOffer(cmd: context.cmd, state: view);
-      case CommandVerb.deposit:
-        return GardenModule.handleDeposit(state: view);
-      default:
-        return null;
-    }
-  }
-
-  @override
-  EngineResponse? onEnterNode(SectorEnterContext context) {
-    final view = _enterView(context);
-    if (view == null) return null;
-    return GardenModule.onEnterNode(
-      fromNode: context.fromNode,
-      destNode: context.destNode,
-      state: view,
-    );
-  }
+class GardenSectorHandler extends ContractSectorHandler {
+  GardenSectorHandler() : super(gardenSectorContract);
 }

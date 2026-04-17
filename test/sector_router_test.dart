@@ -1,31 +1,26 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:archive_of_oblivion/features/game/gallery/gallery_sector.dart';
 import 'package:archive_of_oblivion/features/game/game_node.dart';
-import 'package:archive_of_oblivion/features/game/garden/garden_module.dart';
 import 'package:archive_of_oblivion/features/game/garden/garden_sector.dart';
-import 'package:archive_of_oblivion/features/game/observatory/observatory_module.dart';
 import 'package:archive_of_oblivion/features/game/observatory/observatory_sector.dart';
+import 'package:archive_of_oblivion/features/game/sector_contract.dart';
 import 'package:archive_of_oblivion/features/game/sector_router.dart';
 import 'package:archive_of_oblivion/features/parser/parser_state.dart';
 
 void main() {
-  const router = SectorRouter([GardenSectorHandler()]);
+  final router = SectorRouter([
+    GardenSectorHandler(),
+    ObservatorySectorHandler(),
+    GallerySectorHandler(),
+  ]);
 
-  GardenStateView state({
-    required String nodeId,
-    Set<String> puzzles = const {},
-    Map<String, int> counters = const {},
-    List<String> inventory = const ['notebook'],
-    int psychoWeight = 0,
-  }) {
-    return GardenStateView(
-      nodeId: nodeId,
-      completedPuzzles: puzzles,
-      puzzleCounters: counters,
-      inventory: inventory,
-      psychoWeight: psychoWeight,
-    );
-  }
+  const snapshot = SectorRuntimeSnapshot(
+    completedPuzzles: {},
+    puzzleCounters: {},
+    inventory: ['notebook'],
+    psychoWeight: 0,
+  );
 
   group('SectorRouter command routing', () {
     test('routes garden command to garden sector handler', () {
@@ -46,16 +41,54 @@ void main() {
                 'arrange leaves prudence friendship pleasure simplicity absence tranquillity memory',
           ),
           nodeId: 'garden_cypress',
-          node: GardenModule.roomDefinitions['garden_cypress']!,
-          gameState: state(
-            nodeId: 'garden_cypress',
-            puzzles: const {'garden_columns_read', 'garden_leaves_read'},
+          node: gardenSectorContract.roomDefinitions['garden_cypress']!,
+          snapshot: const SectorRuntimeSnapshot(
+            completedPuzzles: {'garden_columns_read', 'garden_leaves_read'},
+            puzzleCounters: {},
+            inventory: ['notebook'],
+            psychoWeight: 0,
           ),
         ),
       );
 
       expect(response, isNotNull);
       expect(response!.completePuzzle, 'leaves_arranged');
+    });
+
+    test('routes observatory command to observatory sector handler', () {
+      final response = router.routeCommand(
+        SectorCommandContext(
+          cmd: const ParsedCommand(
+            verb: CommandVerb.combine,
+            args: ['moon', 'mercury', 'sun'],
+            rawInput: 'combine moon mercury sun',
+          ),
+          nodeId: 'obs_antechamber',
+          node: observatorySectorContract.roomDefinitions['obs_antechamber']!,
+          snapshot: snapshot,
+        ),
+      );
+
+      expect(response, isNotNull);
+      expect(response!.completePuzzle, 'lenses_combined');
+    });
+
+    test('routes gallery command to gallery sector handler', () {
+      final response = router.routeCommand(
+        SectorCommandContext(
+          cmd: const ParsedCommand(
+            verb: CommandVerb.walk,
+            args: ['backward'],
+            rawInput: 'walk backward',
+          ),
+          nodeId: 'gallery_hall',
+          node: gallerySectorContract.roomDefinitions['gallery_hall']!,
+          snapshot: snapshot,
+        ),
+      );
+
+      expect(response, isNotNull);
+      expect(response!.completePuzzle, 'hall_backward_walked');
     });
 
     test('returns null for unrelated node', () {
@@ -66,9 +99,9 @@ void main() {
             args: ['x'],
             rawInput: 'arrange x',
           ),
-          nodeId: 'obs_dome',
+          nodeId: 'lab_alembic',
           node: const NodeDef(title: 'x', description: 'x', exits: {}),
-          gameState: state(nodeId: 'obs_dome'),
+          snapshot: snapshot,
         ),
       );
 
@@ -79,56 +112,20 @@ void main() {
   group('SectorRouter enter hooks', () {
     test('routes revisit enter hook', () {
       final response = router.onEnterNode(
-        SectorEnterContext(
+        const SectorEnterContext(
           fromNode: 'la_soglia',
           destNode: 'garden_portico',
-          gameState: state(
-            nodeId: 'la_soglia',
-            puzzles: const {'garden_complete'},
+          snapshot: SectorRuntimeSnapshot(
+            completedPuzzles: {'garden_complete'},
+            puzzleCounters: {},
+            inventory: ['notebook'],
+            psychoWeight: 0,
           ),
         ),
       );
 
       expect(response, isNotNull);
       expect(response!.completePuzzle, 'garden_revisited');
-    });
-  });
-
-  group('Observatory routing', () {
-    const observatoryRouter = SectorRouter([
-      GardenSectorHandler(),
-      ObservatorySectorHandler(),
-    ]);
-
-    ObservatoryStateView obsState({
-      required String nodeId,
-      Set<String> puzzles = const {},
-      Map<String, int> counters = const {},
-    }) {
-      return ObservatoryStateView(
-        nodeId: nodeId,
-        completedPuzzles: puzzles,
-        puzzleCounters: counters,
-        inventory: const ['notebook'],
-      );
-    }
-
-    test('routes observatory combine to observatory handler', () {
-      final response = observatoryRouter.routeCommand(
-        SectorCommandContext(
-          cmd: const ParsedCommand(
-            verb: CommandVerb.combine,
-            args: ['moon', 'mercury', 'sun'],
-            rawInput: 'combine moon mercury sun',
-          ),
-          nodeId: 'obs_antechamber',
-          node: ObservatoryModule.roomDefinitions['obs_antechamber']!,
-          gameState: obsState(nodeId: 'obs_antechamber'),
-        ),
-      );
-
-      expect(response, isNotNull);
-      expect(response!.completePuzzle, 'lenses_combined');
     });
   });
 }

@@ -4,6 +4,68 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Sector contract consolidation + Gallery extraction)
+**Role:** Shared-contract hardening + third state-driven sector migration
+
+**Done:**
+- Part A — formalized shared extracted-sector contract:
+  - Added `lib/features/game/sector_contract.dart` with `SectorContract` and `SectorRuntimeSnapshot`.
+  - Updated `lib/features/game/sector_router.dart` to support contract-driven routing via `ContractSectorHandler`.
+  - Converted both existing extracted sectors to the same contract shape:
+    - `lib/features/game/garden/garden_sector.dart`
+    - `lib/features/game/observatory/observatory_sector.dart`
+  - Reduced ad hoc notifier dispatch:
+    - removed per-sector state-view special-casing in notifier (`_gardenView/_observatoryView/_sectorViewForNode`),
+    - replaced with unified snapshot passing (`SectorRuntimeSnapshot`).
+- Part B — migrated Gallery as third real extracted sector:
+  - Added `lib/features/game/gallery/gallery_module.dart`:
+    - room definitions moved out of notifier
+    - gate definitions/hints moved out of notifier
+    - pure reducers for:
+      - reverse hall progression (`walk backward`)
+      - symmetry anomaly press logic
+      - proportion room construction logic
+      - copies wing absence logic
+      - originals wing long-form specific writing logic
+      - twin-chamber meaningful sacrifice logic
+      - mirror seduction/timing and break outcomes
+      - simulacrum acquisition (`the proportion`)
+    - explicit surface/deep hooks and markers
+    - explicit revisit hook and cross-sector output
+  - Added `lib/features/game/gallery/gallery_sector.dart` contract adapter.
+  - Updated `lib/features/game/game_engine_provider.dart`:
+    - added `GallerySectorHandler` to router
+    - replaced inline Gallery node data with `...GalleryModule.roomDefinitions`
+    - replaced inline Gallery gates/hints with `...GalleryModule.exitGates` + `...GalleryModule.gateHints`
+    - removed notifier-owned Gallery branching from:
+      - `_handleWalk`
+      - `_handleWrite`
+      - `_handlePress`
+      - `_handleDrop`
+      - `_handleBreak`
+      - `_handleObserve`
+      - `_handleUnknown` (gallery observe fallback duplication)
+  - Updated `lib/features/game/progression_service.dart`:
+    - Gallery deep evaluation now uses module deep evaluator.
+    - completion markers now sourced from module-level hooks (Garden/Observatory/Gallery), keeping sector-specific semantics in sector modules.
+
+**Tests added/updated:**
+- New `test/gallery_module_test.dart` for:
+  - reverse corridor anti-shortcut behavior
+  - fertile anomaly vs random interaction
+  - proportion correct vs elegant-but-wrong
+  - copies vs originals logic separation
+  - meaningful sacrifice enforcement
+  - mirror state/timing-dependent outcomes
+  - deep vs surface completion distinction
+- New `test/sector_contract_test.dart` to assert the shared contract surface for extracted sectors.
+- Updated `test/sector_router_test.dart` for contract-driven router context and Gallery routing.
+
+**Verification:**
+- `dart format ...` on all touched shared-sector/Gallery files ✅
+- `flutter test test/sector_contract_test.dart test/sector_router_test.dart test/gallery_module_test.dart test/garden_module_test.dart test/observatory_module_test.dart test/progression_service_test.dart` ✅
+- `flutter test` ✅ (all passing; existing skipped integration TODOs unchanged)
+
 ### 2026-04-17 — Codex GPT-5 (Observatory migration: second real state-driven sector)
 **Role:** Sector extraction (Observatory) on shared router/progression infrastructure
 

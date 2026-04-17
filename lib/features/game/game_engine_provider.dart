@@ -16,12 +16,15 @@ import '../demiurge/demiurge_service.dart';
 import '../demiurge/echo_service.dart';
 import '../parser/parser_service.dart';
 import '../parser/parser_state.dart';
+import 'gallery/gallery_module.dart';
+import 'gallery/gallery_sector.dart';
 import 'game_node.dart';
 import 'garden/garden_module.dart';
 import 'garden/garden_sector.dart';
 import 'observatory/observatory_module.dart';
 import 'observatory/observatory_sector.dart';
 import 'progression_service.dart';
+import 'sector_contract.dart';
 import 'sector_router.dart';
 import 'systemic_state.dart';
 import '../state/game_state_provider.dart';
@@ -164,14 +167,7 @@ const List<_ZoneQuestion> _zoneQuestions = [
 const Map<String, Map<String, String>> _exitGates = {
   ...GardenModule.exitGates,
   ...ObservatoryModule.exitGates,
-  'gallery_hall': {'south': 'hall_backward_walked'},
-  'gallery_corridor': {'south': 'corridor_tile_pressed'},
-  'gallery_proportions': {
-    'east': 'proportion_pentagon_drawn',
-    'west': 'proportion_pentagon_drawn',
-  },
-  'gallery_dark': {'east': 'gallery_item_abandoned'},
-  'gallery_light': {'west': 'gallery_item_abandoned'},
+  ...GalleryModule.exitGates,
   'lab_vestibule': {'south': 'lab_offers_complete'},
   'lab_furnace': {'south': 'furnace_calcinated'},
   'lab_alembic': {'south': 'alembic_temperature_set'},
@@ -188,18 +184,7 @@ const Map<String, Map<String, String>> _exitGates = {
 const Map<String, String> _gateHints = {
   ...GardenModule.gateHints,
   ...ObservatoryModule.gateHints,
-  'hall_backward_walked':
-      'The gallery corridor is sealed. The way forward is behind you.\n\n'
-          'Hint: walk backward.',
-  'corridor_tile_pressed':
-      'The proportions room is locked. One tile does not belong.\n\n'
-          'Hint: press anomalous tile.',
-  'proportion_pentagon_drawn':
-      'The wings are sealed. A geometric form must be constructed first.\n\n'
-          'Hint: construct pentagon.',
-  'gallery_item_abandoned':
-      'The tunnel between the chambers demands a price.\n\n'
-          'Hint: drop [something you carry] — the tunnel requires abandonment.',
+  ...GalleryModule.gateHints,
   'lab_offers_complete':
       'The Hall of Substances is locked. The three statues wait.\n\n'
           'Hint: offer [concept] — three times, three different offerings.',
@@ -301,173 +286,7 @@ const Map<String, NodeDef> _nodes = {
   ...ObservatoryModule.roomDefinitions,
 
   // ── Gallery of Mirrors ───────────────────────────────────────────────────────
-  'gallery_hall': NodeDef(
-    title: 'Gallery of Mirrors — Hall of First Impression',
-    description: 'The golden door opens to a long hall of mirrors.\n\n'
-        'You see yourself from every angle. The reflections agree on '
-        'your outline but not on your expression.\n\n'
-        'At the south end, where a door should be, there is only mirror. '
-        'But once — from the corner of your eye — there was something else.',
-    exits: {
-      'north': 'la_soglia',
-      'back': 'la_soglia',
-      'south': 'gallery_corridor'
-    },
-    examines: {
-      'mirrors':
-          'Thirty versions of the same face, each choosing a different truth.',
-      'door': 'Where the south door should be: another mirror. '
-          'Yet in the reflection, it is open.',
-      'reflection':
-          'You look directly at it. The door in the reflection is open. '
-              'In the real wall, it is closed.',
-    },
-  ),
-
-  'gallery_corridor': NodeDef(
-    title: 'Corridor of Symmetry',
-    description:
-        'The corridor is floored with a mosaic of perfect symmetry.\n\n'
-        'Every tile mirrors another — except one. Near the east wall, '
-        'one tile catches the light differently. The mosaic was laid '
-        'by someone who knew that perfection, undisturbed, becomes invisible.\n\n'
-        'A figure walks slowly ahead of you, always the same distance north, '
-        'always facing away.',
-    exits: {'north': 'gallery_hall', 'south': 'gallery_proportions'},
-    examines: {
-      'mosaic': 'Black and white. Perfectly mirrored — except for one tile.',
-      'tile': 'Near the east wall. Slightly rougher. '
-          'The pattern passes through it as if it were smooth.',
-      'anomalous tile': 'This tile is wrong. Or right in the wrong way.',
-      'figure': 'It walks exactly as fast as you. '
-          'When you look directly, it is always just turned away.',
-    },
-  ),
-
-  'gallery_proportions': NodeDef(
-    title: 'Room of Proportions',
-    description: 'The walls are covered in geometric diagrams.\n\n'
-        'Euclid constructions: bisection of angles, regular polygons, '
-        'the golden ratio. At the centre: a drafting table with compass, '
-        'straightedge, and blank paper.\n\n'
-        'The south wall shows two arched doorways: east wing, west wing.',
-    exits: {
-      'north': 'gallery_corridor',
-      'east': 'gallery_copies',
-      'west': 'gallery_originals',
-    },
-    examines: {
-      'diagrams': 'Euclid constructions. Each carries the notation: '
-          '"Form is prior to matter."',
-      'table': 'A drafting table. Compass. Straightedge. Blank paper.',
-      'compass': 'Set to a specific radius. The hinge is gold.',
-      'paper':
-          'Blank. Waiting for the construction that does not yet exist here.',
-      'doorways': 'Two arches: east for copies, west for originals.',
-      'golden ratio':
-          'Cannot be precisely expressed. Only approached, asymptotically.',
-    },
-  ),
-
-  'gallery_copies': NodeDef(
-    title: 'Wing of Copies',
-    description: 'A gallery of technically perfect reproductions.\n\n'
-        'Each one is missing something that cannot be named but can be seen — '
-        'the thing the original hand added in the original moment.\n\n'
-        'To the south: a stairway to a dark chamber.',
-    exits: {'north': 'gallery_proportions', 'south': 'gallery_dark'},
-    examines: {
-      'paintings':
-          'Perfect copies. The gaps are visible only if you look for them.',
-      'first copy': 'A landscape. All colours correct. The light correct. '
-          'Something is missing from the lower left corner.',
-      'second copy': 'A portrait. The face reproduced exactly. '
-          'The expression is empty in a way the original was not.',
-      'third copy':
-          'An abstract composition. Precise. It communicates nothing.',
-    },
-  ),
-
-  'gallery_originals': NodeDef(
-    title: 'Wing of Originals',
-    description: 'A gallery of blank canvases.\n\n'
-        'Primed and ready. Brushes and pigments on a long table. '
-        'A small sign: "The work does not require skill. '
-        'It requires the truth of the specific moment.\n'
-        'Paint something that exists only now, only here, only for you.\n'
-        'Minimum fifty words."\n\n'
-        'To the south: a stairway to a light chamber.',
-    exits: {'north': 'gallery_proportions', 'south': 'gallery_light'},
-    examines: {
-      'canvases': 'Blank. Primed. Three of them.',
-      'brushes': 'Every size. More than needed.',
-      'sign': '"The work does not require skill.\n'
-          'It requires the truth of the specific moment.\n'
-          'Paint something that exists only now, only here, only for you.\n'
-          'Minimum fifty words."',
-      'pigments': 'Every colour, mixed and unmixed.',
-    },
-  ),
-
-  'gallery_dark': NodeDef(
-    title: 'Dark Chamber',
-    description: 'A room with no light source. And yet you can see.\n\n'
-        'Not because of illumination — because this darkness is a kind '
-        'of visibility: seeing from within rather than from without.\n\n'
-        'In the east wall: a low tunnel to a lit chamber. '
-        'It is blocked. The blockage is not physical.',
-    exits: {
-      'north': 'gallery_copies',
-      'east': 'gallery_light',
-      'south': 'gallery_central',
-    },
-    examines: {
-      'darkness':
-          'Vision without light. Objects defined by what surrounds them.',
-      'tunnel':
-          'A low tunnel, east. The blockage is not a wall — it is a condition.',
-      'blockage': 'The tunnel requires something to be left behind.',
-    },
-  ),
-
-  'gallery_light': NodeDef(
-    title: 'Light Chamber',
-    description: 'A room entirely lit.\n\n'
-        'Every surface reflects. There are no shadows. '
-        'Objects are defined only by what falls on them — no depth, only surface.\n\n'
-        'In the west wall: the same tunnel, passable from this side.',
-    exits: {
-      'north': 'gallery_originals',
-      'west': 'gallery_dark',
-      'south': 'gallery_central',
-    },
-    examines: {
-      'light': 'Total. Everything visible — therefore nothing has depth.',
-      'tunnel': 'A low tunnel, west. It connects this room to its opposite.',
-      'objects':
-          'Perfectly visible. Perfectly flat in the way total light makes things flat.',
-    },
-  ),
-
-  'gallery_central': NodeDef(
-    title: 'Central Gallery — The Perfect Mirror',
-    description: 'A circular room. At its centre: the mirror.\n\n'
-        'Not a reflection of the room — a reflection of what the room '
-        'would be if it were completely honest. The frame is black wood, '
-        'unornamented.\n\n'
-        'The figure that was walking ahead of you is here, in the mirror. '
-        'It has stopped. It is facing you now.',
-    exits: {'north': 'gallery_dark', 'back': 'la_soglia'},
-    examines: {
-      'mirror':
-          'Flawless. Shows you — and the figure, closer than it should be.',
-      'figure': 'In the mirror: facing you. In the room: nothing. '
-          'It makes no attempt to explain itself.',
-      'frame': 'Black wood. No ornamentation.',
-      'reflection': 'Your reflection does not smile. Neither does it grieve. '
-          'It waits for you to decide something.',
-    },
-  ),
+  ...GalleryModule.roomDefinitions,
 
   // ── Alchemical Laboratory ────────────────────────────────────────────────────
   'lab_vestibule': NodeDef(
@@ -935,9 +754,10 @@ class _PsychoShiftResult {
 class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   final _history = DialogueHistoryService.instance;
   final Random _random = Random();
-  final SectorRouter _sectorRouter = const SectorRouter([
+  final SectorRouter _sectorRouter = SectorRouter([
     GardenSectorHandler(),
     ObservatorySectorHandler(),
+    GallerySectorHandler(),
   ]);
 
   // ── Auto-save state (ephemeral — not persisted) ──────────────────────────
@@ -981,55 +801,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   static bool _isSimulacrum(String itemName) =>
       _simulacraNames.contains(itemName);
 
-  /// Strips commas, hyphens and collapses whitespace for puzzle input matching.
-  static String _normalizeInput(String input) => input
-      .replaceAll(',', '')
-      .replaceAll('-', ' ')
-      .replaceAll(RegExp(r'\s+'), ' ')
-      .trim()
-      .toLowerCase();
-
-  /// Counts words in [raw] after skipping the first token (the command verb).
-  static int _wordCountExcludingVerb(String raw) =>
-      raw.trim().split(RegExp(r'\s+')).skip(1).length;
-
-  GardenStateView _gardenView({
-    required String nodeId,
-    required GameEngineState state,
-  }) {
-    return GardenStateView(
-      nodeId: nodeId,
-      completedPuzzles: state.completedPuzzles,
-      puzzleCounters: state.puzzleCounters,
-      inventory: state.inventory,
-      psychoWeight: state.psychoWeight,
-    );
-  }
-
-  ObservatoryStateView _observatoryView({
-    required String nodeId,
-    required GameEngineState state,
-  }) {
-    return ObservatoryStateView(
-      nodeId: nodeId,
-      completedPuzzles: state.completedPuzzles,
-      puzzleCounters: state.puzzleCounters,
-      inventory: state.inventory,
-    );
-  }
-
-  Object _sectorViewForNode({
-    required String nodeId,
-    required GameEngineState state,
-  }) {
-    if (GardenModule.isGardenNode(nodeId)) {
-      return _gardenView(nodeId: nodeId, state: state);
-    }
-    if (ObservatoryModule.isObservatoryNode(nodeId)) {
-      return _observatoryView(nodeId: nodeId, state: state);
-    }
-    return _gardenView(nodeId: nodeId, state: state);
-  }
+  SectorRuntimeSnapshot _sectorSnapshot(GameEngineState state) =>
+      SectorRuntimeSnapshot(
+        completedPuzzles: state.completedPuzzles,
+        puzzleCounters: state.puzzleCounters,
+        inventory: state.inventory,
+        psychoWeight: state.psychoWeight,
+      );
 
   EngineResponse? _routeSectorCommand({
     required ParsedCommand cmd,
@@ -1038,31 +816,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }) {
     final node = _nodes[nodeId];
     if (node == null) return null;
-    if (nodeId == 'la_soglia') {
-      final gardenFirst = _sectorRouter.routeCommand(
-        SectorCommandContext(
-          cmd: cmd,
-          nodeId: nodeId,
-          node: node,
-          gameState: _gardenView(nodeId: nodeId, state: state),
-        ),
-      );
-      if (gardenFirst != null) return gardenFirst;
-      return _sectorRouter.routeCommand(
-        SectorCommandContext(
-          cmd: cmd,
-          nodeId: nodeId,
-          node: node,
-          gameState: _observatoryView(nodeId: nodeId, state: state),
-        ),
-      );
-    }
     return _sectorRouter.routeCommand(
       SectorCommandContext(
         cmd: cmd,
         nodeId: nodeId,
         node: node,
-        gameState: _sectorViewForNode(nodeId: nodeId, state: state),
+        snapshot: _sectorSnapshot(state),
       ),
     );
   }
@@ -1873,7 +1632,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       SectorEnterContext(
         fromNode: nodeId,
         destNode: dest,
-        gameState: _sectorViewForNode(nodeId: dest, state: s),
+        snapshot: _sectorSnapshot(s),
       ),
     );
     if (gardenEnterHook != null) return gardenEnterHook;
@@ -1990,6 +1749,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleDrop(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+
     if (cmd.args.isEmpty)
       return const EngineResponse(narrativeText: 'Drop what?');
     final target = cmd.args.join(' ');
@@ -2014,21 +1777,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     final isSimulacrum = _isSimulacrum(match);
-
-    // Gallery dark chamber: dropping anything opens the tunnel
-    if (nodeId == 'gallery_dark' &&
-        !s.completedPuzzles.contains('gallery_item_abandoned')) {
-      return EngineResponse(
-        narrativeText: 'You set down the $match.\n\n'
-            'It remains on the floor. The tunnel between the chambers opens — '
-            'as if the act of leaving something was all it required.',
-        weightDelta: isSimulacrum ? 0 : -1,
-        anxietyDelta: isSimulacrum ? 0 : -1,
-        completePuzzle: 'gallery_item_abandoned',
-        lucidityDelta: 5,
-        needsDemiurge: true,
-      );
-    }
 
     return EngineResponse(
       narrativeText: 'You set down the $match. '
@@ -2132,28 +1880,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
     if (gardenResponse != null) return gardenResponse;
 
-    final mode = cmd.args.join(' ');
-
-    // Gallery hall: walk backward to find the hidden door (GDD §8 — puzzle 1)
-    if (nodeId == 'gallery_hall' &&
-        (mode.contains('backward') || mode.contains('back'))) {
-      if (s.completedPuzzles.contains('hall_backward_walked')) {
-        return const EngineResponse(
-          narrativeText: 'The corridor south is already open.',
-        );
-      }
-      return const EngineResponse(
-        narrativeText:
-            'You walk backward, facing north, watching your reflection recede.\n\n'
-            'Something shifts. Behind you — south — a door appears in the mirror. '
-            'It was there all along. You were facing the wrong way.\n\n'
-            'The corridor south is open.',
-        needsDemiurge: true,
-        lucidityDelta: 5,
-        completePuzzle: 'hall_backward_walked',
-      );
-    }
-
     return const EngineResponse(
         narrativeText: 'Nothing happens. Perhaps the moment has not come.');
   }
@@ -2172,88 +1898,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     final gardenResponse =
         _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
     if (gardenResponse != null) return gardenResponse;
-
-    // Gallery proportions: construct pentagon (GDD §8 — puzzle 3)
-    if (nodeId == 'gallery_proportions') {
-      if (cmd.rawInput.toLowerCase().contains('pentagon')) {
-        if (s.completedPuzzles.contains('proportion_pentagon_drawn')) {
-          return const EngineResponse(
-            narrativeText:
-                'The pentagon is already constructed. Both wings are open.',
-          );
-        }
-        return const EngineResponse(
-          narrativeText: 'You construct the pentagon — compass, straightedge, '
-              'the ancient method. It forms with a precision that feels inevitable.\n\n'
-              'The two wings open: east for copies, west for originals.',
-          needsDemiurge: true,
-          lucidityDelta: 8,
-          completePuzzle: 'proportion_pentagon_drawn',
-          audioTrigger: 'calm',
-        );
-      }
-    }
-
-    // Gallery copies: describe the missing elements — three times (GDD §8 — puzzle 4)
-    if (nodeId == 'gallery_copies') {
-      if (s.completedPuzzles.contains('gallery_copies_complete')) {
-        return const EngineResponse(
-          narrativeText:
-              'You have already described the three missing elements.',
-        );
-      }
-      if (cmd.args.isEmpty) {
-        return const EngineResponse(
-          narrativeText: 'Describe what is missing from one of the copies.',
-        );
-      }
-      final described = (s.puzzleCounters['gallery_copies_described'] ?? 0) + 1;
-      if (described < 3) {
-        return EngineResponse(
-          narrativeText: 'You name the absence.\n\n'
-              'The copy brightens slightly — as if acknowledging '
-              'that someone noticed. $described of three.',
-          incrementCounter: 'gallery_copies_described',
-        );
-      }
-      return const EngineResponse(
-        narrativeText: 'The third description.\n\n'
-            'All three gaps have been seen and named. '
-            'The wing opens the passage south.',
-        needsDemiurge: true,
-        incrementCounter: 'gallery_copies_described',
-        completePuzzle: 'gallery_copies_complete',
-        lucidityDelta: 8,
-      );
-    }
-
-    // Gallery originals: paint an imaginary work — minimum 50 words (GDD §8 — puzzle 5)
-    if (nodeId == 'gallery_originals') {
-      if (s.completedPuzzles.contains('gallery_originals_complete')) {
-        return const EngineResponse(
-            narrativeText: 'The canvas already holds your work.');
-      }
-      // _wordCountExcludingVerb skips the first token (the command word itself).
-      final wordCount = _wordCountExcludingVerb(cmd.rawInput);
-      if (wordCount < 50) {
-        return EngineResponse(
-          narrativeText: 'The canvas does not accept this.\n\n'
-              'The sign says the truth of the specific moment. '
-              'You have given $wordCount words. '
-              'Fifty are required — not for quantity, but because brevity here is evasion.',
-        );
-      }
-      return const EngineResponse(
-        narrativeText: 'You paint.\n\n'
-            'Not the painting itself — the act of it. '
-            'When you stop, something exists that did not exist before.\n\n'
-            'The passage south opens.',
-        needsDemiurge: true,
-        completePuzzle: 'gallery_originals_complete',
-        lucidityDelta: 10,
-        audioTrigger: 'calm',
-      );
-    }
 
     // Fifth Sector — memory price for each room (GDD §11)
     if (nodeId == 'quinto_childhood') {
@@ -2324,29 +1968,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handlePress(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId != 'gallery_corridor') {
-      return const EngineResponse(narrativeText: 'Nothing here to press.');
-    }
-    if (s.completedPuzzles.contains('corridor_tile_pressed')) {
-      return const EngineResponse(
-          narrativeText: 'The tile has been pressed. The way south is open.');
-    }
-    final a = cmd.args.join(' ').toLowerCase();
-    if (a.contains('tile') || a.contains('anomalous') || a.contains('wrong')) {
-      return const EngineResponse(
-        narrativeText: 'You press the anomalous tile.\n\n'
-            'It gives — slightly, decisively. '
-            'The south end of the corridor opens.\n\n'
-            'The figure ahead is no longer visible.',
-        needsDemiurge: true,
-        lucidityDelta: 5,
-        completePuzzle: 'corridor_tile_pressed',
-      );
-    }
-    return const EngineResponse(
-      narrativeText: 'The tiles do not respond.\n\n'
-          'Look for the tile that differs from its neighbours.',
-    );
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(narrativeText: 'Nothing here to press.');
   }
 
   EngineResponse _handleOffer(
@@ -2432,50 +2057,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleBreak(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId != 'gallery_central') {
-      return const EngineResponse(
-          narrativeText: 'There is nothing here to break.');
-    }
-    if (!cmd.rawInput.toLowerCase().contains('mirror')) {
-      return const EngineResponse(
-        narrativeText:
-            'Break what? The mirror is the only thing here that waits for this.',
-      );
-    }
-    if (s.completedPuzzles.contains('gallery_complete') ||
-        s.completedPuzzles.contains('gallery_mirror_broken_chaos')) {
-      return const EngineResponse(
-          narrativeText: 'The mirror is already broken.');
-    }
-    if (s.psychoWeight > 0) {
-      // Chaotic break — no simulacrum granted (GDD §8)
-      return const EngineResponse(
-        narrativeText: 'You break the mirror.\n\n'
-            'It does not shatter cleanly. The fragments scatter, each reflecting '
-            'a different version of you carrying something you should have left behind.\n\n'
-            'No simulacrum appears. The proportion requires empty hands.\n\n'
-            'The Gallery cannot be completed in this state.',
-        needsDemiurge: true,
-        lucidityDelta: -15,
-        anxietyDelta: 20,
-        oblivionDelta: 10,
-        audioTrigger: 'anxious',
-        completePuzzle: 'gallery_mirror_broken_chaos',
-      );
-    }
-    // Clean break — grant The Proportion
-    return _simulacrumReward(
-      narrativeText: 'You break the mirror.\n\n'
-          'It shatters with a sound that is not glass — '
-          'the sound of something that was pretending to be a boundary.\n\n'
-          'The fragments arrange themselves on the floor in the shape of a pentagon, '
-          'each piece a precise fraction of the whole.\n\n'
-          'In the centre: a golden compass with no hinge. The Proportion.',
-      itemName: 'the proportion',
-      completePuzzle: 'gallery_complete',
-      lucidityDelta: 15,
-      anxietyDelta: -10,
-    );
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(
+        narrativeText: 'There is nothing here to break.');
   }
 
   EngineResponse _handleBlow(String nodeId, GameEngineState s) {
@@ -2553,28 +2139,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       state: s,
     );
     if (sectorResponse != null) return sectorResponse;
-
-    if (nodeId == 'gallery_hall') {
-      if (s.completedPuzzles.contains('hall_backward_walked') &&
-          !s.completedPuzzles.contains('gallery_reflection_triggered')) {
-        return const EngineResponse(
-          narrativeText: 'You look into the mirrors a second time.\n\n'
-              'Your reflection looks back — and it is not quite the one you left.\n\n'
-              '"More fragile but more vivid, more unsubstantial, '
-              'more persistent, more faithful."\n\n'
-              'The images hold something you had forgotten was yours.',
-          needsDemiurge: true,
-          lucidityDelta: -5,
-          anxietyDelta: 5,
-          audioTrigger: 'sfx:proustian_trigger',
-          completePuzzle: 'gallery_reflection_triggered',
-        );
-      }
-      return const EngineResponse(
-        narrativeText: 'The mirrors reflect you from every angle. '
-            'None of them shows you looking at them.',
-      );
-    }
 
     return const EngineResponse(
       narrativeText:
@@ -2814,33 +2378,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             'Grey smoke — the smell of something essential escaping.\n\n'
             'Five turnings are required. Wait.',
         completePuzzle: 'furnace_calcinating',
-      );
-    }
-
-    // Gallery hall: observe reflection (2nd Proustian trigger, GDD §9)
-    if ((raw == 'observe reflection' ||
-            raw.startsWith('observe reflection') ||
-            raw == 'observe' ||
-            raw.startsWith('observe ')) &&
-        nodeId == 'gallery_hall') {
-      if (s.completedPuzzles.contains('hall_backward_walked') &&
-          !s.completedPuzzles.contains('gallery_reflection_triggered')) {
-        return const EngineResponse(
-          narrativeText: 'You look into the mirrors a second time.\n\n'
-              'Your reflection looks back — and it is not quite the one you left.\n\n'
-              '"More fragile but more vivid, more unsubstantial, '
-              'more persistent, more faithful."\n\n'
-              'The images hold something you had forgotten was yours.',
-          needsDemiurge: true,
-          lucidityDelta: -5,
-          anxietyDelta: 5,
-          audioTrigger: 'sfx:proustian_trigger',
-          completePuzzle: 'gallery_reflection_triggered',
-        );
-      }
-      return const EngineResponse(
-        narrativeText: 'The mirrors reflect you from every angle. '
-            'None of them shows you looking at them.',
       );
     }
 

@@ -360,6 +360,8 @@ class ObservatoryModule {
       narrativeText: 'You lift the ${lens} lens from its cradle.\n\n'
           'Its weight is less physical than interpretive.',
       needsDemiurge: true,
+      grantItem: '${lens} lens',
+      weightDelta: 1,
       completePuzzle: puzzle,
     );
   }

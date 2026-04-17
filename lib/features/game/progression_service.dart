@@ -1,4 +1,5 @@
 import '../parser/parser_state.dart';
+import 'gallery/gallery_module.dart';
 import 'garden/garden_module.dart';
 import 'observatory/observatory_module.dart';
 
@@ -72,6 +73,7 @@ class ProgressionService {
       sector: 'gallery',
       surfacePuzzle: 'gallery_complete',
       deepPuzzle: 'sys_deep_gallery',
+      deepEvaluator: GalleryModule.isDeepComplete,
     ),
     SectorProgressionRule(
       sector: 'laboratory',
@@ -160,15 +162,20 @@ class ProgressionService {
       if (nextPuzzles.contains(rule.deepPuzzle)) deepCount++;
     }
 
-    // Backward-compatible legacy markers for Garden.
-    if (nextPuzzles.contains('garden_complete')) {
-      nextPuzzles.add('garden_surface_complete');
-    }
-    if (nextPuzzles.contains('sys_deep_garden')) {
-      nextPuzzles.add('garden_deep_complete');
-    }
+    nextPuzzles.addAll(
+      GardenModule.completionMarkers(
+        puzzles: nextPuzzles,
+        counters: nextCounters,
+      ),
+    );
     nextPuzzles.addAll(
       ObservatoryModule.completionMarkers(
+        puzzles: nextPuzzles,
+        counters: nextCounters,
+      ),
+    );
+    nextPuzzles.addAll(
+      GalleryModule.completionMarkers(
         puzzles: nextPuzzles,
         counters: nextCounters,
       ),
