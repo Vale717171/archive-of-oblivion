@@ -4,6 +4,64 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Garden architectural extraction: state-driven module)
+**Role:** Sector architecture refactor (first real extraction slice)
+
+**Done:**
+- Extracted Garden into a dedicated module:
+  - Added `lib/features/game/garden/garden_module.dart`.
+  - Added `GardenStateView` (state snapshot DTO for pure reducers).
+  - Moved Garden room definitions out of engine into `GardenModule.roomDefinitions`.
+  - Moved Garden gate maps into `GardenModule.exitGates` and `GardenModule.gateHints`.
+  - Added Garden pure reducers/handlers:
+    - `handleExamine`
+    - `handleArrange`
+    - `handleWait`
+    - `handleWrite`
+    - `handleWalk`
+    - `handleOffer`
+    - `handleDeposit`
+  - Added explicit Garden progression logic APIs:
+    - `isSurfaceComplete`
+    - `isDeepComplete`
+    - `completionMarkers` (adds `garden_surface_complete` and `garden_deep_complete`, plus `sys_deep_garden`)
+  - Added explicit hook APIs:
+    - `onEnterNode` (revisit hook)
+    - cross-sector hook remains explicit inside `handleExamine` at Threshold pedestal condition.
+- Reduced Garden coupling in `lib/features/game/game_engine_provider.dart`:
+  - Added imports for `game_node.dart` and `garden_module.dart`.
+  - Introduced `lib/features/game/game_node.dart` with shared `NodeDef`.
+  - Replaced private `_NodeDef` usage with shared `NodeDef`.
+  - `_nodes` now includes `...GardenModule.roomDefinitions` instead of embedded Garden node block.
+  - `_exitGates` and `_gateHints` now include Garden via spread from module constants.
+  - Replaced Garden-specific notifier logic in handlers with module delegation:
+    - examine/wait/arrange/write/walk/offer/deposit/go-enter-hook.
+  - Added `_gardenView(...)` helper so notifier only orchestrates calls.
+  - Added post-turn Garden completion marker integration via `GardenModule.completionMarkers(...)`.
+  - Kept gameplay behavior intact while moving logic toward pure state transitions.
+- Added/updated public helper exposure:
+  - `gameGardenSteleInscriptionLooksSpecific(...)`
+  - `gameGardenRelinquishmentCoverage(...)`
+  - `gameGardenSurfaceComplete(...)`
+  - `gameGardenDeepComplete(...)`
+
+**Tests added:**
+- New `test/garden_module_test.dart` covering:
+  - leaf arrangements with distinct outcomes
+  - fountain patience anti-spam behavior
+  - stele generic vs substantial writing evaluation
+  - statue triadic relinquishment enforcement
+  - deep completion requiring more than Ataraxia
+
+**Verification:**
+- `dart format lib/features/game/game_node.dart lib/features/game/garden/garden_module.dart lib/features/game/game_engine_provider.dart test/garden_module_test.dart test/game_engine_helpers_test.dart` ✅
+- `flutter test test/garden_module_test.dart test/game_engine_helpers_test.dart test/systemic_state_test.dart test/puzzle_gates_test.dart` ✅
+- `flutter test` ✅ (all passing; existing skipped integration TODOs unchanged)
+
+**Architecture notes:**
+- Garden is now the first sector with dedicated module-owned room data + pure transition logic.
+- `GameEngineNotifier` remains orchestration-only for Garden command routing and global cross-sector systems.
+
 ### 2026-04-17 — Codex GPT-5 (Systemic Garden migration slice + assist hardening pass 2)
 **Role:** Incremental refactor execution (Garden-first systemic vertical slice)
 

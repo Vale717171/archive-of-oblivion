@@ -16,27 +16,11 @@ import '../demiurge/demiurge_service.dart';
 import '../demiurge/echo_service.dart';
 import '../parser/parser_service.dart';
 import '../parser/parser_state.dart';
+import 'game_node.dart';
+import 'garden/garden_module.dart';
 import 'systemic_state.dart';
 import '../state/game_state_provider.dart';
 import '../state/psycho_provider.dart';
-
-// ── Node data ─────────────────────────────────────────────────────────────────
-
-class _NodeDef {
-  final String title;
-  final String description;
-  final Map<String, String> exits;
-  final Map<String, String> examines;
-  final Set<String> takeable;
-
-  const _NodeDef({
-    required this.title,
-    required this.description,
-    required this.exits,
-    this.examines = const <String, String>{},
-    this.takeable = const <String>{},
-  });
-}
 
 // ── Simulacra — weightless; dropping them does not reduce burden ──────────────
 
@@ -173,9 +157,7 @@ const List<_ZoneQuestion> _zoneQuestions = [
 // ── Exit gates: nodeId → {direction → requiredPuzzleId} ──────────────────────
 
 const Map<String, Map<String, String>> _exitGates = {
-  'garden_cypress': {'north': 'leaves_arranged'},
-  'garden_fountain': {'north': 'fountain_waited'},
-  'garden_stelae': {'north': 'stele_inscribed'},
+  ...GardenModule.exitGates,
   'obs_antechamber': {'north': 'lenses_combined'},
   'obs_corridor': {'west': 'heisenberg_walked', 'east': 'heisenberg_walked'},
   'obs_void': {'south': 'void_fluctuation_measured'},
@@ -203,15 +185,7 @@ const Map<String, Map<String, String>> _exitGates = {
 };
 
 const Map<String, String> _gateHints = {
-  'leaves_arranged':
-      'The fallen leaves bar your way. Their disorder is the lock.\n\n'
-          'Hint: read columns and leaves, then arrange leaves [seven words in Epicurean order].',
-  'fountain_waited':
-      'The passage north is not yet open. Something is still arriving.\n\n'
-          'Hint: wait, but not mechanically. Attend to fountain and dust between turnings.',
-  'stele_inscribed':
-      'The grove will not receive you. The blank stele stands in judgement.\n\n'
-          'Hint: inscribe a concrete, costly line about friendship — not a slogan.',
+  ...GardenModule.gateHints,
   'lenses_combined':
       'The corridor is dark. The telescope mount is incomplete.\n\n'
           'Hint: combine lens [Moon] [Mercury] [Sun].',
@@ -283,9 +257,9 @@ const int _quoteExposureThresholdToNucleo = 18;
 // Nodes are in English as required by GDD §1.
 // Future: move text to assets/texts/*.json (GDD §18).
 
-const Map<String, _NodeDef> _nodes = {
+const Map<String, NodeDef> _nodes = {
   // ── Starting void ────────────────────────────────────────────────────────────
-  'intro_void': _NodeDef(
+  'intro_void': NodeDef(
     title: '',
     description: 'Silence.\n\n'
         'Then — awareness.\n\n'
@@ -304,7 +278,7 @@ const Map<String, _NodeDef> _nodes = {
   ),
 
   // ── The Threshold (hub) ──────────────────────────────────────────────────────
-  'la_soglia': _NodeDef(
+  'la_soglia': NodeDef(
     title: 'The Threshold',
     description: 'A circular rotunda of black marble veined with silver.\n\n'
         'Four doors at the cardinal points: amber to the north, '
@@ -334,147 +308,10 @@ const Map<String, _NodeDef> _nodes = {
   ),
 
   // ── Garden of Epicurus ───────────────────────────────────────────────────────
-  'garden_portico': _NodeDef(
-    title: 'The Garden of Epicurus — Portico',
-    description: 'The amber door opens onto stillness.\n\n'
-        'A portico of worn stone columns. Inscriptions run along each shaft. '
-        'A path of pale stone leads north through cypress trees '
-        'so tall their crowns disappear.',
-    exits: {
-      'north': 'garden_cypress',
-      'south': 'la_soglia',
-      'back': 'la_soglia'
-    },
-    examines: {
-      'columns': 'Each column bears a single word:\n'
-          'ataraxia — aponia — philia — phronesis.\n'
-          'The order is not alphabetical.',
-      'path': 'Cypress trees stand like sentinels.',
-    },
-  ),
-
-  'garden_cypress': _NodeDef(
-    title: 'Cypress Avenue',
-    description: 'A long avenue of cypress trees.\n\n'
-        'Leaves have fallen across the stone path, each perfectly preserved, '
-        'each bearing a single word in faded ink. They are not arranged in '
-        'any obvious order.\n\n'
-        'To the north, the avenue opens onto a dry fountain.',
-    exits: {'north': 'garden_fountain', 'south': 'garden_portico'},
-    examines: {
-      'leaves': 'You crouch and read the words:\n'
-          'pleasure — friendship — prudence — tranquillity — '
-          'memory — simplicity — absence.\n\n'
-          'They belong to an order. You sense it, but cannot yet name it.',
-      'trees':
-          'Impossibly tall. Their roots disappear into ground with no depth.',
-      'words': 'Seven words. One leaf is slightly darker than the rest.',
-    },
-  ),
-
-  'garden_fountain': _NodeDef(
-    title: 'Dry Fountain',
-    description: 'A stone fountain, long dry.\n\n'
-        'Its basin holds only fine grey dust. '
-        'Carved along the rim: "That which satisfies the body is sufficient '
-        'for happiness." The stone is worn smooth by many hands.\n\n'
-        'To the north: a circle of standing stones.',
-    exits: {'north': 'garden_stelae', 'south': 'garden_cypress'},
-    examines: {
-      'fountain': 'Empty. Worn smooth by many hands before yours.',
-      'dust': 'Fine as ash. Breathed on, it forms brief illegible shapes.',
-      'inscription':
-          '"That which satisfies the body is sufficient for happiness."',
-    },
-  ),
-
-  'garden_stelae': _NodeDef(
-    title: 'Circle of Stelae',
-    description: 'A circle of standing stones, each inscribed with a maxim.\n\n'
-        'You count eleven. The twelfth stele is blank — its surface '
-        'smooth and waiting. A stylus lies at its base.\n\n'
-        'To the south, the dry fountain. To the north, the grove.',
-    exits: {'north': 'garden_grove', 'south': 'garden_fountain'},
-    examines: {
-      'stelae': 'Eleven maxims. The eleventh: "Death is nothing to us." '
-          'The twelfth is blank.',
-      'blank stele': 'Smooth stone. A stylus at its base. '
-          'The missing maxim belongs to those who have understood the others.',
-      'stylus': 'A simple instrument. It waits.',
-      'maxims': 'Pleasure. Death. The gods. Pain. Virtue. '
-          'The soul. Justice. Friendship. Wisdom. Society. The self. '
-          'The twelfth stands empty.',
-    },
-    takeable: {'stylus'},
-  ),
-
-  'garden_grove': _NodeDef(
-    title: "Central Grove — Epicurus' Statue",
-    description: 'A clearing of ancient trees.\n\n'
-        'At the centre: a marble statue of a seated figure. '
-        'Hands open on its knees, palms upward, holding nothing. '
-        'The expression is one of complete, undemonstrative peace.\n\n'
-        'To the east and west: two alcoves in the treeline.\n'
-        'To the south: the circle of stelae.',
-    exits: {
-      'east': 'garden_alcove_pleasures',
-      'west': 'garden_alcove_pains',
-      'south': 'garden_stelae',
-    },
-    examines: {
-      'statue': 'The hands hold nothing. The face asks nothing. '
-          'It has been waiting for you specifically.',
-      'trees': 'Ancient. Still. Their roots break the stone path.',
-      'clearing': 'No wind. Sound arrives slightly after it should.',
-    },
-  ),
-
-  'garden_alcove_pleasures': _NodeDef(
-    title: 'Alcove of Pleasures',
-    description: 'A small alcove off the grove.\n\n'
-        'Objects on low shelves: a coin worn smooth, '
-        'a leather-bound book with gilded edges, a brass compass, '
-        'a small oil lamp. Each is beautiful. Each gives you the '
-        'faint sense that acquiring it would be a mistake.\n\n'
-        'A linden tree grows in the corner. Its flowers are open.',
-    exits: {'west': 'garden_grove', 'back': 'garden_grove'},
-    examines: {
-      'coin':
-          'A coin from no era you recognise. Heads: a face. Tails: the same face, older.',
-      'book': 'The gilded title has worn away. Inside, handwriting '
-          'you almost recognise as your own.',
-      'compass':
-          'The needle points in a direction that changes every time you look away.',
-      'lamp': 'The flame is lit. You do not remember lighting it.',
-      'linden':
-          'A linden tree in full flower. The scent is very faint — then overwhelming.',
-      'flowers':
-          'Not just flowers. Something older. A door, half-open. A specific afternoon.',
-    },
-    takeable: {'coin', 'book', 'compass', 'lamp'},
-  ),
-
-  'garden_alcove_pains': _NodeDef(
-    title: 'Alcove of Pains',
-    description: 'A small alcove off the grove.\n\n'
-        'Objects: a rusted key, a torn page, '
-        'a cracked mirror shard, a handful of dried earth.\n\n'
-        'They are less beautiful than those across the grove. '
-        'That, somehow, makes them harder to leave.',
-    exits: {'east': 'garden_grove', 'back': 'garden_grove'},
-    examines: {
-      'key': 'Rusted. You do not know what it opens. '
-          'You suspect the lock no longer exists.',
-      'page': 'A single torn page. One word you understand: remember.',
-      'mirror shard': 'Your reflection is correct. '
-          'That is somehow the most unsettling thing about this place.',
-      'earth': 'Dry. Dark. The smell of the end of summer.',
-    },
-    takeable: {'key', 'page', 'mirror shard', 'earth'},
-  ),
+  ...GardenModule.roomDefinitions,
 
   // ── Observatory ──────────────────────────────────────────────────────────────
-  'obs_antechamber': _NodeDef(
+  'obs_antechamber': NodeDef(
     title: 'The Blind Observatory — Antechamber of Lenses',
     description: 'The cobalt door opens to cold glass.\n\n'
         'Three lenses rest in separate cradles along the north wall, '
@@ -495,7 +332,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'obs_corridor': _NodeDef(
+  'obs_corridor': NodeDef(
     title: 'Corridor of Hypotheses',
     description: 'A long corridor. The walls are lined with framed statements, '
         'each crossed out in red. Not false — abandoned.\n\n'
@@ -517,7 +354,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'obs_void': _NodeDef(
+  'obs_void': NodeDef(
     title: 'Hall of Void',
     description: 'A perfectly dark room. No walls visible.\n\n'
         'You know they are there. The silence has texture — '
@@ -539,7 +376,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'obs_archive': _NodeDef(
+  'obs_archive': NodeDef(
     title: 'Archive of Constants',
     description: 'Glass cabinets line every wall, each holding a constant '
         'of nature, labelled and lit.\n\n'
@@ -566,7 +403,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'obs_calibration': _NodeDef(
+  'obs_calibration': NodeDef(
     title: 'Calibration Chamber',
     description: 'A room of instruments, all zeroed.\n\n'
         'At the centre: a calibration station. Three dials, each reading "???". '
@@ -583,7 +420,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'obs_dome': _NodeDef(
+  'obs_dome': NodeDef(
     title: 'Telescope Dome',
     description: 'The dome opens to a sky that is not a sky.\n\n'
         'No stars — or all stars at once, so dense they form a white field. '
@@ -604,7 +441,7 @@ const Map<String, _NodeDef> _nodes = {
   ),
 
   // ── Gallery of Mirrors ───────────────────────────────────────────────────────
-  'gallery_hall': _NodeDef(
+  'gallery_hall': NodeDef(
     title: 'Gallery of Mirrors — Hall of First Impression',
     description: 'The golden door opens to a long hall of mirrors.\n\n'
         'You see yourself from every angle. The reflections agree on '
@@ -627,7 +464,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'gallery_corridor': _NodeDef(
+  'gallery_corridor': NodeDef(
     title: 'Corridor of Symmetry',
     description:
         'The corridor is floored with a mosaic of perfect symmetry.\n\n'
@@ -647,7 +484,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'gallery_proportions': _NodeDef(
+  'gallery_proportions': NodeDef(
     title: 'Room of Proportions',
     description: 'The walls are covered in geometric diagrams.\n\n'
         'Euclid constructions: bisection of angles, regular polygons, '
@@ -672,7 +509,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'gallery_copies': _NodeDef(
+  'gallery_copies': NodeDef(
     title: 'Wing of Copies',
     description: 'A gallery of technically perfect reproductions.\n\n'
         'Each one is missing something that cannot be named but can be seen — '
@@ -691,7 +528,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'gallery_originals': _NodeDef(
+  'gallery_originals': NodeDef(
     title: 'Wing of Originals',
     description: 'A gallery of blank canvases.\n\n'
         'Primed and ready. Brushes and pigments on a long table. '
@@ -712,7 +549,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'gallery_dark': _NodeDef(
+  'gallery_dark': NodeDef(
     title: 'Dark Chamber',
     description: 'A room with no light source. And yet you can see.\n\n'
         'Not because of illumination — because this darkness is a kind '
@@ -733,7 +570,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'gallery_light': _NodeDef(
+  'gallery_light': NodeDef(
     title: 'Light Chamber',
     description: 'A room entirely lit.\n\n'
         'Every surface reflects. There are no shadows. '
@@ -752,7 +589,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'gallery_central': _NodeDef(
+  'gallery_central': NodeDef(
     title: 'Central Gallery — The Perfect Mirror',
     description: 'A circular room. At its centre: the mirror.\n\n'
         'Not a reflection of the room — a reflection of what the room '
@@ -773,7 +610,7 @@ const Map<String, _NodeDef> _nodes = {
   ),
 
   // ── Alchemical Laboratory ────────────────────────────────────────────────────
-  'lab_vestibule': _NodeDef(
+  'lab_vestibule': NodeDef(
     title: 'The Alchemical Laboratory — Vestibule of Principles',
     description: 'The violet door opens onto sulphur and something sweeter.\n\n'
         'A vestibule of grey stone. Three niches, each containing '
@@ -797,7 +634,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'lab_substances': _NodeDef(
+  'lab_substances': NodeDef(
     title: 'Hall of Substances',
     description: 'A wide hall, its walls covered in alchemical symbols.\n\n'
         'Hundreds of them — spirals, triangles, crosses. Unlabelled. '
@@ -820,7 +657,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'lab_furnace': _NodeDef(
+  'lab_furnace': NodeDef(
     title: 'Furnace',
     description: 'An iron furnace, cold.\n\n'
         'The grate is empty. A tray beside it holds grey-white material. '
@@ -840,7 +677,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'lab_alembic': _NodeDef(
+  'lab_alembic': NodeDef(
     title: 'Alembic',
     description:
         'A glass vessel — wide at the base, drawing to a narrow point.\n\n'
@@ -865,7 +702,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'lab_bain_marie': _NodeDef(
+  'lab_bain_marie': NodeDef(
     title: 'Bain-Marie',
     description: 'A water bath — the gentlest form of heat.\n\n'
         'The outer vessel holds cold water. The inner vessel holds '
@@ -886,7 +723,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'lab_great_work': _NodeDef(
+  'lab_great_work': NodeDef(
     title: 'Table of the Great Work',
     description: 'A stone table at the convergence of three channels.\n\n'
         'On its surface: a diagram of seven concentric circles, each labelled '
@@ -912,7 +749,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'lab_sealed': _NodeDef(
+  'lab_sealed': NodeDef(
     title: 'Sealed Chamber',
     description: 'A small chamber, sealed until now.\n\n'
         'At its centre: an alembic of extraordinary delicacy — glass so thin '
@@ -934,7 +771,7 @@ const Map<String, _NodeDef> _nodes = {
   ),
 
   // ── Fifth Sector stub — accessible once all four simulacra are in inventory ──
-  'quinto_landing': _NodeDef(
+  'quinto_landing': NodeDef(
     title: 'The Fifth Sector — Memory',
     description: 'A spiral staircase brought you here.\n\n'
         'Each candle on the descent was a different age.\n\n'
@@ -965,7 +802,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'quinto_childhood': _NodeDef(
+  'quinto_childhood': NodeDef(
     title: 'Childhood',
     description:
         'A small room. The light is the exact quality of a morning you almost remember.\n\n'
@@ -986,7 +823,7 @@ const Map<String, _NodeDef> _nodes = {
     takeable: {'madeleine'},
   ),
 
-  'quinto_youth': _NodeDef(
+  'quinto_youth': NodeDef(
     title: 'Youth',
     description: 'A room with the feeling of being in transit.\n\n'
         'Luggage partially packed. A train schedule half-read and set down.\n\n'
@@ -1007,7 +844,7 @@ const Map<String, _NodeDef> _nodes = {
     takeable: {'ticket'},
   ),
 
-  'quinto_maturity': _NodeDef(
+  'quinto_maturity': NodeDef(
     title: 'Maturity',
     description: 'A study. Books on every surface.\n\n'
         'A telephone on the desk, receiver off the hook.\n\n'
@@ -1026,7 +863,7 @@ const Map<String, _NodeDef> _nodes = {
     takeable: {'glasses'},
   ),
 
-  'quinto_old_age': _NodeDef(
+  'quinto_old_age': NodeDef(
     title: 'Old Age',
     description: 'A room that has settled into itself completely.\n\n'
         'Everything is in its place. Everything has a history visible in its surface.\n\n'
@@ -1048,7 +885,7 @@ const Map<String, _NodeDef> _nodes = {
     takeable: {'clock'},
   ),
 
-  'quinto_ritual_chamber': _NodeDef(
+  'quinto_ritual_chamber': NodeDef(
     title: 'The Ritual Chamber',
     description: 'A circular room, low-ceilinged.\n\n'
         'At the centre: a cup of extraordinary simplicity. '
@@ -1073,7 +910,7 @@ const Map<String, _NodeDef> _nodes = {
   ),
 
   // ── Il Nucleo — The Final Confrontation (GDD §12) ─────────────────────────
-  'il_nucleo': _NodeDef(
+  'il_nucleo': NodeDef(
     title: 'The Nucleus — The Final Confrontation',
     description: 'A space with no walls.\n\n'
         'Before you: a figure without a face. '
@@ -1095,7 +932,7 @@ const Map<String, _NodeDef> _nodes = {
   ),
 
   // ── I Tre Finali ──────────────────────────────────────────────────────────
-  'finale_acceptance': _NodeDef(
+  'finale_acceptance': NodeDef(
     title: 'Acceptance — The Revelation',
     description: 'The Archive grows transparent.\n\n'
         'Through the walls — walls that were always walls — '
@@ -1112,7 +949,7 @@ const Map<String, _NodeDef> _nodes = {
     },
   ),
 
-  'finale_oblivion': _NodeDef(
+  'finale_oblivion': NodeDef(
     title: 'Oblivion',
     description: '...\n\n'
         '...\n\n'
@@ -1123,7 +960,7 @@ const Map<String, _NodeDef> _nodes = {
     examines: {},
   ),
 
-  'finale_eternal_zone': _NodeDef(
+  'finale_eternal_zone': NodeDef(
     title: 'The Eternal Zone',
     description: 'You remain.\n\n'
         'The variations begin.\n\n'
@@ -1135,7 +972,7 @@ const Map<String, _NodeDef> _nodes = {
   ),
 
   // ── La Zona (GDD §10) ─────────────────────────────────────────────────────
-  'la_zona': _NodeDef(
+  'la_zona': NodeDef(
     title: 'The Zone',
     description: 'Impossible geometry.\n\n'
         'A corridor that is also a room. '
@@ -1248,13 +1085,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   // Maximum value for psychological weight and psycho-profile sliders.
   static const int _maxPsychoValue = 100;
 
-  // Correct leaf order for the Cypress Avenue puzzle (GDD §8 — Epicurean hierarchy).
-  // The column words read in reverse (phronesis→philia→aponia→ataraxia) give
-  // the means: prudence→friendship→[absence of pain]→tranquillity.
-  // Full seven-word progression:
-  static const _correctLeafOrder =
-      'prudence friendship pleasure simplicity absence tranquillity memory';
-
   static const List<String> _unknownCommandFallbacks = [
     'The Archive listens, but does not parse this.',
     'Something was spoken. The Archive holds it, untranslated.',
@@ -1281,74 +1111,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     'moon',
   ];
 
-  static const Set<String> _gardenUsefulItems = {
-    'coin',
-    'book',
-    'compass',
-    'lamp',
-    'key',
-    'stylus',
-  };
-
-  static const Set<String> _gardenIdentityItems = {
-    'notebook',
-    'book',
-    'coin',
-    'compass',
-    'lamp',
-    'page',
-  };
-
-  static const Set<String> _gardenPainItems = {
-    'rusted key',
-    'key',
-    'torn page',
-    'page',
-    'mirror shard',
-    'earth',
-  };
-
-  static const Set<String> _gardenSteleGenericPhrases = {
-    'friendship',
-    'be good',
-    'be kind',
-    'love wins',
-    'all is one',
-    'live laugh love',
-    'peace and love',
-  };
-
-  static const Set<String> _gardenSteleConcreteTerms = {
-    'friend',
-    'name',
-    'door',
-    'winter',
-    'summer',
-    'grave',
-    'voice',
-    'hand',
-    'letter',
-    'street',
-    'house',
-    'room',
-  };
-
-  static const Set<String> _gardenSteleCostTerms = {
-    'risk',
-    'lose',
-    'loss',
-    'cost',
-    'hurt',
-    'forgive',
-    'fear',
-    'ashamed',
-    'wait',
-    'remain',
-    'return',
-    'apologize',
-    'apologise',
-  };
-
   // ── Small helpers ───────────────────────────────────────────────────────────
 
   /// Returns true if [itemName] is one of the four weightless simulacra.
@@ -1367,42 +1129,17 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   static int _wordCountExcludingVerb(String raw) =>
       raw.trim().split(RegExp(r'\s+')).skip(1).length;
 
-  static bool _containsToken(String text, String token) =>
-      RegExp('\\b${RegExp.escape(token)}\\b').hasMatch(text);
-
-  static bool _inventoryHasCategoryItem(
-    Iterable<String> inventory,
-    Set<String> category,
-  ) {
-    for (final item in inventory) {
-      final lower = item.toLowerCase();
-      for (final token in category) {
-        if (lower == token || lower.contains(token)) return true;
-      }
-    }
-    return false;
-  }
-
-  static bool _gardenSteleLooksSpecific(String inscription) {
-    final text = inscription.toLowerCase().trim();
-    if (text.isEmpty) return false;
-    final words =
-        text.split(RegExp(r'\s+')).where((w) => w.trim().isNotEmpty).toList();
-    if (words.length < 8) return false;
-
-    if (_gardenSteleGenericPhrases.contains(text)) return false;
-    if (!_containsToken(text, 'friendship')) return false;
-
-    final hasConcrete =
-        _gardenSteleConcreteTerms.any((term) => _containsToken(text, term));
-    final hasCost =
-        _gardenSteleCostTerms.any((term) => _containsToken(text, term));
-    final hasFirstPerson = _containsToken(text, 'i') ||
-        _containsToken(text, 'me') ||
-        _containsToken(text, 'my') ||
-        _containsToken(text, 'mine');
-
-    return hasConcrete && (hasCost || hasFirstPerson);
+  GardenStateView _gardenView({
+    required String nodeId,
+    required GameEngineState state,
+  }) {
+    return GardenStateView(
+      nodeId: nodeId,
+      completedPuzzles: state.completedPuzzles,
+      puzzleCounters: state.puzzleCounters,
+      inventory: state.inventory,
+      psychoWeight: state.psychoWeight,
+    );
   }
 
   static String _hintRequestCounterKey(String nodeId) =>
@@ -1746,6 +1483,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         counters: newCounters,
         puzzles: newPuzzles,
       );
+      newPuzzles.addAll(
+        GardenModule.completionMarkers(
+          puzzles: newPuzzles,
+          counters: newCounters,
+        ),
+      );
 
       // ── Apply psycho profile ────────────────────────────────────────────────
       if (response.anxietyDelta != null ||
@@ -2074,7 +1817,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   EngineResponse _handleExamine(
     ParsedCommand cmd,
     String nodeId,
-    _NodeDef node,
+    NodeDef node,
     GameEngineState s,
   ) {
     if (cmd.args.isEmpty) {
@@ -2093,61 +1836,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
-    if (nodeId == 'garden_portico' && target.contains('column')) {
-      return const EngineResponse(
-        narrativeText: 'Each column bears one word:\n'
-            'ataraxia — aponia — philia — phronesis.\n\n'
-            'The sequence feels like instruction, not decoration.',
-        completePuzzle: 'garden_columns_read',
-        needsDemiurge: true,
-      );
-    }
-    if (nodeId == 'garden_cypress' && target.contains('leaves')) {
-      return const EngineResponse(
-        narrativeText: 'You kneel among the leaves and read them slowly:\n'
-            'pleasure — friendship — prudence — tranquillity — memory — simplicity — absence.\n\n'
-            'It is not a random list. It is a philosophy waiting for order.',
-        completePuzzle: 'garden_leaves_read',
-        needsDemiurge: true,
-      );
-    }
-    if (nodeId == 'garden_fountain' &&
-        (target.contains('fountain') ||
-            target.contains('dust') ||
-            target.contains('inscription'))) {
-      final waits = s.puzzleCounters['fountain_waits'] ?? 0;
-      if (waits >= 2 && !s.completedPuzzles.contains('fountain_reflection_2')) {
-        return const EngineResponse(
-          narrativeText: 'You trace the rim with your fingertips.\n\n'
-              'The dust is no longer inert. It answers pressure with a line that vanishes at once.\n\n'
-              'The room asks for waiting with attention, not repetition.',
-          completePuzzle: 'fountain_reflection_2',
-          needsDemiurge: true,
-        );
-      }
-      if (waits >= 1 && !s.completedPuzzles.contains('fountain_reflection_1')) {
-        return const EngineResponse(
-          narrativeText:
-              'Looking closely, you notice the dust drift against no wind.\n\n'
-              'Patience here is not passivity. It is participation.',
-          completePuzzle: 'fountain_reflection_1',
-          needsDemiurge: true,
-        );
-      }
-    }
-
-    if (nodeId == 'la_soglia' &&
-        target.contains('pedestal') &&
-        s.completedPuzzles.contains('garden_complete') &&
-        !s.completedPuzzles.contains('garden_cross_sector_hint')) {
-      return const EngineResponse(
-        narrativeText:
-            'Ataraxia rests in your hand, and the eastern door answers with a colder hum.\n\n'
-            'Stillness has altered measure somewhere else in the Archive.',
-        completePuzzle: 'garden_cross_sector_hint',
-        needsDemiurge: true,
-      );
-    }
+    final gardenResponse = GardenModule.handleExamine(
+      nodeId: nodeId,
+      target: target,
+      state: _gardenView(nodeId: nodeId, state: s),
+    );
+    if (gardenResponse != null) return gardenResponse;
     final match = node.examines.entries
         .where((e) => e.key.contains(target) || target.contains(e.key))
         .map((e) => e.value)
@@ -2160,7 +1854,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleGo(
     ParsedCommand cmd,
-    _NodeDef node,
+    NodeDef node,
     String nodeId,
     GameEngineState s,
   ) {
@@ -2301,19 +1995,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
-    if (dest == 'garden_portico' &&
-        s.completedPuzzles.contains('garden_complete') &&
-        !s.completedPuzzles.contains('garden_revisited')) {
-      return EngineResponse(
-        narrativeText: 'Portico (returned)\n\n'
-            'The same columns, but a different silence.\n\n'
-            'The words no longer read like doctrine. They read like memory.\n\n'
-            'In the distance, from the eastern wing, a measured metallic tone answers your step.',
-        newNode: dest,
-        needsDemiurge: true,
-        completePuzzle: 'garden_revisited',
-      );
-    }
+    final gardenEnterHook = GardenModule.onEnterNode(
+      fromNode: nodeId,
+      destNode: dest,
+      state: _gardenView(nodeId: nodeId, state: s),
+    );
+    if (gardenEnterHook != null) return gardenEnterHook;
 
     return EngineResponse(
       narrativeText: _enterNode(destNode),
@@ -2333,50 +2020,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   EngineResponse _handleWait(String nodeId, GameEngineState s) {
-    // Garden fountain: three waits open the passage north
-    if (nodeId == 'garden_fountain') {
-      if (s.completedPuzzles.contains('fountain_waited')) {
-        return const EngineResponse(
-          narrativeText:
-              'The fountain has already given what it had. The path north is open.',
-        );
-      }
-      final waits = (s.puzzleCounters['fountain_waits'] ?? 0) + 1;
-      if (waits == 2 && !s.completedPuzzles.contains('fountain_reflection_1')) {
-        return const EngineResponse(
-          narrativeText:
-              'You wait again, but the fountain remains perfectly mute.\n\n'
-              'It does not reward repetition alone.\n\n'
-              'Study the dust or the inscription, then return to stillness.',
-        );
-      }
-      if (waits >= 3 && !s.completedPuzzles.contains('fountain_reflection_2')) {
-        return const EngineResponse(
-          narrativeText:
-              'Your patience hardens into routine, and the room closes around it.\n\n'
-              'Attend once more to what the fountain is showing before you wait again.',
-        );
-      }
-      if (waits < 3) {
-        return EngineResponse(
-          narrativeText: waits == 1
-              ? 'You wait.\n\nNothing comes. The dust settles back into itself.'
-              : 'You wait again.\n\nA faint condensation forms at the lip of the fountain.',
-          incrementCounter: 'fountain_waits',
-        );
-      }
-      return const EngineResponse(
-        narrativeText:
-            'A third time — and in the silence, a single drop of condensation '
-            'slides down the stone and disappears into the dust.\n\n'
-            'You have learned something. You are not sure what.\n\n'
-            'The path north opens.',
-        needsDemiurge: true,
-        incrementCounter: 'fountain_waits',
-        completePuzzle: 'fountain_waited',
-        lucidityDelta: 3,
-      );
-    }
+    final gardenResponse = GardenModule.handleWait(
+      state: _gardenView(nodeId: nodeId, state: s),
+    );
+    if (gardenResponse != null) return gardenResponse;
 
     // Observatory void: seven waits → Proustian bagliore → enable measure
     if (nodeId == 'obs_void') {
@@ -2449,7 +2096,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   EngineResponse _handleTake(
-      ParsedCommand cmd, _NodeDef node, GameEngineState s) {
+      ParsedCommand cmd, NodeDef node, GameEngineState s) {
     if (cmd.args.isEmpty)
       return const EngineResponse(narrativeText: 'Take what?');
     final target = cmd.args.join(' ');
@@ -2562,71 +2209,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   EngineResponse _handleDeposit(String nodeId, GameEngineState s) {
-    if (nodeId != 'garden_grove') {
-      return const EngineResponse(
-          narrativeText: 'There is nowhere here to deposit anything.');
-    }
-    // Both alcoves must have been walked through (GDD §8 — puzzle 4 before puzzle 5)
-    if (!s.completedPuzzles.contains('alcove_pleasures_walked') ||
-        !s.completedPuzzles.contains('alcove_pains_walked')) {
-      return const EngineResponse(
-        narrativeText: 'Something holds you back.\n\n'
-            'You have not yet passed through both alcoves. '
-            'The statue accepts only those who have faced pleasure and pain '
-            'and chosen to walk through each without grasping.',
-      );
-    }
-    if (s.inventory.every((i) => _simulacraNames.contains(i))) {
-      return const EngineResponse(
-        narrativeText: 'You carry only what you cannot deposit.\n\n'
-            'The statue\'s open hands seem to already know this.',
-        needsDemiurge: true,
-      );
-    }
-    final mundaneInventory = s.inventory.where((i) => !_isSimulacrum(i));
-    final hasUseful = _inventoryHasCategoryItem(
-      mundaneInventory,
-      _gardenUsefulItems,
+    final gardenResponse = GardenModule.handleDeposit(
+      state: _gardenView(nodeId: nodeId, state: s),
     );
-    final hasIdentity = _inventoryHasCategoryItem(
-      mundaneInventory,
-      _gardenIdentityItems,
-    );
-    final hasPain = _inventoryHasCategoryItem(
-      mundaneInventory,
-      _gardenPainItems,
-    );
-    final offeredUseful = s.completedPuzzles.contains('garden_offer_useful');
-    final offeredIdentity =
-        s.completedPuzzles.contains('garden_offer_identity');
-    final offeredPain = s.completedPuzzles.contains('garden_offer_pain');
-
-    final missingKinds = <String>[];
-    if (!(hasUseful || offeredUseful)) missingKinds.add('something useful');
-    if (!(hasIdentity || offeredIdentity))
-      missingKinds.add('something tied to who you are');
-    if (!(hasPain || offeredPain)) missingKinds.add('something tied to pain');
-
-    if (missingKinds.isNotEmpty) {
-      return EngineResponse(
-        narrativeText:
-            'The statue does not refuse you, but neither does it receive.\n\n'
-            'Three relinquishments are required: one useful thing, one identity-bound thing, one pain-bound thing.\n\n'
-            'What is still missing: ${missingKinds.join(', ')}.',
-      );
-    }
-    return _simulacrumReward(
-      narrativeText: 'You place everything at the statue\'s feet.\n\n'
-          'The objects arrange themselves in a loose circle. '
-          'They look smaller than you remember.\n\n'
-          'The expression on the statue\'s face does not change. '
-          'You feel, for the first time in this place, something that resembles relief.\n\n'
-          'In one of the open hands: a glass sphere, perfectly empty. Ataraxia.',
-      itemName: 'ataraxia',
-      completePuzzle: 'garden_complete',
-      lucidityDelta: 10,
-      anxietyDelta: -20,
-      clearInventoryOnDeposit: true,
+    if (gardenResponse != null) return gardenResponse;
+    return const EngineResponse(
+      narrativeText: 'There is nowhere here to deposit anything.',
     );
   }
 
@@ -2669,37 +2257,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleWalk(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    final mode = cmd.args.join(' ');
+    final gardenResponse = GardenModule.handleWalk(
+      cmd: cmd,
+      state: _gardenView(nodeId: nodeId, state: s),
+    );
+    if (gardenResponse != null) return gardenResponse;
 
-    // Garden alcoves: walk through without grasping (GDD §8 — puzzle 4)
-    if (nodeId == 'garden_alcove_pleasures' && mode == 'through') {
-      if (s.completedPuzzles.contains('alcove_pleasures_walked')) {
-        return const EngineResponse(
-            narrativeText: 'You have already walked through here.');
-      }
-      return const EngineResponse(
-        narrativeText: 'You walk through without touching anything.\n\n'
-            'It is harder than it sounds. '
-            'The objects pull at a version of you that you choose not to be.',
-        needsDemiurge: true,
-        lucidityDelta: 7,
-        completePuzzle: 'alcove_pleasures_walked',
-      );
-    }
-    if (nodeId == 'garden_alcove_pains' && mode == 'through') {
-      if (s.completedPuzzles.contains('alcove_pains_walked')) {
-        return const EngineResponse(
-            narrativeText: 'You have already walked through here.');
-      }
-      return const EngineResponse(
-        narrativeText: 'You walk through without taking anything.\n\n'
-            'The objects here pull differently — not with beauty but with familiarity. '
-            'Walking past them feels like a small betrayal and a small liberation.',
-        needsDemiurge: true,
-        lucidityDelta: 7,
-        completePuzzle: 'alcove_pains_walked',
-      );
-    }
+    final mode = cmd.args.join(' ');
 
     // Gallery hall: walk backward to find the hidden door (GDD §8 — puzzle 1)
     if (nodeId == 'gallery_hall' &&
@@ -2750,122 +2314,22 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleArrange(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId != 'garden_cypress') {
-      return const EngineResponse(
-          narrativeText: 'There is nothing here to arrange.');
-    }
-    if (s.completedPuzzles.contains('leaves_arranged')) {
-      return const EngineResponse(
-        narrativeText:
-            'The leaves are already in their correct order. The path north is open.',
-      );
-    }
-    if (cmd.args.isEmpty) {
-      return const EngineResponse(
-        narrativeText: 'The leaves shift but settle back unchanged.\n\n'
-            'Seven words, in Epicurean order.\n\n'
-            'Hint: arrange leaves [word word word word word word word]',
-      );
-    }
-    final prepared = s.completedPuzzles.contains('garden_columns_read') &&
-        s.completedPuzzles.contains('garden_leaves_read');
-    if (!prepared) {
-      return const EngineResponse(
-        narrativeText:
-            'You begin to order the leaves, but the sequence refuses to hold.\n\n'
-            'The path asks for two memories at once: what the columns taught and what the leaves repeat.\n\n'
-            'Read both before arranging.',
-      );
-    }
-    // Normalise: strip commas, hyphens, extra spaces (shared helper)
-    final input = _normalizeInput(cmd.args.join(' '));
-
-    const alternativeOrders = {
-      'prudence friendship absence tranquillity pleasure simplicity memory',
-      'friendship prudence pleasure simplicity absence tranquillity memory',
-      'pleasure friendship prudence simplicity absence tranquillity memory',
-    };
-
-    if (alternativeOrders.contains(input)) {
-      return const EngineResponse(
-        narrativeText: 'The arrangement is coherent, almost persuasive.\n\n'
-            'For a breath, the avenue seems ready to open.\n\n'
-            'Then the darker leaf twists out of line. This is a philosophy, but not the one this path obeys.',
-      );
-    }
-
-    if (input == _correctLeafOrder) {
-      return const EngineResponse(
-        narrativeText:
-            'The leaves move — or you move them. They settle into a line '
-            'that feels, now that you see it, obvious.\n\n'
-            'prudence — friendship — pleasure — simplicity — '
-            'absence — tranquillity — memory.\n\n'
-            'The path north opens.',
-        needsDemiurge: true,
-        lucidityDelta: 10,
-        completePuzzle: 'leaves_arranged',
-        audioTrigger: 'calm',
-      );
-    }
-    return const EngineResponse(
-      narrativeText: 'The leaves arrange themselves briefly — then scatter.\n\n'
-          'The order is not correct. '
-          'Consider: what comes first in Epicurean thought? '
-          'What enables everything else?\n\n'
-          'Read the column words in the portico — in reverse.',
+    final gardenResponse = GardenModule.handleArrange(
+      cmd: cmd,
+      state: _gardenView(nodeId: nodeId, state: s),
     );
+    if (gardenResponse != null) return gardenResponse;
+    return const EngineResponse(
+        narrativeText: 'There is nothing here to arrange.');
   }
 
   EngineResponse _handleWrite(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    // Garden stelae: inscribe the missing maxim (GDD §8 — puzzle 3)
-    if (nodeId == 'garden_stelae') {
-      if (s.psychoWeight > 0) {
-        return const EngineResponse(
-          narrativeText: 'The blank stele\'s surface is illegible to you.\n\n'
-              'The burden you carry clouds your perception. '
-              'The maxim cannot be inscribed by one who has grasped at things.',
-        );
-      }
-      if (s.completedPuzzles.contains('stele_inscribed')) {
-        return const EngineResponse(
-            narrativeText: 'The stele is already inscribed.');
-      }
-      if (cmd.args.isEmpty) {
-        return const EngineResponse(
-          narrativeText:
-              'Inscribe what? The stylus is ready, but the maxim must be supplied.\n\n'
-              'Read the eleven that came before. Understand what they build toward.',
-        );
-      }
-      final inscription = cmd.args.join(' ').toLowerCase();
-      if (_gardenSteleGenericPhrases.contains(inscription) ||
-          inscription.split(RegExp(r'\s+')).length < 5) {
-        return const EngineResponse(
-          narrativeText: 'The stylus scratches, then stalls.\n\n'
-              'The stele rejects slogans.\n\n'
-              'Write something concrete: what friendship costs, what it asks, what it changes.',
-        );
-      }
-      if (_gardenSteleLooksSpecific(inscription)) {
-        return const EngineResponse(
-          narrativeText: 'The stylus moves. The words appear:\n\n'
-              '"Of all wisdom\'s gifts to a happy life, '
-              'the greatest is the possession of friendship."\n\n'
-              'The twelfth stele is complete. The grove opens.',
-          needsDemiurge: true,
-          lucidityDelta: 12,
-          completePuzzle: 'stele_inscribed',
-          audioTrigger: 'calm',
-        );
-      }
-      return const EngineResponse(
-        narrativeText: 'The marks fade before they settle.\n\n'
-            'The stone is asking for a specific and costly truth about friendship, not an abstract praise.\n\n'
-            'Name an action, a risk, a memory, or a wound carried together.',
-      );
-    }
+    final gardenResponse = GardenModule.handleWrite(
+      cmd: cmd,
+      state: _gardenView(nodeId: nodeId, state: s),
+    );
+    if (gardenResponse != null) return gardenResponse;
 
     // Gallery proportions: construct pentagon (GDD §8 — puzzle 3)
     if (nodeId == 'gallery_proportions') {
@@ -3083,65 +2547,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleOffer(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId == 'garden_grove') {
-      if (cmd.args.isEmpty) {
-        return const EngineResponse(
-          narrativeText:
-              'Offer what? The statue receives things, not declarations.\n\n'
-              'Offer one useful object, one identity-bound object, and one pain-bound object.',
-        );
-      }
-      final target = cmd.args.join(' ');
-      final match = s.inventory
-          .where((i) => i.contains(target) || target.contains(i))
-          .firstOrNull;
-      if (match == null) {
-        return const EngineResponse(
-          narrativeText: 'You are not carrying that.',
-        );
-      }
-      final lower = match.toLowerCase();
-      final isUseful = _gardenUsefulItems
-          .any((token) => lower == token || lower.contains(token));
-      final isIdentity = _gardenIdentityItems
-          .any((token) => lower == token || lower.contains(token));
-      final isPain = _gardenPainItems
-          .any((token) => lower == token || lower.contains(token));
-      if (!isUseful && !isIdentity && !isPain) {
-        return const EngineResponse(
-          narrativeText:
-              'The statue does not answer. This is not one of the things it asks to be relinquished.',
-        );
-      }
-
-      String? categoryLabel;
-      String? completePuzzle;
-      if (isUseful && !s.completedPuzzles.contains('garden_offer_useful')) {
-        categoryLabel = 'useful';
-        completePuzzle = 'garden_offer_useful';
-      } else if (isIdentity &&
-          !s.completedPuzzles.contains('garden_offer_identity')) {
-        categoryLabel = 'identity-bound';
-        completePuzzle = 'garden_offer_identity';
-      } else if (isPain && !s.completedPuzzles.contains('garden_offer_pain')) {
-        categoryLabel = 'pain-bound';
-        completePuzzle = 'garden_offer_pain';
-      }
-      if (categoryLabel == null) {
-        return const EngineResponse(
-          narrativeText:
-              'The statue inclines by a fraction. It has already counted this kind of relinquishment.\n\n'
-              'Offer what is still missing, or deposit what you have chosen to set down.',
-        );
-      }
-      return EngineResponse(
-        narrativeText: 'You place the $match on the stone.\n\n'
-            'The open palms do not close, but the air around them changes.\n\n'
-            'The Archive marks this as $categoryLabel.',
-        completePuzzle: completePuzzle,
-        needsDemiurge: true,
-      );
-    }
+    final gardenResponse = GardenModule.handleOffer(
+      cmd: cmd,
+      state: _gardenView(nodeId: nodeId, state: s),
+    );
+    if (gardenResponse != null) return gardenResponse;
 
     if (nodeId != 'lab_vestibule') {
       return const EngineResponse(
@@ -4393,7 +3803,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
-  String _enterNode(_NodeDef node) {
+  String _enterNode(NodeDef node) {
     final title = node.title.isEmpty ? '' : '${node.title}\n\n';
     return '$title${node.description}';
   }
@@ -5025,24 +4435,20 @@ int gameMemoryDepthThresholdToNucleo() => _memoryDepthThresholdToNucleo;
 int gameQuoteExposureThresholdToNucleo() => _quoteExposureThresholdToNucleo;
 
 bool gameGardenSteleInscriptionLooksSpecific(String text) =>
-    GameEngineNotifier._gardenSteleLooksSpecific(text);
+    GardenModule.steleInscriptionLooksSpecific(text);
 
 Map<String, bool> gameGardenRelinquishmentCoverage(Iterable<String> inventory) {
-  return {
-    'useful': GameEngineNotifier._inventoryHasCategoryItem(
-      inventory,
-      GameEngineNotifier._gardenUsefulItems,
-    ),
-    'identity': GameEngineNotifier._inventoryHasCategoryItem(
-      inventory,
-      GameEngineNotifier._gardenIdentityItems,
-    ),
-    'pain': GameEngineNotifier._inventoryHasCategoryItem(
-      inventory,
-      GameEngineNotifier._gardenPainItems,
-    ),
-  };
+  return GardenModule.relinquishmentCoverage(inventory);
 }
+
+bool gameGardenSurfaceComplete(Set<String> puzzles) =>
+    GardenModule.isSurfaceComplete(puzzles);
+
+bool gameGardenDeepComplete({
+  required Set<String> puzzles,
+  required Map<String, int> counters,
+}) =>
+    GardenModule.isDeepComplete(puzzles: puzzles, counters: counters);
 
 BossUtteranceKind classifyBossUtterance(String rawInput) {
   final raw = rawInput.toLowerCase().trim();
