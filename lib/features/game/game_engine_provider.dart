@@ -4369,20 +4369,20 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       fragments.add('awareness +$awarenessDelta');
     }
     if (proustDelta > 0) {
-      fragments.add('Proust +$proustDelta');
+      fragments.add('proust resonance +$proustDelta');
     }
     if (tarkovskijDelta > 0) {
-      fragments.add('Tarkovskij +$tarkovskijDelta');
+      fragments.add('tarkovskij resonance +$tarkovskijDelta');
     }
     if (sethDelta > 0) {
-      fragments.add('Seth +$sethDelta');
+      fragments.add('seth resonance +$sethDelta');
     }
 
-    final phaseLine = phaseChanged
-        ? 'Phase ${before.phase} -> ${after.phase} attained.'
-        : null;
-    final shiftLine =
-        fragments.isEmpty ? null : 'Inner shift: ${fragments.join(' | ')}.';
+    final phaseLine =
+        phaseChanged ? 'A threshold yields. Phase ${after.phase} opens.' : null;
+    final shiftLine = fragments.isEmpty
+        ? null
+        : 'The Archive notes a shift: ${fragments.join(' | ')}.';
 
     if (phaseLine == null && shiftLine == null) {
       return null;

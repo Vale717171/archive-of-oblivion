@@ -4,6 +4,28 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Diegetic micro-copy polish for psycho shifts)
+**Role:** Narrative UX polish
+
+**Done:**
+- Refined psycho-shift output copy in `lib/features/game/game_engine_provider.dart` to sound more in-world while keeping numeric clarity.
+- Updated affinity labels from plain names (`Proust`, `Tarkovskij`, `Seth`) to diegetic wording (`proust resonance`, `tarkovskij resonance`, `seth resonance`).
+- Replaced technical phase line with narrative-forward milestone text:
+  - from: `Phase X -> Y attained.`
+  - to: `A threshold yields. Phase Y opens.`
+- Reframed delta line:
+  - from: `Inner shift: ...`
+  - to: `The Archive notes a shift: ...`
+
+**Verification:**
+- `dart format lib/features/game/game_engine_provider.dart` ✅
+- `flutter test test/parser_test.dart test/puzzle_gates_test.dart` ✅
+
+**Architecture notes:**
+- Pure copy tuning only; no mechanics or state-transition logic changed.
+
+---
+
 ### 2026-04-17 — Codex GPT-5 (Phase/Affinity gameplay feedback cues)
 **Role:** Gameplay UX / psycho-profile readability
 
