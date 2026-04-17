@@ -1,6 +1,7 @@
 import '../parser/parser_state.dart';
 import 'gallery/gallery_module.dart';
 import 'garden/garden_module.dart';
+import 'laboratory/laboratory_module.dart';
 import 'observatory/observatory_module.dart';
 
 class ProgressionResult {
@@ -79,6 +80,7 @@ class ProgressionService {
       sector: 'laboratory',
       surfacePuzzle: 'lab_complete',
       deepPuzzle: 'sys_deep_laboratory',
+      deepEvaluator: LaboratoryModule.isDeepComplete,
     ),
     SectorProgressionRule(
       sector: 'memory',
@@ -176,6 +178,12 @@ class ProgressionService {
     );
     nextPuzzles.addAll(
       GalleryModule.completionMarkers(
+        puzzles: nextPuzzles,
+        counters: nextCounters,
+      ),
+    );
+    nextPuzzles.addAll(
+      LaboratoryModule.completionMarkers(
         puzzles: nextPuzzles,
         counters: nextCounters,
       ),

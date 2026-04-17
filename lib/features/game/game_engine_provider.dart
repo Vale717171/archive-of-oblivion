@@ -21,6 +21,8 @@ import 'gallery/gallery_sector.dart';
 import 'game_node.dart';
 import 'garden/garden_module.dart';
 import 'garden/garden_sector.dart';
+import 'laboratory/laboratory_module.dart';
+import 'laboratory/laboratory_sector.dart';
 import 'observatory/observatory_module.dart';
 import 'observatory/observatory_sector.dart';
 import 'progression_service.dart';
@@ -168,10 +170,7 @@ const Map<String, Map<String, String>> _exitGates = {
   ...GardenModule.exitGates,
   ...ObservatoryModule.exitGates,
   ...GalleryModule.exitGates,
-  'lab_vestibule': {'south': 'lab_offers_complete'},
-  'lab_furnace': {'south': 'furnace_calcinated'},
-  'lab_alembic': {'south': 'alembic_temperature_set'},
-  'lab_bain_marie': {'south': 'bain_marie_complete'},
+  ...LaboratoryModule.exitGates,
   // Fifth Sector — memory price to leave each room (GDD §11)
   'quinto_childhood': {'back': 'memory_childhood'},
   'quinto_youth': {'back': 'memory_youth'},
@@ -185,18 +184,7 @@ const Map<String, String> _gateHints = {
   ...GardenModule.gateHints,
   ...ObservatoryModule.gateHints,
   ...GalleryModule.gateHints,
-  'lab_offers_complete':
-      'The Hall of Substances is locked. The three statues wait.\n\n'
-          'Hint: offer [concept] — three times, three different offerings.',
-  'furnace_calcinated':
-      'The furnace path to the Great Work is blocked. Calcination is unfinished.\n\n'
-          'Hint: calcinate — then wait (patience is the reagent).',
-  'alembic_temperature_set':
-      'The alembic path is blocked. The temperature is wrong.\n\n'
-          'Hint: set temperature [the gentlest degree of fire].',
-  'bain_marie_complete':
-      'The bath path is sealed. The transformation has not begun.\n\n'
-          'Hint: leave this room — return after you have walked three other roads.',
+  ...LaboratoryModule.gateHints,
   // Fifth Sector
   'memory_childhood':
       'The door will not release you. The price of this room is still owed.\n\n'
@@ -289,165 +277,7 @@ const Map<String, NodeDef> _nodes = {
   ...GalleryModule.roomDefinitions,
 
   // ── Alchemical Laboratory ────────────────────────────────────────────────────
-  'lab_vestibule': NodeDef(
-    title: 'The Alchemical Laboratory — Vestibule of Principles',
-    description: 'The violet door opens onto sulphur and something sweeter.\n\n'
-        'A vestibule of grey stone. Three niches, each containing '
-        'a statue in posture of reception — hands open, waiting. '
-        'Each statue has a different bearing: resigned, expectant, indifferent.\n\n'
-        'To the south: the Hall of Substances.',
-    exits: {
-      'south': 'lab_substances',
-      'east': 'la_soglia',
-      'back': 'la_soglia'
-    },
-    examines: {
-      'statues':
-          'Three figures with open hands. They accept without judgement.',
-      'niches': 'One resigned. One expectant. One indifferent.',
-      'first statue': 'Resigned. Hands open but expecting nothing.',
-      'second statue': 'Expectant. Face turned slightly upward.',
-      'third statue': 'Indifferent. Hands open because it is the position.',
-      'sulphur': 'The base smell of transformation. Beneath it: something '
-          'sweeter, harder to place.',
-    },
-  ),
-
-  'lab_substances': NodeDef(
-    title: 'Hall of Substances',
-    description: 'A wide hall, its walls covered in alchemical symbols.\n\n'
-        'Hundreds of them — spirals, triangles, crosses. Unlabelled. '
-        'Their meaning must be decoded from their relationships.\n\n'
-        'Three doorways: west to the furnace, south to the alembic, '
-        'east to the bain-marie.',
-    exits: {
-      'north': 'lab_vestibule',
-      'west': 'lab_furnace',
-      'south': 'lab_alembic',
-      'east': 'lab_bain_marie',
-    },
-    examines: {
-      'symbols': 'A dense field. Some familiar: lead, gold. '
-          'Three near the centre form a triangle.',
-      'triangle': 'Three symbols: Mercury, Sulphur, Salt — the Tria Prima. '
-          'The three principles of alchemical transformation.',
-      'doorways':
-          'Three branches. Each requires a different substance, a different patience.',
-    },
-  ),
-
-  'lab_furnace': NodeDef(
-    title: 'Furnace',
-    description: 'An iron furnace, cold.\n\n'
-        'The grate is empty. A tray beside it holds grey-white material. '
-        'On the wall: "Calcinate. Reduce to essential ash. '
-        'Five turnings of the wheel are required."',
-    exits: {
-      'east': 'lab_substances',
-      'south': 'lab_great_work',
-      'back': 'lab_substances'
-    },
-    examines: {
-      'furnace': 'Cold iron. The grate is empty. Ready.',
-      'tray': 'Grey-white material. Dense.',
-      'instruction': '"Calcinate. Reduce to essential ash.\n'
-          'Five turnings of the wheel.\n'
-          'Patience is the reagent that cannot be purchased."',
-    },
-  ),
-
-  'lab_alembic': NodeDef(
-    title: 'Alembic',
-    description:
-        'A glass vessel — wide at the base, drawing to a narrow point.\n\n'
-        'A liquid of indeterminate colour rests in the lower bulb. '
-        'The temperature control accepts a degree '
-        'on the alchemical scale: Cold, Gentle, Warm, Hot, Intense, Fierce, Total.\n\n'
-        'A crystalline residue coats the inner walls like dried frost.',
-    exits: {
-      'north': 'lab_substances',
-      'south': 'lab_great_work',
-      'back': 'lab_substances'
-    },
-    examines: {
-      'vessel':
-          'Glass, clear. The liquid shifts colour — not due to chemistry.',
-      'temperature':
-          'The control accepts: Cold, Gentle, Warm, Hot, Intense, Fierce, Total.',
-      'liquid': 'Below boiling. Waiting for the correct temperature.',
-      'residue': 'Crystalline. Mineral. Ancient.',
-      'scale':
-          '"Each degree named for its effect on the substance, not the vessel."',
-    },
-  ),
-
-  'lab_bain_marie': NodeDef(
-    title: 'Bain-Marie',
-    description: 'A water bath — the gentlest form of heat.\n\n'
-        'The outer vessel holds cold water. The inner vessel holds '
-        'a preparation that cannot be rushed. A placard:\n'
-        '"Leave. Return when the water remembers what it has been asked to do.\n'
-        'Some transformations begin only in the absence of the one who wants them."\n\n'
-        'The preparation has not yet begun.',
-    exits: {
-      'west': 'lab_substances',
-      'south': 'lab_great_work',
-      'back': 'lab_substances'
-    },
-    examines: {
-      'bath': 'Outer vessel: cold water. Inner: a thick opaque preparation.',
-      'preparation': 'It has not begun its transformation.',
-      'placard': '"Leave. Return when the water remembers.\n'
-          'Some things begin only in absence."',
-    },
-  ),
-
-  'lab_great_work': NodeDef(
-    title: 'Table of the Great Work',
-    description: 'A stone table at the convergence of three channels.\n\n'
-        'On its surface: a diagram of seven concentric circles, each labelled '
-        'with a planetary name. Each circle has a recess for a prepared substance.\n\n'
-        'The order is inscribed at the rim:\n'
-        'Saturn — Jupiter — Mars — Sun — Venus — Mercury — Moon.\n\n'
-        'At the south end: the sealed chamber.',
-    exits: {
-      'north': 'lab_furnace',
-      'west': 'lab_alembic',
-      'east': 'lab_bain_marie',
-      'south': 'lab_sealed',
-    },
-    examines: {
-      'circles': 'Seven circles, Saturn outermost, Moon innermost. '
-          'The alchemical descent: lead to silver, darkness to light.',
-      'recesses': 'Each circle has a recess waiting for a prepared substance.',
-      'order': 'Saturn → Jupiter → Mars → Sun → Venus → Mercury → Moon. '
-          'The Opus Magnum. The order must be exact.',
-      'sealed': 'The sealed chamber is south. '
-          'It opens when all seven circles are complete '
-          'and all three preparation paths have been followed.',
-    },
-  ),
-
-  'lab_sealed': NodeDef(
-    title: 'Sealed Chamber',
-    description: 'A small chamber, sealed until now.\n\n'
-        'At its centre: an alembic of extraordinary delicacy — glass so thin '
-        'it is held together by the substance within. '
-        'The substance glows faintly, pulsing at irregular intervals.\n\n'
-        'A card at the base: "The catalyst is not chemical. '
-        'It cannot be purchased or synthesised. '
-        'You have carried it since before you arrived. Breathe."',
-    exits: {'north': 'lab_great_work', 'back': 'lab_great_work'},
-    examines: {
-      'alembic':
-          'Glass so thin the substance seems to float without a container.',
-      'substance': 'Luminescent. Pulsing — the way a heartbeat is regular.',
-      'card': '"The catalyst is not chemical.\n'
-          'It cannot be purchased or synthesised.\n'
-          'You have carried it since before you arrived.\n'
-          'Breathe."',
-    },
-  ),
+  ...LaboratoryModule.roomDefinitions,
 
   // ── Fifth Sector stub — accessible once all four simulacra are in inventory ──
   'quinto_landing': NodeDef(
@@ -758,6 +588,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     GardenSectorHandler(),
     ObservatorySectorHandler(),
     GallerySectorHandler(),
+    LaboratorySectorHandler(),
   ]);
 
   // ── Auto-save state (ephemeral — not persisted) ──────────────────────────
@@ -782,17 +613,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     'Something in what you said belongs to another room.',
     'The Archive keeps the utterance without resolving it.',
     'These words do not fit the lock before you.',
-  ];
-
-  // Planetary order for the Great Work circles (alchemical Opus Magnum descent).
-  static const List<String> _planetOrder = [
-    'saturn',
-    'jupiter',
-    'mars',
-    'sun',
-    'venus',
-    'mercury',
-    'moon',
   ];
 
   // ── Small helpers ───────────────────────────────────────────────────────────
@@ -1054,24 +874,23 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
             (newCounters[response.incrementCounter!] ?? 0) + 1;
       }
 
-      // ── Navigation + bain-marie tracking + zone tracking ───────────────────
+      // ── Navigation + sector transition tracking + zone tracking ────────────
       if (response.newNode != null) {
         // Node persistence is deferred to saveEngineState at the end of this method
         // so that all state changes (puzzles, counters, inventory) are written atomically.
 
-        // Mark bain-marie departure
-        if (currentNodeId == 'lab_bain_marie' &&
-            !newPuzzles.contains('bain_marie_left')) {
-          newPuzzles.add('bain_marie_left');
-        }
-        // Count external (non-lab) visits for bain-marie return puzzle
-        if (!response.newNode!.startsWith('lab_') &&
-            newPuzzles.contains('bain_marie_left') &&
-            !newPuzzles.contains('bain_marie_complete')) {
-          final visits = (newCounters['bain_marie_external'] ?? 0) + 1;
-          newCounters['bain_marie_external'] = visits;
-          if (visits >= 3) newPuzzles.add('bain_marie_complete');
-        }
+        final labNav = LaboratoryModule.applyNavigationTransition(
+          fromNode: currentNodeId,
+          destNode: response.newNode!,
+          puzzles: newPuzzles,
+          counters: newCounters,
+        );
+        newPuzzles
+          ..clear()
+          ..addAll(labNav.puzzles);
+        newCounters
+          ..clear()
+          ..addAll(labNav.counters);
 
         // Zone encounter tracking
         if (response.newNode == 'la_zona') {
@@ -1527,21 +1346,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
     }
 
-    // Special: lab_great_work → lab_sealed requires all three lab paths done
-    if (nodeId == 'lab_great_work' && direction == 'south') {
-      final done = s.completedPuzzles;
-      if (!done.contains('furnace_calcinated') ||
-          !done.contains('alembic_temperature_set') ||
-          !done.contains('bain_marie_complete') ||
-          !done.contains('lab_great_work_complete')) {
-        return const EngineResponse(
-          narrativeText: 'The sealed chamber will not open.\n\n'
-              'Three channels must converge and the Great Work be complete '
-              'before the door yields.',
-        );
-      }
-    }
-
     // Special: quinto_landing → quinto_ritual_chamber requires all 4 memory prices
     if (nodeId == 'quinto_landing' && direction == 'down') {
       const memories = {
@@ -1578,20 +1382,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
     }
 
-    // Special: lab_substances branches require all three substances collected
-    if (nodeId == 'lab_substances' && direction != 'north') {
-      final done = s.completedPuzzles;
-      if (!done.contains('lab_mercury_collected') ||
-          !done.contains('lab_sulphur_collected') ||
-          !done.contains('lab_salt_collected')) {
-        return const EngineResponse(
-          narrativeText:
-              'The branches are sealed. The substances must be gathered first.\n\n'
-              'Hint: decipher symbols — then collect each substance.',
-        );
-      }
-    }
-
     // Exit gate check (all other gates)
     final requiredPuzzle = gameRequiredPuzzleForExit(nodeId, direction);
     if (requiredPuzzle != null &&
@@ -1610,22 +1400,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     final destNode = _nodes[dest];
     if (destNode == null) {
       return const EngineResponse(narrativeText: 'That way is not yet open.');
-    }
-
-    // Special: bain-marie return after three external visits
-    if (dest == 'lab_bain_marie' &&
-        s.completedPuzzles.contains('bain_marie_left') &&
-        s.completedPuzzles.contains('bain_marie_complete')) {
-      return EngineResponse(
-        narrativeText: 'Bain-Marie\n\n'
-            'The outer water has changed. It is warm — not because of heat, '
-            'but because of time.\n\n'
-            'The inner preparation is moving. Slowly, it has become '
-            'what it needed to become.\n\n'
-            'The path south to the Great Work opens.',
-        newNode: dest,
-        needsDemiurge: true,
-      );
     }
 
     final gardenEnterHook = _sectorRouter.onEnterNode(
@@ -1655,47 +1429,13 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   EngineResponse _handleWait(String nodeId, GameEngineState s) {
-    final gardenResponse = _routeSectorCommand(
+    final sectorResponse = _routeSectorCommand(
       cmd: const ParsedCommand(
           verb: CommandVerb.wait, args: [], rawInput: 'wait'),
       nodeId: nodeId,
       state: s,
     );
-    if (gardenResponse != null) return gardenResponse;
-
-    // Lab furnace: five waits while calcinating → calcination complete
-    if (nodeId == 'lab_furnace') {
-      if (!s.completedPuzzles.contains('furnace_calcinating')) {
-        return const EngineResponse(
-          narrativeText: 'The furnace is cold. Nothing is calcinating yet.\n\n'
-              'Hint: calcinate first.',
-        );
-      }
-      if (s.completedPuzzles.contains('furnace_calcinated')) {
-        return const EngineResponse(
-          narrativeText:
-              'The calcination is complete. The ash awaits the next stage.',
-        );
-      }
-      final turns = (s.puzzleCounters['furnace_waits'] ?? 0) + 1;
-      if (turns < 5) {
-        return EngineResponse(
-          narrativeText: 'The furnace glows. The material reduces. '
-              '$turns of five turnings.',
-          incrementCounter: 'furnace_waits',
-        );
-      }
-      return const EngineResponse(
-        narrativeText: 'The fifth turning.\n\n'
-            'The material has reduced to fine white ash — no longer what it was. '
-            'Something essential remains.\n\n'
-            'The furnace path south is clear.',
-        needsDemiurge: true,
-        incrementCounter: 'furnace_waits',
-        completePuzzle: 'furnace_calcinated',
-        lucidityDelta: 5,
-      );
-    }
+    if (sectorResponse != null) return sectorResponse;
 
     return const EngineResponse(
         narrativeText: 'Time passes. The Archive observes.');
@@ -1757,9 +1497,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       return const EngineResponse(narrativeText: 'Drop what?');
     final target = cmd.args.join(' ');
 
-    // Lab Great Work: placement puzzle
-    if (nodeId == 'lab_great_work') return _handleGreatWorkPlacement(cmd, s);
-
     // Ritual Chamber: place simulacra in cup
     if (nodeId == 'quinto_ritual_chamber')
       return _handleRitualPlacement(cmd, s);
@@ -1783,41 +1520,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'It seems smaller without your hands around it.',
       weightDelta: isSimulacrum ? 0 : -1,
       anxietyDelta: isSimulacrum ? 0 : -1,
-    );
-  }
-
-  EngineResponse _handleGreatWorkPlacement(
-      ParsedCommand cmd, GameEngineState s) {
-    if (s.completedPuzzles.contains('lab_great_work_complete')) {
-      return const EngineResponse(
-          narrativeText: 'The Great Work is already complete.');
-    }
-    final step = s.puzzleCounters['great_work_step'] ?? 0;
-    if (step >= 7) {
-      return const EngineResponse(
-          narrativeText: 'The Great Work is already complete.');
-    }
-    final expectedPlanet = _planetOrder[step];
-    if (!cmd.args.join(' ').contains(expectedPlanet)) {
-      return EngineResponse(
-        narrativeText: 'That is not the correct circle.\n\n'
-            'The $expectedPlanet circle must receive its substance next.\n\n'
-            'Order: ${_planetOrder.join(" → ")}',
-      );
-    }
-    final isLast = step == 6;
-    return EngineResponse(
-      narrativeText: isLast
-          ? 'The seventh placement.\n\n'
-              'All seven circles glow with amber light. '
-              'The Great Work is complete.\n\n'
-              'The sealed chamber door opens to the south.'
-          : 'You place the substance in the $expectedPlanet circle.\n\n'
-              '${6 - step} more placement${6 - step == 1 ? "" : "s"} remain.',
-      needsDemiurge: isLast,
-      incrementCounter: 'great_work_step',
-      completePuzzle: isLast ? 'lab_great_work_complete' : null,
-      lucidityDelta: isLast ? 10 : null,
     );
   }
 
@@ -1976,45 +1678,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleOffer(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    final gardenResponse =
+    final sectorResponse =
         _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
-    if (gardenResponse != null) return gardenResponse;
-
-    if (nodeId != 'lab_vestibule') {
-      return const EngineResponse(
-          narrativeText: 'There is no one here to receive an offering.');
-    }
-    if (s.completedPuzzles.contains('lab_offers_complete')) {
-      return const EngineResponse(
-        narrativeText:
-            'The three statues have received. The Hall of Substances is open.',
-      );
-    }
-    if (cmd.args.isEmpty) {
-      return const EngineResponse(
-        narrativeText: 'Offer what? The statues wait with open hands.\n\n'
-            'They accept concepts, not objects.',
-      );
-    }
-    final count = (s.puzzleCounters['lab_offers_count'] ?? 0) + 1;
-    final concept = cmd.args.join(' ');
-    if (count < 3) {
-      return EngineResponse(
-        narrativeText: 'You offer $concept.\n\n'
-            'The statue\'s hands close briefly, then open again, empty. '
-            '$count of three offerings.',
-        incrementCounter: 'lab_offers_count',
-      );
-    }
-    return EngineResponse(
-      narrativeText: 'You offer $concept.\n\n'
-          'The third statue closes its hands. All three have received.\n\n'
-          'The Hall of Substances opens to the south.',
-      needsDemiurge: true,
-      incrementCounter: 'lab_offers_count',
-      completePuzzle: 'lab_offers_complete',
-      lucidityDelta: 5,
-    );
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(
+        narrativeText: 'There is no one here to receive an offering.');
   }
 
   EngineResponse _handleMeasure(
@@ -2065,66 +1733,26 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   EngineResponse _handleBlow(String nodeId, GameEngineState s) {
-    if (nodeId != 'lab_sealed') {
-      return const EngineResponse(narrativeText: 'Nothing here to blow into.');
-    }
-    if (s.completedPuzzles.contains('lab_complete')) {
-      return const EngineResponse(
-          narrativeText: 'The Catalyst has already been released.');
-    }
-    return _simulacrumReward(
-      narrativeText: 'You breathe into the alembic.\n\n'
-          'Your breath — warm, carbon, water, the trace chemistry of a life '
-          'lived — enters the glass and touches the substance.\n\n'
-          'The substance changes. Not with a reaction — with a recognition. '
-          'The pulsing steadies. The glow intensifies.\n\n'
-          'In your hands: a small flask of luminescent liquid, '
-          'beating in time with your heart. The Catalyst.',
-      itemName: 'the catalyst',
-      completePuzzle: 'lab_complete',
-      lucidityDelta: 12,
-      anxietyDelta: -15,
+    final sectorResponse = _routeSectorCommand(
+      cmd: const ParsedCommand(
+        verb: CommandVerb.blow,
+        args: [],
+        rawInput: 'blow',
+      ),
+      nodeId: nodeId,
+      state: s,
     );
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(narrativeText: 'Nothing here to blow into.');
   }
 
   EngineResponse _handleSetParam(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId != 'lab_alembic') {
-      return const EngineResponse(
-          narrativeText: 'Nothing here accepts parameter adjustments.');
-    }
-    if (s.completedPuzzles.contains('alembic_temperature_set')) {
-      return const EngineResponse(
-        narrativeText:
-            'The temperature is already set. The alembic path south is open.',
-      );
-    }
-    final a = cmd.args.join(' ').toLowerCase();
-    if (a.contains('temp')) {
-      final value = a.replaceAll('temperature', '').trim();
-      if (value == 'gentle' ||
-          value == '1' ||
-          value == 'first' ||
-          value == 'balneum') {
-        return const EngineResponse(
-          narrativeText: 'You set the temperature to Gentle.\n\n'
-              'The liquid responds — not by boiling, by opening. '
-              'It becomes willing.\n\n'
-              'The alembic path south opens.',
-          needsDemiurge: true,
-          lucidityDelta: 8,
-          completePuzzle: 'alembic_temperature_set',
-        );
-      }
-      return const EngineResponse(
-        narrativeText: 'The liquid recoils.\n\n'
-            'The scale: Cold, Gentle, Warm, Hot, Intense, Fierce, Total.\n'
-            'The bain-marie of alchemical tradition uses the gentlest degree.',
-      );
-    }
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
     return const EngineResponse(
-      narrativeText: 'Set what? The temperature control awaits.\n\n'
-          'Hint: set temperature [degree on the alchemical scale]',
+      narrativeText: 'Nothing here accepts parameter adjustments.',
     );
   }
 
@@ -2156,79 +1784,27 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   EngineResponse _handleDecipher(String nodeId, GameEngineState s) {
-    if (nodeId != 'lab_substances') {
-      return const EngineResponse(
-          narrativeText: 'There is nothing here to decipher.');
-    }
-    if (s.completedPuzzles.contains('lab_symbols_deciphered')) {
-      return const EngineResponse(
-        narrativeText:
-            'The symbols are already decoded: mercury, sulphur, salt.\n\n'
-            'Collect each to proceed.',
-      );
-    }
-    return const EngineResponse(
-      narrativeText: 'You study the central triangle.\n\n'
-          'The three vertices decode:\n'
-          'Mercury — the spirit, quicksilver, volatility.\n'
-          'Sulphur — the soul, combustion, will.\n'
-          'Salt — the body, fixity, matter.\n\n'
-          'The Tria Prima. All transformation passes through these three.\n\n'
-          'Now: collect mercury — collect sulphur — collect salt.',
-      lucidityDelta: 5,
-      completePuzzle: 'lab_symbols_deciphered',
+    final sectorResponse = _routeSectorCommand(
+      cmd: const ParsedCommand(
+        verb: CommandVerb.decipher,
+        args: [],
+        rawInput: 'decipher',
+      ),
+      nodeId: nodeId,
+      state: s,
     );
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(
+        narrativeText: 'There is nothing here to decipher.');
   }
 
   EngineResponse _handleCollect(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId != 'lab_substances') {
-      return const EngineResponse(
-          narrativeText: 'There is nothing here to collect.');
-    }
-    final sub = cmd.args.join(' ').trim().toLowerCase();
-    if (sub.isEmpty) {
-      return const EngineResponse(
-        narrativeText:
-            'Collect what? The room distinguishes mercury, sulphur, and salt.',
-      );
-    }
-    if (!s.completedPuzzles.contains('lab_symbols_deciphered')) {
-      return const EngineResponse(
-        narrativeText:
-            'You do not yet know what to collect.\n\nDecipher the symbols first.',
-      );
-    }
-    final key = (sub == 'sulfur' || sub == 'sulphur') ? 'sulphur' : sub;
-    final valid = {'mercury', 'sulphur', 'salt'};
-    if (!valid.contains(key)) {
-      return EngineResponse(
-        narrativeText: '"$sub" is not one of the three substances.\n\n'
-            'Collect: mercury, sulphur, or salt.',
-      );
-    }
-    final puzzleId = 'lab_${key}_collected';
-    if (s.completedPuzzles.contains(puzzleId)) {
-      return EngineResponse(
-          narrativeText: 'You have already collected the $key.');
-    }
-    const required = {
-      'lab_mercury_collected',
-      'lab_sulphur_collected',
-      'lab_salt_collected',
-    };
-    final afterThis = s.completedPuzzles.union({puzzleId});
-    final isLast = required.every(afterThis.contains);
-    return EngineResponse(
-      narrativeText: isLast
-          ? 'You collect the $key.\n\n'
-              'All three substances of the Tria Prima are gathered.\n\n'
-              'The three branches open: the furnace, the alembic, the bain-marie.'
-          : 'You collect the $key. It settles with a faint warmth.',
-      needsDemiurge: isLast,
-      completePuzzle: puzzleId,
-      lucidityDelta: isLast ? 8 : null,
-    );
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(
+        narrativeText: 'There is nothing here to collect.');
   }
 
   EngineResponse _handleSay(
@@ -2294,92 +1870,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   /// Handles commands not recognised by the parser (contextual raw-input parsing).
   EngineResponse _handleUnknown(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+
     final raw = cmd.rawInput.toLowerCase().trim();
-
-    // Lab substances: decipher symbols
-    if ((raw == 'decipher symbols' || raw == 'decipher') &&
-        nodeId == 'lab_substances') {
-      if (s.completedPuzzles.contains('lab_symbols_deciphered')) {
-        return const EngineResponse(
-          narrativeText:
-              'The symbols are already decoded: mercury, sulphur, salt.\n\n'
-              'Collect each to proceed.',
-        );
-      }
-      return const EngineResponse(
-        narrativeText: 'You study the central triangle.\n\n'
-            'The three vertices decode:\n'
-            'Mercury — the spirit, quicksilver, volatility.\n'
-            'Sulphur — the soul, combustion, will.\n'
-            'Salt — the body, fixity, matter.\n\n'
-            'The Tria Prima. All transformation passes through these three.\n\n'
-            'Now: collect mercury — collect sulphur — collect salt.',
-        lucidityDelta: 5,
-        completePuzzle: 'lab_symbols_deciphered',
-      );
-    }
-
-    // Lab substances: collect [substance]
-    if (raw.startsWith('collect ') && nodeId == 'lab_substances') {
-      final sub = raw.substring(8).trim();
-      if (!s.completedPuzzles.contains('lab_symbols_deciphered')) {
-        return const EngineResponse(
-          narrativeText:
-              'You do not yet know what to collect.\n\nDecipher the symbols first.',
-        );
-      }
-      // Normalise sulfur/sulphur
-      final key = (sub == 'sulfur' || sub == 'sulphur') ? 'sulphur' : sub;
-      final valid = {'mercury', 'sulphur', 'salt'};
-      if (!valid.contains(key)) {
-        return EngineResponse(
-          narrativeText: '"$sub" is not one of the three substances.\n\n'
-              'Collect: mercury, sulphur, or salt.',
-        );
-      }
-      final puzzleId = 'lab_${key}_collected';
-      if (s.completedPuzzles.contains(puzzleId)) {
-        return EngineResponse(
-            narrativeText: 'You have already collected the $key.');
-      }
-      // Check whether this is the final substance using a Set so all three
-      // required IDs are expressed in one place.
-      const required = {
-        'lab_mercury_collected',
-        'lab_sulphur_collected',
-        'lab_salt_collected'
-      };
-      final afterThis = s.completedPuzzles.union({puzzleId});
-      final isLast = required.every(afterThis.contains);
-      // Always record the individual substance ID; _handleGo checks all three.
-      return EngineResponse(
-        narrativeText: isLast
-            ? 'You collect the $key.\n\n'
-                'All three substances of the Tria Prima are gathered.\n\n'
-                'The three branches open: the furnace, the alembic, the bain-marie.'
-            : 'You collect the $key. It settles with a faint warmth.',
-        needsDemiurge: isLast,
-        completePuzzle: puzzleId,
-        lucidityDelta: isLast ? 8 : null,
-      );
-    }
-
-    // Lab furnace: calcinate
-    if (raw == 'calcinate' && nodeId == 'lab_furnace') {
-      if (s.completedPuzzles.contains('furnace_calcinating')) {
-        return const EngineResponse(
-          narrativeText:
-              'The calcination is already in progress. Wait for five turnings.',
-        );
-      }
-      return const EngineResponse(
-        narrativeText: 'You light the furnace.\n\n'
-            'The material begins its reduction. '
-            'Grey smoke — the smell of something essential escaping.\n\n'
-            'Five turnings are required. Wait.',
-        completePuzzle: 'furnace_calcinating',
-      );
-    }
 
     // Quinto maturity: answer telephone (say/answer/tell)
     if (nodeId == 'quinto_maturity' &&
@@ -2995,13 +2490,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
           'Use decipher symbols, then collect mercury, collect sulphur, and collect salt.',
         ]);
       case 'lab_great_work':
-        final step = s.puzzleCounters['great_work_step'] ?? 0;
-        final nextPlanet =
-            step < _planetOrder.length ? _planetOrder[step] : _planetOrder.last;
         return _selectHint(level, [
           'Order matters more than substance here.',
           'The circles accept a planetary descent, one stage at a time.',
-          'Place each substance in order: ${_planetOrder.join(' → ')}. The next circle is $nextPlanet.',
+          'Place each substance in order: Saturn → Jupiter → Mars → Sun → Venus → Mercury → Moon.',
         ]);
       case 'lab_sealed':
         return _selectHint(level, const [

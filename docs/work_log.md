@@ -4,6 +4,57 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Laboratory extraction: fourth real state-driven sector)
+**Role:** Staged-process sector extraction + notifier de-coupling
+
+**Done:**
+- Added dedicated Laboratory module + contract adapter:
+  - `lib/features/game/laboratory/laboratory_module.dart`
+  - `lib/features/game/laboratory/laboratory_sector.dart`
+- Introduced explicit Laboratory runtime modeling (`LaboratoryRuntimeModel`) with staged semantics for:
+  - offerings accepted/rejected and distinct concept tracking
+  - symbol decipher + substance collection readiness
+  - furnace start/wait/calcination
+  - alembic degree interpretation and outcomes
+  - bain-marie stage + external maturation visits
+  - Great Work phase progression and convergence readiness
+  - sealed chamber readiness, simulacrum acquisition, revisit/cross hooks
+- Migrated Laboratory room data/gates/hints out of notifier:
+  - `_nodes` now uses `...LaboratoryModule.roomDefinitions`
+  - `_exitGates` and `_gateHints` now spread `...LaboratoryModule.exitGates` / `...LaboratoryModule.gateHints`
+- Migrated Laboratory command behavior to sector reducers (through `SectorRouter`):
+  - offering vestibule logic
+  - decipher/collect logic
+  - furnace calcinate/wait logic
+  - alembic temperature handling
+  - Great Work placement sequencing
+  - sealed chamber final breath
+  - cross-sector pedestal feedback and revisit hook
+- Moved bain-marie navigation maturation from notifier loop to pure module helper:
+  - `LaboratoryModule.applyNavigationTransition(...)`
+- Progression integration:
+  - `ProgressionService` now uses `LaboratoryModule.isDeepComplete`
+  - laboratory completion markers sourced from `LaboratoryModule.completionMarkers(...)`
+  - deep marker `sys_deep_laboratory` now produced by module conditions
+
+**Tests added/updated:**
+- New `test/laboratory_module_test.dart` covering:
+  - offer distinctness vs generic repetition rejection
+  - explicit substance/transformation runtime states
+  - anti-bruteforce furnace sequencing
+  - meaningful alembic degree outcomes
+  - bain-marie maturation requires external progression
+  - Great Work order cannot be skipped
+  - final breath requires true process readiness
+  - deep completion stricter than surface completion
+- Updated:
+  - `test/sector_router_test.dart` (Laboratory routing case)
+  - `test/sector_contract_test.dart` (Laboratory contract included)
+
+**Verification:**
+- `flutter test test/laboratory_module_test.dart test/sector_router_test.dart test/sector_contract_test.dart test/progression_service_test.dart` ✅
+- `flutter test` ✅ (all passing; existing skipped integration TODOs unchanged)
+
 ### 2026-04-17 — Codex GPT-5 (Sector contract consolidation + Gallery extraction)
 **Role:** Shared-contract hardening + third state-driven sector migration
 
