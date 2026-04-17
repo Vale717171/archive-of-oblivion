@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:archive_of_oblivion/features/game/game_node.dart';
 import 'package:archive_of_oblivion/features/game/garden/garden_module.dart';
 import 'package:archive_of_oblivion/features/game/garden/garden_sector.dart';
+import 'package:archive_of_oblivion/features/game/observatory/observatory_module.dart';
+import 'package:archive_of_oblivion/features/game/observatory/observatory_sector.dart';
 import 'package:archive_of_oblivion/features/game/sector_router.dart';
 import 'package:archive_of_oblivion/features/parser/parser_state.dart';
 
@@ -89,6 +91,44 @@ void main() {
 
       expect(response, isNotNull);
       expect(response!.completePuzzle, 'garden_revisited');
+    });
+  });
+
+  group('Observatory routing', () {
+    const observatoryRouter = SectorRouter([
+      GardenSectorHandler(),
+      ObservatorySectorHandler(),
+    ]);
+
+    ObservatoryStateView obsState({
+      required String nodeId,
+      Set<String> puzzles = const {},
+      Map<String, int> counters = const {},
+    }) {
+      return ObservatoryStateView(
+        nodeId: nodeId,
+        completedPuzzles: puzzles,
+        puzzleCounters: counters,
+        inventory: const ['notebook'],
+      );
+    }
+
+    test('routes observatory combine to observatory handler', () {
+      final response = observatoryRouter.routeCommand(
+        SectorCommandContext(
+          cmd: const ParsedCommand(
+            verb: CommandVerb.combine,
+            args: ['moon', 'mercury', 'sun'],
+            rawInput: 'combine moon mercury sun',
+          ),
+          nodeId: 'obs_antechamber',
+          node: ObservatoryModule.roomDefinitions['obs_antechamber']!,
+          gameState: obsState(nodeId: 'obs_antechamber'),
+        ),
+      );
+
+      expect(response, isNotNull);
+      expect(response!.completePuzzle, 'lenses_combined');
     });
   });
 }

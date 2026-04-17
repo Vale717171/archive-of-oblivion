@@ -1,5 +1,6 @@
 import '../parser/parser_state.dart';
 import 'garden/garden_module.dart';
+import 'observatory/observatory_module.dart';
 
 class ProgressionResult {
   final Set<String> puzzles;
@@ -65,6 +66,7 @@ class ProgressionService {
       sector: 'observatory',
       surfacePuzzle: 'obs_complete',
       deepPuzzle: 'sys_deep_observatory',
+      deepEvaluator: ObservatoryModule.isDeepComplete,
     ),
     SectorProgressionRule(
       sector: 'gallery',
@@ -165,6 +167,12 @@ class ProgressionService {
     if (nextPuzzles.contains('sys_deep_garden')) {
       nextPuzzles.add('garden_deep_complete');
     }
+    nextPuzzles.addAll(
+      ObservatoryModule.completionMarkers(
+        puzzles: nextPuzzles,
+        counters: nextCounters,
+      ),
+    );
 
     // Shared threshold resonance input consumed by SystemicStateCodec.
     nextCounters[thresholdResonanceInputCounter] = deepCount;

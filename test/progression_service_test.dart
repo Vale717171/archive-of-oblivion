@@ -73,5 +73,30 @@ void main() {
         greaterThanOrEqualTo(1),
       );
     });
+
+    test('observatory deep progression requires module deep conditions', () {
+      final counters = {
+        ProgressionService.depthCounterKey('observatory'): 7,
+      };
+      final puzzles = {
+        'obs_complete',
+      };
+
+      final result = ProgressionService.applyTurn(
+        cmd: const ParsedCommand(
+          verb: CommandVerb.examine,
+          args: [],
+          rawInput: 'look',
+        ),
+        response: const EngineResponse(narrativeText: 'x'),
+        nodeId: 'obs_dome',
+        puzzles: puzzles,
+        counters: counters,
+      );
+
+      expect(result.puzzles, contains('progress_surface_observatory'));
+      expect(result.puzzles, isNot(contains('progress_deep_observatory')));
+      expect(result.puzzles, isNot(contains('sys_deep_observatory')));
+    });
   });
 }

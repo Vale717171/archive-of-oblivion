@@ -19,6 +19,7 @@ import '../parser/parser_state.dart';
 import 'game_node.dart';
 import 'garden/garden_module.dart';
 import 'garden/garden_sector.dart';
+import 'observatory/observatory_module.dart';
 import 'observatory/observatory_sector.dart';
 import 'progression_service.dart';
 import 'sector_router.dart';
@@ -162,11 +163,7 @@ const List<_ZoneQuestion> _zoneQuestions = [
 
 const Map<String, Map<String, String>> _exitGates = {
   ...GardenModule.exitGates,
-  'obs_antechamber': {'north': 'lenses_combined'},
-  'obs_corridor': {'west': 'heisenberg_walked', 'east': 'heisenberg_walked'},
-  'obs_void': {'south': 'void_fluctuation_measured'},
-  'obs_archive': {'south': 'archive_constant_entered'},
-  'obs_calibration': {'north': 'obs_calibrated'},
+  ...ObservatoryModule.exitGates,
   'gallery_hall': {'south': 'hall_backward_walked'},
   'gallery_corridor': {'south': 'corridor_tile_pressed'},
   'gallery_proportions': {
@@ -190,21 +187,7 @@ const Map<String, Map<String, String>> _exitGates = {
 
 const Map<String, String> _gateHints = {
   ...GardenModule.gateHints,
-  'lenses_combined':
-      'The corridor is dark. The telescope mount is incomplete.\n\n'
-          'Hint: combine lens [Moon] [Mercury] [Sun].',
-  'heisenberg_walked':
-      'The branches of the corridor are inaccessible. Sight is the obstacle.\n\n'
-          'Hint: walk blindfolded.',
-  'void_fluctuation_measured':
-      'The calibration chamber is sealed. The void has not spoken.\n\n'
-          'Hint: wait seven times — then measure fluctuation.',
-  'archive_constant_entered':
-      'The calibration chamber cannot be reached. The panel awaits.\n\n'
-          'Hint: enter [the value that underlies all constants].',
-  'obs_calibrated':
-      'The dome is locked. The instrument needs its reference point.\n\n'
-          'Hint: calibrate [the only honest coordinates].',
+  ...ObservatoryModule.gateHints,
   'hall_backward_walked':
       'The gallery corridor is sealed. The way forward is behind you.\n\n'
           'Hint: walk backward.',
@@ -315,134 +298,7 @@ const Map<String, NodeDef> _nodes = {
   ...GardenModule.roomDefinitions,
 
   // ── Observatory ──────────────────────────────────────────────────────────────
-  'obs_antechamber': NodeDef(
-    title: 'The Blind Observatory — Antechamber of Lenses',
-    description: 'The cobalt door opens to cold glass.\n\n'
-        'Three lenses rest in separate cradles along the north wall, '
-        'each engraved with a celestial name. A brass telescope mount '
-        'at the centre holds three empty slots.\n\n'
-        'The labels read: Sun — Mercury — Moon.\n\n'
-        'To the north: the Corridor of Hypotheses.',
-    exits: {'north': 'obs_corridor', 'west': 'la_soglia', 'back': 'la_soglia'},
-    examines: {
-      'lenses': 'Three lenses. Sun: large, amber. Mercury: small, dense. '
-          'Moon: silvered, cold. The order in which they are combined matters.',
-      'sun': 'The largest lens. Its apparent primacy may be the problem.',
-      'mercury': 'Small and heavy. The glass feels older.',
-      'moon': 'Cold to the touch. It seems to absorb rather than bend.',
-      'mount': 'Three slots, vertically arranged. Each accepts only one lens.',
-      'slots':
-          'Upper, middle, lower. Their relative sizes suggest an ordering.',
-    },
-  ),
-
-  'obs_corridor': NodeDef(
-    title: 'Corridor of Hypotheses',
-    description: 'A long corridor. The walls are lined with framed statements, '
-        'each crossed out in red. Not false — abandoned.\n\n'
-        'The corridor branches: west to a dark hall, east to an archive.\n\n'
-        'A placard: "The act of looking disturbs the looked-at. This has been proven."',
-    exits: {
-      'south': 'obs_antechamber',
-      'west': 'obs_void',
-      'east': 'obs_archive'
-    },
-    examines: {
-      'hypotheses': '"Light behaves as a wave." Crossed out. '
-          '"Light behaves as a particle." Crossed out. '
-          'Beneath both: "Light behaves."',
-      'placard': '"The act of looking disturbs the looked-at.\n'
-          'Position and momentum resist simultaneous knowledge.\n'
-          'Uncertainty is not ignorance. It is precision."',
-      'branches': 'West: absolute darkness. East: an archive of glass.',
-    },
-  ),
-
-  'obs_void': NodeDef(
-    title: 'Hall of Void',
-    description: 'A perfectly dark room. No walls visible.\n\n'
-        'You know they are there. The silence has texture — '
-        'a grain, as if vibrating just below hearing.\n\n'
-        'A measurement panel glows faintly: one dial, no pointer.',
-    exits: {
-      'east': 'obs_corridor',
-      'south': 'obs_calibration',
-      'back': 'obs_corridor'
-    },
-    examines: {
-      'panel': 'A single dial. No pointer. '
-          'Label: QUANTUM FLUCTUATION.\n'
-          '"Measure only when the instrument has forgotten it is measuring."',
-      'darkness': 'True darkness — the kind that has never been interrupted.',
-      'silence': 'The presence of something that has not yet decided '
-          'whether to become sound.',
-      'dial': 'The needle does not exist. Or does not yet.',
-    },
-  ),
-
-  'obs_archive': NodeDef(
-    title: 'Archive of Constants',
-    description: 'Glass cabinets line every wall, each holding a constant '
-        'of nature, labelled and lit.\n\n'
-        'The speed of light. Planck constant. '
-        'The gravitational constant. The fine-structure constant. Others.\n\n'
-        'At the far end: a panel with a single input slot.\n'
-        '"Enter the value that underlies them all."',
-    exits: {
-      'west': 'obs_corridor',
-      'south': 'obs_calibration',
-      'back': 'obs_corridor'
-    },
-    examines: {
-      'constants': 'Each cabinet: a number, a name, a unit. '
-          'In natural units, stripped of measurement, they all reduce.',
-      'panel': '"Enter the value that underlies them all.\n'
-          'Not a measurement. A statement."',
-      'speed of light': '"c". In natural units: 1.',
-      'planck constant': '"h". In natural units: 1.',
-      'fine-structure': 'Approximately 1/137. Dimensionless. '
-          'The most fundamental number — still not 1.',
-      'input': 'A slot for a single number. What do all constants '
-          'become when you stop measuring in human units?',
-    },
-  ),
-
-  'obs_calibration': NodeDef(
-    title: 'Calibration Chamber',
-    description: 'A room of instruments, all zeroed.\n\n'
-        'At the centre: a calibration station. Three dials, each reading "???". '
-        'A placard: "Set the reference point. '
-        'All measurement flows from the chosen origin."\n\n'
-        'To the north: the dome.',
-    exits: {'north': 'obs_dome', 'west': 'obs_void', 'east': 'obs_archive'},
-    examines: {
-      'dials': 'Three dials, each marked "???". They accept numeric input.',
-      'placard': '"There is no absolute origin. The origin is chosen.\n'
-          'The honest instrument knows this and starts from zero."',
-      'station': 'Three coordinates: X, Y, Z. All reading "???".',
-      'door': 'The dome door is sealed. The calibration must be set first.',
-    },
-  ),
-
-  'obs_dome': NodeDef(
-    title: 'Telescope Dome',
-    description: 'The dome opens to a sky that is not a sky.\n\n'
-        'No stars — or all stars at once, so dense they form a white field. '
-        'At the centre: the telescope, massive, angled toward the sky.\n\n'
-        'A brass plate on the base: "Primary mirror — forward-facing."',
-    exits: {'south': 'obs_calibration', 'back': 'obs_calibration'},
-    examines: {
-      'telescope':
-          'The primary mirror faces outward — toward that impossible sky. '
-              'It has been forward-facing since before you arrived.',
-      'sky': 'Not stars. Frequencies. Every point of light is a wave '
-          'collapsed by the act of being seen.',
-      'mirror': 'Primary mirror, facing outward. '
-          '"Inversion requires confirmation."',
-      'plate':
-          '"Primary mirror — forward-facing.\nInversion requires confirmation."',
-    },
-  ),
+  ...ObservatoryModule.roomDefinitions,
 
   // ── Gallery of Mirrors ───────────────────────────────────────────────────────
   'gallery_hall': NodeDef(
@@ -1150,6 +1006,31 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
   }
 
+  ObservatoryStateView _observatoryView({
+    required String nodeId,
+    required GameEngineState state,
+  }) {
+    return ObservatoryStateView(
+      nodeId: nodeId,
+      completedPuzzles: state.completedPuzzles,
+      puzzleCounters: state.puzzleCounters,
+      inventory: state.inventory,
+    );
+  }
+
+  Object _sectorViewForNode({
+    required String nodeId,
+    required GameEngineState state,
+  }) {
+    if (GardenModule.isGardenNode(nodeId)) {
+      return _gardenView(nodeId: nodeId, state: state);
+    }
+    if (ObservatoryModule.isObservatoryNode(nodeId)) {
+      return _observatoryView(nodeId: nodeId, state: state);
+    }
+    return _gardenView(nodeId: nodeId, state: state);
+  }
+
   EngineResponse? _routeSectorCommand({
     required ParsedCommand cmd,
     required String nodeId,
@@ -1157,12 +1038,31 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }) {
     final node = _nodes[nodeId];
     if (node == null) return null;
+    if (nodeId == 'la_soglia') {
+      final gardenFirst = _sectorRouter.routeCommand(
+        SectorCommandContext(
+          cmd: cmd,
+          nodeId: nodeId,
+          node: node,
+          gameState: _gardenView(nodeId: nodeId, state: state),
+        ),
+      );
+      if (gardenFirst != null) return gardenFirst;
+      return _sectorRouter.routeCommand(
+        SectorCommandContext(
+          cmd: cmd,
+          nodeId: nodeId,
+          node: node,
+          gameState: _observatoryView(nodeId: nodeId, state: state),
+        ),
+      );
+    }
     return _sectorRouter.routeCommand(
       SectorCommandContext(
         cmd: cmd,
         nodeId: nodeId,
         node: node,
-        gameState: _gardenView(nodeId: nodeId, state: state),
+        gameState: _sectorViewForNode(nodeId: nodeId, state: state),
       ),
     );
   }
@@ -1696,7 +1596,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         return _handleWait(nodeId, s);
 
       case CommandVerb.take:
-        return _handleTake(cmd, node, s);
+        return _handleTake(cmd, nodeId, node, s);
+
+      case CommandVerb.use:
+        return _handleUse(cmd, nodeId, s);
 
       case CommandVerb.drop:
         return _handleDrop(cmd, nodeId, s);
@@ -1970,7 +1873,7 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       SectorEnterContext(
         fromNode: nodeId,
         destNode: dest,
-        gameState: _gardenView(nodeId: nodeId, state: s),
+        gameState: _sectorViewForNode(nodeId: dest, state: s),
       ),
     );
     if (gardenEnterHook != null) return gardenEnterHook;
@@ -2000,38 +1903,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       state: s,
     );
     if (gardenResponse != null) return gardenResponse;
-
-    // Observatory void: seven waits → Proustian bagliore → enable measure
-    if (nodeId == 'obs_void') {
-      if (s.completedPuzzles.contains('void_silence_complete')) {
-        return const EngineResponse(
-          narrativeText: 'The void has already spoken. '
-              'Measure fluctuation to proceed.',
-        );
-      }
-      final silence = (s.puzzleCounters['void_silence'] ?? 0) + 1;
-      if (silence < 7) {
-        return EngineResponse(
-          narrativeText: 'You do nothing.\n\nThe void notes this. '
-              '$silence of seven turnings.',
-          incrementCounter: 'void_silence',
-        );
-      }
-      return const EngineResponse(
-        narrativeText: 'The seventh turning.\n\n'
-            'A light — brief, inexplicable — crosses the darkness from no direction. '
-            'You are briefly not here. A road between two church steeples at dusk, '
-            'a light that moved and became something else.\n\n'
-            'The dial now has a pointer. It is trembling.\n\n'
-            'Now: measure fluctuation.',
-        needsDemiurge: true,
-        incrementCounter: 'void_silence',
-        completePuzzle: 'void_silence_complete',
-        lucidityDelta: -5,
-        anxietyDelta: 5,
-        audioTrigger: 'sfx:proustian_trigger',
-      );
-    }
 
     // Lab furnace: five waits while calcinating → calcination complete
     if (nodeId == 'lab_furnace') {
@@ -2072,7 +1943,14 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   EngineResponse _handleTake(
-      ParsedCommand cmd, NodeDef node, GameEngineState s) {
+      ParsedCommand cmd, String nodeId, NodeDef node, GameEngineState s) {
+    final sectorResponse = _routeSectorCommand(
+      cmd: cmd,
+      nodeId: nodeId,
+      state: s,
+    );
+    if (sectorResponse != null) return sectorResponse;
+
     if (cmd.args.isEmpty)
       return const EngineResponse(narrativeText: 'Take what?');
     final target = cmd.args.join(' ');
@@ -2097,6 +1975,17 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     }
 
     return const EngineResponse(narrativeText: 'You cannot take that.');
+  }
+
+  EngineResponse _handleUse(
+      ParsedCommand cmd, String nodeId, GameEngineState s) {
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(
+      narrativeText:
+          'Nothing here responds to use in that way. Try a more specific action.',
+    );
   }
 
   EngineResponse _handleDrop(
@@ -2265,29 +2154,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       );
     }
 
-    // Observatory corridor: walk blindfolded — Heisenberg puzzle (GDD §8 — puzzle 2)
-    if (nodeId == 'obs_corridor' &&
-        (mode.contains('blind') || mode == 'blindfolded')) {
-      if (s.completedPuzzles.contains('heisenberg_walked')) {
-        return const EngineResponse(
-          narrativeText: 'You have already demonstrated this understanding. '
-              'Both branches are open.',
-        );
-      }
-      return const EngineResponse(
-        narrativeText:
-            'You close your eyes — then something more than eyes.\n\n'
-            'You walk. Without looking, you arrive. '
-            'You do not know exactly where. You do not know exactly how.\n\n'
-            'That is the point.\n\n'
-            'The branches open: west to the void, east to the archive.',
-        needsDemiurge: true,
-        lucidityDelta: 8,
-        anxietyDelta: -5,
-        completePuzzle: 'heisenberg_walked',
-      );
-    }
-
     return const EngineResponse(
         narrativeText: 'Nothing happens. Perhaps the moment has not come.');
   }
@@ -2450,48 +2316,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleCombine(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId != 'obs_antechamber') {
-      return const EngineResponse(narrativeText: 'Nothing here to combine.');
-    }
-    if (s.completedPuzzles.contains('lenses_combined')) {
-      return const EngineResponse(
-        narrativeText:
-            'The lenses are already in place. The corridor north is open.',
-      );
-    }
-    final a = cmd.args.join(' ').toLowerCase();
-    final hasMoon = a.contains('moon');
-    final hasMercury = a.contains('mercury');
-    final hasSun = a.contains('sun');
-    final moonFirst = hasMoon &&
-        hasMercury &&
-        hasSun &&
-        a.indexOf('moon') < a.indexOf('mercury') &&
-        a.indexOf('mercury') < a.indexOf('sun');
-
-    if (moonFirst) {
-      return const EngineResponse(
-        narrativeText:
-            'You slot the lenses in inverted order: Moon, Mercury, Sun.\n\n'
-            'The mount clicks. A faint hum — as if the instrument '
-            'recognised that the obvious order was the wrong one.\n\n'
-            'The corridor north is open.',
-        needsDemiurge: true,
-        lucidityDelta: 8,
-        completePuzzle: 'lenses_combined',
-      );
-    }
-    if (hasMoon && hasMercury && hasSun) {
-      return const EngineResponse(
-        narrativeText: 'The mount rejects this order.\n\n'
-            'The apparent hierarchy — Sun first — may need to be inverted.',
-      );
-    }
-    return const EngineResponse(
-      narrativeText: 'The mount does not accept this.\n\n'
-          'Three lenses: Moon, Mercury, Sun. '
-          'Their order is the inverse of what seems natural.',
-    );
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(narrativeText: 'Nothing here to combine.');
   }
 
   EngineResponse _handlePress(
@@ -2566,119 +2394,40 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleMeasure(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId != 'obs_void') {
-      return const EngineResponse(narrativeText: 'Nothing here to measure.');
-    }
-    if (!s.completedPuzzles.contains('void_silence_complete')) {
-      return const EngineResponse(
-        narrativeText: 'The dial has no pointer yet.\n\n'
-            'The void must be given time. Wait.',
-      );
-    }
-    if (s.completedPuzzles.contains('void_fluctuation_measured')) {
-      return const EngineResponse(
-        narrativeText:
-            'The fluctuation has been measured. The passage south is open.',
-      );
-    }
-    return const EngineResponse(
-      narrativeText: 'You read the dial.\n\n'
-          'The pointer rests at a value that cannot be zero and cannot be fixed. '
-          'It fluctuates between two states that should exclude each other.\n\n'
-          'You absorb it. The difference between noting and understanding is not large here.\n\n'
-          'The passage south opens.',
-      needsDemiurge: true,
-      lucidityDelta: 8,
-      completePuzzle: 'void_fluctuation_measured',
-    );
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(narrativeText: 'Nothing here to measure.');
   }
 
   EngineResponse _handleCalibrate(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId != 'obs_calibration') {
-      return const EngineResponse(narrativeText: 'Nothing here to calibrate.');
-    }
-    if (s.completedPuzzles.contains('obs_calibrated')) {
-      return const EngineResponse(
-          narrativeText: 'The calibration is set. The dome is open.');
-    }
-    final a = _normalizeInput(cmd.args.join(' '));
-    final isZero = RegExp(r'^0\s+0\s+0$').hasMatch(a) || a == '0 0 0';
-    if (isZero) {
-      return const EngineResponse(
-        narrativeText: 'You set all three dials to zero.\n\n'
-            'A hum from the mount above. The dome door opens.\n\n'
-            'The reference point is chosen. Everything flows from here.',
-        needsDemiurge: true,
-        lucidityDelta: 10,
-        completePuzzle: 'obs_calibrated',
-      );
-    }
-    return const EngineResponse(
-      narrativeText: 'The mount rejects those coordinates.\n\n'
-          'The only honest origin makes no claim to be absolute.\n\n'
-          'Hint: calibrate [X] [Y] [Z]',
-    );
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(narrativeText: 'Nothing here to calibrate.');
   }
 
   EngineResponse _handleInvert(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId != 'obs_dome') {
-      return const EngineResponse(narrativeText: 'Nothing here to invert.');
-    }
-    if (s.completedPuzzles.contains('obs_confirmed')) {
-      return const EngineResponse(
-        narrativeText: 'The mirror is inverted and confirmed. You may observe.',
-      );
-    }
-    if (s.completedPuzzles.contains('obs_mirror_inverted')) {
-      return const EngineResponse(
-        narrativeText:
-            'The inversion is in progress. Confirm three times to commit.',
-      );
-    }
-    if (cmd.rawInput.toLowerCase().contains('mirror')) {
-      return const EngineResponse(
-        narrativeText: 'You reach for the inversion mechanism.\n\n'
-            'The primary mirror rotates — slowly, '
-            'with the sound of something large being reconsidered.\n\n'
-            'It now faces inward. The telescope looks at the room, not the sky.\n\n'
-            '"Inversion requires confirmation. Confirm three times to proceed."',
-        completePuzzle: 'obs_mirror_inverted',
-      );
-    }
-    return const EngineResponse(
-        narrativeText: 'Invert what? The primary mirror is the instrument.');
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(narrativeText: 'Nothing here to invert.');
   }
 
   EngineResponse _handleConfirm(String nodeId, GameEngineState s) {
-    if (nodeId != 'obs_dome') {
-      return const EngineResponse(narrativeText: 'Nothing here to confirm.');
-    }
-    if (!s.completedPuzzles.contains('obs_mirror_inverted')) {
-      return const EngineResponse(
-          narrativeText: 'There is nothing awaiting confirmation.');
-    }
-    if (s.completedPuzzles.contains('obs_confirmed')) {
-      return const EngineResponse(
-        narrativeText:
-            'Already confirmed. The telescope is ready. You may observe.',
-      );
-    }
-    final count = (s.puzzleCounters['obs_confirm_count'] ?? 0) + 1;
-    if (count < 3) {
-      return EngineResponse(
-        narrativeText: 'Confirmation $count of three.\n\nThe mechanism holds.',
-        incrementCounter: 'obs_confirm_count',
-      );
-    }
-    return const EngineResponse(
-      narrativeText: 'Third confirmation.\n\n'
-          'The mechanism locks. The mirror is committed.\n\n'
-          'The telescope is ready. You may now observe.',
-      incrementCounter: 'obs_confirm_count',
-      completePuzzle: 'obs_confirmed',
+    final sectorResponse = _routeSectorCommand(
+      cmd: const ParsedCommand(
+        verb: CommandVerb.confirm,
+        args: [],
+        rawInput: 'confirm',
+      ),
+      nodeId: nodeId,
+      state: s,
     );
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(narrativeText: 'Nothing here to confirm.');
   }
 
   EngineResponse _handleBreak(
@@ -2794,34 +2543,16 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   }
 
   EngineResponse _handleObserve(String nodeId, GameEngineState s) {
-    if (nodeId == 'obs_dome') {
-      if (!s.completedPuzzles.contains('obs_confirmed')) {
-        return const EngineResponse(
-          narrativeText: 'The telescope is not ready.\n\n'
-              'Invert the primary mirror and confirm three times first.',
-        );
-      }
-      if (s.completedPuzzles.contains('obs_complete')) {
-        return const EngineResponse(
-          narrativeText:
-              'The observation is complete. The Constant is already in your hands.',
-        );
-      }
-      return _simulacrumReward(
-        narrativeText: 'You look into the inverted telescope.\n\n'
-            'It shows you the room — and within the room, yourself. '
-            'A figure of precise but unmeasurable dimensions.\n\n'
-            'At the centre of the image, superimposed on your chest: '
-            'a light source the instrument cannot locate, '
-            'because it is no longer looking outward.\n\n'
-            'In your hands: a prism of tangible light. It is warm. '
-            'It refracts you. The Constant.',
-        itemName: 'the constant',
-        completePuzzle: 'obs_complete',
-        lucidityDelta: 15,
-        anxietyDelta: -10,
-      );
-    }
+    final sectorResponse = _routeSectorCommand(
+      cmd: const ParsedCommand(
+        verb: CommandVerb.observe,
+        args: [],
+        rawInput: 'observe',
+      ),
+      nodeId: nodeId,
+      state: s,
+    );
+    if (sectorResponse != null) return sectorResponse;
 
     if (nodeId == 'gallery_hall') {
       if (s.completedPuzzles.contains('hall_backward_walked') &&
@@ -2853,40 +2584,11 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
   EngineResponse _handleEnterValue(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
-    if (nodeId != 'obs_archive') {
-      return const EngineResponse(
-          narrativeText: 'There is nothing here that accepts an entry.');
-    }
-    final value = cmd.args.join(' ').trim();
-    if (value.isEmpty) {
-      return const EngineResponse(
-        narrativeText:
-            'Enter what? The panel is waiting for the constant beneath constants.',
-      );
-    }
-    if (s.completedPuzzles.contains('archive_constant_entered')) {
-      return const EngineResponse(
-        narrativeText:
-            'The panel already has its answer. The passage south is open.',
-      );
-    }
-    if (value == '1') {
-      return const EngineResponse(
-        narrativeText: 'You enter: 1.\n\n'
-            'The panel accepts it without comment.\n\n'
-            'In natural units, all constants equal one — not because they are '
-            'the same, but because measurement is always a comparison, '
-            'and the only honest comparison is with the thing itself.\n\n'
-            'The passage south opens.',
-        needsDemiurge: true,
-        lucidityDelta: 10,
-        completePuzzle: 'archive_constant_entered',
-      );
-    }
-    return EngineResponse(
-      narrativeText: '"$value" is not accepted.\n\n'
-          'What do all constants become when you stop measuring in human units?',
-    );
+    final sectorResponse =
+        _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
+    if (sectorResponse != null) return sectorResponse;
+    return const EngineResponse(
+        narrativeText: 'There is nothing here that accepts an entry.');
   }
 
   EngineResponse _handleDecipher(String nodeId, GameEngineState s) {
@@ -3029,65 +2731,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   EngineResponse _handleUnknown(
       ParsedCommand cmd, String nodeId, GameEngineState s) {
     final raw = cmd.rawInput.toLowerCase().trim();
-
-    // Observatory dome: observe
-    if ((raw == 'observe' || raw.startsWith('observe ')) &&
-        nodeId == 'obs_dome') {
-      if (!s.completedPuzzles.contains('obs_confirmed')) {
-        return const EngineResponse(
-          narrativeText: 'The telescope is not ready.\n\n'
-              'Invert the primary mirror and confirm three times first.',
-        );
-      }
-      if (s.completedPuzzles.contains('obs_complete')) {
-        return const EngineResponse(
-          narrativeText:
-              'The observation is complete. The Constant is already in your hands.',
-        );
-      }
-      return _simulacrumReward(
-        narrativeText: 'You look into the inverted telescope.\n\n'
-            'It shows you the room — and within the room, yourself. '
-            'A figure of precise but unmeasurable dimensions.\n\n'
-            'At the centre of the image, superimposed on your chest: '
-            'a light source the instrument cannot locate, '
-            'because it is no longer looking outward.\n\n'
-            'In your hands: a prism of tangible light. It is warm. '
-            'It refracts you. The Constant.',
-        itemName: 'the constant',
-        completePuzzle: 'obs_complete',
-        lucidityDelta: 15,
-        anxietyDelta: -10,
-      );
-    }
-
-    // Observatory archive: enter [value]
-    if (raw.startsWith('enter ') && nodeId == 'obs_archive') {
-      final value = raw.substring(6).trim();
-      if (s.completedPuzzles.contains('archive_constant_entered')) {
-        return const EngineResponse(
-          narrativeText:
-              'The panel already has its answer. The passage south is open.',
-        );
-      }
-      if (value == '1') {
-        return const EngineResponse(
-          narrativeText: 'You enter: 1.\n\n'
-              'The panel accepts it without comment.\n\n'
-              'In natural units, all constants equal one — not because they are '
-              'the same, but because measurement is always a comparison, '
-              'and the only honest comparison is with the thing itself.\n\n'
-              'The passage south opens.',
-          needsDemiurge: true,
-          lucidityDelta: 10,
-          completePuzzle: 'archive_constant_entered',
-        );
-      }
-      return EngineResponse(
-        narrativeText: '"$value" is not accepted.\n\n'
-            'What do all constants become when you stop measuring in human units?',
-      );
-    }
 
     // Lab substances: decipher symbols
     if ((raw == 'decipher symbols' || raw == 'decipher') &&

@@ -4,6 +4,61 @@
 
 ---
 
+### 2026-04-17 — Codex GPT-5 (Observatory migration: second real state-driven sector)
+**Role:** Sector extraction (Observatory) on shared router/progression infrastructure
+
+**Done:**
+- Added dedicated Observatory module:
+  - `lib/features/game/observatory/observatory_module.dart`
+  - Moved Observatory room data out of notifier into `roomDefinitions`.
+  - Added Observatory `exitGates` + `gateHints` in-module.
+  - Added pure reducers for:
+    - lens acquisition (`take lens ...`) and lens stance selection (`use ... lens`)
+    - lens combination ordering puzzle
+    - blindfold corridor progression
+    - void fluctuation wait/measure chain
+    - constants archive value entry (true / partial / false paths)
+    - calibration coordinates
+    - dome inversion/confirmation/observation ritual with simulacrum grant.
+  - Added explicit Observatory progression hooks:
+    - `isSurfaceComplete`, `isDeepComplete`, `completionMarkers`
+    - revisit hook (`obs_revisited`) and cross-sector output (`obs_cross_sector_hint`).
+- Replaced placeholder sector adapter with real handler:
+  - `lib/features/game/observatory/observatory_sector.dart`
+  - Routed Observatory verbs through shared `SectorHandler` interface.
+- Migrated notifier wiring to shared infra:
+  - `game_engine_provider.dart` now imports `ObservatoryModule`.
+  - `_nodes` now uses `...ObservatoryModule.roomDefinitions`.
+  - `_exitGates` and `_gateHints` now spread from `ObservatoryModule`.
+  - Observatory command branches removed from notifier and delegated via `_routeSectorCommand(...)` in:
+    - `walk`, `combine`, `wait`, `measure`, `calibrate`, `invert`, `confirm`, `observe`, `enterValue`
+    - plus `take`/`use` routing support.
+  - Removed Observatory-specific unknown-command parsing duplication in notifier.
+- Progression integration:
+  - `ProgressionService` Observatory rule now uses `deepEvaluator: ObservatoryModule.isDeepComplete`.
+  - Added Observatory completion marker hook integration via `ObservatoryModule.completionMarkers(...)`.
+
+**Tests added/updated:**
+- New `test/observatory_module_test.dart` covering:
+  - distinct lens interpretations
+  - blindfold corridor anti-bruteforce
+  - fluctuation chamber condition sequence
+  - constants archive true/partial/false logic
+  - surface vs deep completion distinction
+- Updated `test/sector_router_test.dart` with Observatory routing case.
+- Updated `test/progression_service_test.dart` with Observatory deep-condition assertion.
+
+**Verification:**
+- `dart format ...` on all touched Observatory/shared files ✅
+- `flutter test test/observatory_module_test.dart test/sector_router_test.dart test/progression_service_test.dart test/garden_module_test.dart` ✅
+- `flutter test` ✅ (all passing; existing skipped integration TODOs unchanged)
+
+**Architecture notes:**
+- Garden and Observatory now share the same extraction pattern:
+  - module-owned room data + pure reducers
+  - thin `SectorHandler` adapter
+  - notifier orchestration + shared progression service.
+
 ### 2026-04-17 — Codex GPT-5 (Shared sector infrastructure: router + pure progression service)
 **Role:** Cross-sector extraction infrastructure before Observatory migration
 
