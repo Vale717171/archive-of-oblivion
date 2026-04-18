@@ -26,12 +26,13 @@ import '../state/psycho_provider.dart';
 import 'archive_panels.dart';
 import '../audio/audio_service.dart';
 import 'background_service.dart';
+import 'ritual_style.dart';
 
 // PsychoProfile thresholds that drive the UI colour palette (mirror GDD section 6)
 const int _panicAnxietyThreshold = 70; // anxiety > this → reddish text
 const int _lowLucidityThreshold = 30; // lucidity < this → grey text
 const int _highOblivionThreshold = 60; // oblivionLevel > this → blue-grey text
-const double _backgroundImageOpacity = 0.15;
+const double _backgroundImageOpacity = 0.28;
 const double _minimumReadableTextScale = 1.08;
 const Duration _backgroundFlashHoldDuration = Duration(milliseconds: 180);
 const Duration _backgroundFadeDuration = Duration(milliseconds: 900);
@@ -41,12 +42,13 @@ const Duration _simulacrumBannerDuration = Duration(milliseconds: 2200);
 const String _walkthroughUnlockCommand = 'Stalker4598!TarkoS?';
 
 // ── Finale helpers ────────────────────────────────────────────────────────────
-enum _FinaleType { acceptance, oblivion, eternalZone }
+enum _FinaleType { acceptance, oblivion, eternalZone, testimony }
 
 bool _isFinaleNode(String nodeId) =>
     nodeId == 'finale_acceptance' ||
     nodeId == 'finale_oblivion' ||
-    nodeId == 'finale_eternal_zone';
+    nodeId == 'finale_eternal_zone' ||
+    nodeId == 'finale_testimony';
 
 _FinaleType? _finaleTypeFor(String nodeId) {
   switch (nodeId) {
@@ -56,6 +58,8 @@ _FinaleType? _finaleTypeFor(String nodeId) {
       return _FinaleType.oblivion;
     case 'finale_eternal_zone':
       return _FinaleType.eternalZone;
+    case 'finale_testimony':
+      return _FinaleType.testimony;
     default:
       return null;
   }
@@ -871,6 +875,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
             nodeId: currentNode,
             highContrast: highContrast,
           );
+    final visualProfile = visualProfileForNode(currentNode);
 
     // Resolve background image from current node
     final backgroundPath = BackgroundService.getBackgroundForNodeOrDefault(
@@ -893,6 +898,12 @@ class _GameScreenState extends ConsumerState<GameScreen>
               backgroundPath: backgroundPath,
               flashActive: _backgroundFlashActive,
               opacity: isFinale ? 0.52 : null,
+            ),
+            IgnorePointer(
+              child: _SectorAtmosphereLayer(
+                profile: visualProfile,
+                reduceMotion: settings?.reduceMotion ?? false,
+              ),
             ),
             // Vignette: radial gradient that darkens toward the edges.
             // Intensity scales with oblivionLevel (0→100) so the world
@@ -963,6 +974,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                         sectorLabel: gameSectorLabel(currentNode),
                         nodeTitle: gameNodeTitle(currentNode),
                         narrativeColor: narrativeColor,
+                        visualProfile: visualProfile,
                         textScale: textScale,
                         onMenuSelected: (action) =>
                             _handleMenuAction(action, engine),
@@ -978,6 +990,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                           itemCount: engine.inventory.length,
                           weight: engine.psychoWeight,
                           narrativeColor: narrativeColor,
+                          visualProfile: visualProfile,
                           textScale: textScale,
                           showAssist: settings?.commandAssist ?? true,
                           typewriterRunning: _typewriterRunning,
@@ -989,20 +1002,28 @@ class _GameScreenState extends ConsumerState<GameScreen>
                         padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.38),
+                            color: Colors.black.withValues(alpha: 0.33),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.09),
+                              color: visualProfile.frame.withValues(alpha: 0.8),
+                              width: 1.1,
                             ),
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(22),
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    visualProfile.glow.withValues(alpha: 0.12),
+                                blurRadius: 30,
+                              ),
+                            ],
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(22),
                             child: GestureDetector(
                               onTap: _skipTypewriter,
                               child: ListView.builder(
                                 controller: _scrollController,
                                 padding:
-                                    const EdgeInsets.fromLTRB(20, 24, 20, 8),
+                                    const EdgeInsets.fromLTRB(22, 28, 22, 12),
                                 itemCount: engine.messages.length,
                                 itemBuilder: (context, index) {
                                   final msg = engine.messages[index];
@@ -1020,6 +1041,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                                     text: displayText,
                                     role: msg.role,
                                     narrativeColor: narrativeColor,
+                                    visualProfile: visualProfile,
                                     showCursor:
                                         isLastNarrative && _typewriterRunning,
                                     textScale: textScale,
@@ -1048,6 +1070,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                                   commands: quickCommands,
                                   onCommand: _queueQuickCommand,
                                   narrativeColor: narrativeColor,
+                                  visualProfile: visualProfile,
                                 ),
                               ),
                             if (lastCommand != null)
@@ -1057,15 +1080,23 @@ class _GameScreenState extends ConsumerState<GameScreen>
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: ActionChip(
-                                    label: Text('↑ $lastCommand'),
+                                    label: Text(
+                                      '↑ $lastCommand',
+                                      style: RitualTypography.command(
+                                        12.4,
+                                        color: narrativeColor.withValues(
+                                            alpha: 0.9),
+                                      ),
+                                    ),
                                     onPressed: () => _queueQuickCommand(
                                         lastCommand,
                                         submit: false),
                                     backgroundColor:
-                                        Colors.white.withValues(alpha: 0.05),
+                                        Colors.white.withValues(alpha: 0.03),
                                     side: BorderSide(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.08)),
+                                      color: visualProfile.frame
+                                          .withValues(alpha: 0.55),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1079,6 +1110,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                       itemCount: engine.inventory.length,
                       profile: profile,
                       color: narrativeColor.withValues(alpha: 0.72),
+                      visualProfile: visualProfile,
                       textScale: textScale,
                       lastCommand: _lastSubmittedCommand,
                     ),
@@ -1090,6 +1122,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                       onSubmit: _submit,
                       enabled: engine.phase == ParserPhase.idle,
                       narrativeColor: narrativeColor,
+                      visualProfile: visualProfile,
                       textScale: textScale,
                       hintText: _inputHintForNode(currentNode),
                       onRecallLast: lastCommand == null
@@ -1115,6 +1148,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
               child: IgnorePointer(
                 child: _PuzzleSolvedOverlay(
                   active: _puzzleCueActive,
+                  visualProfile: visualProfile,
                   reduceMotion: settings?.reduceMotion ?? false,
                 ),
               ),
@@ -1126,6 +1160,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
               child: IgnorePointer(
                 child: _SimulacrumBanner(
                   text: _simulacrumBannerText,
+                  visualProfile: visualProfile,
                   reduceMotion: settings?.reduceMotion ?? false,
                 ),
               ),
@@ -1213,6 +1248,100 @@ class _VignetteLayer extends StatelessWidget {
   }
 }
 
+class _SectorAtmosphereLayer extends StatefulWidget {
+  final SectorVisualProfile profile;
+  final bool reduceMotion;
+
+  const _SectorAtmosphereLayer({
+    required this.profile,
+    required this.reduceMotion,
+  });
+
+  @override
+  State<_SectorAtmosphereLayer> createState() => _SectorAtmosphereLayerState();
+}
+
+class _SectorAtmosphereLayerState extends State<_SectorAtmosphereLayer>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 16),
+      lowerBound: 0.0,
+      upperBound: 1.0,
+    );
+    if (!widget.reduceMotion) {
+      _ctrl.repeat(reverse: true);
+    } else {
+      _ctrl.value = 0.5;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _SectorAtmosphereLayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.reduceMotion != oldWidget.reduceMotion) {
+      if (widget.reduceMotion) {
+        _ctrl.stop();
+        _ctrl.value = 0.5;
+      } else {
+        _ctrl.repeat(reverse: true);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (context, _) {
+        final drift = widget.reduceMotion ? 0.0 : (_ctrl.value - 0.5) * 0.08;
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: widget.profile.veilGradient,
+                ),
+              ),
+            ),
+            Transform.translate(
+              offset: Offset(0, drift * 20),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment(0, -0.45 + drift),
+                    radius: 1.15,
+                    colors: [
+                      widget.profile.glow.withValues(alpha: 0.18),
+                      widget.profile.glow.withValues(alpha: 0.05),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.26, 0.7],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 enum _GameMenuAction {
   newGame,
   saveLoad,
@@ -1236,6 +1365,7 @@ class _TopHud extends StatelessWidget {
   final String sectorLabel;
   final String nodeTitle;
   final Color narrativeColor;
+  final SectorVisualProfile visualProfile;
   final double textScale;
   final ValueChanged<_GameMenuAction> onMenuSelected;
   final bool canReturnToTitle;
@@ -1244,6 +1374,7 @@ class _TopHud extends StatelessWidget {
     required this.sectorLabel,
     required this.nodeTitle,
     required this.narrativeColor,
+    required this.visualProfile,
     required this.textScale,
     required this.onMenuSelected,
     required this.canReturnToTitle,
@@ -1259,20 +1390,17 @@ class _TopHud extends StatelessWidget {
             children: [
               Text(
                 sectorLabel.toUpperCase(),
-                style: TextStyle(
-                  color: narrativeColor.withValues(alpha: 0.75),
-                  fontSize: 11 * textScale,
-                  letterSpacing: 1.3,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: RitualTypography.command(
+                  11 * textScale,
+                  color: visualProfile.accent.withValues(alpha: 0.92),
+                ).copyWith(letterSpacing: 1.5),
               ),
               const SizedBox(height: 4),
               Text(
                 nodeTitle,
-                style: TextStyle(
+                style: RitualTypography.display(
+                  24 * textScale,
                   color: narrativeColor,
-                  fontSize: 20 * textScale,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -1320,13 +1448,15 @@ class _TopHud extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: Colors.black.withValues(alpha: 0.28),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+              border: Border.all(
+                color: visualProfile.frame.withValues(alpha: 0.88),
+              ),
             ),
             child: Icon(
               Icons.more_horiz,
-              color: narrativeColor.withValues(alpha: 0.85),
+              color: visualProfile.accent.withValues(alpha: 0.95),
             ),
           ),
         ),
@@ -1341,6 +1471,7 @@ class _SessionCard extends StatelessWidget {
   final int itemCount;
   final int weight;
   final Color narrativeColor;
+  final SectorVisualProfile visualProfile;
   final double textScale;
   final bool showAssist;
   final bool typewriterRunning;
@@ -1351,6 +1482,7 @@ class _SessionCard extends StatelessWidget {
     required this.itemCount,
     required this.weight,
     required this.narrativeColor,
+    required this.visualProfile,
     required this.textScale,
     required this.showAssist,
     required this.typewriterRunning,
@@ -1362,28 +1494,26 @@ class _SessionCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.22),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        color: Colors.black.withValues(alpha: 0.31),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: visualProfile.frame.withValues(alpha: 0.82)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '$sectorLabel · $nodeTitle',
-            style: TextStyle(
-              color: narrativeColor.withValues(alpha: 0.54),
-              fontSize: 11 * textScale,
-              letterSpacing: 0.7,
+            style: RitualTypography.command(
+              11.5 * textScale,
+              color: visualProfile.accent.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: 6),
           Text(
             '$itemCount carried  ·  weight $weight  ·  autosave active',
-            style: TextStyle(
-              color: narrativeColor.withValues(alpha: 0.76),
-              fontSize: 12 * textScale,
-              letterSpacing: 0.5,
+            style: RitualTypography.ritualSans(
+              13.2 * textScale,
+              color: narrativeColor.withValues(alpha: 0.84),
             ),
           ),
           if (showAssist) ...[
@@ -1393,8 +1523,8 @@ class _SessionCard extends StatelessWidget {
                   ? 'Tap the narrative to reveal the full line instantly.'
                   : 'Short commands work best. Mistakes may still advance the atmosphere.',
               style: TextStyle(
-                color: narrativeColor.withValues(alpha: 0.65),
-                fontSize: 12 * textScale,
+                color: narrativeColor.withValues(alpha: 0.68),
+                fontSize: 12.2 * textScale,
                 height: 1.35,
               ),
             ),
@@ -1409,11 +1539,13 @@ class _QuickCommandBar extends StatelessWidget {
   final List<_QuickCommand> commands;
   final void Function(String command, {bool submit}) onCommand;
   final Color narrativeColor;
+  final SectorVisualProfile visualProfile;
 
   const _QuickCommandBar({
     required this.commands,
     required this.onCommand,
     required this.narrativeColor,
+    required this.visualProfile,
   });
 
   @override
@@ -1424,10 +1556,17 @@ class _QuickCommandBar extends StatelessWidget {
       children: [
         for (final command in commands)
           ActionChip(
-            label: Text(command.label),
+            label: Text(
+              command.label,
+              style: RitualTypography.command(
+                12.2,
+                color: narrativeColor.withValues(alpha: 0.9),
+              ),
+            ),
             onPressed: () => onCommand(command.command, submit: command.submit),
-            backgroundColor: Colors.white.withValues(alpha: 0.06),
-            side: BorderSide(color: narrativeColor.withValues(alpha: 0.14)),
+            backgroundColor: Colors.black.withValues(alpha: 0.2),
+            side:
+                BorderSide(color: visualProfile.frame.withValues(alpha: 0.76)),
           ),
       ],
     );
@@ -1438,6 +1577,7 @@ class _MessageTile extends StatelessWidget {
   final String text;
   final MessageRole role;
   final Color narrativeColor;
+  final SectorVisualProfile visualProfile;
   final bool showCursor;
   final double textScale;
 
@@ -1445,6 +1585,7 @@ class _MessageTile extends StatelessWidget {
     required this.text,
     required this.role,
     required this.narrativeColor,
+    required this.visualProfile,
     this.showCursor = false,
     required this.textScale,
   });
@@ -1465,20 +1606,16 @@ class _MessageTile extends StatelessWidget {
               children: [
                 TextSpan(
                   text: promptGlyph,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.40),
-                    fontFamily: 'monospace',
-                    fontSize: 14 * textScale,
-                    letterSpacing: 0.5,
+                  style: RitualTypography.command(
+                    14 * textScale,
+                    color: Colors.white.withValues(alpha: 0.42),
                   ),
                 ),
                 TextSpan(
                   text: commandText,
-                  style: TextStyle(
-                    color: const Color(0xFFB99A58),
-                    fontFamily: 'monospace',
-                    fontSize: 14 * textScale,
-                    letterSpacing: 0.5,
+                  style: RitualTypography.command(
+                    14 * textScale,
+                    color: visualProfile.accent,
                   ),
                 ),
               ],
@@ -1492,12 +1629,9 @@ class _MessageTile extends StatelessWidget {
           child: RichText(
             text: TextSpan(
               text: text,
-              style: TextStyle(
+              style: RitualTypography.narrative(
+                17 * textScale,
                 color: narrativeColor,
-                fontFamily: 'Georgia',
-                fontSize: 16 * textScale,
-                height: 1.65,
-                letterSpacing: 0.2,
               ),
               children: showCursor
                   ? [
@@ -1521,7 +1655,7 @@ class _MessageTile extends StatelessWidget {
             text,
             style: TextStyle(
               color: Colors.red.shade300,
-              fontFamily: 'monospace',
+              fontFamily: RitualTypography.command(12).fontFamily,
               fontSize: 13 * textScale,
               fontStyle: FontStyle.italic,
             ),
@@ -1536,6 +1670,7 @@ class _StatusBar extends StatelessWidget {
   final int itemCount;
   final PsychoProfile? profile;
   final Color color;
+  final SectorVisualProfile visualProfile;
   final double textScale;
   final String? lastCommand;
 
@@ -1544,6 +1679,7 @@ class _StatusBar extends StatelessWidget {
     required this.itemCount,
     required this.profile,
     required this.color,
+    required this.visualProfile,
     required this.textScale,
     this.lastCommand,
   });
@@ -1570,9 +1706,9 @@ class _StatusBar extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: color,
-                      fontFamily: 'monospace',
-                      fontSize: 11 * textScale,
-                      letterSpacing: 0.6,
+                      fontFamily: RitualTypography.command(11).fontFamily,
+                      fontSize: 11.3 * textScale,
+                      letterSpacing: 0.58,
                     ),
                   ),
                 ),
@@ -1583,18 +1719,21 @@ class _StatusBar extends StatelessWidget {
               label: 'Lucidity',
               value: profile?.lucidity ?? 50,
               color: const Color(0xFFDCC58A),
+              visualProfile: visualProfile,
             ),
             const SizedBox(height: 4),
             _PsycheMiniBar(
               label: 'Anxiety',
               value: profile?.anxiety ?? 10,
               color: const Color(0xFFC97C7C),
+              visualProfile: visualProfile,
             ),
             const SizedBox(height: 4),
             _PsycheMiniBar(
               label: 'Oblivion',
               value: profile?.oblivionLevel ?? 0,
               color: const Color(0xFF879EC4),
+              visualProfile: visualProfile,
             ),
           ],
         ),
@@ -1607,11 +1746,13 @@ class _PsycheMiniBar extends StatelessWidget {
   final String label;
   final int value;
   final Color color;
+  final SectorVisualProfile visualProfile;
 
   const _PsycheMiniBar({
     required this.label,
     required this.value,
     required this.color,
+    required this.visualProfile,
   });
 
   @override
@@ -1627,7 +1768,7 @@ class _PsycheMiniBar extends StatelessWidget {
               color: color.withValues(alpha: 0.82),
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
+              letterSpacing: 0.55,
             ),
           ),
         ),
@@ -1636,8 +1777,8 @@ class _PsycheMiniBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(999),
             child: LinearProgressIndicator(
               value: clampedValue / 100,
-              minHeight: 5,
-              backgroundColor: Colors.white.withValues(alpha: 0.08),
+              minHeight: 6,
+              backgroundColor: visualProfile.frame.withValues(alpha: 0.18),
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
@@ -1649,10 +1790,12 @@ class _PsycheMiniBar extends StatelessWidget {
 
 class _PuzzleSolvedOverlay extends StatelessWidget {
   final bool active;
+  final SectorVisualProfile visualProfile;
   final bool reduceMotion;
 
   const _PuzzleSolvedOverlay({
     required this.active,
+    required this.visualProfile,
     required this.reduceMotion,
   });
 
@@ -1667,17 +1810,17 @@ class _PuzzleSolvedOverlay extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 32),
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 22),
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.22),
+            color: Colors.black.withValues(alpha: 0.44),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFB99A58), width: 1.2),
+            border: Border.all(color: visualProfile.accent, width: 1.2),
           ),
-          child: const Column(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 '✦',
                 style: TextStyle(
-                  color: Color(0xFFDEC58A),
+                  color: visualProfile.accent,
                   fontSize: 28,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1702,10 +1845,12 @@ class _PuzzleSolvedOverlay extends StatelessWidget {
 
 class _SimulacrumBanner extends StatelessWidget {
   final String? text;
+  final SectorVisualProfile visualProfile;
   final bool reduceMotion;
 
   const _SimulacrumBanner({
     required this.text,
+    required this.visualProfile,
     required this.reduceMotion,
   });
 
@@ -1728,10 +1873,10 @@ class _SimulacrumBanner extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFF17120A).withValues(alpha: 0.94),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFB99A58)),
+              border: Border.all(color: visualProfile.accent),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.28),
+                  color: visualProfile.glow.withValues(alpha: 0.28),
                   blurRadius: 18,
                   offset: const Offset(0, 6),
                 ),
@@ -1740,10 +1885,11 @@ class _SimulacrumBanner extends StatelessWidget {
             child: Text(
               text ?? '',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFFF1E5C9),
+              style: TextStyle(
+                color: const Color(0xFFF1E5C9),
                 fontWeight: FontWeight.w600,
-                letterSpacing: 0.4,
+                fontFamily: RitualTypography.ritualSans(12).fontFamily,
+                letterSpacing: 0.45,
               ),
             ),
           ),
@@ -1759,6 +1905,7 @@ class _InputRow extends StatelessWidget {
   final VoidCallback onSubmit;
   final bool enabled;
   final Color narrativeColor;
+  final SectorVisualProfile visualProfile;
   final double textScale;
   final String hintText;
   final VoidCallback? onRecallLast;
@@ -1773,6 +1920,7 @@ class _InputRow extends StatelessWidget {
     required this.onSubmit,
     required this.enabled,
     required this.narrativeColor,
+    required this.visualProfile,
     required this.textScale,
     required this.hintText,
     this.onRecallLast,
@@ -1790,8 +1938,8 @@ class _InputRow extends StatelessWidget {
       builder: (context, _) {
         final hasFocus = focusNode.hasFocus && enabled;
         final borderColor = hasFocus
-            ? narrativeColor.withValues(alpha: 0.55)
-            : Colors.white.withValues(alpha: 0.15);
+            ? visualProfile.accent.withValues(alpha: 0.82)
+            : visualProfile.frame.withValues(alpha: 0.62);
 
         return Padding(
           padding: const EdgeInsets.fromLTRB(12, 6, 12, 12),
@@ -1802,9 +1950,17 @@ class _InputRow extends StatelessWidget {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.45),
+                  color: Colors.black.withValues(alpha: 0.48),
                   border: Border.all(color: borderColor),
                   borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: hasFocus
+                          ? visualProfile.glow.withValues(alpha: 0.24)
+                          : Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 28,
+                    ),
+                  ],
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 child: Row(
@@ -1821,7 +1977,7 @@ class _InputRow extends StatelessWidget {
                               : Icons.lightbulb_outline,
                           size: 20,
                           color: assistVisible
-                              ? const Color(0xFFB99A58)
+                              ? visualProfile.accent
                               : narrativeColor.withValues(alpha: 0.40),
                         ),
                       ),
@@ -1850,7 +2006,7 @@ class _InputRow extends StatelessWidget {
                       style: TextStyle(
                         color: narrativeColor.withValues(
                             alpha: enabled ? 0.8 : 0.3),
-                        fontFamily: 'monospace',
+                        fontFamily: RitualTypography.command(16).fontFamily,
                         fontSize: 16 * textScale,
                       ),
                     ),
@@ -1865,8 +2021,8 @@ class _InputRow extends StatelessWidget {
                         onSubmitted: (_) => onSubmit(),
                         style: TextStyle(
                           color: narrativeColor,
-                          fontFamily: 'monospace',
-                          fontSize: 15 * textScale,
+                          fontFamily: RitualTypography.command(15).fontFamily,
+                          fontSize: 15.8 * textScale,
                         ),
                         cursorColor: narrativeColor,
                         decoration: InputDecoration(
@@ -1874,7 +2030,7 @@ class _InputRow extends StatelessWidget {
                           hintText: enabled ? hintText : '…',
                           hintStyle: TextStyle(
                             color: narrativeColor.withValues(alpha: 0.25),
-                            fontFamily: 'monospace',
+                            fontFamily: RitualTypography.command(14).fontFamily,
                             fontSize: 14 * textScale,
                           ),
                           suffixIcon: IconButton(
@@ -1884,7 +2040,7 @@ class _InputRow extends StatelessWidget {
                               Icons.send_rounded,
                               size: 20,
                               color: enabled
-                                  ? const Color(0xFFB99A58)
+                                  ? visualProfile.accent
                                   : Colors.white.withValues(alpha: 0.15),
                             ),
                           ),
@@ -1963,6 +2119,9 @@ class _FinaleBackdropState extends State<_FinaleBackdrop>
             ),
           _FinaleType.eternalZone => Container(
               color: const Color(0xFF1A3A5C).withValues(alpha: 0.14),
+            ),
+          _FinaleType.testimony => Container(
+              color: const Color(0xFF8B6A3F).withValues(alpha: 0.11),
             ),
         },
       ),

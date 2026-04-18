@@ -8,6 +8,7 @@ import '../state/game_state_provider.dart';
 import 'archive_panels.dart';
 import 'background_service.dart';
 import 'game_screen.dart';
+import 'ritual_style.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key, this.audioFailed = false});
@@ -31,7 +32,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (!mounted) return;
       setState(() => _showTitle = true);
       final settings = ref.read(appSettingsProvider).valueOrNull;
-      if ((settings?.enableHaptics ?? true) && !(settings?.reduceMotion ?? false)) {
+      if ((settings?.enableHaptics ?? true) &&
+          !(settings?.reduceMotion ?? false)) {
         HapticFeedback.mediumImpact();
       }
     });
@@ -87,15 +89,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         (currentNode != 'intro_void' ||
             gameState.completedPuzzles.isNotEmpty ||
             gameState.inventory.length > 1);
-    final backgroundPath = BackgroundService.getBackgroundForNodeOrDefault(currentNode);
+    final backgroundPath =
+        BackgroundService.getBackgroundForNodeOrDefault(currentNode);
 
     final bodyColor = highContrast ? Colors.white : const Color(0xFFE9E3D6);
     final mutedColor = highContrast
         ? Colors.white70
         : const Color(0xFFD4C7AE).withValues(alpha: 0.88);
+    final profile = visualProfileForNode(currentNode ?? 'intro_void');
 
     return Scaffold(
-      backgroundColor: const Color(0xFF07090D),
+      backgroundColor: const Color(0xFF05070C),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -111,11 +115,40 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               height: double.infinity,
             ),
           ),
-          Container(color: Colors.black.withValues(alpha: 0.62)),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.58),
+                  Colors.black.withValues(alpha: 0.74),
+                  Colors.black.withValues(alpha: 0.86),
+                ],
+              ),
+            ),
+          ),
+          IgnorePointer(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: const Alignment(0, -0.38),
+                  radius: 1.24,
+                  colors: [
+                    profile.glow.withValues(alpha: 0.16),
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.52),
+                  ],
+                  stops: const [0.08, 0.52, 1.0],
+                ),
+              ),
+            ),
+          ),
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
                 child: AnimatedScale(
                   scale: _showTitle ? 1.0 : 0.88,
                   duration: Duration(
@@ -128,93 +161,157 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       milliseconds: (settings?.reduceMotion ?? false) ? 0 : 900,
                     ),
                     child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 560),
-                    child: DefaultTextStyle(
-                      style: TextStyle(
-                        color: bodyColor,
-                        fontSize: 16 * textScale,
-                        height: 1.5,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'The Archive of Oblivion',
-                            style: TextStyle(
-                              color: bodyColor,
-                              fontSize: 34 * textScale,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.8,
-                            ),
+                      constraints: const BoxConstraints(maxWidth: 620),
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(24, 26, 24, 22),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: profile.frame.withValues(alpha: 0.9),
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'A psycho-philosophical text adventure about memory, burden, and the temptation of oblivion.',
-                            style: TextStyle(
-                              color: mutedColor,
-                              fontSize: 16 * textScale,
-                            ),
-                          ),
-                          const SizedBox(height: 18),
-                          Text(
-                            'A contemplative parser narrative in English.\nAverage session: 10–20 minutes.\nBest with headphones, patience, and short commands.',
-                            style: TextStyle(
-                              color: mutedColor,
-                              fontSize: 14 * textScale,
-                            ),
-                          ),
-                          const SizedBox(height: 28),
-                          _HomeActionButton(
-                            label: hasProgress ? 'Continue' : 'Enter the Archive',
-                            onPressed: () => _openGame(startFresh: false),
-                          ),
-                          const SizedBox(height: 10),
-                          _HomeActionButton(
-                            label: 'New game',
-                            outlined: true,
-                            onPressed: () => _openGame(startFresh: true),
-                          ),
-                          const SizedBox(height: 24),
-                          if (gameState != null) _SaveSummaryCard(gameState: gameState),
-                          const SizedBox(height: 20),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              _HomeChip(
-                                label: 'Introduction',
-                                onPressed: () => ArchivePanels.showIntroduction(context),
-                              ),
-                              _HomeChip(
-                                label: 'How to play',
-                                onPressed: () => ArchivePanels.showHowToPlay(context),
-                              ),
-                              _HomeChip(
-                                label: 'Settings',
-                                onPressed: () => ArchivePanels.showSettings(context),
-                              ),
-                              _HomeChip(
-                                label: 'Credits',
-                                onPressed: () => ArchivePanels.showCredits(context),
-                              ),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withValues(alpha: 0.24),
+                              Colors.black.withValues(alpha: 0.43),
+                              Colors.black.withValues(alpha: 0.61),
                             ],
                           ),
-                          const SizedBox(height: 20),
-                          Text(
-                            'The Demiurge answers uncertainty. Mistakes are sometimes discoveries.',
-                            style: TextStyle(
-                              color: mutedColor,
-                              fontSize: 13 * textScale,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                          if (widget.audioFailed && !_audioBannerDismissed) ...[
-                            const SizedBox(height: 16),
-                            _AudioFailedBanner(
-                              onDismiss: () => setState(() => _audioBannerDismissed = true),
+                          boxShadow: [
+                            BoxShadow(
+                              color: profile.glow.withValues(alpha: 0.18),
+                              blurRadius: 38,
+                              spreadRadius: 2,
                             ),
                           ],
-                        ],
+                        ),
+                        child: DefaultTextStyle(
+                          style: RitualTypography.narrative(
+                            16 * textScale,
+                            color: bodyColor,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 168,
+                                      height: 1.1,
+                                      color:
+                                          profile.accent.withValues(alpha: 0.5),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'THE ARCHIVE',
+                                      textAlign: TextAlign.center,
+                                      style: RitualTypography.display(
+                                        40 * textScale,
+                                        color: bodyColor,
+                                        height: 1.06,
+                                      ),
+                                    ),
+                                    Text(
+                                      'OF OBLIVION',
+                                      textAlign: TextAlign.center,
+                                      style: RitualTypography.display(
+                                        31 * textScale,
+                                        color: profile.accent,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 14),
+                                    Container(
+                                      width: 168,
+                                      height: 1.1,
+                                      color:
+                                          profile.accent.withValues(alpha: 0.5),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'A psycho-philosophical ritual text adventure about memory, burden, and the temptation of oblivion.',
+                                style: RitualTypography.narrative(
+                                  18 * textScale,
+                                  color: bodyColor.withValues(alpha: 0.95),
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              Text(
+                                'ENGLISH ONLY · SLOW INPUT · 10–20 MINUTES PER SESSION',
+                                style: RitualTypography.ritualSans(
+                                  12 * textScale,
+                                  color: mutedColor.withValues(alpha: 0.95),
+                                  weight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              _HomeActionButton(
+                                label: hasProgress
+                                    ? 'Continue the Descent'
+                                    : 'Enter the Archive',
+                                onPressed: () => _openGame(startFresh: false),
+                              ),
+                              const SizedBox(height: 10),
+                              _HomeActionButton(
+                                label: 'Begin a New Run',
+                                outlined: true,
+                                onPressed: () => _openGame(startFresh: true),
+                              ),
+                              const SizedBox(height: 24),
+                              if (gameState != null)
+                                _SaveSummaryCard(gameState: gameState),
+                              const SizedBox(height: 20),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
+                                  _HomeChip(
+                                    label: 'Introduction',
+                                    onPressed: () =>
+                                        ArchivePanels.showIntroduction(context),
+                                  ),
+                                  _HomeChip(
+                                    label: 'How to play',
+                                    onPressed: () =>
+                                        ArchivePanels.showHowToPlay(context),
+                                  ),
+                                  _HomeChip(
+                                    label: 'Settings',
+                                    onPressed: () =>
+                                        ArchivePanels.showSettings(context),
+                                  ),
+                                  _HomeChip(
+                                    label: 'Credits',
+                                    onPressed: () =>
+                                        ArchivePanels.showCredits(context),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                'The Demiurge answers uncertainty. Mistakes may still be coordinates.',
+                                style: RitualTypography.narrative(
+                                  14 * textScale,
+                                  color: mutedColor.withValues(alpha: 0.92),
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              if (widget.audioFailed &&
+                                  !_audioBannerDismissed) ...[
+                                const SizedBox(height: 16),
+                                _AudioFailedBanner(
+                                  onDismiss: () => setState(
+                                      () => _audioBannerDismissed = true),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -222,7 +319,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ),
-        ),
         ],
       ),
     );
@@ -243,7 +339,8 @@ class _HomeActionButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(appSettingsProvider).valueOrNull;
-    final hapticsOn = (settings?.enableHaptics ?? true) && !(settings?.reduceMotion ?? false);
+    final hapticsOn =
+        (settings?.enableHaptics ?? true) && !(settings?.reduceMotion ?? false);
 
     void handlePress() {
       if (hapticsOn) HapticFeedback.selectionClick();
@@ -252,7 +349,15 @@ class _HomeActionButton extends ConsumerWidget {
 
     final child = SizedBox(
       width: double.infinity,
-      child: Text(label, textAlign: TextAlign.center),
+      child: Text(
+        label,
+        textAlign: TextAlign.center,
+        style: RitualTypography.ritualSans(
+          17,
+          color: outlined ? const Color(0xFFEDE5D7) : Colors.black,
+          weight: FontWeight.w600,
+        ),
+      ),
     );
 
     if (outlined) {
@@ -260,8 +365,12 @@ class _HomeActionButton extends ConsumerWidget {
         onPressed: handlePress,
         style: OutlinedButton.styleFrom(
           foregroundColor: const Color(0xFFE9E3D6),
-          side: const BorderSide(color: Color(0xFFB99A58)),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          side:
+              BorderSide(color: const Color(0xFFB99A58).withValues(alpha: 0.9)),
+          backgroundColor: Colors.black.withValues(alpha: 0.22),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
         child: child,
       );
@@ -272,7 +381,9 @@ class _HomeActionButton extends ConsumerWidget {
       style: FilledButton.styleFrom(
         backgroundColor: const Color(0xFFB99A58),
         foregroundColor: Colors.black,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 0,
       ),
       child: child,
     );
@@ -291,16 +402,23 @@ class _HomeChip extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(appSettingsProvider).valueOrNull;
-    final hapticsOn = (settings?.enableHaptics ?? true) && !(settings?.reduceMotion ?? false);
+    final hapticsOn =
+        (settings?.enableHaptics ?? true) && !(settings?.reduceMotion ?? false);
 
     return ActionChip(
-      label: Text(label),
+      label: Text(
+        label,
+        style: RitualTypography.command(
+          12.5,
+          color: const Color(0xFFE9E3D6),
+        ),
+      ),
       onPressed: () {
         if (hapticsOn) HapticFeedback.selectionClick();
         onPressed();
       },
-      backgroundColor: Colors.white.withValues(alpha: 0.06),
-      side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+      backgroundColor: Colors.white.withValues(alpha: 0.05),
+      side: BorderSide(color: Colors.white.withValues(alpha: 0.17)),
     );
   }
 }
@@ -326,7 +444,8 @@ class _AudioFailedBanner extends StatelessWidget {
           const Expanded(
             child: Text(
               'Audio unavailable — the Archive continues in silence.',
-              style: TextStyle(color: Colors.amber, fontSize: 12),
+              style: TextStyle(
+                  color: Colors.amber, fontSize: 12, letterSpacing: 0.3),
             ),
           ),
           GestureDetector(
@@ -354,30 +473,37 @@ class _SaveSummaryCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Current run',
-            style: TextStyle(
-              fontSize: 12,
+            style: RitualTypography.command(
+              11.5,
+              color: const Color(0xFFDCCCAE),
+            ).copyWith(
               letterSpacing: 1.2,
-              color: Colors.white70,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             nodeTitle,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: RitualTypography.display(
+              22,
+              color: const Color(0xFFF1E7D5),
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             '$sector  ·  ${gameState.inventory.length} carried  ·  weight ${gameState.psychoWeight}  ·  $progress puzzle states',
-            style: const TextStyle(color: Colors.white70, height: 1.4),
+            style: RitualTypography.narrative(
+              14,
+              color: const Color(0xFFE5DBC8).withValues(alpha: 0.82),
+            ),
           ),
         ],
       ),

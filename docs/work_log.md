@@ -4,6 +4,34 @@
 
 ---
 
+### 2026-04-18 — Codex GPT-5 (UI prestige pass: Home/Game atmospheric redesign)
+**Role:** Flutter UI art-direction upgrade (authored, premium, atmospheric) with gameplay-preserving integration
+
+**Done:**
+- Added a dedicated visual system module for typography + sector identity:
+  - `lib/features/ui/ritual_style.dart`
+  - Introduced `RitualTypography` (disciplined hierarchy: display/ritual sans/narrative/command).
+  - Introduced `SectorVisualProfile` + `visualProfileForNode(...)` for diegetic per-sector tints/glows/frames/veils.
+- Upgraded Home screen to a ceremonial title-screen composition:
+  - stronger title hierarchy and framing lines
+  - layered background + radial glow + restrained vignette
+  - premium CTA treatment with filled/outlined ritual buttons
+  - improved run-summary card/chips typography and visual rhythm
+  - preserved existing flows (continue/new game/panels/audio warning).
+- Elevated Game screen into a ritual interface object:
+  - integrated sector-driven atmospheric layer (`_SectorAtmosphereLayer`) with slow drift
+  - increased background presence while preserving readability
+  - restyled HUD/session card/quick commands/message tiles/input row/status bars with shared typographic system
+  - differentiated narrative/system/player/meta text more clearly through hierarchy and framing
+  - refined finale support to include `finale_testimony` visual routing.
+- Dependency:
+  - Added `google_fonts` in `pubspec.yaml` for controlled, high-impact type direction.
+
+**Verification:**
+- `dart format lib/features/ui/home_screen.dart lib/features/ui/game_screen.dart lib/features/ui/ritual_style.dart` ✅
+- `flutter test` ✅
+- `flutter analyze` ⚠️ no UI-blocking errors after fixes; repository still reports pre-existing warnings/info in non-UI modules.
+
 ### 2026-04-18 — Codex GPT-5 (Final validation+tuning pass: run profiles, ending differentiation, signal coherence)
 **Role:** End-to-end behavior validation + light adjudication/signal tuning (no architecture churn)
 
