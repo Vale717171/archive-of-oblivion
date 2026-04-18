@@ -4,6 +4,49 @@
 
 ---
 
+### 2026-04-18 — Codex GPT-5 (Final validation+tuning pass: run profiles, ending differentiation, signal coherence)
+**Role:** End-to-end behavior validation + light adjudication/signal tuning (no architecture churn)
+
+**Done:**
+- Part A — added full-run integration profile coverage:
+  - New `test/final_run_profiles_integration_test.dart` with six scenario profiles:
+    - Acceptance-oriented
+    - Oblivion-oriented
+    - Eternal Zone-oriented
+    - Testimony-oriented
+    - contradictory/under-integrated
+    - advanced-but-evasive
+  - For each profile the test asserts:
+    - progression pipeline stability (`ProgressionService`)
+    - persistence/save-load continuity (`GameState` row roundtrip)
+    - Zone prompt coherence (`ZoneModule.previewPrompt` source)
+    - Memory coherence (`MemoryModule.buildEpitaphInput`, readiness consistency)
+    - Nucleus argument differentiation (argument/stance signature mismatch across profiles)
+    - final outcome alignment (`NucleusModule.resolveTurn` ending node).
+- Part B — adjudication tuning audit + small threshold tuning:
+  - Updated `lib/features/game/nucleus/nucleus_adjudication.dart` with minimal balancing changes:
+    - `Acceptance` now also requires `memoryCostlyCount >= 2` (reduces shallow-overlap acceptance)
+    - `Oblivion` narrowed from broad trigger to require stronger erasure profile in low-habitation/high-intensification paths
+    - `Eternal Zone` tightened to:
+      - not overlap with active Oblivion condition
+      - require interpretive richness (`zoneSubstantialCount >= 2`)
+      - require incomplete integration band (`contradictionCount` in 2..4 and unresolved protections).
+  - Effect: clearer differentiation among Acceptance / Eternal Zone / Oblivion with less single-metric dominance.
+- Part C — player-facing signal coherence (lightweight, diegetic):
+  - `examine notebook` now appends `Final Arc Signals` block in notifier (derived from `FinalArcAdjudication`):
+    - coherence band
+    - depth readiness
+    - quote/exposure readiness
+    - Nucleus ratification readiness.
+  - This reduces opacity without adding new UI systems.
+- Part D — safe cleanup:
+  - No new architecture introduced.
+  - Kept notifier orchestration-only and avoided reintroducing final-arc decision logic there.
+
+**Verification:**
+- `flutter test test/final_run_profiles_integration_test.dart test/nucleus_module_test.dart test/final_arc_adjudication_test.dart test/zone_module_test.dart` ✅
+- `flutter test` ✅
+
 ### 2026-04-18 — Codex GPT-5 (Nucleus extraction + run-derived ending adjudication)
 **Role:** Final-arc subsystem extraction and ending orchestration decoupling
 

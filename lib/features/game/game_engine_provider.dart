@@ -16,6 +16,7 @@ import '../demiurge/demiurge_service.dart';
 import '../demiurge/echo_service.dart';
 import '../parser/parser_service.dart';
 import '../parser/parser_state.dart';
+import 'final_arc_adjudication.dart';
 import 'gallery/gallery_module.dart';
 import 'gallery/gallery_sector.dart';
 import 'game_node.dart';
@@ -993,8 +994,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         counters: s.puzzleCounters,
         puzzles: s.completedPuzzles,
       );
+      final readiness = _finalReadinessSignal(s);
       return EngineResponse(
-        narrativeText: SystemicStateCodec.notebookExamineText(systemic),
+        narrativeText:
+            '${SystemicStateCodec.notebookExamineText(systemic)}\n\n$readiness',
       );
     }
 
@@ -1654,6 +1657,36 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       final tagKey = 'memory_meta_tag_${tag}_count';
       counters[tagKey] = (counters[tagKey] ?? 0) + 1;
     }
+  }
+
+  String _finalReadinessSignal(GameEngineState s) {
+    final snapshot = FinalArcAdjudication.aggregate(
+      puzzles: s.completedPuzzles,
+      counters: s.puzzleCounters,
+      inventory: s.inventory,
+      psychoWeight: s.psychoWeight,
+    );
+
+    final coherenceLine = switch (snapshot.coherenceBand) {
+      'stable' => 'Coherence reads as mostly stable.',
+      'strained' => 'Coherence is strained; one argument seam still vibrates.',
+      _ => 'Coherence is fractured; unresolved seams dominate.',
+    };
+    final depthLine = snapshot.sectorDepthReady
+        ? 'Depth profile: sufficient for final adjudication.'
+        : 'Depth profile: still thin in at least one wing.';
+    final quoteLine = snapshot.quoteReady
+        ? 'Exposure profile: the run has listened long enough.'
+        : 'Exposure profile: more voices are still required.';
+    final stanceLine = snapshot.nucleusEligibilityInput
+        ? 'The Nucleus can now test your claim directly.'
+        : 'The Nucleus is not yet ready to ratify any final claim.';
+
+    return 'Final Arc Signals\n\n'
+        '$coherenceLine\n'
+        '$depthLine\n'
+        '$quoteLine\n'
+        '$stanceLine';
   }
 
   bool _shouldResetVisibleTranscript({

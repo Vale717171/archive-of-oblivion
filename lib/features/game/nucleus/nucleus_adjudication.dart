@@ -42,16 +42,22 @@ class NucleusAdjudication {
     final acceptance = s.nucleusEligibilityInput &&
         s.contradictionCount <= 2 &&
         s.unresolvedProtections <= 2 &&
+        s.memoryCostlyCount >= 2 &&
         s.zoneResolvedContradictions >= s.zoneIntensifiedContradictions;
 
     final oblivion = s.contradictionCount >= 5 ||
-        (s.zoneIntensifiedContradictions >= 2 && s.notebookHabitation < 8) ||
-        (!s.memoryReady && s.unresolvedProtections >= 5);
+        (s.zoneIntensifiedContradictions >= 2 &&
+            (s.notebookHabitation < 8 || s.unresolvedProtections >= 4)) ||
+        (!s.memoryReady && s.unresolvedProtections >= 6 && s.quoteReady);
 
     final eternalZone = !acceptance &&
+        !oblivion &&
         s.quoteReady &&
         s.notebookHabitation >= 8 &&
-        (s.zoneSubstantialCount >= 2 || s.deepSectorCount >= 3);
+        s.zoneSubstantialCount >= 2 &&
+        s.unresolvedProtections >= 2 &&
+        s.contradictionCount >= 2 &&
+        s.contradictionCount <= 4;
 
     final testimony = acceptance &&
         s.deepSectorCount >= 4 &&
