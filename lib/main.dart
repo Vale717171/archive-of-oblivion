@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'features/audio/audio_service.dart';
 import 'features/demiurge/demiurge_service.dart';
 import 'features/ui/splash_screen.dart';
@@ -19,6 +20,9 @@ void main() async {
     print('[PlatformError] $error\n$stack');
     return true; // mark as handled so the app does not terminate
   };
+
+  // Avoid runtime network font fetches on restricted/offline devices.
+  GoogleFonts.config.allowRuntimeFetching = false;
 
   // ProviderContainer necessario per inizializzare AudioService
   // prima di runApp (audio_service usa container.listen, non WidgetRef)
