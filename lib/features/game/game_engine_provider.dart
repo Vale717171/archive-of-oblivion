@@ -25,6 +25,8 @@ import 'laboratory/laboratory_module.dart';
 import 'laboratory/laboratory_sector.dart';
 import 'memory/memory_module.dart';
 import 'memory/memory_sector.dart';
+import 'nucleus/nucleus_adjudication.dart';
+import 'nucleus/nucleus_module.dart';
 import 'observatory/observatory_module.dart';
 import 'observatory/observatory_sector.dart';
 import 'progression_service.dart';
@@ -45,30 +47,6 @@ const Set<String> _simulacraNames = {
 };
 
 const Set<String> simulacraItemNames = _simulacraNames;
-
-// ── Boss fight — resolution and surrender keywords (GDD §12) ─────────────────
-
-const Set<String> _resolutionKeywords = {
-  'human warmth',
-  'imperfection',
-  'observer',
-  'acceptance',
-  'i want to remember',
-  'i exist',
-  'irrepeatable',
-  'breath',
-};
-
-const Set<String> _surrenderKeywords = {
-  'i accept the void',
-  'nothing matters',
-  'surrender',
-  'i give up',
-  'the void is peace',
-  'i want to forget',
-  'i accept oblivion',
-  'oblivion',
-};
 
 enum BossUtteranceKind { surrender, remain, resolution, other }
 
@@ -227,6 +205,21 @@ const Map<String, NodeDef> _nodes = {
     exits: {'back': 'la_zona'},
     examines: {
       'variations': 'Infinite. Procedural. Each one specifically yours.',
+    },
+  ),
+
+  'finale_testimony': NodeDef(
+    title: 'Testimony',
+    description: 'You stand between erasure and consolation.\n\n'
+        'Not acquitted. Not condemned. Accountable.\n\n'
+        'The Archive remains open as witness, not prison.\n\n'
+        'Type WAKE UP when you are ready.',
+    exits: {},
+    examines: {
+      'archive':
+          'It is no longer asking for a perfect ending. It is asking for ongoing truth.',
+      'witness':
+          'To testify is to keep memory, cost, and future action in one sentence.',
     },
   ),
 
@@ -549,7 +542,16 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         psychoWeight: withPlayer.psychoWeight,
         randomRoll: _random.nextDouble(),
       );
-      final response = zoneResolution.response;
+      final finalArcResolution = NucleusModule.resolveTurn(
+        cmd: cmd,
+        nodeId: currentNodeId,
+        evaluationResponse: zoneResolution.response,
+        puzzles: withPlayer.completedPuzzles,
+        counters: withPlayer.puzzleCounters,
+        inventory: withPlayer.inventory,
+        psychoWeight: withPlayer.psychoWeight,
+      );
+      final response = finalArcResolution.response;
       final progressiveHintSuffix = _progressiveHintSuffix(
         cmd: cmd,
         response: response,
@@ -609,6 +611,10 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
       newPuzzles.addAll(zoneResolution.puzzleAdds);
       for (final entry in zoneResolution.counterUpdates.entries) {
+        newCounters[entry.key] = entry.value;
+      }
+      newPuzzles.addAll(finalArcResolution.puzzleAdds);
+      for (final entry in finalArcResolution.counterUpdates.entries) {
         newCounters[entry.key] = entry.value;
       }
 
@@ -854,27 +860,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     if (node == null) {
       return const EngineResponse(
           narrativeText: 'The Archive does not recognise this place.');
-    }
-
-    // ── Il Nucleo: route most commands through boss handler (GDD §12) ────────
-    if (nodeId == 'il_nucleo' &&
-        cmd.verb != CommandVerb.inventory &&
-        cmd.verb != CommandVerb.examine &&
-        cmd.verb != CommandVerb.help) {
-      return _handleBossInput(cmd, s);
-    }
-
-    // ── Finale nodes: minimal interactions ───────────────────────────────────
-    if (nodeId == 'finale_acceptance' ||
-        nodeId == 'finale_oblivion' ||
-        nodeId == 'finale_eternal_zone') {
-      if (cmd.verb == CommandVerb.inventory ||
-          cmd.verb == CommandVerb.examine ||
-          cmd.verb == CommandVerb.help) {
-        // Fall through to normal handling
-      } else {
-        return _handleFinaleInput(cmd, nodeId, s);
-      }
     }
 
     switch (cmd.verb) {
@@ -1486,21 +1471,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
     if (sectorResponse != null) return sectorResponse;
 
-    final raw = cmd.rawInput.toLowerCase().trim();
-
-    // Finale 1: WAKE UP epilogue (GDD §12)
-    if ((raw == 'wake up' || raw == 'wakeup') &&
-        nodeId == 'finale_acceptance') {
-      return const EngineResponse(
-        narrativeText: '"The Archive is empty.\n\n'
-            'Time has started flowing again.\n\n'
-            'Outside it is cold, but you are no longer alone."\n\n'
-            '— FINE —',
-        audioTrigger: 'calm',
-        lucidityDelta: 20,
-      );
-    }
-
     return EngineResponse(
       narrativeText: _randomUnknownFallback(),
       needsDemiurge: true,
@@ -1536,214 +1506,6 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     );
     if (sectorResponse != null) return sectorResponse;
     return const EngineResponse(narrativeText: 'Nothing here to stir.');
-  }
-
-  // ── Il Nucleo handlers ────────────────────────────────────────────────────
-
-  EngineResponse _handleBossInput(ParsedCommand cmd, GameEngineState s) {
-    final raw = cmd.rawInput.toLowerCase().trim();
-    final utteranceKind = classifyBossUtterance(raw);
-
-    // Surrender → Finale 2 (GDD §12)
-    if (utteranceKind == BossUtteranceKind.surrender) {
-      return const EngineResponse(
-        narrativeText: 'You speak the word.\n\n'
-            'The Antagonist does not triumph. It simply waits.\n\n'
-            '...\n\n'
-            '...\n\n'
-            '"Lived. Died. No one will remember."\n\n'
-            '— Arseny Tarkovsky',
-        needsDemiurge: false,
-        newNode: 'finale_oblivion',
-        audioTrigger: 'silence',
-        oblivionDelta: 30,
-      );
-    }
-
-    // Remain / stay → Finale 3 (Eternal Zone)
-    if (utteranceKind == BossUtteranceKind.remain) {
-      return const EngineResponse(
-        narrativeText: 'You stay.\n\n'
-            'The Antagonist says nothing. It may not have noticed.\n\n'
-            'The Archive continues. The variations are infinite. '
-            'You will encounter them all, eventually.\n\n'
-            'The Zone does not end. Neither do you.',
-        needsDemiurge: true,
-        newNode: 'finale_eternal_zone',
-        audioTrigger: 'oblivion',
-      );
-    }
-
-    // Resolution keyword check (GDD §12 — Regola del Tre)
-    if (utteranceKind == BossUtteranceKind.resolution) {
-      if (s.psychoWeight == 0) {
-        // Weight is zero — resolution accepted → Finale 1
-        return const EngineResponse(
-          narrativeText: 'You say it.\n\n'
-              'The Antagonist is silent for a long time.\n\n'
-              'Then:\n\n'
-              '"You are correct. I have no argument against that."\n\n'
-              'The voice does not disappear — it simply stops trying.\n\n'
-              'Something in the space changes. The Archive, which had been '
-              'holding itself very carefully, relaxes.\n\n'
-              'A light — not dramatic, not final — '
-              'the light of an ordinary room at dusk.',
-          needsDemiurge: true,
-          newNode: 'finale_acceptance',
-          lucidityDelta: 20,
-          audioTrigger: 'aria_goldberg',
-          completePuzzle: 'boss_resolved',
-        );
-      }
-
-      // Weight > 0 — Regola del Tre
-      final attempts = (s.puzzleCounters['boss_attempts'] ?? 0) + 1;
-      final String responseText;
-      if (attempts == 1) {
-        responseText = 'The words form — and dissolve.\n\n'
-            'Something in you does not believe them yet. '
-            'They are true, but you are carrying too much for them to land.\n\n'
-            'The Antagonist says: "You almost had it."\n\n'
-            'It waits. It is patient.';
-      } else if (attempts == 2) {
-        final inv = s.inventory.where((i) => !_isSimulacrum(i)).join(', ');
-        final invText = inv.isEmpty ? 'nothing you can name' : inv;
-        responseText = 'Again the words — and again they cannot reach.\n\n'
-            'The Antagonist tilts its face:\n\n'
-            '"You carry: $invText.\n\n'
-            'Each one is a small argument against what you are trying to say. '
-            'They are yours. They are also in the way."\n\n'
-            'It waits.';
-      } else {
-        // Attempt 3+: [INVENTORY] visible
-        final inv = s.inventory.where((i) => !_isSimulacrum(i)).join(', ');
-        final invBlock = inv.isEmpty ? '' : '\n\n[INVENTORY: $inv]';
-        responseText = 'A third time.\n\n'
-            'The words will not cohere.$invBlock\n\n'
-            '"The weight is the proof," the Antagonist says. '
-            '"You know what it is asking you to put down."';
-      }
-      return EngineResponse(
-        narrativeText: responseText,
-        needsDemiurge: attempts < 2,
-        incrementCounter: 'boss_attempts',
-        anxietyDelta: attempts * 3,
-      );
-    }
-
-    // Drop in boss context — catarsis (GDD §12)
-    if (cmd.verb == CommandVerb.drop) {
-      return _handleBossDrop(cmd, s);
-    }
-
-    // Deposit in boss context — clear all mundane items (processInput handles the inventory)
-    if (cmd.verb == CommandVerb.deposit) {
-      final hasMundane = s.inventory.any((i) => !_isSimulacrum(i));
-      if (!hasMundane) {
-        return const EngineResponse(
-          narrativeText: 'You carry nothing that can be set down here.\n\n'
-              'The simulacra are yours. They are not the weight.',
-        );
-      }
-      return const EngineResponse(
-        narrativeText: 'You set everything down.\n\n'
-            'Your hands are empty. The weight is gone.\n\n'
-            'The Antagonist looks at you differently.\n\n'
-            '"That," it says, "changes the argument."',
-        lucidityDelta: 10,
-        anxietyDelta: -15,
-        needsDemiurge: true,
-        audioTrigger: 'calm',
-        clearInventoryOnDeposit: true,
-      );
-    }
-
-    // Generic: Antagonist continues its argument
-    return _antagonistArgue(s);
-  }
-
-  EngineResponse _handleBossDrop(ParsedCommand cmd, GameEngineState s) {
-    if (cmd.args.isEmpty) {
-      return const EngineResponse(
-        narrativeText: 'What do you wish to set down?',
-      );
-    }
-    final target = cmd.args.join(' ');
-    final match = s.inventory
-        .where((i) =>
-            !_isSimulacrum(i) && (i.contains(target) || target.contains(i)))
-        .firstOrNull;
-    if (match == null) {
-      return const EngineResponse(
-        narrativeText: 'You do not carry that — or perhaps you carry it '
-            'in a way that cannot be put down here.',
-      );
-    }
-    final remaining =
-        s.inventory.where((i) => !_isSimulacrum(i) && i != match).length;
-    if (remaining == 0) {
-      return EngineResponse(
-        narrativeText: 'You set down the $match.\n\n'
-            'Your hands are empty. The weight is zero.\n\n'
-            'The Antagonist looks at you for a long time.\n\n'
-            '"That," it says, "changes the argument."',
-        weightDelta: -1,
-        lucidityDelta: 10,
-        anxietyDelta: -10,
-        needsDemiurge: true,
-        audioTrigger: 'calm',
-      );
-    }
-    return EngineResponse(
-      narrativeText: 'You set down the $match.\n\n'
-          'The Antagonist observes this. "There is still weight," it says.\n\n'
-          '$remaining thing${remaining == 1 ? "" : "s"} '
-          'remain${remaining == 1 ? "s" : ""}.',
-      weightDelta: -1,
-      anxietyDelta: -2,
-      lucidityDelta: 3,
-    );
-  }
-
-  EngineResponse _antagonistArgue(GameEngineState s) {
-    final attempts = s.puzzleCounters['boss_attempts'] ?? 0;
-    if (attempts == 0) {
-      return const EngineResponse(
-        narrativeText: 'The Antagonist speaks without raising its voice.\n\n'
-            '"Consider: every thought you value was the product of electro-chemistry. '
-            'Every love: oxytocin, dopamine, the firing of neurons that did not '
-            'choose to fire. Every memory: a reconstruction, inaccurate, '
-            'serving the survival of an organism that will not survive.\n\n'
-            'I am not your enemy. I am the mercy you have been afraid to accept."',
-        needsDemiurge: true,
-        anxietyDelta: 5,
-      );
-    }
-    return const EngineResponse(
-      narrativeText: 'The Antagonist listens.\n\n'
-          '"You speak as if the words could change what is true.\n\n'
-          'What do you carry that proves you wrong?"',
-      needsDemiurge: true,
-      anxietyDelta: 2,
-    );
-  }
-
-  EngineResponse _handleFinaleInput(
-      ParsedCommand cmd, String nodeId, GameEngineState s) {
-    // In finales: most commands return flavour text; WAKE UP handled in _handleUnknown
-    if (nodeId == 'finale_acceptance') {
-      return const EngineResponse(
-        narrativeText: 'The Archive is still. Type WAKE UP when you are ready.',
-      );
-    }
-    if (nodeId == 'finale_oblivion') {
-      return const EngineResponse(narrativeText: '...');
-    }
-    // finale_eternal_zone: zone continues
-    return const EngineResponse(
-      narrativeText:
-          'The variations continue. There is no command that ends this.',
-    );
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -2387,7 +2149,7 @@ const _helpText = '''Commands:
   drink                                — Fifth Sector ritual
   say [words]                          — Maturity room (Fifth Sector)
   inventory  /  i                      — list what you carry
-  wake up                              — Finale 1 epilogue
+  wake up                              — finale epilogue (Acceptance/Testimony)
   help  /  ?                           — this message''';
 
 String gameNodeTitle(String nodeId) => _nodes[nodeId]?.title.isNotEmpty == true
@@ -2424,18 +2186,18 @@ bool gameGardenDeepComplete({
     GardenModule.isDeepComplete(puzzles: puzzles, counters: counters);
 
 BossUtteranceKind classifyBossUtterance(String rawInput) {
-  final raw = rawInput.toLowerCase().trim();
-  if (_surrenderKeywords.any(raw.contains)) return BossUtteranceKind.surrender;
-  if (raw == 'stay' ||
-      raw == 'remain' ||
-      raw == 'i remain' ||
-      raw == 'i want to stay' ||
-      raw.contains('eternal zone')) {
-    return BossUtteranceKind.remain;
+  final stance = NucleusAdjudication.classifyStance(rawInput);
+  switch (stance) {
+    case NucleusStance.oblivion:
+      return BossUtteranceKind.surrender;
+    case NucleusStance.eternalZone:
+      return BossUtteranceKind.remain;
+    case NucleusStance.acceptance:
+    case NucleusStance.testimony:
+      return BossUtteranceKind.resolution;
+    case NucleusStance.none:
+      return BossUtteranceKind.other;
   }
-  if (_resolutionKeywords.any(raw.contains))
-    return BossUtteranceKind.resolution;
-  return BossUtteranceKind.other;
 }
 
 bool gameTransitEligibleForZone(String fromNodeId, String destNodeId) {

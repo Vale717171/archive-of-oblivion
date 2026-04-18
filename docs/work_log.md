@@ -4,6 +4,66 @@
 
 ---
 
+### 2026-04-18 — Codex GPT-5 (Nucleus extraction + run-derived ending adjudication)
+**Role:** Final-arc subsystem extraction and ending orchestration decoupling
+
+**Done:**
+- Part A — extracted Nucleus/final-arc logic out of notifier:
+  - Added pure final-arc module stack:
+    - `lib/features/game/nucleus/nucleus_adjudication.dart`
+    - `lib/features/game/nucleus/nucleus_content.dart`
+    - `lib/features/game/nucleus/nucleus_module.dart`
+  - `NucleusModule.resolveTurn(...)` now owns:
+    - Nucleus confrontation command handling
+    - final stance classification
+    - eligibility checks
+    - final outcome resolution
+    - pure result patches (`puzzleAdds`/`counterUpdates`) + rendered response.
+  - `GameEngineNotifier` now delegates final-arc handling in `processInput()` after Zone resolution, applying only returned patches.
+  - Removed notifier-owned Nucleus/finale handlers:
+    - `_handleBossInput`
+    - `_handleBossDrop`
+    - `_antagonistArgue`
+    - `_handleFinaleInput`
+  - Removed notifier-owned finale wake-up branch from `_handleUnknown`; final-arc module now handles wake-up for Acceptance/Testimony.
+
+- Part B — explicit run-derived ending adjudication implemented:
+  - Endings adjudicated from `FinalArcAdjudicationSnapshot` + structured metadata:
+    - `Acceptance`
+    - `Oblivion`
+    - `Eternal Zone`
+    - `Testimony` (rare balance path)
+  - Availability/eligibility now depends on:
+    - contradiction/coherence profile
+    - dominant weight axis
+    - Memory quality signals
+    - Zone quality/intensification/resolution signals
+    - notebook habitation + quote exposure
+    - unresolved protections
+    - sector depth/completion readiness
+  - Nucleus argument sets now vary meaningfully by run profile.
+
+- Part C — text/content separated from adjudication:
+  - `nucleus_adjudication.dart` = pure eligibility + argument selection
+  - `nucleus_module.dart` = pure confrontation flow + patches
+  - `nucleus_content.dart` = response text/rendering mapping layer
+  - Added `finale_testimony` node to runtime node map for the fourth ending destination.
+
+**Tests added/updated:**
+- New `test/nucleus_module_test.dart`:
+  - different run profiles yield different Nucleus argument sets
+  - Acceptance blocked for contradictory/under-integrated run
+  - Oblivion available with high erasure-readiness even with advanced progression
+  - Eternal Zone from interpretive richness without integration
+  - Testimony rare-balance gating and non-trivial overlap behavior
+  - outcome stability across save/load
+  - backward-safe behavior with partial missing final-arc metadata
+- Existing suites kept green (helpers/final-arc/zone/cross-sector/integration).
+
+**Verification:**
+- `flutter test test/nucleus_module_test.dart test/final_arc_adjudication_test.dart test/game_engine_helpers_test.dart test/zone_module_test.dart` ✅
+- `flutter test` ✅
+
 ### 2026-04-17 — Codex GPT-5 (Zone extraction + final-arc adjudication foundation)
 **Role:** Run-reactive Zone subsystem extraction + final-arc persistence/adjudication hardening
 
