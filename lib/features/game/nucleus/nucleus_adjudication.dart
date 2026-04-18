@@ -40,31 +40,38 @@ class NucleusArgumentSet {
 class NucleusAdjudication {
   static NucleusEligibility evaluate(FinalArcAdjudicationSnapshot s) {
     final acceptance = s.nucleusEligibilityInput &&
-        s.contradictionCount <= 2 &&
-        s.unresolvedProtections <= 2 &&
-        s.memoryCostlyCount >= 2 &&
-        s.zoneResolvedContradictions >= s.zoneIntensifiedContradictions;
+        s.traversalValueEvident &&
+        s.sterileTraversalPressure <= 4 &&
+        s.contradictionCount <= 3 &&
+        s.unresolvedProtections <= 4 &&
+        (s.memoryCostlyCount >= 1 || s.livingIncompletionEvident) &&
+        s.zoneSubstantialCount + s.zoneResolvedContradictions >=
+            s.zoneIntensifiedContradictions;
 
-    final oblivion = s.contradictionCount >= 5 ||
-        (s.zoneIntensifiedContradictions >= 2 &&
-            (s.notebookHabitation < 8 || s.unresolvedProtections >= 4)) ||
-        (!s.memoryReady && s.unresolvedProtections >= 6 && s.quoteReady);
+    final oblivion = (s.sterileTraversalPressure >= 5 &&
+            (s.unresolvedProtections >= 5 || s.contradictionCount >= 4)) ||
+        (s.unresolvedProtections >= 7 && s.quoteReady) ||
+        (!s.traversalValueEvident &&
+            s.contradictionCount >= 4 &&
+            s.memoryCostlyCount == 0);
 
-    final eternalZone = !acceptance &&
-        !oblivion &&
+    final eternalZone = !oblivion &&
+        !acceptance &&
+        s.traversalValueEvident &&
         s.quoteReady &&
         s.notebookHabitation >= 8 &&
         s.zoneSubstantialCount >= 2 &&
         s.unresolvedProtections >= 2 &&
         s.contradictionCount >= 2 &&
-        s.contradictionCount <= 4;
+        s.contradictionCount <= 5;
 
     final testimony = acceptance &&
         s.deepSectorCount >= 4 &&
         s.zoneSubstantialCount >= 3 &&
         s.memoryCostlyCount >= 3 &&
-        s.contradictionCount <= 1 &&
-        s.unresolvedProtections <= 1 &&
+        s.contradictionCount <= 2 &&
+        s.unresolvedProtections <= 2 &&
+        s.sterileTraversalPressure <= 1 &&
         s.quoteExposureSeen >=
             MemoryModule.quoteExposureThresholdToNucleo + 6 &&
         s.habitationReady;
@@ -84,7 +91,15 @@ class NucleusAdjudication {
     final arguments = <String>[];
     final windows = <String>[];
 
-    if (snapshot.contradictionCount >= 4) {
+    if (snapshot.sterileTraversalPressure >= 5) {
+      arguments.add(
+        'Many of your turns were evasive. Not every question was alive in the asking.',
+      );
+    } else if (snapshot.livingIncompletionEvident) {
+      arguments.add(
+        'Not every attempt opened a door. Still, your hesitations produced time instead of noise.',
+      );
+    } else if (snapshot.contradictionCount >= 4) {
       arguments.add(
         'You call this coherence, yet your own run records fracture after fracture.',
       );
@@ -113,36 +128,60 @@ class NucleusAdjudication {
         );
     }
 
-    if (snapshot.memoryCostlyCount < 2) {
+    if (snapshot.traversalValueEvident) {
       arguments.add(
-        'Memory answered, but not at full cost. You narrated; you did not fully confess.',
+        'The run already holds weight. The unresolved matter is your stance toward what emerged.',
       );
+    } else {
+      arguments.add(
+        'You touched many surfaces lightly. I am still searching for where you were truly present.',
+      );
+    }
+
+    if (snapshot.memoryCostlyCount < 2) {
+      if (snapshot.memorySpecificCount >= 2) {
+        arguments.add(
+          'Your answers were specific, yet not fully costly. Incompletion is present, not nullity.',
+        );
+      } else {
+        arguments.add(
+          'Memory answered, but mostly in decorative form. Description replaced stake.',
+        );
+      }
     } else {
       arguments.add(
         'Memory paid a price. The question is whether you can keep paying outside the room.',
       );
     }
 
-    if (snapshot.zoneSubstantialCount >
+    if (snapshot.zoneSubstantialCount >=
         snapshot.zoneIntensifiedContradictions) {
       arguments.add(
-        'The Zone registered ownership more than evasion. That matters here.',
+        'The Zone recorded ownership often enough: failure did not erase witness.',
       );
     } else {
       arguments.add(
-        'The Zone still records evasions as coordinates. It can route you back there.',
+        'The Zone still records evasions as coordinates. Some refusals remained empty.',
       );
     }
 
-    if (snapshot.unresolvedProtections >= 4) {
-      windows.add('A protection remains primary. Name it or surrender to it.');
+    if (snapshot.unresolvedProtections >= 4 ||
+        snapshot.sterileTraversalPressure >= 4) {
+      windows.add(
+          'A protection remains primary. Name it, bear it, or let it choose for you.');
     }
     if (snapshot.quoteReady && snapshot.habitationReady) {
       windows
           .add('You have listened and inhabited language enough to testify.');
     }
     if (snapshot.sectorDepthReady) {
-      windows.add('Depth exists in the run. Integration is still contested.');
+      windows.add(
+          'Depth exists in the run. The stance now decides embodiment, not value.');
+    }
+    if (snapshot.livingIncompletionEvident) {
+      windows.add(
+        'Incomplete attempts are on record as lived matter. They are not acquittal; they are form.',
+      );
     }
 
     final stances = <NucleusStance>{};

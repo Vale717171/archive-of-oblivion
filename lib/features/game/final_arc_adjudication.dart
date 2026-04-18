@@ -27,6 +27,16 @@ class FinalArcAdjudicationSnapshot {
 
   final int unresolvedProtections;
 
+  /// Derived signal: how much the run appears genuinely inhabited even when
+  /// not fully resolved.
+  final int livedTraversalValue;
+
+  /// Derived signal: accumulation of evasive/sterile participation patterns.
+  final int sterileTraversalPressure;
+
+  final bool traversalValueEvident;
+  final bool livingIncompletionEvident;
+
   final bool nucleusEligibilityInput;
 
   const FinalArcAdjudicationSnapshot({
@@ -50,6 +60,10 @@ class FinalArcAdjudicationSnapshot {
     required this.zoneResolvedContradictions,
     required this.zoneIntensifiedContradictions,
     required this.unresolvedProtections,
+    required this.livedTraversalValue,
+    required this.sterileTraversalPressure,
+    required this.traversalValueEvident,
+    required this.livingIncompletionEvident,
     required this.nucleusEligibilityInput,
   });
 }
@@ -119,6 +133,38 @@ class FinalArcAdjudication {
     final unresolvedProtections =
         contradictions + mundaneProtections + (memoryCostly < 2 ? 1 : 0);
 
+    final livedTraversalValue = _deriveLivedTraversalValue(
+      surfaceCount: surfaceCount,
+      deepCount: deepCount,
+      quoteReady: quote >= MemoryModule.quoteExposureThresholdToNucleo,
+      habitationReady: habitation >= 8,
+      memorySpecific: memorySpecific,
+      memoryCostly: memoryCostly,
+      zoneSubstantial: zoneSubstantial,
+      zoneResponses: zoneResponses,
+      contradictions: contradictions,
+      zoneIntensified: zoneIntensified,
+    );
+
+    final sterileTraversalPressure = _deriveSterileTraversalPressure(
+      contradictions: contradictions,
+      memorySpecific: memorySpecific,
+      memoryCostly: memoryCostly,
+      zoneResponses: zoneResponses,
+      zoneSubstantial: zoneSubstantial,
+      zoneIntensified: zoneIntensified,
+      notebookHabitation: habitation,
+    );
+
+    final livingIncompletionEvident = contradictions >= 1 &&
+        contradictions <= 4 &&
+        memorySpecific >= 2 &&
+        memoryCostly >= 1 &&
+        (zoneSubstantial >= 1 || zoneResponses >= 2) &&
+        zoneSubstantial >= zoneIntensified;
+
+    final traversalValueEvident = livedTraversalValue >= 4;
+
     final dominantAxis = _dominantWeightAxis(counters, psychoWeight);
     final coherenceBand = contradictions >= 5
         ? 'fractured'
@@ -161,8 +207,73 @@ class FinalArcAdjudication {
       zoneResolvedContradictions: zoneResolved,
       zoneIntensifiedContradictions: zoneIntensified,
       unresolvedProtections: unresolvedProtections,
+      livedTraversalValue: livedTraversalValue,
+      sterileTraversalPressure: sterileTraversalPressure,
+      traversalValueEvident: traversalValueEvident,
+      livingIncompletionEvident: livingIncompletionEvident,
       nucleusEligibilityInput: nucleusEligibilityInput,
     );
+  }
+
+  static int _deriveLivedTraversalValue({
+    required int surfaceCount,
+    required int deepCount,
+    required bool quoteReady,
+    required bool habitationReady,
+    required int memorySpecific,
+    required int memoryCostly,
+    required int zoneSubstantial,
+    required int zoneResponses,
+    required int contradictions,
+    required int zoneIntensified,
+  }) {
+    var score = 0;
+    score += surfaceCount >= 3 ? 1 : 0;
+    score += deepCount >= 1 ? 1 : 0;
+    score += deepCount >= 3 ? 1 : 0;
+    score += quoteReady ? 1 : 0;
+    score += habitationReady ? 1 : 0;
+    score += memorySpecific.clamp(0, 3);
+    score += memoryCostly.clamp(0, 2);
+    score += zoneSubstantial.clamp(0, 3);
+
+    // Incomplete but inhabited: participation exceeds clean resolution
+    // without collapsing into pure intensification.
+    if (zoneResponses > zoneSubstantial &&
+        zoneSubstantial > 0 &&
+        zoneIntensified <= zoneSubstantial + 1) {
+      score += 1;
+    }
+    if (contradictions >= 1 &&
+        contradictions <= 4 &&
+        memorySpecific >= 2 &&
+        zoneSubstantial >= 1) {
+      score += 1;
+    }
+
+    return score;
+  }
+
+  static int _deriveSterileTraversalPressure({
+    required int contradictions,
+    required int memorySpecific,
+    required int memoryCostly,
+    required int zoneResponses,
+    required int zoneSubstantial,
+    required int zoneIntensified,
+    required int notebookHabitation,
+  }) {
+    var score = 0;
+    score += zoneIntensified.clamp(0, 3);
+    score += contradictions >= 5
+        ? 2
+        : contradictions >= 3
+            ? 1
+            : 0;
+    if (zoneResponses >= 3 && zoneSubstantial == 0) score += 2;
+    if (memorySpecific == 0 && memoryCostly == 0) score += 1;
+    if (notebookHabitation < 5) score += 1;
+    return score;
   }
 
   static String _dominantWeightAxis(

@@ -6,17 +6,27 @@ class NucleusContent {
     switch (outcome) {
       case FinalOutcomeKey.acceptance:
         return const EngineResponse(
-          narrativeText: '''You speak it, and this time the words remain.
+          narrativeText:
+              '''You do not claim victory.
+You assent to what is already true.
 
 The Antagonist is silent for a long time.
 
 Then:
 
-"You are correct. I have no argument against that."
+"Not every attempt opened a door. But nothing honestly traversed was null."
 
-Something in the Archive loosens from necessity into presence.
+"Even what did not lead onward left a form."
 
-A light — not dramatic, not final — the light of an ordinary room at dusk.''',
+"You do not erase the missed turns.
+You carry them without kneeling before them."
+
+Nothing is erased.
+Nothing is dismissed.
+Yet something in the Archive loosens into presence.
+
+A light, not dramatic, not final:
+the light of an ordinary room at dusk.''',
           needsDemiurge: true,
           newNode: 'finale_acceptance',
           lucidityDelta: 20,
@@ -25,17 +35,20 @@ A light — not dramatic, not final — the light of an ordinary room at dusk.''
         );
       case FinalOutcomeKey.oblivion:
         return const EngineResponse(
-          narrativeText: '''You choose erasure.
+          narrativeText: '''You do not refuse meaning.
+You refuse to remain for it.
 
-The Antagonist does not triumph. It only stops resisting you.
+The Antagonist does not triumph.
+It relinquishes jurisdiction.
 
 ...
 
 ...
 
-"Lived. Died. No one will remember."
-
-— Arseny Tarkovsky''',
+"Meaning was present.
+You ask that it leave no witness.
+You ask for peace without a keeper."
+''',
           newNode: 'finale_oblivion',
           audioTrigger: 'silence',
           oblivionDelta: 30,
@@ -44,22 +57,40 @@ The Antagonist does not triumph. It only stops resisting you.
         return const EngineResponse(
           narrativeText: '''You remain inside interpretation.
 
-The argument does not close. It multiplies.
+You perceived variation, fracture, and signal.
+You did not fully incarnate them.
 
-The variations are infinite. The Zone does not end. Neither do you.''',
+Every form opens.
+None consents to be final.
+Every form points beyond itself.
+No form is inhabited to the end.
+
+This is not emptiness.
+It is abundance without dwelling.
+
+The Zone does not end.
+Neither do you.''',
           needsDemiurge: true,
           newNode: 'finale_eternal_zone',
           audioTrigger: 'oblivion',
         );
       case FinalOutcomeKey.testimony:
         return const EngineResponse(
-          narrativeText: '''You do not ask for acquittal. You testify.
+          narrativeText: '''You do not ask for purity.
+You testify.
 
-You speak as witness to what was paid, what remains, and what must still be carried consciously.
+You bear witness to fragments, wrong turns, costs, and unfinished form.
+You do not call them success.
+You refuse to call them void.
 
-The Antagonist does not vanish. It accepts jurisdiction limits.
+The Antagonist does not vanish.
+It recedes into a smaller authority.
 
-The Archive keeps one chamber open for future truth, and one door open to the world.''',
+The Archive keeps one chamber open for future truth,
+and one door open to the world.
+
+What is incomplete remains incomplete.
+What is living remains accountable.''',
           needsDemiurge: true,
           newNode: 'finale_testimony',
           lucidityDelta: 24,
@@ -71,7 +102,13 @@ The Archive keeps one chamber open for future truth, and one door open to the wo
         return const EngineResponse(
           narrativeText: '''The Antagonist listens.
 
-"You are near a claim. Not yet inside one."''',
+"The value is no longer in question.
+Only your relation to it remains in question.
+
+The claim is near.
+It has not yet learned how to remain.
+
+Speak again."''',
           needsDemiurge: true,
           anxietyDelta: 3,
           incrementCounter: 'boss_attempts',
@@ -89,20 +126,20 @@ The Archive keeps one chamber open for future truth, and one door open to the wo
 
     final base = switch (stance) {
       NucleusStance.acceptance =>
-        'You invoke acceptance, but the run has not integrated enough to hold it.',
+        'You invoke acceptance. The words arrive, but they do not yet keep their shape.',
       NucleusStance.oblivion =>
-        'You invoke oblivion, but your run still resists total erasure.',
+        'You invoke oblivion. Silence answers, but not as erasure.',
       NucleusStance.eternalZone =>
-        'You invoke continuation, but the Zone does not fully claim this trajectory yet.',
+        'You invoke continuation. This passage has not yet become a dwelling for endless variation.',
       NucleusStance.testimony =>
-        'You invoke testimony, but testimony requires a rarer balance than this run currently holds.',
+        'You invoke testimony. Witness is spoken, but the burden has not fully taken root.',
       NucleusStance.none =>
-        'The Antagonist waits for a claim with consequence.',
+        'No claim is yet standing long enough to be judged.',
     };
 
     final contour = attempts <= 1
-        ? 'The sentence reaches the threshold and dissolves.'
-        : 'The sentence returns altered, still unratified.';
+        ? 'The sentence reaches the threshold and disperses before it can remain.'
+        : 'The sentence returns altered. Closer, but still unable to endure.';
 
     return EngineResponse(
       narrativeText: '$base\n\n$contour$invBlock',
@@ -119,12 +156,12 @@ The Archive keeps one chamber open for future truth, and one door open to the wo
   }) {
     final index = attempts % (arguments.isEmpty ? 1 : arguments.length);
     final core = arguments.isEmpty
-        ? 'The Antagonist asks what remains unresolved.'
+        ? 'What has been traversed has already taken form. How will you stand before it?'
         : arguments[index];
     final window = windows.isEmpty ? '' : '\n\n${windows.first}';
 
     return EngineResponse(
-      narrativeText: 'The Antagonist says:\n\n"$core"$window',
+      narrativeText: '"$core"$window',
       needsDemiurge: true,
       anxietyDelta: attempts == 0 ? 5 : 2,
     );

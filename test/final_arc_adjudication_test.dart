@@ -43,6 +43,9 @@ void main() {
       expect(snapshot.dominantWeightAxis, 'verbal');
       expect(snapshot.memoryReady, isTrue);
       expect(snapshot.zoneSubstantialCount, 2);
+      expect(snapshot.traversalValueEvident, isTrue);
+      expect(snapshot.livedTraversalValue, greaterThanOrEqualTo(6));
+      expect(snapshot.sterileTraversalPressure, lessThanOrEqualTo(3));
       expect(snapshot.nucleusEligibilityInput, isTrue);
     });
 
@@ -61,6 +64,8 @@ void main() {
       expect(snapshot.memoryCostlyCount, 0);
       expect(snapshot.zoneResponses, 0);
       expect(snapshot.zoneSubstantialCount, 0);
+      expect(snapshot.traversalValueEvident, isFalse);
+      expect(snapshot.sterileTraversalPressure, greaterThanOrEqualTo(1));
       expect(snapshot.nucleusEligibilityInput, isFalse);
     });
   });

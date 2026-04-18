@@ -33,7 +33,11 @@ Un'avventura testuale per Android ispirata ai giochi degli anni '80, ma radicalm
 
 Il giocatore si sveglia in un non-luogo chiamato L'Archivio. Non ricorda chi sia né come ci sia arrivato. L'Archivio non è semplicemente una mente: è uno **spazio metafisico di transito** — un *Bardo* — in cui l'Anima deve distillare il senso della propria esistenza umana prima di poter procedere oltre.
 
-Il Sistema (L'Antagonista) rappresenta la tentazione del **Nichilismo**: vuole convincere il giocatore che la vita biologica è stata soltanto un doloroso e casuale errore chimico, spingendolo verso la "Pace del Vuoto" (l'annullamento totale dell'anima). Il giocatore deve esplorare quattro settori concettuali, recuperare quattro Simulacri e dimostrare — a se stesso e al Sistema — che l'esperienza umana, per quanto imperfetta e dolorosa, è **sacra, eterna e profondamente significativa**.
+Il Sistema (L'Antagonista) rappresenta la tentazione del **Nichilismo**: vuole convincere il giocatore che la vita biologica è stata soltanto un doloroso e casuale errore chimico, spingendolo verso la "Pace del Vuoto" (l'annullamento totale dell'anima).
+
+**Principio fondamentale:** Il giocatore non deve *dimostrare* di aver vissuto bene. Deve solo *testimoniare* di aver vissuto. Ogni comando digitato — anche quelli che non aprono nessuna porta — è parte del viaggio. Le stanze non esistono per essere risolte. Esistono per essere attraversate. E anche il tornarsi sopra, anche il girare in cerchio, anche l'errore: tutto è esperienza, tutto insegna, tutto conta.
+
+L'Antagonista ha ragione su molte cose: il tempo cancella, l'entropia vince, saremo dimenticati. Ma ha torto su una sola cosa, e quella è la cosa che conta: **il viaggio è accaduto. Non si può togliere.**
 
 ---
 
@@ -67,7 +71,11 @@ Quando il giocatore digita un comando non riconosciuto o commette un errore, "Al
 
 ### Filosofia di design
 
-Il giocatore non sa mai se ha sbagliato o scoperto qualcosa. L'errore è parte del viaggio esistenziale. "All That Is" non giudica, non corregge — *testimonia*. Ogni comando errato è comunque un atto di coscienza.
+Il giocatore non sa mai se ha sbagliato o scoperto qualcosa. Questa ambiguità è voluta e irrisolvibile: è la filosofia del gioco.
+
+"All That Is" non giudica, non corregge — *testimonia*. Ogni comando che non apre una porta riceve comunque una risposta: una citazione, un'osservazione, un frammento di saggezza. Non è un fallback tecnico. È il cuore del gioco: **le domande sbagliate insegnano tanto quanto quelle giuste.** Il cammino verso nessuna parte è comunque un cammino.
+
+I comandi "giusti" aprono porte fisiche. I comandi "sbagliati" aprono porte interiori. Entrambi contano. L'Archivio li tiene tutti.
 
 ### Implementazione tecnica
 
@@ -336,34 +344,116 @@ drink                    → TRANSIZIONE AL NUCLEO
 
 ## 12. IL CONFRONTO FINALE: IL NUCLEO
 
-**L'Antagonista:** Entità senza volto, tratti mutevoli. Voce calma, ragionevole. Argomenta per il nichilismo con logica Schopenhauer. Legge l'inventario e personalizza le argomentazioni.
+> **Documento di sceneggiatura completo:** `docs/finale_screenplay.md`
+> Questa sezione contiene la specifica di design. Il testo esatto del gioco è nel file sopra.
 
-**Parole chiave risolutive:** "human warmth", "imperfection", "observer", "acceptance", "I want to remember", "I exist", "irrepeatable", "breath"
+---
 
-### La Regola del Tre
+### Filosofia del finale
 
-Se la frase risolutiva viene digitata con peso > 0:
+Il finale non è un giudizio. Non misura quanto bene hai giocato.
 
-**Tentativo 1:** blocco interiore — mente annebbiata
+Il Nucleo è un'entità nichilista che *ha ragione* su molte cose — il tempo cancella, l'entropia vince, saremo dimenticati. Ma ha torto su una cosa sola: non può cancellare il fatto che il viaggio è accaduto. E questo è abbastanza.
 
-**Tentativo 2:** l'Entità nomina gli oggetti specifici nell'inventario
+**Il Nucleo perde sempre.** Non perché il giocatore abbia la risposta giusta, ma perché il giocatore è ancora lì, ancora a rispondere, dopo tutto quel cammino. L'atto stesso di rispondere — qualunque cosa si scriva, anche il silenzio — è l'argomento che l'entità non può confutare.
 
-**Tentativo 3:** rottura della quarta parete — `[INVENTORY]` visibile nel testo
+---
 
-**La Catarsi:** `drop gold coin`, `drop ancient book`. Ogni oggetto lasciato premiato. Quando peso = 0, frase risolutiva accettata.
+### Struttura: Tre Movimenti
 
-### I Tre Finali
+**MOVIMENTO 1 — La Testimonianza**
 
-**FINALE 1 — Acceptance (Vittoria - La Rivelazione):** L'Archivio diventa traslucido, rivelando una vastità che assomiglia a un ritorno a casa. Ogni lacrima, ogni silenzio, ogni imperfezione non erano stati invano: erano le materie prime dell'anima. Il disegno, finalmente, ha senso. *"Fuori non c'è il Vuoto. Fuori c'è tutto."* L'Aria delle Goldberg riprende dalla nota sospesa, completa la frase, fade 20s.
+L'entità non attacca. *Elenca.* Nomina ogni stanza attraversata, ogni attesa, ogni parola scritta, ogni oggetto portato e abbandonato. Anche le domande che non hanno aperto nessuna porta. Anche i comandi a cui l'Archivio ha risposto con una citazione invece che con un passaggio.
 
-**FINALE 2 — Oblivion (Sconfitta):** Silenzio 30s → fruscio bianco → nulla. Verso di Tarkovsky: *"Lived. Died. No one will remember."*
+Poi chiede: *"Tell me: what was the point?"*
 
-**FINALE 3 — Eternal Zone (Neutro):** Zona permanente, variazioni procedurali infinite.
+Il tono non è ostile. È quello di un archivio che legge i propri registri.
 
-**Epilogo (Finale 1):**
-> *"The Archive is empty. Time has started flowing again. Outside it is cold, but you are no longer alone."*
+**MOVIMENTO 2 — Cosa Rimane**
 
-Ultimo comando: `WAKE UP`
+Il giocatore vede un prompt libero: `> What remains?`
+
+Non esistono parole chiave. Non esiste risposta sbagliata. Il motore accetta qualsiasi input — anche il silenzio. L'entità risponde con la stessa frase indipendentemente da ciò che viene scritto:
+
+> *"[PLAYER_INPUT]"*
+> *"The Archive has heard this."*
+> *"I have no argument against it."*
+
+L'entità non viene sconfitta con la risposta più bella. Viene sconfitta dalla risposta — qualunque essa sia.
+
+**MOVIMENTO 3 — L'Archivio si apre**
+
+Dissolvenza. L'Aria delle Goldberg riprende dal punto esatto in cui era stata sospesa all'ingresso nel gioco — non dall'inizio, da dove aveva smesso, come se avesse aspettato.
+
+Segue una variante tematica basata sul percorso del giocatore (vedi sotto), poi il Testo Universale — identico per tutti.
+
+---
+
+### Le Quattro Varianti Tonali
+
+Le varianti cambiano il *tono* del finale, non il *senso*. Tutte convergono allo stesso testo universale.
+
+| Variante | Condizioni | Tema |
+|---|---|---|
+| **Il Viaggiatore Leggero** | peso = 0, lucidità alta, tutti i Simulacri | ha lasciato andare come acqua attraverso la pietra |
+| **Il Portatore** | peso > 2 | ha tenuto stretto — il peso era fedeltà, non errore |
+| **Il Cercatore della Zona** | ≥ 4 passaggi nella Zona | ha girato in cerchio — il cerchio è la forma di chi non smette di cercare |
+| **Il Testimone** | percorso equilibrato | si è fermato tra chiarezza e oblio — la posizione più onesta |
+
+---
+
+### Il Testo Universale — identico per tutti
+
+```
+The Archive was yours.
+
+You moved through it.
+
+You asked.
+You waited.
+You wrote.
+You offered.
+You carried.
+You left behind.
+
+Some doors opened.
+Some did not.
+
+The ones that did not — the Archive answered them too.
+Every answer, even the ones that led nowhere, was a step further inside.
+
+This is what the rooms were for.
+Not to be solved.
+To be walked through.
+
+You walked through them.
+
+The Archive closes.
+
+But it closes having been walked.
+
+That cannot be taken from you.
+
+— FINE —
+```
+
+Dissolvenza in bianco — 4 secondi. Nessun suono. Home screen, senza fanfare.
+
+---
+
+### Audio del finale
+
+| Momento | Audio |
+|---|---|
+| Ingresso Il Nucleo | silenzio assoluto |
+| Movimento 1 (elenco) | nessun suono |
+| *"Tell me: what was the point?"* | singola nota di pianoforte, non risolta |
+| Movimento 2 (input giocatore) | silenzio |
+| *"Go."* | la nota si risolve — poi silenzio |
+| Movimento 3 | Aria Goldberg riprende dal punto sospeso |
+| Testo universale | Aria continua in decrescendo |
+| *"— FINE —"* | Aria completa il suo arco, fade 20 secondi |
+| Dissolvenza in bianco | silenzio |
 
 ---
 
@@ -371,7 +461,7 @@ Ultimo comando: `WAKE UP`
 
 | Presenza | Dove | Come |
 |---|---|---|
-| **Arseny Tarkovsky** | Stele + La Zona + Finale 2 | Versi incisi |
+| **Arseny Tarkovsky** | Stele + La Zona + Variante Portatore | Versi incisi |
 | **Andrei Tarkovskij** | Galleria degli Specchi | Figura irraggiungibile di spalle |
 | **Seth (Jane Roberts)** | Laboratorio Alchemico | Tono oracolare — no citazioni dirette (copyright) |
 
@@ -415,9 +505,7 @@ Solo testo e musica. Bach è l'architettura sonora dell'Archivio — non accompa
 - **Laboratorio** — `blow into the alembic`: nota armonica di violoncello si sovrappone
 - **Memoria** — progressione violino per stagioni; `drink`: silenzio → riparte con bordone continuo
 - **Zona** — variazione procedurale ogni ingresso (speed 0.7–1.3x, pitch ±0.5). Silenzio totale durante domande
-- **Finale Accettazione** — Aria riprende dalla nota sospesa, completa, fade 20s
-- **Finale Oblio** — silenzio 30s → fruscio bianco → nulla
-- **Finale Zona Eterna** — Aria manipolata, loop infinito mutante
+- **Tutti i finali** — Aria riprende dalla nota sospesa dove era stata interrotta all'inizio del gioco, completa il suo arco, fade 20s. L'audio non distingue tra varianti: il viaggio è sempre degno dello stesso epilogo musicale.
 
 ### Fonti Audio
 
@@ -673,11 +761,24 @@ CREATE TABLE zone_responses (
 - Quinto Settore con aroma personalizzato
 - Tutti gli effetti audio speciali
 
-**Versione 4 — DemiurgoService** ← ATTUALE
+**Versione 4 — DemiurgoService** ✅ completata
 - Integrazione `DemiurgeService` ("All That Is") in `game_engine_provider.dart`
 - Popolamento bundle citazioni (`assets/texts/demiurge/`) con ≥200 citazioni per settore
 - Rimozione dipendenza `flutter_llama` da `pubspec.yaml`
-- Test su device reale
+- Sistema Echo personas (Proust / Tarkovskij / Seth)
+- Sistema fasi (1–5) + affinity tracking
+- Multi-slot save system
+- Haptic feedback
+- Splash screen cinematica
+- 105 parser test + 119 puzzle gate test
+
+**Versione 5 — Storytelling** ← ATTUALE
+- Revisione filosofia del finale: il Nucleo perde sempre, il viaggio dà senso all'esistenza
+- Sceneggiatura completa del finale in tre movimenti (`docs/finale_screenplay.md`)
+- Aggiornamento GDD sezioni 3, 5, 12 ✅
+- Implementazione nuova logica il_nucleo nel motore (da fare)
+- Ottimizzazione testi narrativi dei nodi per coerenza con la filosofia (da fare)
+- Playtest end-to-end su device fisico Android (da fare)
 
 ---
 ## 22. NOTE APERTE / DA DECIDERE
@@ -695,9 +796,9 @@ CREATE TABLE zone_responses (
 - ~~Boss finale + Quinto Settore~~ ✅
 
 **Ancora aperto / priorità:**
-- **PRIORITÀ 1:** Integrare `DemiurgeService.respond()` in `game_engine_provider.dart` (sostituire `_callLlm()`)
-- **PRIORITÀ 2:** Popolare citazioni Demiurgo con ≥200 per settore via `tools/prepare_demiurge_bundles.py`
-- **PRIORITÀ 3:** Rimuovere dipendenza `flutter_llama` da `pubspec.yaml`
+- **PRIORITÀ 1:** Implementare nuova logica `il_nucleo` in `game_engine_provider.dart` secondo `docs/finale_screenplay.md` — tre movimenti, prompt libero "What remains?", varianti tonali
+- **PRIORITÀ 2:** Ottimizzare i testi narrativi dei nodi per coerenza con la filosofia (le stanze non esistono per essere risolte, esistono per essere attraversate)
+- **PRIORITÀ 3:** Playtest end-to-end su device fisico Android (API 26+, 3 GB RAM)
 - Verso esatto di Arseny Tarkovsky per la Stele (Settore Giardino, garden_stelae)
 - Test crossfade audio su device reali (rischio click nel workaround player swap)
 

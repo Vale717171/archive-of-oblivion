@@ -108,6 +108,46 @@ void main() {
       expect(integratedArgs.availableStances,
           isNot(fracturedArgs.availableStances));
     });
+
+    test('arguments can reflect meaningful but non-perfect traversal', () {
+      final imperfectButLived = FinalArcAdjudication.aggregate(
+        puzzles: const {
+          'garden_complete',
+          'obs_complete',
+          'gallery_complete',
+          'lab_complete',
+          'ritual_complete',
+          'sys_deep_garden',
+          'sys_deep_observatory',
+          'sys_deep_gallery',
+        },
+        counters: const {
+          'quote_exposure_seen': 21,
+          'sys_notebook_habitation': 9,
+          'sys_contradictions': 3,
+          'zone_meta_responses': 4,
+          'zone_meta_quality_tier_2': 2,
+          'zone_meta_contradiction_resolved_count': 1,
+          'zone_meta_contradiction_intensified_count': 1,
+          'memory_meta_costly_count': 1,
+          'memory_meta_specific_count': 3,
+        },
+        inventory: const ['notebook', 'ataraxia'],
+        psychoWeight: 2,
+      );
+      final eligibility = NucleusAdjudication.evaluate(imperfectButLived);
+      final arguments = NucleusAdjudication.buildArguments(
+        snapshot: imperfectButLived,
+        eligibility: eligibility,
+      );
+
+      final merged = arguments.antagonistArguments.join(' ').toLowerCase();
+      expect(merged.contains('not every attempt opened a door'), isTrue);
+      expect(merged.contains('already holds weight'), isTrue);
+      expect(merged.contains('not nullity'), isTrue);
+      expect(
+          arguments.availableStances.contains(NucleusStance.oblivion), isFalse);
+    });
   });
 
   group('Ending adjudication', () {
@@ -188,6 +228,42 @@ void main() {
       expect(result.response.newNode, 'finale_eternal_zone');
     });
 
+    test('Acceptance can emerge from honest imperfect integrated run', () {
+      final result = _resolve(
+        'i choose to live with imperfection',
+        puzzles: const {
+          'garden_complete',
+          'obs_complete',
+          'gallery_complete',
+          'lab_complete',
+          'ritual_complete',
+          'memory_epitaph_ready',
+          'sys_deep_garden',
+          'sys_deep_observatory',
+          'sys_deep_gallery',
+        },
+        counters: const {
+          'sys_contradictions': 3,
+          'quote_exposure_seen': 23,
+          'sys_notebook_habitation': 10,
+          'zone_meta_responses': 4,
+          'zone_meta_quality_tier_2': 2,
+          'zone_meta_contradiction_resolved_count': 1,
+          'zone_meta_contradiction_intensified_count': 1,
+          'memory_meta_costly_count': 1,
+          'memory_meta_specific_count': 3,
+        },
+        inventory: const ['notebook', 'ataraxia'],
+        psychoWeight: 2,
+      );
+
+      expect(result.response.newNode, 'finale_acceptance');
+      expect(
+        result.response.narrativeText.toLowerCase(),
+        contains('not every attempt opened a door'),
+      );
+    });
+
     test('Testimony is rare and does not overlap trivially with Acceptance',
         () {
       final almostAcceptance = _resolve(
@@ -245,6 +321,131 @@ void main() {
       );
 
       expect(rareBalance.response.newNode, 'finale_testimony');
+    });
+
+    test('Oblivion and Eternal Zone stay philosophically distinct', () {
+      final oblivion = _resolve(
+        'erase me',
+        puzzles: const {
+          'garden_complete',
+          'obs_complete',
+          'gallery_complete',
+          'lab_complete',
+          'ritual_complete',
+        },
+        counters: const {
+          'sys_contradictions': 6,
+          'quote_exposure_seen': 20,
+          'sys_notebook_habitation': 4,
+          'zone_meta_responses': 4,
+          'zone_meta_quality_tier_2': 0,
+          'zone_meta_contradiction_intensified_count': 3,
+          'memory_meta_costly_count': 0,
+          'memory_meta_specific_count': 0,
+        },
+        inventory: const ['notebook', 'mirror shard', 'clock'],
+        psychoWeight: 6,
+      );
+      final zone = _resolve(
+        'i remain',
+        puzzles: const {
+          'garden_complete',
+          'obs_complete',
+          'gallery_complete',
+          'lab_complete',
+          'ritual_complete',
+          'sys_deep_garden',
+          'sys_deep_observatory',
+          'sys_deep_gallery',
+        },
+        counters: const {
+          'sys_contradictions': 3,
+          'quote_exposure_seen': 22,
+          'sys_notebook_habitation': 10,
+          'zone_meta_responses': 4,
+          'zone_meta_quality_tier_2': 3,
+          'zone_meta_contradiction_resolved_count': 1,
+          'zone_meta_contradiction_intensified_count': 1,
+          'memory_meta_costly_count': 1,
+          'memory_meta_specific_count': 3,
+        },
+        inventory: const ['notebook', 'ataraxia'],
+        psychoWeight: 2,
+      );
+
+      expect(oblivion.response.newNode, 'finale_oblivion');
+      expect(zone.response.newNode, 'finale_eternal_zone');
+      expect(
+        oblivion.response.narrativeText.toLowerCase(),
+        contains('meaning was present'),
+      );
+      expect(
+        zone.response.narrativeText.toLowerCase(),
+        contains('did not fully incarnate'),
+      );
+    });
+
+    test('endings do not collapse into a simple good/bad spectrum', () {
+      final acceptance = _resolve(
+        'i choose to live with imperfection',
+        puzzles: const {
+          'garden_complete',
+          'obs_complete',
+          'gallery_complete',
+          'lab_complete',
+          'ritual_complete',
+          'memory_epitaph_ready',
+          'sys_deep_garden',
+          'sys_deep_observatory',
+          'sys_deep_gallery',
+        },
+        counters: const {
+          'sys_contradictions': 3,
+          'quote_exposure_seen': 23,
+          'sys_notebook_habitation': 10,
+          'zone_meta_responses': 4,
+          'zone_meta_quality_tier_2': 2,
+          'zone_meta_contradiction_resolved_count': 1,
+          'zone_meta_contradiction_intensified_count': 1,
+          'memory_meta_costly_count': 1,
+          'memory_meta_specific_count': 3,
+        },
+        inventory: const ['notebook', 'ataraxia'],
+        psychoWeight: 2,
+      );
+      final oblivion = _resolve(
+        'i accept oblivion',
+        puzzles: const {
+          'garden_complete',
+          'obs_complete',
+          'gallery_complete',
+          'lab_complete',
+          'ritual_complete',
+        },
+        counters: const {
+          'sys_contradictions': 6,
+          'quote_exposure_seen': 20,
+          'sys_notebook_habitation': 4,
+          'zone_meta_responses': 4,
+          'zone_meta_quality_tier_2': 0,
+          'zone_meta_contradiction_intensified_count': 3,
+          'memory_meta_costly_count': 0,
+          'memory_meta_specific_count': 0,
+        },
+        inventory: const ['notebook', 'mirror shard', 'clock'],
+        psychoWeight: 6,
+      );
+
+      expect(acceptance.response.newNode, 'finale_acceptance');
+      expect(oblivion.response.newNode, 'finale_oblivion');
+      expect(
+        acceptance.response.narrativeText.toLowerCase(),
+        isNot(contains('you win')),
+      );
+      expect(
+        oblivion.response.narrativeText.toLowerCase(),
+        isNot(contains('you failed')),
+      );
     });
   });
 

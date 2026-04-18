@@ -139,7 +139,7 @@ void main() {
       counters: const {
         'quote_exposure_seen': 22,
         'sys_notebook_habitation': 10,
-        'sys_contradictions': 2,
+        'sys_contradictions': 4,
         'sys_weight_verbal': 3,
         'sys_weight_symbolic': 8,
         'memory_childhood_specific_count': 1,
@@ -155,7 +155,7 @@ void main() {
       psychoWeight: 2,
       nucleusInput: 'i want to stay',
       expectedEndingNode: 'finale_eternal_zone',
-      expectedZoneSource: 'weight_symbolic',
+      expectedZoneSource: 'contradiction',
       expectMemoryReady: true,
     ),
     _RunProfile(
@@ -220,7 +220,7 @@ void main() {
         'memory_meta_costly_count': 2,
         'zone_meta_quality_tier_2': 2,
         'zone_meta_contradiction_resolved_count': 0,
-        'zone_meta_contradiction_intensified_count': 2,
+        'zone_meta_contradiction_intensified_count': 3,
       },
       inventory: const ['notebook', 'ticket'],
       psychoWeight: 3,
