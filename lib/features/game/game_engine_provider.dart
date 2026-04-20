@@ -340,7 +340,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
   int _commandsSinceAutoSave = 0;
   String _lastAutoSaveSector = '';
   final Map<String, int> _nonProductiveAttemptsByNode = <String, int>{};
+  final Map<String, String> _lastGenericFailByNode = <String, String>{};
+  final Map<String, int> _genericFailStreakByNode = <String, int>{};
+  int _zoneSterileMoveFailStreak = 0;
   int _sessionQuoteExposureFloor = 0;
+  int _unknownFallbackCursor = 0;
+  String? _lastUnknownFallback;
 
   // Maximum value for psychological weight and psycho-profile sliders.
   static const int _maxPsychoValue = 100;
@@ -358,6 +363,19 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
     'Something in what you said belongs to another room.',
     'The Archive keeps the utterance without resolving it.',
     'These words do not fit the lock before you.',
+  ];
+  static const List<String> _onboardingFertileUnknownFallbacks = [
+    'The room catches a real thread in what you said.\n\nNo hinge turns yet, but the thread remains.',
+    'Something in your words belongs here.\n\nThe mechanism stays still, yet the chamber keeps the trace.',
+    'Your sentence brushes the right surface.\n\nNot a key yet. Still: not wasted.',
+    'The Archive hears intention before form.\n\nThe room does not open, but it remembers.',
+  ];
+
+  static const List<String> _onboardingOpaqueUnknownFallbacks = [
+    'Your words pass through the chamber without purchase.\n\nNothing in the room moves.',
+    'The utterance arrives, then thins into air.\n\nNo contour holds.',
+    'The phrase does not find a lock in this room.\n\nNo threshold answers.',
+    'The Archive receives the sound only.\n\nThe chamber remains unchanged.',
   ];
 
   // ── Small helpers ───────────────────────────────────────────────────────────
@@ -424,8 +442,36 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         'Linger, answer, and let each wing leave its mark before you ascend.';
   }
 
-  String _randomUnknownFallback() => _unknownCommandFallbacks[
-      _random.nextInt(_unknownCommandFallbacks.length)];
+  int _playerTurnCount(GameEngineState state) =>
+      state.messages.where((msg) => msg.role == MessageRole.player).length;
+
+  String _onboardingUnknownFallback({
+    required bool fertile,
+    required int turnCount,
+  }) {
+    final source = turnCount <= 6
+        ? (fertile
+            ? _onboardingFertileUnknownFallbacks
+            : _onboardingOpaqueUnknownFallbacks)
+        : _unknownCommandFallbacks;
+    if (source.length == 1) return source.first;
+
+    // Keep early failures varied so the first minutes don't feel templated.
+    for (var attempt = 0; attempt < source.length; attempt++) {
+      final candidate =
+          source[(_unknownFallbackCursor + attempt) % source.length];
+      if (candidate != _lastUnknownFallback) {
+        _unknownFallbackCursor =
+            (_unknownFallbackCursor + attempt + 1) % source.length;
+        _lastUnknownFallback = candidate;
+        return candidate;
+      }
+    }
+    final fallback = source[_unknownFallbackCursor % source.length];
+    _unknownFallbackCursor = (_unknownFallbackCursor + 1) % source.length;
+    _lastUnknownFallback = fallback;
+    return fallback;
+  }
 
   EngineResponse _simulacrumReward({
     required String narrativeText,
@@ -532,6 +578,9 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
       final savedState = await ref.read(gameStateProvider.future);
       final currentNodeId = savedState.currentNode;
+      if (currentNodeId == 'la_zona' && cmd.verb != CommandVerb.go) {
+        _zoneSterileMoveFailStreak = 0;
+      }
       final evaluationResponse = _evaluate(cmd, currentNodeId, withPlayer);
       final zoneResolution = ZoneModule.resolveTurn(
         cmd: cmd,
@@ -552,7 +601,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         inventory: withPlayer.inventory,
         psychoWeight: withPlayer.psychoWeight,
       );
-      final response = finalArcResolution.response;
+      final response = _rebalanceMidgameOffTrajectoryResponse(
+        cmd: cmd,
+        nodeId: currentNodeId,
+        stateSnapshot: withPlayer,
+        response: finalArcResolution.response,
+      );
       final progressiveHintSuffix = _progressiveHintSuffix(
         cmd: cmd,
         response: response,
@@ -724,22 +778,43 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
       // ── Display ─────────────────────────────────────────────────────────────
       final demiurgeNodeId = response.newNode ?? currentNodeId;
-      final narrativeText = response.needsDemiurge
+      final throttleMetaNarration = _shouldThrottleMetaNarration(
+        response: response,
+        nodeId: demiurgeNodeId,
+      );
+      final narrativeText = response.needsDemiurge && !throttleMetaNarration
           ? _callNarrator(
               cmd.verb, response.narrativeText, demiurgeNodeId, trimmed)
           : response.narrativeText;
       final narrativeWithProgressiveHint = progressiveHintSuffix == null
           ? narrativeText
           : '$narrativeText$progressiveHintSuffix';
-      final narrativeWithPsychoShift = psychoShift == null
+      final savedNodeId = response.newNode ?? currentNodeId;
+      final deferPsychoShift = _shouldDeferPsychoShiftLine(
+        response: response,
+        nodeId: savedNodeId,
+        progressiveHintSuffix: progressiveHintSuffix,
+        narrativeText: narrativeText,
+        psychoShift: psychoShift,
+      );
+      final narrativeWithPsychoShift = psychoShift == null || deferPsychoShift
           ? narrativeWithProgressiveHint
           : '$narrativeWithProgressiveHint\n\n${psychoShift.text}';
-      final savedNodeId = response.newNode ?? currentNodeId;
-      final thresholdSignal = SystemicStateCodec.thresholdReturnSignal(
+      final thresholdSignalCandidate = SystemicStateCodec.thresholdReturnSignal(
         nodeId: savedNodeId,
         counters: newCounters,
         puzzles: newPuzzles,
       );
+      final previousThresholdSignal = SystemicStateCodec.thresholdReturnSignal(
+        nodeId: currentNodeId,
+        counters: withPlayer.puzzleCounters,
+        puzzles: withPlayer.completedPuzzles,
+      );
+      final thresholdSignal = thresholdSignalCandidate != null &&
+              ((savedNodeId == 'la_soglia' && currentNodeId != 'la_soglia') ||
+                  thresholdSignalCandidate != previousThresholdSignal)
+          ? thresholdSignalCandidate
+          : null;
       final narrativeWithThreshold = thresholdSignal == null
           ? narrativeWithPsychoShift
           : '$narrativeWithPsychoShift\n\n$thresholdSignal';
@@ -1073,8 +1148,20 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
 
     final dest = node.exits[direction];
     if (dest == null) {
+      if (nodeId == 'la_zona') {
+        _zoneSterileMoveFailStreak += 1;
+        return EngineResponse(
+          narrativeText: _zoneSterileNavigationFailText(
+            direction: direction,
+            streak: _zoneSterileMoveFailStreak,
+          ),
+        );
+      }
       return const EngineResponse(
           narrativeText: 'There is nothing in that direction.');
+    }
+    if (nodeId == 'la_zona') {
+      _zoneSterileMoveFailStreak = 0;
     }
     final destNode = _nodes[dest];
     if (destNode == null) {
@@ -1474,8 +1561,17 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         _routeSectorCommand(cmd: cmd, nodeId: nodeId, state: s);
     if (sectorResponse != null) return sectorResponse;
 
+    final sector = DemiurgeService.sectorForNode(nodeId);
+    final fertile = EchoService.echoForKeywords(cmd.rawInput) != null ||
+        EchoService.isThematicForSector(cmd.rawInput, sector);
+    final turnCount = _playerTurnCount(s);
+    final fallback = _onboardingUnknownFallback(
+      fertile: fertile,
+      turnCount: turnCount,
+    );
+
     return EngineResponse(
-      narrativeText: _randomUnknownFallback(),
+      narrativeText: fallback,
       needsDemiurge: true,
     );
   }
@@ -1590,9 +1686,9 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         ]);
       case 'la_zona':
         return _selectHint(level, const [
-          'The Zone wants an answer, not a keyword.',
-          'Short replies are rejected; it is testing sincerity, not syntax.',
-          'Answer the Zone’s question in at least a few words, then use back only after it accepts your response.',
+          'Keywords dissolve quickly here; answer in lived language.',
+          'One short line is rarely enough. Give the Zone one concrete detail and one cost.',
+          'Answer in first person with a few words of stake, then use back only after it accepts your response.',
         ]);
     }
 
@@ -1901,6 +1997,29 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         verb != CommandVerb.inventory;
   }
 
+  String _zoneSterileNavigationFailText({
+    required String direction,
+    required int streak,
+  }) {
+    final cycle = streak % 4;
+    final base = switch (cycle) {
+      0 =>
+        'You move $direction. The corridor shifts and returns you to the same question.',
+      1 =>
+        'The step toward $direction lands, but the geometry declines to register it.',
+      2 =>
+        'That direction opens for an instant, then folds back into the same wall.',
+      _ => 'The Zone allows the gesture, not the passage.',
+    };
+    if (streak >= 6 && streak % 6 == 0) {
+      return '$base\n\nFor one breath, an angle loosens — then decides against you.';
+    }
+    if (streak >= 3 && streak % 3 == 0) {
+      return '$base\n\nThe attempt was not sterile. It just did not cross.';
+    }
+    return base;
+  }
+
   bool _isProductiveOutcome(EngineResponse response) {
     return response.newNode != null ||
         response.completePuzzle != null ||
@@ -1912,6 +2031,55 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
         response.anxietyDelta != null ||
         response.oblivionDelta != null ||
         response.playerMemoryKey != null;
+  }
+
+  bool _hasActionableTail(String narrativeText) {
+    final lines = narrativeText
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .toList();
+    if (lines.isEmpty) return false;
+    final tail = lines.last.toLowerCase();
+    return tail.startsWith('try ') ||
+        tail.startsWith('walk ') ||
+        tail.startsWith('name ') ||
+        tail.startsWith('begin ') ||
+        tail.startsWith('bring ') ||
+        tail.startsWith('build ') ||
+        tail.startsWith('choose ') ||
+        tail.startsWith('use ') ||
+        tail.startsWith('give ');
+  }
+
+  bool _responseAlreadyGuidesNextMove(EngineResponse response) {
+    final text = response.narrativeText;
+    return text.contains('Hint:') || _hasActionableTail(text);
+  }
+
+  bool _shouldDeferPsychoShiftLine({
+    required EngineResponse response,
+    required String nodeId,
+    required String? progressiveHintSuffix,
+    required String narrativeText,
+    required _PsychoShiftResult? psychoShift,
+  }) {
+    if (psychoShift == null) return false;
+    if (psychoShift.phaseChanged) return false;
+    if (_isProductiveOutcome(response)) return false;
+    final nonProductiveAttempts = _nonProductiveAttemptsByNode[nodeId] ?? 0;
+    if (nonProductiveAttempts >= 4) {
+      // In long non-productive chains, keep shift reporting sparse.
+      return nonProductiveAttempts % 4 != 0;
+    }
+    if (nonProductiveAttempts >= 2 && nonProductiveAttempts % 3 != 0) {
+      return true;
+    }
+    final isEarlyPuzzleLoop = nodeId == 'obs_antechamber' ||
+        nodeId == 'gallery_hall' ||
+        nodeId == 'gallery_copies';
+    return progressiveHintSuffix != null ||
+        (isEarlyPuzzleLoop && _hasActionableTail(narrativeText));
   }
 
   String? _progressiveHintSuffix({
@@ -1926,18 +2094,191 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       _nonProductiveAttemptsByNode.remove(nodeId);
       return null;
     }
+    if (_responseAlreadyGuidesNextMove(response)) {
+      if (nodeId == 'la_zona') {
+        final attempts = (_nonProductiveAttemptsByNode[nodeId] ?? 0) + 1;
+        _nonProductiveAttemptsByNode[nodeId] = attempts;
+        return null;
+      }
+      _nonProductiveAttemptsByNode.remove(nodeId);
+      return null;
+    }
 
     final attempts = (_nonProductiveAttemptsByNode[nodeId] ?? 0) + 1;
     _nonProductiveAttemptsByNode[nodeId] = attempts;
 
     if (attempts != 3 && attempts != 5) return null;
+    if (nodeId == 'obs_antechamber') {
+      if (attempts == 3) {
+        return '\n\nThe mount does not argue.\n\nTry an order that starts from the least dominant lens.';
+      }
+      return '\n\nThe mount keeps the same silence.\n\nMoon first, then Mercury, then Sun.';
+    }
+    if (nodeId == 'gallery_hall') {
+      if (attempts == 3) {
+        return '\n\nThe mirrors refuse frontal insistence.\n\nTry moving while facing away from the door-line.';
+      }
+      return '\n\nThe hall repeats your straight path.\n\nWalk backward and watch what changes behind you.';
+    }
+    if (nodeId == 'gallery_copies') {
+      if (attempts == 3) {
+        return '\n\nThe wing keeps your wording, not your intent.\n\nName one element that is missing, not one that is present.';
+      }
+      return '\n\nThe copies remain exact and incomplete.\n\nGive one brief absence-statement, then test another canvas.';
+    }
     final hintLevel = attempts == 3 ? 1 : 2;
     final hintText = _hintTextForNode(nodeId, hintLevel, stateSnapshot);
     final hintBody = hintText.contains('\n\n')
         ? hintText.split('\n\n').skip(1).join('\n\n')
         : hintText;
+    if (attempts == 3) {
+      return '\n\n$hintBody';
+    }
+    return '\n\nThe room does not close against you.\n\n$hintBody';
+  }
 
-    return '\n\nThe Archive does not correct you. It adjusts the light.\n\n$hintBody';
+  bool _shouldThrottleMetaNarration({
+    required EngineResponse response,
+    required String nodeId,
+  }) {
+    if (!response.needsDemiurge) return false;
+    if (_isProductiveOutcome(response)) return false;
+    if (_responseAlreadyGuidesNextMove(response) && nodeId != 'la_zona') {
+      return false;
+    }
+    final attempts = _nonProductiveAttemptsByNode[nodeId] ?? 0;
+    // Only engage in sustained off-trajectory chains.
+    if (attempts < 4) return false;
+    final text = response.narrativeText;
+    // Preserve authored room/gate lines that already orient from within.
+    if (text.contains('Hint:') || _hasActionableTail(text)) return false;
+    return true;
+  }
+
+  bool _isGenericFailureNarrative(String text) {
+    final normalized = text.trim().toLowerCase();
+    return normalized == 'nothing happens. perhaps the moment has not come.' ||
+        normalized == 'there is nothing in that direction.' ||
+        normalized == 'there is nothing here to arrange.' ||
+        normalized == 'nothing here to combine.' ||
+        normalized == 'nothing here to press.' ||
+        normalized == 'nothing here to measure.' ||
+        normalized == 'nothing here to calibrate.' ||
+        normalized == 'nothing here to invert.' ||
+        normalized == 'nothing here to confirm.' ||
+        normalized == 'there is nothing here to break.' ||
+        normalized == 'there is nothing here that accepts an entry.' ||
+        normalized == 'there is nothing here to decipher.' ||
+        normalized == 'there is nothing here to collect.' ||
+        normalized == 'there is no one here to receive an offering.' ||
+        normalized == 'there is nowhere here to deposit anything.' ||
+        normalized == 'you are not carrying that.';
+  }
+
+  String _variedGenericFailureLine({
+    required CommandVerb verb,
+    required int streak,
+  }) {
+    final cycle = streak % 3;
+    switch (verb) {
+      case CommandVerb.go:
+        return cycle == 0
+            ? 'That route keeps its seal.\n\nTry a neighboring direction before repeating this one.'
+            : cycle == 1
+                ? 'The passage does not answer that approach.\n\nShift orientation, then move again.'
+                : 'The way resists this line.\n\nStep elsewhere, then return with a different angle.';
+      case CommandVerb.walk:
+        return cycle == 0
+            ? 'The gesture lands, but the room stays still.\n\nAlter the manner of movement, not only its force.'
+            : cycle == 1
+                ? 'Your motion is seen, not accepted.\n\nChange stance, then repeat.'
+                : 'The floor remembers the attempt.\n\nTry a different walk-intent.';
+      case CommandVerb.write:
+        return cycle == 0
+            ? 'The line is received, but does not turn the lock.\n\nTighten one detail and write again.'
+            : cycle == 1
+                ? 'The room keeps your sentence without yielding.\n\nRewrite with one sharper absence.'
+                : 'Your wording remains near the hinge.\n\nTrim it to one operative image.';
+      default:
+        return cycle == 0
+            ? 'The room holds, unchanged.\n\nTry a nearby verb rather than repeating the same stroke.'
+            : cycle == 1
+                ? 'No opening yet.\n\nShift one relation and test again.'
+                : 'The chamber keeps this attempt in suspension.\n\nChange one element, then retry.';
+    }
+  }
+
+  bool _looksQuasiCorrectWithoutTail(String text) {
+    final lower = text.toLowerCase();
+    final quasiMarker = lower.contains('almost') ||
+        lower.contains('not yet') ||
+        lower.contains('stays dim') ||
+        lower.contains('evasive') ||
+        lower.contains('rejects this') ||
+        lower.contains('rejects those') ||
+        lower.contains('is not ready') ||
+        lower.contains('does not answer random pressure');
+    return quasiMarker && !_hasActionableTail(text) && !text.contains('Hint:');
+  }
+
+  EngineResponse _rebalanceMidgameOffTrajectoryResponse({
+    required ParsedCommand cmd,
+    required String nodeId,
+    required GameEngineState stateSnapshot,
+    required EngineResponse response,
+  }) {
+    if (_isProductiveOutcome(response)) {
+      _lastGenericFailByNode.remove(nodeId);
+      _genericFailStreakByNode.remove(nodeId);
+      return response;
+    }
+
+    final turnCount = _playerTurnCount(stateSnapshot);
+    if (turnCount <= 12) {
+      return response;
+    }
+
+    var narrative = response.narrativeText.trimRight();
+    final isGenericFailure = _isGenericFailureNarrative(narrative);
+    if (isGenericFailure) {
+      final last = _lastGenericFailByNode[nodeId];
+      final sameAsLast = last == narrative;
+      final streak =
+          sameAsLast ? (_genericFailStreakByNode[nodeId] ?? 1) + 1 : 1;
+      _lastGenericFailByNode[nodeId] = narrative;
+      _genericFailStreakByNode[nodeId] = streak;
+      if (streak >= 2) {
+        narrative = _variedGenericFailureLine(verb: cmd.verb, streak: streak);
+      }
+    } else {
+      _lastGenericFailByNode.remove(nodeId);
+      _genericFailStreakByNode.remove(nodeId);
+    }
+
+    if (_looksQuasiCorrectWithoutTail(narrative)) {
+      narrative =
+          '$narrative\n\nYou are near the hinge. Change one relation, then repeat the gesture.';
+    }
+
+    if (narrative == response.narrativeText) {
+      return response;
+    }
+
+    return EngineResponse(
+      narrativeText: narrative,
+      newNode: response.newNode,
+      needsDemiurge: response.needsDemiurge,
+      weightDelta: response.weightDelta,
+      lucidityDelta: response.lucidityDelta,
+      anxietyDelta: response.anxietyDelta,
+      oblivionDelta: response.oblivionDelta,
+      grantItem: response.grantItem,
+      completePuzzle: response.completePuzzle,
+      incrementCounter: response.incrementCounter,
+      clearInventoryOnDeposit: response.clearInventoryOnDeposit,
+      audioTrigger: response.audioTrigger,
+      playerMemoryKey: response.playerMemoryKey,
+    );
   }
 
   /// Returns a Demiurge ("All That Is") narrative response for the given node.
@@ -2000,12 +2341,12 @@ class GameEngineNotifier extends AsyncNotifier<GameEngineState> {
       }
     }
 
-    // ── 4. Archive-meta (completely off-topic unknown command).
-    //        Seth's voice turns every failure into a narrative moment.
-    //        Only fires for unknown verbs — recognised-but-failed commands
-    //        still deserve the Demiurge's full philosophical response.
+    // ── 4. Unknown fallback (completely off-topic unknown command).
+    //        Keep the wording authored by _handleUnknown so onboarding can
+    //        distinguish fertile misses from commands that leave no traction.
+    //        Recognised-but-failed commands still go through Demiurge fallback.
     if (verb == CommandVerb.unknown) {
-      return EchoService.instance.respondMeta();
+      return fallbackText;
     }
 
     // ── 5. Demiurge fallback ────────────────────────────────────────────────

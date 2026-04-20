@@ -11,6 +11,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:math' show min;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -123,6 +124,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
   // -1 = "not yet observed" so the very first build never fires a threshold haptic.
   int _lastObservedOblivionLevel = -1;
   String? _lastSubmittedCommand;
+  int _submittedTurnCount = 0;
 
   // Assist tray (quick commands + reuse) — hidden by default so the text
   // area gets maximum space; toggled by the lightbulb icon in the input row.
@@ -251,6 +253,9 @@ class _GameScreenState extends ConsumerState<GameScreen>
 
   void _startTypewriter(String text) {
     final settings = ref.read(appSettingsProvider).valueOrNull;
+    final currentNode =
+        ref.read(gameStateProvider).valueOrNull?.currentNode ?? '';
+    final onboardingBoost = _shouldBoostOnboardingTypewriter(currentNode);
     if (settings?.instantText ?? false) {
       setState(() {
         _typewriterTarget = text;
@@ -262,8 +267,14 @@ class _GameScreenState extends ConsumerState<GameScreen>
     }
     if (_typewriterTarget == text && _typewriterRunning) return;
     _typewriterTarget = text;
-    _typewriterBuffer = '';
-    _typewriterIndex = 0;
+    if (onboardingBoost && text.length > 24) {
+      final seedChars = min(22, text.length);
+      _typewriterBuffer = text.substring(0, seedChars);
+      _typewriterIndex = seedChars;
+    } else {
+      _typewriterBuffer = '';
+      _typewriterIndex = 0;
+    }
     _typewriterRunning = true;
     _tickTypewriter();
   }
@@ -280,11 +291,19 @@ class _GameScreenState extends ConsumerState<GameScreen>
     final settings = ref.read(appSettingsProvider).valueOrNull;
     final currentNode =
         ref.read(gameStateProvider).valueOrNull?.currentNode ?? '';
+    final onboardingBoost = _shouldBoostOnboardingTypewriter(currentNode);
     final tunedDelay =
         (((settings?.typewriterMillis ?? 30) * 1.25).round()).clamp(12, 60);
-    final baseDelay = _isFinaleNode(currentNode) ? 170 : tunedDelay;
-    final delay =
-        (ch == ' ' || ch == '\n') ? (baseDelay ~/ 2).clamp(4, 20) : baseDelay;
+    final baseDelay = _isFinaleNode(currentNode)
+        ? 170
+        : onboardingBoost
+            ? (tunedDelay * 0.62).round().clamp(8, 28)
+            : tunedDelay;
+    final delay = (ch == ' ' || ch == '\n')
+        ? onboardingBoost
+            ? (baseDelay ~/ 3).clamp(3, 14)
+            : (baseDelay ~/ 2).clamp(4, 20)
+        : baseDelay;
 
     _typewriterTimer?.cancel();
     _typewriterTimer = Timer(Duration(milliseconds: delay), () {
@@ -311,6 +330,15 @@ class _GameScreenState extends ConsumerState<GameScreen>
       _scrollToBottom();
       _tickTypewriter();
     });
+  }
+
+  bool _shouldBoostOnboardingTypewriter(String nodeId) {
+    if (_isFinaleNode(nodeId)) return false;
+    final engine = ref.read(gameEngineProvider).valueOrNull;
+    if (engine == null) return false;
+    final playerTurns =
+        engine.messages.where((m) => m.role == MessageRole.player).length;
+    return playerTurns <= 8;
   }
 
   void _skipTypewriter() {
@@ -609,6 +637,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
     if (_hapticsOn()) HapticFeedback.mediumImpact();
     _controller.clear();
     _lastSubmittedCommand = text;
+    _submittedTurnCount += 1;
     // Add to history (skip duplicates of the most recent entry; cap at 30).
     if (_commandHistory.isEmpty || _commandHistory.last != text) {
       _commandHistory.add(text);
@@ -954,6 +983,8 @@ class _GameScreenState extends ConsumerState<GameScreen>
                 final quickCommands = (settings?.commandAssist ?? true)
                     ? _quickCommandsForNode(currentNode, engine)
                     : const <_QuickCommand>[];
+                final showSessionAssist = (settings?.commandAssist ?? true) &&
+                    (_typewriterRunning || _submittedTurnCount <= 14);
                 final lastCommand = _findLastPlayerCommand(engine.messages);
 
                 // Start typewriter for the latest narrative message when it arrives
@@ -992,7 +1023,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                           narrativeColor: narrativeColor,
                           visualProfile: visualProfile,
                           textScale: textScale,
-                          showAssist: settings?.commandAssist ?? true,
+                          showAssist: showSessionAssist,
                           typewriterRunning: _typewriterRunning,
                         ),
                       ),
@@ -1521,7 +1552,7 @@ class _SessionCard extends StatelessWidget {
             Text(
               typewriterRunning
                   ? 'Tap the narrative to reveal the full line instantly.'
-                  : 'Short commands work best. Mistakes may still advance the atmosphere.',
+                  : 'Short commands work best. Some mistakes still change the atmosphere; others pass without opening anything yet.',
               style: TextStyle(
                 color: narrativeColor.withValues(alpha: 0.68),
                 fontSize: 12.2 * textScale,

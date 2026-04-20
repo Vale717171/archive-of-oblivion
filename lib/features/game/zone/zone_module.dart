@@ -441,6 +441,9 @@ class ZoneModule {
       'sys_notebook_habitation':
           currentHabitation + (evaluation.accepted ? 1 : 0),
     };
+    final failStreak =
+        evaluation.accepted ? 0 : (counters['zone_fail_streak'] ?? 0) + 1;
+    updates['zone_fail_streak'] = failStreak;
 
     for (final tag in evaluation.tags) {
       final key = 'zone_meta_tag_${tag}_count';
@@ -457,13 +460,21 @@ class ZoneModule {
     };
 
     if (!evaluation.accepted) {
+      final pulse = _zoneProgressPulseFor(
+        source: promptSource,
+        streak: failStreak,
+      );
+      final responseText = pulse == null
+          ? _zoneRejectedResponseFor(
+              source: promptSource,
+              streak: failStreak,
+            )
+          : '${_zoneRejectedResponseFor(source: promptSource, streak: failStreak)}\n\n$pulse';
       return ZoneTurnResolution(
-        response: const EngineResponse(
-          narrativeText: 'The Zone does not accept the half-answer.\n\n'
-              'It waits. Something in the geometry tightens.\n\n'
-              'Try again — more fully.',
-          anxietyDelta: 5,
-          weightDelta: 1,
+        response: EngineResponse(
+          narrativeText: responseText,
+          anxietyDelta: failStreak >= 4 ? 2 : 5,
+          weightDelta: failStreak >= 4 ? 0 : 1,
         ),
         counterUpdates: updates,
         puzzleAdds: metadataMarkers,
@@ -756,6 +767,43 @@ class ZoneModule {
       }
     }
     return 'The Zone keeps this as a partial coordinate. You may return, but it will ask again later.';
+  }
+
+  static String _zoneRejectedResponseFor({
+    required String source,
+    required int streak,
+  }) {
+    final cycle = streak % 4;
+    final sourceLine = switch (source) {
+      'contradiction' =>
+        'The answer circles the contradiction, but does not yet inhabit it.',
+      'memory_readiness' => 'A memory spoke, but from behind glass.',
+      'notebook' => 'The line is lucid, yet still borrowed.',
+      _ => 'The Zone does not accept the half-answer.',
+    };
+    final closeLine = switch (cycle) {
+      0 => 'It waits. Something in the geometry tightens.',
+      1 => 'The corridor keeps your words, then asks for the missing weight.',
+      2 => 'The walls hold position, as if listening for one sentence more.',
+      _ => 'The architecture stays suspended, unfinished by that reply.',
+    };
+    return '$sourceLine\n\n$closeLine\n\nTry again — more fully.';
+  }
+
+  static String? _zoneProgressPulseFor({
+    required String source,
+    required int streak,
+  }) {
+    // Rare pulse in long non-productive chains.
+    if (streak < 4 || streak % 4 != 0) return null;
+    switch (source) {
+      case 'contradiction':
+        return 'A seam in the corridor appears for one breath, then seals again.';
+      case 'notebook':
+        return 'For an instant, one blank margin darkens — as if ink considered returning.';
+      default:
+        return 'The angle between two walls softens, then hardens back.';
+    }
   }
 
   static bool _tagMatchesText(String tag, String text) {

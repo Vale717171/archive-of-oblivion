@@ -4,6 +4,28 @@
 
 ---
 
+### 2026-04-20 — Codex GPT-5 (Micro-polish cycle closure: onboarding → Zone-heavy validation)
+**Role:** Gameplay readability/pacing micro-polish + emulator-grounded validation (no refactor)
+
+**Done:**
+- Completed a focused readability/pacing cycle without architecture churn:
+  - onboarding fail feedback variation + fertile vs opaque signal clarity
+  - Observatory early-loop fail readability (`examine`/`combine`) with clearer next-move cadence
+  - Gallery early-loop fail readability with reduced post-fail density
+  - cross-sector post-fail composition balancing (fail + suffix + shift layering)
+  - midgame off-trajectory balancing to reduce meta/system over-reporting pressure
+  - Zone chain tuning (text-chain + sterile navigation `go` fail throttling/variation)
+- Kept interventions orchestration-first in engine flow, with minimal local text edits where needed.
+- Repeated emulator playtests (clean, off-trajectory, quasi-correct, mixed long, Zone-heavy) used as the decision basis.
+
+**Outcome:**
+- Early loops now breathe better and preserve tone.
+- Stable remaining bottleneck was narrowed to long Zone-heavy non-productive navigation chains, then reduced via targeted movement-fail variation and sparse diegetic pulse.
+- Decision at cycle end: stop patching and continue with validation-first runs.
+
+**Validation snapshots (targeted):**
+- `flutter test test/game_engine_helpers_test.dart test/observatory_module_test.dart test/gallery_module_test.dart test/zone_module_test.dart test/game_screen_test.dart` ✅
+
 ### 2026-04-18 — Codex GPT-5 (UI prestige pass: Home/Game atmospheric redesign)
 **Role:** Flutter UI art-direction upgrade (authored, premium, atmospheric) with gameplay-preserving integration
 

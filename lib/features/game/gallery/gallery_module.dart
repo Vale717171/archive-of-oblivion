@@ -302,8 +302,9 @@ class GalleryModule {
     }
 
     return const EngineResponse(
-      narrativeText: 'Forward movement only extends the hallway.\n\n'
-          'In this room, straightforwardness is not progress.',
+      narrativeText: 'Forward movement only lengthens the hall.\n\n'
+          'This room opens from the wrong orientation.\n\n'
+          'Walk backward and keep the mirror in your periphery.',
     );
   }
 
@@ -392,7 +393,9 @@ class GalleryModule {
       }
       if (cmd.args.isEmpty) {
         return const EngineResponse(
-          narrativeText: 'Describe what is missing from one of the copies.',
+          narrativeText: 'Your line does not land.\n\n'
+              'In this wing, naming presence is not enough.\n\n'
+              'Choose one copy and name what is missing.',
         );
       }
       final text = cmd.args.join(' ').toLowerCase();
@@ -403,9 +406,9 @@ class GalleryModule {
           text.contains('removed');
       if (!isAbsenceAware) {
         return const EngineResponse(
-          narrativeText:
-              'You describe what is present. The copy does not brighten.\n\n'
-              'This wing opens only when absence is named as absence.',
+          narrativeText: 'The copy receives your words, then stays dim.\n\n'
+              'You named what is there, not what was removed.\n\n'
+              'Name one absence directly.',
         );
       }
       final described =

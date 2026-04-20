@@ -61,13 +61,15 @@ class ObservatoryModule {
         'back': 'la_soglia'
       },
       examines: {
-        'lenses': 'Three lenses. Sun: large, amber. Mercury: small, dense. '
-            'Moon: silvered, cold. The order in which they are combined matters.',
+        'lenses': 'Three lenses: Sun (large, amber), Mercury (small, dense), '
+            'Moon (silvered, cold).\n\nThe labels invite the obvious order. The mount does not.',
+        'lens':
+            'Sun, Mercury, Moon.\n\nIf you test an order, begin with what feels least dominant.',
         'sun': 'The largest lens. Its apparent primacy may be the problem.',
         'mercury': 'Small and heavy. The glass feels older.',
         'moon': 'Cold to the touch. It seems to absorb rather than bend.',
         'mount':
-            'Three slots, vertically arranged. Each accepts only one lens.',
+            'Three vertical slots, one lens each.\n\nIt responds to sequence, not size.',
         'slots':
             'Upper, middle, lower. Their relative sizes suggest an ordering.',
       },
@@ -446,14 +448,15 @@ class ObservatoryModule {
     }
     if (hasMoon && hasMercury && hasSun) {
       return const EngineResponse(
-        narrativeText: 'The mount rejects this order.\n\n'
-            'The apparent hierarchy — Sun first — may need to be inverted.',
+        narrativeText: 'The mount rejects this sequence.\n\n'
+            'The obvious hierarchy is a decoy.\n\n'
+            'Begin with the cold lens, then the dense one, then the bright one.',
       );
     }
     return const EngineResponse(
-      narrativeText: 'The mount does not accept this.\n\n'
-          'Three lenses: Moon, Mercury, Sun. '
-          'Their order is the inverse of what seems natural.',
+      narrativeText: 'The mount stays inert.\n\n'
+          'It only answers to a full sequence.\n\n'
+          'Bring Moon, Mercury, and Sun into one deliberate order.',
     );
   }
 
