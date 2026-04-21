@@ -39,6 +39,7 @@ const Duration _backgroundFlashHoldDuration = Duration(milliseconds: 180);
 const Duration _backgroundFadeDuration = Duration(milliseconds: 900);
 const Duration _puzzleCueHoldDuration = Duration(milliseconds: 1300);
 const Duration _simulacrumBannerDuration = Duration(milliseconds: 2200);
+const Duration _epiphanyPopupDuration = Duration(milliseconds: 2000);
 // Secret command that activates walkthrough mode (QA only, never persisted).
 const String _walkthroughUnlockCommand = 'Stalker4598!TarkoS?';
 
@@ -65,6 +66,83 @@ _FinaleType? _finaleTypeFor(String nodeId) {
       return null;
   }
 }
+
+class _ProgressMilestone {
+  final String key;
+  final String label;
+  final String trackTitle;
+
+  const _ProgressMilestone({
+    required this.key,
+    required this.label,
+    required this.trackTitle,
+  });
+}
+
+class _EpiphanyLine {
+  final String title;
+  final String subtitle;
+
+  const _EpiphanyLine({
+    required this.title,
+    required this.subtitle,
+  });
+}
+
+const List<_ProgressMilestone> _progressMilestones = [
+  _ProgressMilestone(
+    key: 'progress_surface_garden',
+    label: 'Garden',
+    trackTitle: 'Bach BWV 846 — Garden Threshold',
+  ),
+  _ProgressMilestone(
+    key: 'progress_surface_observatory',
+    label: 'Observatory',
+    trackTitle: 'Contrapunctus — Observatory',
+  ),
+  _ProgressMilestone(
+    key: 'progress_surface_gallery',
+    label: 'Gallery',
+    trackTitle: 'Bach BWV 846 — Gallery Mirror',
+  ),
+  _ProgressMilestone(
+    key: 'progress_surface_laboratory',
+    label: 'Laboratory',
+    trackTitle: 'Bach BWV 1008 — Laboratory',
+  ),
+  _ProgressMilestone(
+    key: 'progress_surface_memory',
+    label: 'Memory',
+    trackTitle: 'Aria delle Goldberg — Memory Trace',
+  ),
+];
+
+const List<_EpiphanyLine> _epiphanyLines = [
+  _EpiphanyLine(
+    title: 'Aperture',
+    subtitle: 'A narrow light opens inside the Archive.',
+  ),
+  _EpiphanyLine(
+    title: 'Resonance',
+    subtitle: 'The room answers before words can.',
+  ),
+  _EpiphanyLine(
+    title: 'Threshold',
+    subtitle: 'A silent hinge turns somewhere near.',
+  ),
+  _EpiphanyLine(
+    title: 'Trace',
+    subtitle: 'A living mark remains in the dust.',
+  ),
+  _EpiphanyLine(
+    title: 'Alignment',
+    subtitle: 'For one breath, everything is in tune.',
+  ),
+  _EpiphanyLine(
+    title: 'Revelation',
+    subtitle: 'A hidden contour steps into view.',
+  ),
+];
 
 // 5×4 color matrix: +18% RGB gain plus a small +18 luminance lift keeps the
 // mandated 0.15-opacity artwork readable on dimmer screens without making it loud.
@@ -113,13 +191,18 @@ class _GameScreenState extends ConsumerState<GameScreen>
   Timer? _backgroundFlashTimer;
   Timer? _puzzleCueTimer;
   Timer? _simulacrumBannerTimer;
+  Timer? _epiphanyPopupTimer;
   bool _backgroundFlashActive = false;
   bool _puzzleCueActive = false;
   String? _simulacrumBannerText;
+  String? _epiphanyTitle;
+  String? _epiphanySubtitle;
   bool _lastObservedPuzzleSolved = false;
   String? _lastObservedSimulacrum;
   int _lastObservedPsychoShiftCount = 0;
   int _lastObservedMessageCount = 0;
+  int _lastObservedUnlockedMilestones = 0;
+  int _epiphanyLineCursor = 0;
   String _lastObservedSectorLabel = '';
   // -1 = "not yet observed" so the very first build never fires a threshold haptic.
   int _lastObservedOblivionLevel = -1;
@@ -186,6 +269,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
     _backgroundFlashTimer?.cancel();
     _puzzleCueTimer?.cancel();
     _simulacrumBannerTimer?.cancel();
+    _epiphanyPopupTimer?.cancel();
     _controller.dispose();
     _scrollController.dispose();
     _focusNode.dispose();
@@ -473,6 +557,11 @@ class _GameScreenState extends ConsumerState<GameScreen>
     if (_hapticsOn()) HapticFeedback.mediumImpact();
     // ignore: discarded_futures
     AudioService().handleTrigger('sfx:command_accepted');
+    // A short Bach fragment appears as an epiphany reward.
+    // ignore: discarded_futures
+    AudioService().handleTrigger('reward_bach');
+    final line = _nextEpiphanyLine();
+    _showEpiphanyPopup(title: line.title, subtitle: line.subtitle);
     setState(() => _puzzleCueActive = true);
     _puzzleCueTimer = Timer(_puzzleCueHoldDuration, () {
       if (!mounted) return;
@@ -490,6 +579,11 @@ class _GameScreenState extends ConsumerState<GameScreen>
     _simulacrumBannerTimer?.cancel();
     if (_hapticsOn()) HapticFeedback.mediumImpact();
     setState(() => _simulacrumBannerText = '✦ $label recovered');
+    final line = _nextEpiphanyLine();
+    _showEpiphanyPopup(
+      title: '$label Recovered',
+      subtitle: line.subtitle,
+    );
     _simulacrumBannerTimer = Timer(_simulacrumBannerDuration, () {
       if (!mounted) return;
       setState(() => _simulacrumBannerText = null);
@@ -508,6 +602,51 @@ class _GameScreenState extends ConsumerState<GameScreen>
     }
     // ignore: discarded_futures
     AudioService().handleTrigger('sfx:command_accepted');
+  }
+
+  void _showEpiphanyPopup({
+    required String title,
+    required String subtitle,
+  }) {
+    _epiphanyPopupTimer?.cancel();
+    setState(() {
+      _epiphanyTitle = title;
+      _epiphanySubtitle = subtitle;
+    });
+    _epiphanyPopupTimer = Timer(_epiphanyPopupDuration, () {
+      if (!mounted) return;
+      setState(() {
+        _epiphanyTitle = null;
+        _epiphanySubtitle = null;
+      });
+    });
+  }
+
+  _EpiphanyLine _nextEpiphanyLine() {
+    final line = _epiphanyLines[_epiphanyLineCursor % _epiphanyLines.length];
+    _epiphanyLineCursor++;
+    return line;
+  }
+
+  int _unlockedMilestonesCount(Set<String> completedPuzzles) => _progressMilestones
+      .where((m) => completedPuzzles.contains(m.key))
+      .length;
+
+  void _consumeMilestoneReveal(Set<String> completedPuzzles) {
+    final unlocked = _unlockedMilestonesCount(completedPuzzles);
+    if (unlocked > _lastObservedUnlockedMilestones &&
+        unlocked <= _progressMilestones.length) {
+      final unlockedMilestone = _progressMilestones[unlocked - 1];
+      final line = _nextEpiphanyLine();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _showEpiphanyPopup(
+          title: '${unlockedMilestone.label} Revealed',
+          subtitle: '${line.subtitle} · ${unlockedMilestone.trackTitle}',
+        );
+      });
+    }
+    _lastObservedUnlockedMilestones = unlocked;
   }
 
   void _consumeFeedbackSignals(GameEngineState engine) {
@@ -966,6 +1105,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
               ),
               data: (engine) {
                 _consumeFeedbackSignals(engine);
+                _consumeMilestoneReveal(engine.completedPuzzles);
                 _consumeSectorChange(currentNode);
                 // Detect the WAKE UP epilogue text to trigger white-screen fade.
                 final lastMsg = engine.messages.lastOrNull;
@@ -1139,6 +1279,7 @@ class _GameScreenState extends ConsumerState<GameScreen>
                     _StatusBar(
                       weight: engine.psychoWeight,
                       itemCount: engine.inventory.length,
+                      completedPuzzles: engine.completedPuzzles,
                       profile: profile,
                       color: narrativeColor.withValues(alpha: 0.72),
                       visualProfile: visualProfile,
@@ -1191,6 +1332,19 @@ class _GameScreenState extends ConsumerState<GameScreen>
               child: IgnorePointer(
                 child: _SimulacrumBanner(
                   text: _simulacrumBannerText,
+                  visualProfile: visualProfile,
+                  reduceMotion: settings?.reduceMotion ?? false,
+                ),
+              ),
+            ),
+            Positioned(
+              top: 74,
+              left: 20,
+              right: 20,
+              child: IgnorePointer(
+                child: _EpiphanyPopup(
+                  title: _epiphanyTitle,
+                  subtitle: _epiphanySubtitle,
                   visualProfile: visualProfile,
                   reduceMotion: settings?.reduceMotion ?? false,
                 ),
@@ -1699,6 +1853,7 @@ class _MessageTile extends StatelessWidget {
 class _StatusBar extends StatelessWidget {
   final int weight;
   final int itemCount;
+  final Set<String> completedPuzzles;
   final PsychoProfile? profile;
   final Color color;
   final SectorVisualProfile visualProfile;
@@ -1708,6 +1863,7 @@ class _StatusBar extends StatelessWidget {
   const _StatusBar({
     required this.weight,
     required this.itemCount,
+    required this.completedPuzzles,
     required this.profile,
     required this.color,
     required this.visualProfile,
@@ -1766,7 +1922,129 @@ class _StatusBar extends StatelessWidget {
               color: const Color(0xFF879EC4),
               visualProfile: visualProfile,
             ),
+            const SizedBox(height: 8),
+            _ProgressConstellation(
+              milestones: _progressMilestones,
+              completedPuzzles: completedPuzzles,
+              visualProfile: visualProfile,
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProgressConstellation extends StatelessWidget {
+  final List<_ProgressMilestone> milestones;
+  final Set<String> completedPuzzles;
+  final SectorVisualProfile visualProfile;
+
+  const _ProgressConstellation({
+    required this.milestones,
+    required this.completedPuzzles,
+    required this.visualProfile,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          'Fragments',
+          style: TextStyle(
+            color: visualProfile.accent.withValues(alpha: 0.72),
+            fontSize: 10.6,
+            letterSpacing: 0.45,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Wrap(
+            spacing: 10,
+            runSpacing: 6,
+            children: [
+              for (int i = 0; i < milestones.length; i++)
+                _ProgressDot(
+                  index: i + 1,
+                  milestone: milestones[i],
+                  unlocked: completedPuzzles.contains(milestones[i].key),
+                  visualProfile: visualProfile,
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ProgressDot extends StatelessWidget {
+  final int index;
+  final _ProgressMilestone milestone;
+  final bool unlocked;
+  final SectorVisualProfile visualProfile;
+
+  const _ProgressDot({
+    required this.index,
+    required this.milestone,
+    required this.unlocked,
+    required this.visualProfile,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final fill = unlocked
+        ? visualProfile.accent.withValues(alpha: 0.92)
+        : Colors.transparent;
+    final border = unlocked
+        ? visualProfile.accent.withValues(alpha: 0.95)
+        : visualProfile.frame.withValues(alpha: 0.55);
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () {
+        final messenger = ScaffoldMessenger.of(context);
+        messenger.clearSnackBars();
+        if (!unlocked) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text('Fragment $index not revealed yet.'),
+              duration: const Duration(milliseconds: 1200),
+            ),
+          );
+          return;
+        }
+        // ignore: discarded_futures
+        AudioService().handleTrigger('reward_bach');
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('${milestone.label}: ${milestone.trackTitle}'),
+            duration: const Duration(milliseconds: 1700),
+          ),
+        );
+      },
+      child: Tooltip(
+        message: unlocked
+            ? '${milestone.label} · ${milestone.trackTitle}'
+            : '${milestone.label} · locked',
+        child: Container(
+          width: 16,
+          height: 16,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: fill,
+            border: Border.all(color: border, width: 1.2),
+            boxShadow: unlocked
+                ? [
+                    BoxShadow(
+                      color: visualProfile.glow.withValues(alpha: 0.32),
+                      blurRadius: 8,
+                    ),
+                  ]
+                : null,
+          ),
         ),
       ),
     );
@@ -1856,8 +2134,8 @@ class _PuzzleSolvedOverlay extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: 8),
-              Text(
+              const SizedBox(height: 8),
+              const Text(
                 'Puzzle resolved',
                 style: TextStyle(
                   color: Color(0xFFF3E8CF),
@@ -1922,6 +2200,83 @@ class _SimulacrumBanner extends StatelessWidget {
                 fontFamily: RitualTypography.ritualSans(12).fontFamily,
                 letterSpacing: 0.45,
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EpiphanyPopup extends StatelessWidget {
+  final String? title;
+  final String? subtitle;
+  final SectorVisualProfile visualProfile;
+  final bool reduceMotion;
+
+  const _EpiphanyPopup({
+    required this.title,
+    required this.subtitle,
+    required this.visualProfile,
+    required this.reduceMotion,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final active = title != null && subtitle != null;
+    return AnimatedSlide(
+      duration:
+          reduceMotion ? Duration.zero : const Duration(milliseconds: 260),
+      offset: active ? Offset.zero : const Offset(0, -0.9),
+      curve: Curves.easeOutCubic,
+      child: AnimatedOpacity(
+        opacity: active ? 1 : 0,
+        duration:
+            reduceMotion ? Duration.zero : const Duration(milliseconds: 220),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 460),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0E1114).withValues(alpha: 0.93),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: visualProfile.accent.withValues(alpha: 0.9),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: visualProfile.glow.withValues(alpha: 0.26),
+                  blurRadius: 18,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title ?? '',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Color(0xFFF4E8CC),
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.55,
+                    fontSize: 12.8,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle ?? '',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Color(0xFFD6CCB2),
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.32,
+                    fontSize: 11.8,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

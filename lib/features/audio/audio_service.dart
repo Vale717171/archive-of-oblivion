@@ -26,12 +26,15 @@ class AudioService with WidgetsBindingObserver {
   static const double _oblivionVolume = 0.50;
   static const double _zoneVolume = 0.68;
   static const double _maxMixVolume = 0.90;
-  static const double _ambientVolume = 0.32; // ambient layer target (scales with musicVolume)
+  static const double _ambientVolume =
+      0.38; // ambient layer target (scales with musicVolume)
+  static const bool _rewardFirstBachMode = true;
   factory AudioService() => _instance;
   AudioService._internal();
 
   final AudioPlayer _backgroundPlayer = AudioPlayer();
   final AudioPlayer _ambientPlayer = AudioPlayer();
+  final AudioPlayer _rewardPlayer = AudioPlayer();
   final Set<String> _availableAssets = {};
   final Set<String> _missingAssets = {};
   Future<void> _audioOperationQueue = Future.value();
@@ -92,6 +95,8 @@ class AudioService with WidgetsBindingObserver {
     await _backgroundPlayer.setVolume(0.0);
     await _ambientPlayer.setLoopMode(LoopMode.one);
     await _ambientPlayer.setVolume(0.0);
+    await _rewardPlayer.setLoopMode(LoopMode.off);
+    await _rewardPlayer.setVolume(0.0);
     // Register for app lifecycle events to auto-pause/resume audio.
     WidgetsBinding.instance.addObserver(this);
 
@@ -190,6 +195,14 @@ class AudioService with WidgetsBindingObserver {
       await _backgroundPlayer.setVolume(0.0);
       return;
     }
+    if (_rewardFirstBachMode &&
+        !_isAlwaysOnTrack(trackKey) &&
+        trackKey != 'silence') {
+      _currentAmbienceKey = trackKey;
+      await _backgroundPlayer.stop();
+      await _backgroundPlayer.setVolume(0.0);
+      return;
+    }
     if (trackKey == 'silence') {
       final applied = await _handleSilenceEnding();
       if (applied) _currentAmbienceKey = trackKey;
@@ -221,6 +234,10 @@ class AudioService with WidgetsBindingObserver {
         if (asset != null) await playSFX(asset);
         return;
       }
+      if (trigger == 'reward_bach') {
+        await _playBachRewardSting();
+        return;
+      }
       if (trigger == 'silence') {
         await _handleSilenceEnding();
         return;
@@ -238,6 +255,9 @@ class AudioService with WidgetsBindingObserver {
         return;
       }
       if (AudioTrackCatalog.isExplicitTrack(trigger)) {
+        if (_rewardFirstBachMode && !_isAlwaysOnTrack(trigger)) {
+          return;
+        }
         await _crossfadeTo(trigger);
       }
     });
@@ -488,6 +508,54 @@ class AudioService with WidgetsBindingObserver {
         .clamp(0.0, _maxMixVolume);
   }
 
+  bool _isAlwaysOnTrack(String key) =>
+      key == 'aria_goldberg' ||
+      key == 'siciliano' ||
+      key == 'oblivion' ||
+      key == 'silence' ||
+      key == 'zona_eternal';
+
+  Future<void> _playBachRewardSting() async {
+    if (!_isMusicEnabled || _musicVolumeScale <= 0) return;
+
+    final isHighAnxiety = (_lastProfile?.anxiety ?? 0) >= 60;
+    final key = isHighAnxiety ? 'siciliano' : 'aria_goldberg';
+    final asset = AudioTrackCatalog.assetForKey(key);
+    if (asset == null || !await _assetExists(asset)) return;
+
+    try {
+      final canDuckAmbient = _currentAmbientKey != null && _ambientPlayer.playing;
+      if (canDuckAmbient) {
+        final ducked = (_ambientPlayer.volume * 0.34).clamp(0.0, 0.16);
+        await _rampAmbientVolume(ducked, steps: 5, msPerStep: 28);
+      }
+      await _rewardPlayer.stop();
+      await _rewardPlayer.setAsset(asset);
+      await _rewardPlayer.setVolume((0.84 * _musicVolumeScale).clamp(0.0, 1.0));
+      // Keep the cue short so it feels like a reward pulse, not a new bed track.
+      await _rewardPlayer.setClip(
+        start: Duration.zero,
+        end: const Duration(seconds: 8),
+      );
+      // ignore: discarded_futures
+      _rewardPlayer.play();
+      if (canDuckAmbient) {
+        Future.delayed(const Duration(milliseconds: 1450), () {
+          if (!_isMusicEnabled || _currentAmbientKey == null) return;
+          final intensity = ((_lastProfile?.oblivionLevel ?? 0) / 100)
+              .clamp(0.0, 1.0);
+          final target = ((_ambientVolume + intensity * 0.25) * _musicVolumeScale)
+              .clamp(0.0, 0.60);
+          // ignore: discarded_futures
+          _rampAmbientVolume(target, steps: 12, msPerStep: 38);
+        });
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('[Audio] Reward Bach cue failed: $e');
+    }
+  }
+
   bool get _isMusicEnabled => (_lastSettings?.musicEnabled ?? true);
 
   double get _musicVolumeScale => (_lastSettings?.musicVolume ?? 0.85).clamp(0.0, 1.0);
@@ -585,7 +653,13 @@ class AudioService with WidgetsBindingObserver {
       // fire-and-forget — same reason as _backgroundPlayer.play()
       // ignore: discarded_futures
       _ambientPlayer.play();
-      final targetVol = (_ambientVolume * _musicVolumeScale).clamp(0.0, 0.45);
+      final sectorBias = switch (sector) {
+        'giardino' => 1.12, // wetter bed, more droplets-presence
+        'osservatorio' => 0.90, // lighter, airy metallic resonance
+        _ => 1.0,
+      };
+      final targetVol =
+          (_ambientVolume * _musicVolumeScale * sectorBias).clamp(0.0, 0.45);
       // ignore: avoid_print
       print('[Audio] Ambient "$ambientKey" → $asset (vol ${targetVol.toStringAsFixed(2)})');
       await _rampAmbientVolume(targetVol);
@@ -712,6 +786,7 @@ class AudioService with WidgetsBindingObserver {
     _settingsSubscription?.close();
     _backgroundPlayer.dispose();
     _ambientPlayer.dispose();
+    _rewardPlayer.dispose();
     _typewriterPlayer.dispose();
   }
 }

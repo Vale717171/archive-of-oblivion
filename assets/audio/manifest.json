@@ -8,6 +8,30 @@
   },
   "tracks": [
     {
+      "key": "ambient_soglia",
+      "asset": "assets/audio/ambient_soglia_air.ogg",
+      "status": "ready",
+      "source": "Local ffmpeg-built ambience collage (breathing air, hollow room resonance, low drone, faint shimmer)",
+      "license": "Repository-generated / lawful original synthesis",
+      "duration_s": 96.0
+    },
+    {
+      "key": "ambient_giardino",
+      "asset": "assets/audio/ambient_giardino_water.ogg",
+      "status": "ready",
+      "source": "Local ffmpeg-built ambience collage (water-like filtered noise, sparse droplets, airy rustle, restrained minimal pad)",
+      "license": "Repository-generated / lawful original synthesis",
+      "duration_s": 96.0
+    },
+    {
+      "key": "ambient_osservatorio",
+      "asset": "assets/audio/ambient_osservatorio_metal.ogg",
+      "status": "ready",
+      "source": "Local ffmpeg-built ambience collage (airy friction, distant metallic resonances, low drone, faint minimal pad)",
+      "license": "Repository-generated / lawful original synthesis",
+      "duration_s": 96.0
+    },
+    {
       "key": "soglia",
       "asset": "assets/audio/bach_bwv846_soglia.ogg",
       "status": "ready",

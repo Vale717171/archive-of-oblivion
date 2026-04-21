@@ -2,6 +2,9 @@ class AudioTrackCatalog {
   static const Map<String, String> ambienceAssets = {
     // Ambient layer — low-volume atmospheric echo, played underneath Bach BGM.
     'universal_ambient': 'assets/audio/echo_chamber.ogg',
+    'ambient_soglia': 'assets/audio/ambient_soglia_air.ogg',
+    'ambient_giardino': 'assets/audio/ambient_giardino_water.ogg',
+    'ambient_osservatorio': 'assets/audio/ambient_osservatorio_metal.ogg',
 
     // Sector bases
     'soglia': 'assets/audio/bach_bwv846_soglia.ogg',
@@ -92,6 +95,10 @@ class AudioTrackCatalog {
   /// special tracks such as oblivion/silence are also excluded by the caller).
   static String? ambientKeyForSector(String sector) {
     if (sector == 'memoria' || sector == 'la_zona') return null;
+    if (sector == 'soglia') return 'ambient_soglia';
+    // Two pilot sectors now use true ambience beds instead of Bach variations.
+    if (sector == 'giardino') return 'ambient_giardino';
+    if (sector == 'osservatorio') return 'ambient_osservatorio';
     return 'universal_ambient';
   }
 
